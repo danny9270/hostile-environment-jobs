@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hostile Environment Jobs | EOD, Security, Medic and Mine Action Vacancies</title>
+<meta name="description" content="Current jobs in hostile and high-risk environments: EOD, IEDD, search, mine action, security, hostile environment medics and support roles. Checked by hand, closed jobs removed automatically.">
+<meta property="og:title" content="Hostile Environment Jobs">
+<meta property="og:description" content="EOD, security, medic and mine action jobs in high-risk places, checked by hand.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#b4451f">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --ink: #1f2420; --muted: #5d645e; --line: #dcdcd4;
+  --accent: #b4451f; --accent-ink: #ffffff; --soft: #fbe9e1; --ok: #2f6f4f;
+  --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
+  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
+  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0 0 .4em; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.01em; }
+h2 { font-size: 26px; }
+h3 { font-size: 20px; }
+
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+header.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 19px; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.brand svg { flex: none; }
+nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 15px; }
+nav a[aria-current="page"] { color: var(--ink); background: var(--bg); }
+
+.hero { padding: 36px 0 12px; }
+.hero p { color: var(--muted); max-width: 640px; margin: 0; }
+.sample-note { background: var(--soft); border: 1px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin: 16px 0 0; font-size: 15px; }
+
+.tools { display: grid; grid-template-columns: 1fr 200px; gap: 10px; margin: 22px 0 10px; }
+.tools input, .tools select, form input, form select, form textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
+.chips button { font: 600 14px var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.meta-line { color: var(--muted); font-size: 14px; margin: 8px 0 14px; font-family: var(--mono); }
+
+.jobs { display: grid; gap: 12px; padding-bottom: 40px; }
+.job { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; }
+.job h3 { margin: 0; font-size: 19px; }
+.job h3 a { color: var(--ink); text-decoration: none; }
+.job h3 a:hover { text-decoration: underline; }
+.job .who { color: var(--muted); font-size: 15px; }
+.job .side { text-align: right; font-size: 14px; color: var(--muted); grid-row: span 2; }
+.tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .04em; background: var(--soft); color: var(--accent); padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+.soon { color: var(--accent); font-weight: 600; }
+.empty { color: var(--muted); padding: 24px 0; }
+
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
+.detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 16px 0; }
+.detail dt { color: var(--muted); }
+.detail dd { margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
+.btn { display: inline-block; font: 700 15px var(--display); text-decoration: none; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.back { display: inline-block; margin-top: 20px; }
+
+.page { padding: 32px 0 48px; max-width: 720px; }
+form { display: grid; gap: 14px; margin-top: 18px; }
+form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
+form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.note { color: var(--accent); } .sent { color: var(--ok); }
+.guide { border-top: 1px solid var(--line); padding: 14px 0; }
+.guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: "+"; font: 700 22px var(--display); color: var(--accent); }
+.guide[open] summary::after { content: "\2212"; }
+.guide summary h2 { margin: 0; font-size: 21px; text-wrap: balance; }
+.guide li { margin-bottom: 6px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; padding: 20px 0 32px; }
+footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .tools, form .row { grid-template-columns: 1fr; }
+  .job { grid-template-columns: 1fr; }
+  .job .side { text-align: left; grid-row: auto; }
+  nav { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#jobs" data-view="jobs">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="13" cy="13" r="4" fill="#b4451f"/></svg>
+    Hostile Environment Jobs</a>
+  <nav>
+    <a href="#jobs" data-view="jobs">Jobs</a>
+    <a href="#courses" data-view="courses">Courses</a>
+    <a href="#careers" data-view="careers">Getting in</a>
+    <a href="#post" data-view="post">Post a job</a>
+    <a href="#about" data-view="about">About</a>
+  </nav>
+</div></header>
+
+<main>
+<section id="jobs" class="wrap">
+  <div class="hero">
+    <h1>Jobs where the work is hard to reach</h1>
+    <p>Current vacancies in hostile and high-risk environments: EOD and IEDD, search, mine action, security, hostile environment medics, and the people who keep them running. Checked by hand, and closed jobs drop off automatically.</p>
+    <p class="sample-note" id="sample-note" hidden>This is a preview with sample jobs. Real listings will replace them before launch.</p>
+  </div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Search title, employer, country or qualification (e.g. IEDD, FREC, SIA)" aria-label="Search jobs">
+    <select id="region" aria-label="Region"><option value="">All regions</option></select>
+  </div>
+  <div class="chips" id="cats" role="group" aria-label="Job type"></div>
+  <p class="meta-line" id="count"></p>
+  <div class="jobs" id="list"></div>
+  <p class="empty" id="empty" hidden>No open jobs match. Try another type or region, or join the Facebook group for new posts.</p>
+</section>
+
+<section id="job" class="wrap" hidden>
+  <a class="back" href="#jobs" data-view="jobs">&larr; All jobs</a>
+  <article class="detail" id="job-detail"></article>
+</section>
+
+<section id="courses" class="wrap" hidden>
+  <div class="hero">
+    <h1>Courses and training</h1>
+    <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically.</p>
+    <p class="sample-note" id="course-sample-note" hidden>These are sample courses. Real listings will replace them before launch.</p>
+  </div>
+  <div class="chips" id="course-types" role="group" aria-label="Course type"></div>
+  <div class="jobs" id="course-list"></div>
+  <p class="empty" id="course-empty" hidden>No upcoming courses of this type yet.</p>
+  <div class="page" id="list-course">
+    <h2>List a course</h2>
+    <p>Training providers can list courses for free. We check each one before it goes live.</p>
+    <form id="course-form" novalidate>
+      <input type="hidden" name="_subject" value="New course for Hostile Environment Jobs">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <label>Course name <input id="c-title" name="title" required></label>
+      <div class="row">
+        <label>Provider <input id="c-provider" name="provider" required></label>
+        <label>Course type <select name="type" id="course-cat" required></select></label>
+      </div>
+      <div class="row">
+        <label>Location (or Online) <input id="c-location" name="location" required></label>
+        <label>Next start date <input id="c-start" name="start" type="date"></label>
+      </div>
+      <div class="row">
+        <label>Price <input id="c-price" name="price" placeholder="e.g. £1,450"></label>
+        <label>Accreditation <input id="c-accr" name="accreditation" placeholder="e.g. IMAS, Ofqual, CPD"></label>
+      </div>
+      <label>Link to book <input id="c-url" name="url" type="url" placeholder="https://" required></label>
+      <label>Your email <input id="c-email" name="email" type="email" required></label>
+      <button class="btn primary" type="submit">Send course</button>
+      <p id="course-note" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<section id="careers" class="wrap" hidden>
+  <div class="page">
+    <h1>Getting in</h1>
+    <p>How people get into each line of work, which qualifications employers ask for, and where to find the courses. Based on what we see in job adverts and from our members. Always check what a specific employer requires.</p>
+    <details class="guide" open>
+      <summary><h2>Humanitarian mine action and EOD</h2></summary>
+      <p>Most people come from military EOD or combat engineer roles, but national staff and career changers start as deminers and work up.</p>
+      <ul><li>Start as a deminer or EOD operator; IMAS EOD Level 1 and 2 are the entry qualifications, and many NGOs train national staff themselves.</li><li>Move to IMAS EOD Level 3 to lead teams, then Level 3+ or specialist courses (BAC, ammunition, PMM) for senior technical roles.</li><li>Non-technical survey, EORE and community liaison roles suit people without an ammunition background.</li><li>Expect HEAT and a first aid ticket to be asked for on almost every application.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="EOD">See these jobs</a><a class="btn" href="#courses" data-ctype="EOD & IEDD">See courses</a></div>
+    </details>
+    <details class="guide">
+      <summary><h2>IEDD and commercial EOD</h2></summary>
+      <p>These roles nearly always go to people with military or police IEDD qualifications and operational experience.</p>
+      <ul><li>UK, US and NATO high-threat or IEDD operator courses are the usual baseline; civilian equivalents are rarer and checked carefully.</li><li>Commercial UXO survey and clearance (offshore wind, construction) is a common route into the civilian world.</li><li>Instructor and mentor roles with partner forces suit operators with teaching experience.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="IEDD">See these jobs</a><a class="btn" href="#courses" data-ctype="EOD & IEDD">See courses</a></div>
+    </details>
+    <details class="guide">
+      <summary><h2>Military search</h2></summary>
+      <p>Search advisers usually come from military search teams; trained searchers can also move into mine action survey work.</p>
+      <ul><li>Search team member, then search team commander, then search adviser qualifications are the usual ladder.</li><li>Training and mentoring national search teams is where most civilian search jobs are.</li><li>Pair search experience with an IMAS qualification to widen your options.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="Search">See these jobs</a><a class="btn" href="#courses" data-ctype="Search">See courses</a></div>
+    </details>
+    <details class="guide">
+      <summary><h2>Security</h2></summary>
+      <p>Covers close protection, PSD, site security and NGO security management. Each needs different credentials.</p>
+      <ul><li>Close protection: an SIA CP licence (UK) or local equivalent, a recognised CP course and an emergency first aid qualification.</li><li>NGO security management: experience matters more than tickets, but courses in security risk management and HEAT help you get shortlisted.</li><li>Former military and police have a head start; analysts and coordinators can come from humanitarian or political backgrounds.</li><li>Check each country's licensing rules before you take a contract.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="Security">See these jobs</a><a class="btn" href="#courses" data-ctype="Security">See courses</a></div>
+    </details>
+    <details class="guide">
+      <summary><h2>Hostile environment medic</h2></summary>
+      <p>Employers want proven trauma care plus the ability to work alone, far from a hospital.</p>
+      <ul><li>Paramedics, nurses and military medics are the main routes; FREC 4 or 5 opens doors to remote medic roles if you're not registered.</li><li>Add a pre-hospital trauma course (PHTLS, TCCC or similar) and remote or tactical medicine training.</li><li>Many medic roles also cover HSE, so a NEBOSH or similar safety certificate is useful.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="Medical">See these jobs</a><a class="btn" href="#courses" data-ctype="Medical">See courses</a></div>
+    </details>
+    <details class="guide">
+      <summary><h2>Support, logistics and management</h2></summary>
+      <p>Every field programme needs people for logistics, finance, HR, data, fleet and management, and many need no ammunition background.</p>
+      <ul><li>Transfer your skills from the military, NGOs or business, and highlight work in tough places.</li><li>IMSMA, GIS and data skills are in short supply in mine action.</li><li>Programme managers usually need donor reporting, budget and people management experience.</li></ul>
+      <div class="actions"><a class="btn" href="#jobs" data-cat="Support & Logistics">See these jobs</a><a class="btn" href="#courses" data-ctype="Management">See courses</a></div>
+    </details>
+  </div>
+</section>
+
+<section id="post" class="wrap" hidden>
+  <div class="page">
+    <h1>Post a job</h1>
+    <p>Send us the vacancy and we'll check it and post it here and in the Facebook group, usually within a day. Posting is free.</p>
+    <form id="post-form" novalidate>
+      <input type="hidden" name="_subject" value="New job for Hostile Environment Jobs">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <label>Job title <input name="title" required></label>
+      <div class="row">
+        <label>Employer <input name="employer" required></label>
+        <label>Job type
+          <select name="category" id="post-cat" required></select></label>
+      </div>
+      <div class="row">
+        <label>Location <input name="location" placeholder="City, country" required></label>
+        <label>Closing date <input name="closing" type="date"></label>
+      </div>
+      <label>Link to the advert or how to apply <input name="apply_url" type="url" placeholder="https://" required></label>
+      <label>Key requirements and anything else we should know <textarea name="details" rows="5"></textarea></label>
+      <label>Your email <input name="email" type="email" required></label>
+      <button class="btn primary" type="submit">Send job</button>
+      <p id="post-note" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<section id="about" class="wrap" hidden>
+  <div class="page">
+    <h1>About</h1>
+    <p>Hostile Environment Jobs grew out of our Facebook group, where people working in EOD, search and mine action share vacancies. It now covers everyone who works in hard places: security, medics, trainers and support staff too. This site keeps every open job in one place, searchable, with closed jobs removed automatically.</p>
+    <h2>How we check jobs</h2>
+    <p>Every job links to the employer's own advert. We check each one before posting and show the date it was added. We never ask applicants for money, and you should be wary of any job that does.</p>
+    <h2>New jobs first</h2>
+    <p>Join the <a id="fb-link" href="#" target="_blank" rel="noopener">Facebook group</a> to see new jobs as they're posted.</p>
+    <h2>Contact</h2>
+    <p>Email <a class="em" href="#">us</a>.</p>
+  </div>
+</section>
+
+<section id="privacy" class="wrap" hidden>
+  <div class="page">
+    <h1>Privacy</h1>
+    <p>We don't use cookies or track you across sites. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. Ask us any time to delete what you've sent.</p>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>&copy; <span id="yr"></span> Hostile Environment Jobs</span>
+  <a href="#privacy" data-view="privacy">Privacy</a>
+  <a href="#post" data-view="post">Post a job</a>
+  <a href="#list-course" data-view="courses">List a course</a>
+</div></footer>
+
+<script>
+// Settings to fill in before launch.
+const CONTACT = ["jobs", "example.org"].join("@"); // assembled here so spam bots don't collect it
+const FACEBOOK_GROUP = "https://www.facebook.com/groups/";
+const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Medical", "Management", "Quality & Safety", "Training", "Support & Logistics", "Other"];
+
+const views = ["jobs", "job", "courses", "careers", "post", "about", "privacy"];
+const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
+let JOBS = [];
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const fmtDate = d => new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const isOpen = j => j.closing === "Rolling" || !j.closing || new Date(j.closing + "T23:59:59") >= today;
+function due(j) {
+  if (j.closing === "Rolling" || !j.closing) return "Open until filled";
+  const days = Math.round((new Date(j.closing + "T00:00:00") - today) / 864e5);
+  return "Closes " + fmtDate(j.closing) + (days <= 7 ? ` <span class="soon">(${days === 0 ? "today" : days + " days left"})</span>` : "");
+}
+
+function show(hash) {
+  const [view, id] = hash.split("/");
+  const v = view === "list-course" ? "courses" : views.includes(view) ? view : "jobs";
+  views.forEach(n => document.getElementById(n).hidden = n !== v);
+  document.querySelectorAll("nav a").forEach(a => a.dataset.view === (v === "job" ? "jobs" : v) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  if (v === "job") renderDetail(decodeURIComponent(id || ""));
+  else document.getElementById("jobposting")?.remove();
+  if (view === "list-course") document.getElementById("list-course").scrollIntoView();
+  else window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", () => show(location.hash.slice(1) || "jobs"));
+
+// Filters
+let cat = "";
+const q = document.getElementById("q"), region = document.getElementById("region");
+function renderList() {
+  const term = q.value.trim().toLowerCase();
+  const open = JOBS.filter(isOpen)
+    .filter(j => !cat || j.category === cat)
+    .filter(j => !region.value || j.region === region.value)
+    .filter(j => !term || [j.title, j.employer, j.location, j.category, ...(j.requirements || [])].join(" ").toLowerCase().includes(term))
+    .sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+  document.getElementById("empty").hidden = open.length > 0;
+  const total = JOBS.filter(isOpen).length;
+  document.getElementById("count").textContent = `${open.length} of ${total} open jobs` + (lastChecked ? ` · updated ${fmtDate(lastChecked)}` : "");
+  document.getElementById("list").innerHTML = open.map(j => `<article class="job">
+    <div><span class="tag">${esc(j.category)}</span>
+      <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
+      <div class="who">${esc(j.employer)} · ${esc(j.location)}</div></div>
+    <div class="side">${due(j)}<br>${esc(j.contract || "")}</div>
+  </article>`).join("");
+}
+let lastChecked = "";
+function buildFilters() {
+  const used = new Set(JOBS.filter(isOpen).map(j => j.category));
+  const bar = document.getElementById("cats");
+  const mk = (label, val) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(val === cat));
+    b.addEventListener("click", () => { cat = val; bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderList(); }); return b; };
+  bar.append(mk("All", ""));
+  CATEGORIES.filter(c => used.has(c)).forEach(c => bar.append(mk(c, c)));
+  [...new Set(JOBS.filter(isOpen).map(j => j.region).filter(Boolean))].sort().forEach(r => region.append(new Option(r, r)));
+}
+q.addEventListener("input", renderList);
+region.addEventListener("change", renderList);
+
+function renderDetail(id) {
+  const j = JOBS.find(x => x.id === id);
+  const el = document.getElementById("job-detail");
+  if (!j) { el.innerHTML = "<h2>Job not found</h2><p>It may have closed. See the current jobs instead.</p>"; return; }
+  const closed = !isOpen(j);
+  const link = location.origin + location.pathname + "#job/" + encodeURIComponent(j.id);
+  el.innerHTML = `<span class="tag">${esc(j.category)}</span>
+    <h1>${esc(j.title)}</h1>
+    <div class="who">${esc(j.employer)} · ${esc(j.location)}</div>
+    ${closed ? `<p class="note"><strong>This job has closed.</strong></p>` : ""}
+    <p>${esc(j.summary)}</p>
+    <dl><dt>Closing</dt><dd>${due(j)}</dd><dt>Contract</dt><dd>${esc(j.contract)}</dd><dt>Salary</dt><dd>${esc(j.salary || "Not stated")}</dd>
+      <dt>Requirements</dt><dd>${(j.requirements || []).map(esc).join("<br>")}</dd><dt>Added</dt><dd>${j.posted ? fmtDate(j.posted) : ""}</dd></dl>
+    <div class="actions">
+      ${closed ? "" : `<a class="btn primary" href="${esc(j.apply_url)}" target="_blank" rel="noopener">Apply on employer's site</a>`}
+      <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}" target="_blank" rel="noopener">Share on Facebook</a>
+      <button class="btn" type="button" id="copy">Copy link</button>
+    </div>`;
+  document.getElementById("copy").onclick = e => navigator.clipboard?.writeText(link).then(() => e.target.textContent = "Link copied").catch(() => {});
+  document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
+  // Google for Jobs structured data, so listings can show in Google's job search.
+  document.getElementById("jobposting")?.remove();
+  if (!closed && !j.sample) {
+    const s = document.createElement("script"); s.type = "application/ld+json"; s.id = "jobposting";
+    s.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "JobPosting", title: j.title, description: j.summary,
+      datePosted: j.posted, validThrough: j.closing !== "Rolling" ? j.closing : undefined,
+      hiringOrganization: { "@type": "Organization", name: j.employer },
+      jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: j.location } } });
+    document.head.append(s);
+  }
+}
+
+fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+  JOBS = Array.isArray(data) ? data : (data.jobs || []);
+  lastChecked = JOBS.map(j => j.posted).filter(Boolean).sort().pop() || "";
+  document.getElementById("sample-note").hidden = !JOBS.some(j => j.sample);
+  buildFilters();
+  renderList();
+  show(location.hash.slice(1) || "jobs");
+});
+
+// Courses: loaded from courses.json, past start dates hidden automatically.
+let COURSES = [], ctype = "";
+const courseOpen = c => !/^\d{4}-\d\d-\d\d$/.test(c.start) || new Date(c.start + "T23:59:59") >= today;
+function renderCourses() {
+  const list = COURSES.filter(courseOpen).filter(c => !ctype || c.type === ctype)
+    .sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  document.getElementById("course-empty").hidden = list.length > 0;
+  document.getElementById("course-list").innerHTML = list.map(c => `<article class="job">
+    <div><span class="tag">${esc(c.type)}</span>
+      <h3><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
+      <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
+      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p></div>
+    <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
+  </article>`).join("");
+}
+fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+  COURSES = Array.isArray(data) ? data : (data.courses || []);
+  document.getElementById("course-sample-note").hidden = !COURSES.some(c => c.sample);
+  const used = new Set(COURSES.filter(courseOpen).map(c => c.type));
+  const bar = document.getElementById("course-types");
+  const mk = (label, val) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(val === ctype));
+    b.addEventListener("click", () => { ctype = val; bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderCourses(); }); return b; };
+  bar.append(mk("All", ""));
+  COURSE_TYPES.filter(t => used.has(t)).forEach(t => bar.append(mk(t, t)));
+  renderCourses();
+});
+
+// "Getting in" buttons open jobs or courses already filtered to that line of work.
+document.getElementById("careers").addEventListener("click", e => {
+  const a = e.target.closest("a[data-cat], a[data-ctype]");
+  if (!a) return;
+  const bar = document.getElementById(a.dataset.cat !== undefined ? "cats" : "course-types");
+  const want = a.dataset.cat ?? a.dataset.ctype;
+  const b = [...bar.querySelectorAll("button")].find(x => x.textContent === want);
+  (b || bar.querySelector("button"))?.click();
+});
+
+// Job and course forms, sent by FormSubmit to the contact address.
+const postCat = document.getElementById("post-cat");
+CATEGORIES.forEach(c => postCat.append(new Option(c, c)));
+const courseCat = document.getElementById("course-cat");
+COURSE_TYPES.forEach(c => courseCat.append(new Option(c, c)));
+function wireForm(form, note, missing, thanks) {
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { note.className = "note"; note.textContent = missing; return; }
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
+      if (!res.ok) throw new Error(res.status);
+      form.reset(); note.className = "sent"; note.textContent = thanks;
+    } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+    finally { btn.disabled = false; }
+  });
+}
+wireForm(document.getElementById("post-form"), document.getElementById("post-note"),
+  "Fill in the title, employer, location, link and your email, then send again.",
+  "Thanks, we've got it. We'll check the job and post it, usually within a day.");
+wireForm(document.getElementById("course-form"), document.getElementById("course-note"),
+  "Fill in the course name, provider, location, booking link and your email, then send again.",
+  "Thanks, we've got it. We'll check the course and list it, usually within a day.");
+
+document.querySelectorAll("a.em").forEach(a => { a.textContent = CONTACT; a.href = "mailto:" + CONTACT; });
+document.getElementById("fb-link").href = FACEBOOK_GROUP;
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
