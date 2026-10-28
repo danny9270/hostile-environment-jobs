@@ -338,6 +338,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <footer><div class="wrap">
   <span>&copy; <span id="yr"></span> Hostile Environment Jobs</span>
   <a href="#privacy" data-view="privacy">Privacy</a>
+  <a href="/jobs/">All open jobs</a>
   <a href="#post" data-view="post">Post a job</a>
   <a href="#list-course" data-view="courses">List a course</a>
   <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
@@ -395,7 +396,6 @@ function show(hash) {
   views.forEach(n => document.getElementById(n).hidden = n !== v);
   document.querySelectorAll("nav a").forEach(a => a.dataset.view === (v === "job" ? "jobs" : v) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   if (v === "job") renderDetail(decodeURIComponent(id || ""));
-  else document.getElementById("jobposting")?.remove();
   if (view === "list-course") document.getElementById("list-course").scrollIntoView();
   else window.scrollTo(0, 0);
 }
@@ -449,7 +449,7 @@ function renderDetail(id) {
   const el = document.getElementById("job-detail");
   if (!j) { el.innerHTML = "<h2>Job not found</h2><p>It may have closed. See the current jobs instead.</p>"; return; }
   const closed = !isOpen(j);
-  const link = location.origin + location.pathname + "#job/" + encodeURIComponent(j.id);
+  const link = location.origin + "/jobs/" + encodeURIComponent(j.id) + "/"; // its own page, built by scripts/build_pages.py
   el.innerHTML = `<span class="tag">${esc(j.category)}</span>
     <h1>${esc(j.title)}</h1>
     <div class="who">${esc(j.employer)} · ${esc(j.location)}</div>
@@ -464,16 +464,6 @@ function renderDetail(id) {
     </div>`;
   document.getElementById("copy").onclick = e => navigator.clipboard?.writeText(link).then(() => e.target.textContent = "Link copied").catch(() => {});
   document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
-  // Google for Jobs structured data, so listings can show in Google's job search.
-  document.getElementById("jobposting")?.remove();
-  if (!closed && !j.sample) {
-    const s = document.createElement("script"); s.type = "application/ld+json"; s.id = "jobposting";
-    s.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "JobPosting", title: j.title, description: j.summary,
-      datePosted: j.posted, validThrough: j.closing !== "Rolling" ? j.closing : undefined,
-      hiringOrganization: { "@type": "Organization", name: j.employer },
-      jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: j.location } } });
-    document.head.append(s);
-  }
 }
 
 fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
