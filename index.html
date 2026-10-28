@@ -329,7 +329,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -595,6 +595,15 @@ document.querySelectorAll(".fb-join").forEach(a => a.href = FACEBOOK_GROUP);
   let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 150); });
 })();
 document.getElementById("yr").textContent = new Date().getFullYear();
+
+// Visitor stats with GoatCounter (no cookies). Each view (#jobs, #job/..., #courses) counts as its own page.
+function countView() {
+  if (!window.goatcounter || !window.goatcounter.count) return setTimeout(countView, 300);
+  window.goatcounter.count({ path: location.pathname + location.hash });
+}
+window.addEventListener("load", countView);
+window.addEventListener("hashchange", countView);
 </script>
+<script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}' async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
