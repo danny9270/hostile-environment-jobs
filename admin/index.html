@@ -190,7 +190,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   <div class="grid two">
     <div class="card">
       <h2>Visitor stats (GoatCounter)</h2>
-      <p class="small">Fill these in once your GoatCounter account is set up. Both are kept only in this browser.</p>
+      <p class="small">In GoatCounter go to Settings, API, make a key with "Read statistics" ticked, and paste it here. It is kept only in this browser.</p>
       <form id="gc-form">
         <label>Site code <span class="hint">(the part before .goatcounter.com)</span><input id="gc-code" placeholder="hostileenvironmentjobs" autocomplete="off"></label>
         <label>API key <span class="hint">(GoatCounter: Settings, API, "Read statistics")</span><input id="gc-key" type="password" autocomplete="off"></label>
@@ -224,6 +224,7 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
 // Keep in step with CATEGORIES and COURSE_TYPES in ../index.html.
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
+const GC_CODE = "hostileenvironmentjobs"; // GoatCounter site code, overridable in Settings
 const REGIONS = ["Africa", "Americas", "Asia", "Europe", "Middle East", "Worldwide"];
 
 const $ = id => document.getElementById(id);
@@ -392,9 +393,9 @@ function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); 
 
 // ---------- visitor stats ----------
 async function renderVisits() {
-  const el = $("visits"), code = store.get("gc-code"), key = store.get("gc-key");
-  if (!code || !key) {
-    el.innerHTML = `<h2>Visitors</h2><p class="small">Visitor stats come from GoatCounter. Once your account is set up, add the site code and API key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
+  const el = $("visits"), code = store.get("gc-code") || GC_CODE, key = store.get("gc-key");
+  if (!key) {
+    el.innerHTML = `<h2>Visitors</h2><p class="small">Visitor stats come from GoatCounter. Once your account is set up, add your API key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
     return;
   }
   el.innerHTML = `<h2>Visitors</h2><p class="muted small">Loading...</p>`;
@@ -555,7 +556,7 @@ $("add-course").onclick = () => openEditor("courses");
 function showTab(tab) {
   ["dash", "jobs", "courses", "settings"].forEach(t => $(t).hidden = t !== tab);
   document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
-  if (tab === "settings") { $("gc-code").value = store.get("gc-code") || ""; $("gc-key").value = store.get("gc-key") || ""; }
+  if (tab === "settings") { $("gc-code").value = store.get("gc-code") || GC_CODE; $("gc-key").value = store.get("gc-key") || ""; }
   history.replaceState(null, "", "#" + tab);
   window.scrollTo(0, 0);
 }
