@@ -62,6 +62,16 @@ def country(location):
     return min(found)[1] if found else None
 
 
+def employment_type(contract):
+    # Google's fixed values, guessed from the contract text; left out when it doesn't say.
+    c = contract.lower()
+    for pattern, value in ((r"contractor|freelance|rotational", "CONTRACTOR"), (r"\bmonths?\b|temporary|fixed[- ]term", "TEMPORARY"),
+                           (r"full[- ]time|permanent", "FULL_TIME"), (r"part[- ]time", "PART_TIME")):
+        if re.search(pattern, c):
+            return value
+    return None
+
+
 def page(title, description, path, body, head_extra=""):
     url = SITE + path
     return f"""<!doctype html>
@@ -109,6 +119,8 @@ def job_page(j):
         "jobLocation": {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": j["location"]}},
         "directApply": False, "url": SITE + path,
     }
+    if employment_type(j.get("contract", "")):
+        posting["employmentType"] = employment_type(j["contract"])
     if country(j["location"]):
         posting["jobLocation"]["address"]["addressCountry"] = country(j["location"])
     if j.get("closing") and j["closing"] != "Rolling":
