@@ -137,6 +137,30 @@ form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .guide[open] summary::after { content: "\2212"; }
 .guide summary h2 { margin: 0; font-size: 24px; }
 .guide li { margin-bottom: 6px; }
+/* Calendar: month grid of course starts (sand) and job closing dates (orange), with a "coming up" list. */
+.cal-head { display: flex; align-items: center; gap: 10px; margin: 8px 0 12px; }
+.cal-head h2 { margin: 0 auto 0 0; font-size: 26px; }
+.cal-head button { font: 800 18px var(--display); width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.cal-head button:disabled { opacity: .35; cursor: default; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal .dow { font: 500 12px var(--mono); text-transform: uppercase; color: var(--muted); padding: 2px 4px; }
+.cal .day { min-height: 92px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px; display: grid; align-content: start; gap: 3px; }
+.cal .day.out { background: transparent; border-color: transparent; }
+.cal .day.today { border-color: var(--accent); }
+.cal .num { font: 500 12px var(--mono); color: var(--muted); }
+.cal .today .num { color: var(--accent); font-weight: 700; }
+.ev { display: block; font: 600 12px/1.25 var(--body); padding: 2px 5px; border-radius: 4px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev.course { background: #2e2a1f; color: var(--sand); border-left: 3px solid var(--sand); }
+.ev.job { background: var(--soft); color: var(--accent); border-left: 3px solid var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
+.legend .lj::before { background: var(--accent); }
+.subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
+.subscribe h2 { font-size: 24px; margin: 0 0 4px; }
+.subscribe p { margin: 0; color: var(--muted); }
+.agenda { display: grid; gap: 8px; padding-bottom: 40px; }
+.agenda h2 { margin-top: 28px; }
+.agenda .when { font: 500 13px var(--mono); color: var(--sand); }
 .fb-band { background: var(--raised); border-block: 1px solid var(--line); }
 .fb-band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-block: 22px; }
 .fb-band p { margin: 0; font: 800 22px/1.2 var(--display); text-transform: uppercase; }
@@ -154,6 +178,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }
+  .cal { gap: 2px; }
+  .cal .day { min-height: 48px; padding: 3px; }
+  .cal .ev { font-size: 0; padding: 0; height: 6px; border-left-width: 0; }
+  .cal .ev.course { background: var(--sand); } .cal .ev.job { background: var(--accent); }
 }
 </style>
 </head>
@@ -165,6 +193,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <nav>
     <a href="#jobs" data-view="jobs">Jobs</a>
     <a href="#courses" data-view="courses">Courses</a>
+    <a href="#calendar" data-view="calendar">Calendar</a>
     <a href="#careers" data-view="careers">Getting in</a>
     <a href="#post" data-view="post">Post a job</a>
     <a href="#about" data-view="about">About</a>
@@ -243,6 +272,32 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <p id="course-note" aria-live="polite"></p>
     </form>
   </div>
+</section>
+
+<section id="calendar" class="wrap" hidden>
+  <div class="page-hero"><div style="padding-block: 40px 20px">
+    <p class="eyebrow">Course start dates · Job closing dates</p>
+    <h1>Calendar</h1>
+    <p>Upcoming course start dates and job closing dates in one place. Subscribe and they'll appear in your own calendar, with new ones added automatically.</p>
+  </div></div>
+  <div class="subscribe">
+    <h2>Add to your calendar</h2>
+    <p>Subscribing keeps your calendar up to date as we add courses and jobs. You can remove it any time.</p>
+    <div class="actions">
+      <a class="btn primary" id="cal-google" href="#" target="_blank" rel="noopener">Google Calendar</a>
+      <a class="btn" id="cal-apple" href="#">Apple Calendar (iPhone, Mac)</a>
+      <a class="btn" id="cal-outlook" href="#" target="_blank" rel="noopener">Outlook</a>
+      <button class="btn" type="button" id="cal-copy">Copy feed link</button>
+    </div>
+  </div>
+  <div class="cal-head">
+    <h2 id="cal-title"></h2>
+    <button type="button" id="cal-prev" aria-label="Previous month">&lsaquo;</button>
+    <button type="button" id="cal-next" aria-label="Next month">&rsaquo;</button>
+  </div>
+  <div class="cal" id="cal-grid"></div>
+  <p class="legend"><span>Course starts</span><span class="lj">Job closes</span></p>
+  <div class="agenda" id="agenda"></div>
 </section>
 
 <section id="careers" class="wrap" hidden>
@@ -341,6 +396,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="#post" data-view="post">Post a job</a>
   <a href="#list-course" data-view="courses">List a course</a>
+  <a href="#calendar" data-view="calendar">Calendar</a>
   <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
   <a href="https://www.facebook.com/hostileenvironmentjobs" target="_blank" rel="noopener">Facebook</a>
   <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
@@ -376,7 +432,7 @@ const ICON_PATHS = {
 };
 const icon = (name, size = 24) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ICON_PATHS.Other}</svg>`;
 
-const views = ["jobs", "job", "courses", "careers", "post", "about", "privacy"];
+const views = ["jobs", "job", "courses", "calendar", "careers", "post", "about", "privacy"];
 const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
 let JOBS = [];
 const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -466,7 +522,7 @@ function renderDetail(id) {
   document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
 }
 
-fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+const jobsLoaded = fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
   JOBS = Array.isArray(data) ? data : (data.jobs || []);
   lastChecked = JOBS.map(j => j.posted).filter(Boolean).sort().pop() || "";
   document.getElementById("sample-note").hidden = !JOBS.some(j => j.sample);
@@ -491,7 +547,7 @@ function renderCourses() {
     <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
   </article>`).join("");
 }
-fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+const coursesLoaded = fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
   COURSES = Array.isArray(data) ? data : (data.courses || []);
   document.getElementById("course-sample-note").hidden = !COURSES.some(c => c.sample);
   const used = new Set(COURSES.filter(courseOpen).map(c => c.type));
@@ -502,6 +558,54 @@ fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).cat
   COURSE_TYPES.filter(t => used.has(t)).forEach(t => bar.append(mk(t, t)));
   document.getElementById("stat-courses").textContent = COURSES.filter(courseOpen).length;
   renderCourses();
+});
+
+// Calendar: course starts and job closing dates, drawn once both lists have loaded.
+// The same dates are published as calendar.ics by scripts/build_pages.py for people to subscribe to.
+const FEED = "hostileenvironmentjobs.com/calendar.ics";
+let calMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function calEvents() {
+  const dated = d => /^\d{4}-\d\d-\d\d$/.test(d || "");
+  return [
+    ...COURSES.filter(c => !c.sample && dated(c.start)).map(c => ({ date: c.start, kind: "course", label: c.title, sub: `${c.provider} · ${c.location}`, href: c.url, ext: true, verb: "Course starts" })),
+    ...JOBS.filter(j => !j.sample && dated(j.closing)).map(j => ({ date: j.closing, kind: "job", label: j.title, sub: `${j.employer} · ${j.location}`, href: "#job/" + encodeURIComponent(j.id), verb: "Job closes" }))
+  ].sort((a, b) => a.date.localeCompare(b.date));
+}
+const evLink = e => `<a class="ev ${e.kind}" href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""} title="${esc(e.verb + ": " + e.label)}">${esc(e.label)}</a>`;
+function renderCalendar() {
+  const events = calEvents(), byDay = {};
+  events.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
+  const y = calMonth.getFullYear(), m = calMonth.getMonth();
+  document.getElementById("cal-title").textContent = calMonth.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  document.getElementById("cal-prev").disabled = y === today.getFullYear() && m === today.getMonth();
+  const lead = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+  let cells = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => `<div class="dow">${d}</div>`).join("");
+  for (let i = 0; i < lead; i++) cells += '<div class="day out"></div>';
+  for (let d = 1; d <= days; d++) {
+    const key = isoDay(new Date(y, m, d));
+    cells += `<div class="day${key === isoDay(today) ? " today" : ""}"><span class="num">${d}</span>${(byDay[key] || []).map(evLink).join("")}</div>`;
+  }
+  document.getElementById("cal-grid").innerHTML = cells;
+  const upcoming = events.filter(e => e.date >= isoDay(today));
+  document.getElementById("agenda").innerHTML = "<h2>Coming up</h2>" + (upcoming.length ? upcoming.map(e => `<article class="job">
+    <span class="ico">${icon(e.kind === "course" ? "Training" : "Other")}</span>
+    <div><span class="when">${esc(e.verb)} · ${fmtDate(e.date)}</span>
+      <h3><a href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""}>${esc(e.label)}</a></h3>
+      <div class="who">${esc(e.sub)}</div></div>
+  </article>`).join("") : '<p class="empty">Nothing dated coming up. Jobs that are open until filled don\'t appear here.</p>');
+}
+document.getElementById("cal-prev").onclick = () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() - 1, 1); renderCalendar(); };
+document.getElementById("cal-next").onclick = () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + 1, 1); renderCalendar(); };
+document.getElementById("cal-google").href = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent("webcal://" + FEED);
+document.getElementById("cal-apple").href = "webcal://" + FEED;
+document.getElementById("cal-outlook").href = "https://outlook.live.com/calendar/0/addfromweb?url=" + encodeURIComponent("https://" + FEED) + "&name=" + encodeURIComponent("Hostile Environment Jobs");
+document.getElementById("cal-copy").onclick = e => navigator.clipboard?.writeText("https://" + FEED).then(() => e.target.textContent = "Link copied").catch(() => {});
+Promise.all([jobsLoaded, coursesLoaded]).then(() => {
+  // Open on the month of the next event if nothing more is on this month.
+  const next = calEvents().find(e => e.date >= isoDay(today));
+  if (next && next.date.slice(0, 7) > isoDay(today).slice(0, 7)) calMonth = new Date(next.date.slice(0, 4), next.date.slice(5, 7) - 1, 1);
+  renderCalendar();
 });
 
 // "Getting in" buttons open jobs or courses already filtered to that line of work.

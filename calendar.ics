@@ -1,0 +1,197 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hostile Environment Jobs//Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Hostile Environment Jobs
+X-WR-TIMEZONE:UTC
+X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
+ ntjobs.com
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:course-pcm-imas-eod-3plus-nov-2026@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261102
+DTEND;VALUE=DATE:20261103
+SUMMARY:Course starts: IMAS EOD Level 3+ (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
+ eeks. On request\nAdvanced EOD course for operators already employed at IM
+ AS EOD Level 3. Next dates March and November 2027.\n\nBook: https://www.p
+ cm-erw.com/course-dates-pre-registration/
+URL:https://www.pcm-erw.com/course-dates-pre-registration/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-uk-med-health-advisor-roving@hostileenvironmentjobs.com
+DTSTAMP:20261014T000000Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:Job closes: Health Advisor (Roving) (UK-Med)
+LOCATION:Manchester\, UK\, with up to 80% deployment
+DESCRIPTION:UK-Med\, Manchester\, UK\, with up to 80% deployment\nDeploy to
+  emergency health responses worldwide\, advising and setting up UK-Med's m
+ edical programmes in conflict and disaster zones.\n\nDetails and how to ap
+ ply: https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
+URL:https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261104
+DTEND;VALUE=DATE:20261105
+SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
+ (Soesterberg\, Netherlands)
+LOCATION:Soesterberg\, Netherlands
+DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
+ ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
+ d HEAT for NGO\, UN and media staff. Further dates 23 Nov\, 7 Dec\, 16 Dec
+  and through 2027.\n\nBook: https://www.centreforsafety.org/course/basic-h
+ eat-course/
+URL:https://www.centreforsafety.org/course/basic-heat-course/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-mechanical-operator-kharkiv@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261106
+DTEND;VALUE=DATE:20261107
+SUMMARY:Job closes: Humanitarian Mine Action Team Member (Mechanical Operat
+ or) (Danish Refugee Council (DRC))
+LOCATION:Kharkiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nOperate and m
+ aintain mechanical demining machines supporting land release in Kharkiv ob
+ last.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs
+ /drc-hma-mechanical-operator-kharkiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-mechanical-operator-kha
+ rkiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-nonviolent-peaceforce-security-officer-mykolaiv@hostileenvironmentj
+ obs.com
+DTSTAMP:20261024T000000Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Job closes: Safety & Security Officer (Ukrainian nationals) (Nonvio
+ lent Peaceforce)
+LOCATION:Mykolaiv\, Ukraine
+DESCRIPTION:Nonviolent Peaceforce\, Mykolaiv\, Ukraine\nSupport safety and 
+ security management for humanitarian protection teams in southern Ukraine.
+ \n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs/nonv
+ iolent-peaceforce-security-officer-mykolaiv/
+URL:https://hostileenvironmentjobs.com/jobs/nonviolent-peaceforce-security-
+ officer-mykolaiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-gra-heat-nov-2026@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261124
+DTEND;VALUE=DATE:20261125
+SUMMARY:Course starts: HEAT Training (Near Deventer\, Netherlands)
+LOCATION:Near Deventer\, Netherlands
+DESCRIPTION:Global Risk Advice\, Near Deventer\, Netherlands. 3 days\, 2 ni
+ ghts. €1\,495 incl. meals and lodging\nThree-day HEAT in a residential s
+ etting\, including Red Cross first aid. Registration closes 23 Nov.\n\nBoo
+ k: https://globalriskadvice.com/event/heat-training-24-26-november-2026/
+URL:https://globalriskadvice.com/event/heat-training-24-26-november-2026/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-csd-basic-heat-nairobi@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261216
+DTEND;VALUE=DATE:20261217
+SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
+ (Nairobi\, Kenya)
+LOCATION:Nairobi\, Kenya
+DESCRIPTION:Centre for Safety and Development (CSD)\, Nairobi\, Kenya. 3 da
+ ys. €3\,200 incl. 2 nights\nThe same CSD HEAT course run in Nairobi\, ha
+ ndy for East Africa based staff. 2027 dates from January.\n\nBook: https:/
+ /www.centreforsafety.org/course/basic-heat-course/
+URL:https://www.centreforsafety.org/course/basic-heat-course/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-irc-humanitarian-access-safety-security-advisor@hostileenvironmentj
+ obs.com
+DTSTAMP:20261021T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:Job closes: Humanitarian Access\, Safety and Security Advisor (Inte
+ rnational Rescue Committee (IRC))
+LOCATION:Nairobi\, Kenya or UK (or any IRC office)
+DESCRIPTION:International Rescue Committee (IRC)\, Nairobi\, Kenya or UK (o
+ r any IRC office)\nEmergency-focused adviser supporting IRC teams on human
+ itarian access\, safety and security in new and escalating crises.\n\nDeta
+ ils and how to apply: https://hostileenvironmentjobs.com/jobs/irc-humanita
+ rian-access-safety-security-advisor/
+URL:https://hostileenvironmentjobs.com/jobs/irc-humanitarian-access-safety-
+ security-advisor/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-irc-regional-safety-security-director-east-africa@hostileenvironmen
+ tjobs.com
+DTSTAMP:20261024T000000Z
+DTSTART;VALUE=DATE:20261231
+DTEND;VALUE=DATE:20270101
+SUMMARY:Job closes: Regional Safety & Security Director (International Resc
+ ue Committee (IRC))
+LOCATION:Nairobi\, Kenya (covering Kenya\, Uganda\, Ethiopia)
+DESCRIPTION:International Rescue Committee (IRC)\, Nairobi\, Kenya (coverin
+ g Kenya\, Uganda\, Ethiopia)\nLead safety and security risk management for
+  IRC programmes across East Africa\, mentoring country security teams.\n\n
+ Details and how to apply: https://hostileenvironmentjobs.com/jobs/irc-regi
+ onal-safety-security-director-east-africa/
+URL:https://hostileenvironmentjobs.com/jobs/irc-regional-safety-security-di
+ rector-east-africa/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-3rg-cp-frec3-jan-2027@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20270104
+DTEND;VALUE=DATE:20270105
+SUMMARY:Course starts: Close Protection & FREC 3 (Poole\, Dorset\, UK)
+LOCATION:Poole\, Dorset\, UK
+DESCRIPTION:3rg Security Training\, Poole\, Dorset\, UK. 23 days. £3\,300 
+ (£250 deposit)\nClose protection with FREC 3 first response emergency car
+ e\, including hostile environment modules.\n\nBook: https://www.3rg.co.uk/
+ store/p/4th-26th-january-2027-close-protection-frec-3-course-deposit
+URL:https://www.3rg.co.uk/store/p/4th-26th-january-2027-close-protection-fr
+ ec-3-course-deposit
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-imas-eod-1-2-jan-2027@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20270111
+DTEND;VALUE=DATE:20270112
+SUMMARY:Course starts: Field Operator / IMAS EOD Level 1 & 2 (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
+ eeks. On request\nEntry-level demining and EOD course with no prerequisite
+ s\, taught in English. Further dates May and August 2027.\n\nBook: https:/
+ /www.pcm-erw.com/course-dates-pre-registration/
+URL:https://www.pcm-erw.com/course-dates-pre-registration/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-imas-eod-3-feb-2027@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20270208
+DTEND;VALUE=DATE:20270209
+SUMMARY:Course starts: IMAS EOD Level 3 (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 3 w
+ eeks. On request\nTeam leader level EOD qualification for holders of IMAS 
+ EOD Level 2. Further dates May and September 2027.\n\nBook: https://www.pc
+ m-erw.com/course-dates-pre-registration/
+URL:https://www.pcm-erw.com/course-dates-pre-registration/
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

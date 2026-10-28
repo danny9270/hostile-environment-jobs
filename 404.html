@@ -130,6 +130,30 @@ form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .guide[open] summary::after { content: "\2212"; }
 .guide summary h2 { margin: 0; font-size: 24px; }
 .guide li { margin-bottom: 6px; }
+/* Calendar: month grid of course starts (sand) and job closing dates (orange), with a "coming up" list. */
+.cal-head { display: flex; align-items: center; gap: 10px; margin: 8px 0 12px; }
+.cal-head h2 { margin: 0 auto 0 0; font-size: 26px; }
+.cal-head button { font: 800 18px var(--display); width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.cal-head button:disabled { opacity: .35; cursor: default; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal .dow { font: 500 12px var(--mono); text-transform: uppercase; color: var(--muted); padding: 2px 4px; }
+.cal .day { min-height: 92px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px; display: grid; align-content: start; gap: 3px; }
+.cal .day.out { background: transparent; border-color: transparent; }
+.cal .day.today { border-color: var(--accent); }
+.cal .num { font: 500 12px var(--mono); color: var(--muted); }
+.cal .today .num { color: var(--accent); font-weight: 700; }
+.ev { display: block; font: 600 12px/1.25 var(--body); padding: 2px 5px; border-radius: 4px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev.course { background: #2e2a1f; color: var(--sand); border-left: 3px solid var(--sand); }
+.ev.job { background: var(--soft); color: var(--accent); border-left: 3px solid var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
+.legend .lj::before { background: var(--accent); }
+.subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
+.subscribe h2 { font-size: 24px; margin: 0 0 4px; }
+.subscribe p { margin: 0; color: var(--muted); }
+.agenda { display: grid; gap: 8px; padding-bottom: 40px; }
+.agenda h2 { margin-top: 28px; }
+.agenda .when { font: 500 13px var(--mono); color: var(--sand); }
 .fb-band { background: var(--raised); border-block: 1px solid var(--line); }
 .fb-band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-block: 22px; }
 .fb-band p { margin: 0; font: 800 22px/1.2 var(--display); text-transform: uppercase; }
@@ -147,6 +171,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }
+  .cal { gap: 2px; }
+  .cal .day { min-height: 48px; padding: 3px; }
+  .cal .ev { font-size: 0; padding: 0; height: 6px; border-left-width: 0; }
+  .cal .ev.course { background: var(--sand); } .cal .ev.job { background: var(--accent); }
 }
 </style>
 </head>
@@ -158,6 +186,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <nav>
     <a href="/#jobs" data-view="jobs">Jobs</a>
     <a href="/#courses" data-view="courses">Courses</a>
+    <a href="/#calendar" data-view="calendar">Calendar</a>
     <a href="/#careers" data-view="careers">Getting in</a>
     <a href="/#post" data-view="post">Post a job</a>
     <a href="/#about" data-view="about">About</a>
@@ -174,6 +203,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="/#post" data-view="post">Post a job</a>
   <a href="/#list-course" data-view="courses">List a course</a>
+  <a href="/#calendar" data-view="calendar">Calendar</a>
   <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
   <a href="https://www.facebook.com/hostileenvironmentjobs" target="_blank" rel="noopener">Facebook</a>
   <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
