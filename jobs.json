@@ -1,5 +1,63 @@
 [
  {
+  "id": "brimstone-uxo-engineer-uk",
+  "title": "UXO Engineer",
+  "employer": "Brimstone UXO",
+  "category": "EOD",
+  "location": "Kent, UK (projects mostly UK-based)",
+  "region": "Europe",
+  "contract": "Short-term project contracts, potential to go full-time",
+  "salary": "Not stated",
+  "requirements": [
+   "Qualified and experienced EOD engineer or search-trained professional",
+   "Military and/or commercial EOD training and experience",
+   "Able to deliver non-intrusive and intrusive surveys and target investigations"
+  ],
+  "summary": "UXO engineer supporting on-site UXO risk mitigation, surveys and target investigations on UK construction projects.",
+  "closing": "Rolling",
+  "apply_url": "https://www.brimstoneuxo.com/careers/unexploded-ordnance-uxo-engineer/",
+  "posted": "2026-10-28"
+ },
+ {
+  "id": "1st-line-defence-uxo-specialist-uk",
+  "title": "UXO Specialist",
+  "employer": "1st Line Defence",
+  "category": "EOD",
+  "location": "UK sites (company based in Hoddesdon, Hertfordshire)",
+  "region": "Europe",
+  "contract": "Not stated",
+  "salary": "Not stated",
+  "requirements": [
+   "Formal training from a NATO EOD training establishment, or a recognised civilian course validated by 1st Line Defence",
+   "Experience recognising UXO and assessing its hazards",
+   "Knows the actions to take when a suspicious object is found"
+  ],
+  "summary": "Field specialist on UXO risk mitigation projects at UK sites where unexploded ordnance is likely, reporting to the Projects Supervisor.",
+  "closing": "Rolling",
+  "apply_url": "https://www.1stlinedefence.co.uk/job-career-role/uxo-specialist/",
+  "posted": "2026-10-28"
+ },
+ {
+  "id": "nation-security-k9-explosive-detection-dallas",
+  "title": "K9 Owner-Handler, Explosive Detection (Cargo & Aviation)",
+  "employer": "Nation Security Services",
+  "category": "K9",
+  "location": "Dallas, Texas, United States",
+  "region": "Americas",
+  "contract": "Rotating shifts, regional travel",
+  "salary": "From US$35/hour",
+  "requirements": [
+   "Own a certified or certifiable explosive detection dog (50-90 lbs)",
+   "2+ years EDD handler experience (military, law enforcement or private security)",
+   "US citizen or national; background check and drug screen",
+   "Clean driving licence and suitable K9 transport vehicle"
+  ],
+  "summary": "Owner-handler teams screening cargo facilities, aviation hubs and ports with explosive detection dogs.",
+  "closing": "Rolling",
+  "apply_url": "https://apply.workable.com/nationsecurity/jobs/view/C1A056BE1D/",
+  "posted": "2026-10-28"
+ },
+ {
   "id": "errg-uxo-technician-iii",
   "title": "UXO Technician III",
   "employer": "ERRG",
