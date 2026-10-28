@@ -15,48 +15,65 @@
 <meta property="og:site_name" content="Hostile Environment Jobs">
 <link rel="canonical" href="https://hostileenvironmentjobs.com/">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Hostile Environment Jobs", "url": "https://hostileenvironmentjobs.com/"}</script>
-<meta name="theme-color" content="#b4451f">
+<meta name="theme-color" content="#111310">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; }
 [hidden] { display: none !important; }
+/* Layout: one committed dark "field kit" look like the Facebook group banner. A full-bleed hero with a
+   drawn topographic map, category tiles with icons, then a single column of job cards. */
 :root {
-  --bg: #f5f4f0; --surface: #ffffff; --ink: #1f2420; --muted: #5d645e; --line: #dcdcd4;
-  --accent: #b4451f; --accent-ink: #ffffff; --soft: #fbe9e1; --ok: #2f6f4f;
-  --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --bg: #111310; --surface: #1a1d19; --raised: #222620; --ink: #ecebe4; --muted: #a3a79c; --line: #30352d;
+  --accent: #f29a2e; --accent-ink: #1b1204; --sand: #c9b48a; --soft: #3a2a14; --ok: #8fd19e; --warn: #ff7a59;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
-  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
-  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; color-scheme: dark }
 body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
-.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 a { color: var(--accent); }
-h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0 0 .4em; }
-h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.01em; }
-h2 { font-size: 26px; }
-h3 { font-size: 20px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: clamp(40px, 7vw, 76px); font-weight: 900; text-transform: uppercase; letter-spacing: .01em; }
+h2 { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+h3 { font-size: 22px; font-weight: 800; }
+.amp { color: var(--accent); }
 
-header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
 header.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; flex-wrap: wrap; }
-.brand { font-family: var(--display); font-weight: 800; font-size: 19px; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-.brand svg { flex: none; }
-nav { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+.brand { font: 900 21px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; color: var(--accent); }
+nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
 nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 15px; }
-nav a[aria-current="page"] { color: var(--ink); background: var(--bg); }
+nav a:hover { color: var(--ink); }
+nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); }
 
-.hero { padding: 36px 0 12px; }
-.hero p { color: var(--muted); max-width: 640px; margin: 0; }
-.sample-note { background: var(--soft); border: 1px solid var(--accent); border-radius: 8px; padding: 10px 14px; margin: 16px 0 0; font-size: 15px; }
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, #2b2416 0%, var(--bg) 60%); }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.hero .wrap { position: relative; padding-block: 56px 40px; }
+.eyebrow { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sand); margin: 0 0 14px; }
+.hero p.lede { color: var(--ink); opacity: .85; max-width: 600px; margin: 0; font-size: 19px; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 26px 0 0; padding: 0; list-style: none; }
+.stats li { font: 500 14px var(--mono); color: var(--muted); }
+.stats b { display: block; font: 900 38px/1 var(--display); color: var(--ink); }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.page-hero .wrap { padding-block: 44px 30px; }
+.page-hero h1 { font-size: clamp(36px, 6vw, 60px); }
 
-.tools { display: grid; grid-template-columns: 1fr 200px; gap: 10px; margin: 22px 0 10px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 28px 0 8px; }
+.tile { display: grid; gap: 6px; align-content: start; text-align: left; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; cursor: pointer; }
+.tile:hover { border-color: var(--sand); }
+.tile svg { color: var(--accent); }
+.tile .n { font: 500 13px var(--mono); color: var(--muted); }
+.tile .t { font: 800 19px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.tile[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tile[aria-pressed="true"] svg, .tile[aria-pressed="true"] .n { color: var(--accent-ink); }
+
+.tools { display: grid; grid-template-columns: minmax(0, 1fr) 180px 180px; gap: 10px; margin: 14px 0 10px; }
 .tools input, .tools select, form input, form select, form textarea {
   font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
@@ -64,23 +81,41 @@ nav a[aria-current="page"] { color: var(--ink); background: var(--bg); }
 .chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .meta-line { color: var(--muted); font-size: 14px; margin: 8px 0 14px; font-family: var(--mono); }
 
-.jobs { display: grid; gap: 12px; padding-bottom: 40px; }
-.job { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; }
-.job h3 { margin: 0; font-size: 19px; }
+.jobs { display: grid; gap: 10px; padding-bottom: 40px; }
+.job { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; }
+.job:hover { border-color: #4a5045; }
+.job .ico { width: 48px; height: 48px; border-radius: 10px; display: grid; place-items: center; background: var(--soft); color: var(--accent); }
+.job h3 { margin: 0; font-size: 22px; }
 .job h3 a { color: var(--ink); text-decoration: none; }
-.job h3 a:hover { text-decoration: underline; }
+.job h3 a::after { content: ""; position: absolute; inset: 0; }
+.job h3 a:hover { color: var(--accent); }
 .job .who { color: var(--muted); font-size: 15px; }
-.job .side { text-align: right; font-size: 14px; color: var(--muted); grid-row: span 2; }
-.tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .04em; background: var(--soft); color: var(--accent); padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
-.soon { color: var(--accent); font-weight: 600; }
+.job .side { text-align: right; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+.job.soon-card { border-color: #5a3a1a; }
+.job.soon-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 10px 10px 0 0;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, #111310 10px 20px); }
+.job p.who { margin: 6px 0 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; padding: 0; list-style: none; }
+.meta li { font: 500 12.5px var(--mono); color: var(--ink); background: var(--raised); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
+.meta li.pay { color: var(--accent); border-color: #5a3a1a; }
+.employers { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: center; padding-block: 40px; }
+.employers h2 { font-size: clamp(30px, 4vw, 44px); margin: 0 0 10px; }
+.employers p { margin: 0; color: var(--muted); }
+.employers ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.employers li { display: flex; gap: 10px; align-items: baseline; }
+.employers li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); }
+.tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); margin-bottom: 2px; }
+.soon { color: var(--warn); font-weight: 600; }
 .empty { color: var(--muted); padding: 24px 0; }
 
 .detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
-.detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 16px 0; }
-.detail dt { color: var(--muted); }
+.detail h1 { font-size: clamp(32px, 5vw, 52px); }
+.detail dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 18px; margin: 16px 0; }
+.detail dt { color: var(--sand); font: 500 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
 .detail dd { margin: 0; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
-.btn { display: inline-block; font: 700 15px var(--display); text-decoration: none; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.btn { display: inline-block; font: 800 16px var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 11px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--sand); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .back { display: inline-block; margin-top: 20px; }
 
@@ -88,31 +123,39 @@ nav a[aria-current="page"] { color: var(--ink); background: var(--bg); }
 form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.note { color: var(--accent); } .sent { color: var(--ok); }
+.note { color: var(--warn); } .sent { color: var(--ok); }
 .guide { border-top: 1px solid var(--line); padding: 14px 0; }
 .guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .guide summary::-webkit-details-marker { display: none; }
-.guide summary::after { content: "+"; font: 700 22px var(--display); color: var(--accent); }
+.guide summary::after { content: "+"; font: 900 26px var(--display); color: var(--accent); }
 .guide[open] summary::after { content: "\2212"; }
-.guide summary h2 { margin: 0; font-size: 21px; text-wrap: balance; }
+.guide summary h2 { margin: 0; font-size: 24px; }
 .guide li { margin-bottom: 6px; }
+.fb-band { background: var(--raised); border-block: 1px solid var(--line); }
+.fb-band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-block: 22px; }
+.fb-band p { margin: 0; font: 800 22px/1.2 var(--display); text-transform: uppercase; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; padding: 20px 0 32px; }
+footer { color: var(--muted); font-size: 14px; padding: 20px 0 32px; }
 footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
+@media (prefers-reduced-motion: no-preference) { .tile, .job, .btn { transition: border-color .15s, background .15s; } }
 
 @media (max-width: 640px) {
-  .tools, form .row { grid-template-columns: 1fr; }
-  .job { grid-template-columns: 1fr; }
-  .job .side { text-align: left; grid-row: auto; }
+  .tools, form .row, .employers { grid-template-columns: 1fr; }
+  .job { grid-template-columns: 40px minmax(0, 1fr); }
+  .job .ico { width: 40px; height: 40px; grid-row: span 1; }
+  .job .side { text-align: left; grid-row: auto; grid-column: 2; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   nav { margin-left: 0; }
+  .detail dl { grid-template-columns: 1fr; gap: 2px; }
+  .detail dd { margin-bottom: 8px; }
 }
 </style>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <a class="brand" href="#jobs" data-view="jobs">
-    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="13" cy="13" r="4" fill="#b4451f"/></svg>
-    Hostile Environment Jobs</a>
+    <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="14" r="3" fill="currentColor"/></svg>
+    Hostile Environment <span class="amp">Jobs</span></a>
   <nav>
     <a href="#jobs" data-view="jobs">Jobs</a>
     <a href="#courses" data-view="courses">Courses</a>
@@ -123,20 +166,35 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 
 <main>
-<section id="jobs" class="wrap">
+<section id="jobs">
   <div class="hero">
-    <h1>Jobs where the work is hard to reach</h1>
-    <p>Current vacancies in hostile and high-risk environments: EOD and IEDD, search, mine action, security, hostile environment medics, and the people who keep them running. Checked by hand, and closed jobs drop off automatically.</p>
-    <p class="sample-note" id="sample-note" hidden>This is a preview with sample jobs. Real listings will replace them before launch.</p>
+    <canvas id="topo" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <p class="eyebrow">EOD · Search · Security · Medics · Mine action</p>
+      <h1>Work where it's <span class="amp">hard</span> to reach</h1>
+      <p class="lede">Current jobs and courses for people who work in hostile and high-risk places. Every listing is checked by hand and links to the employer's own advert. Closed jobs drop off automatically.</p>
+      <ul class="stats"><li><b id="stat-jobs">0</b>open jobs</li><li><b id="stat-courses">0</b>upcoming courses</li><li><b>4.4K</b>in the Facebook group</li></ul>
+      <p class="sample-note" id="sample-note" hidden>This is a preview with sample jobs.</p>
+    </div>
   </div>
+  <div class="wrap">
+  <div class="tiles" id="tiles" role="group" aria-label="Job type"></div>
   <div class="tools">
     <input id="q" type="search" placeholder="Search title, employer, country or qualification (e.g. IEDD, FREC, SIA)" aria-label="Search jobs">
     <select id="region" aria-label="Region"><option value="">All regions</option></select>
+    <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="closing">Closing soonest</option></select>
   </div>
-  <div class="chips" id="cats" role="group" aria-label="Job type"></div>
-  <p class="meta-line" id="count"></p>
+    <p class="meta-line" id="count"></p>
   <div class="jobs" id="list"></div>
   <p class="empty" id="empty" hidden>No open jobs match. Try another type or region, or join the Facebook group for new posts.</p>
+  </div>
+  <div class="fb-band"><div class="wrap"><p>New jobs land in the Facebook group first</p><a class="btn primary fb-join" href="#" target="_blank" rel="noopener">Join 4.4K members</a></div></div>
+  <div class="wrap employers">
+    <div><p class="eyebrow">For employers and training providers</p><h2>Reach people who've <span class="amp">done the job</span></h2>
+      <p>Post a vacancy or course for free. We check it, list it here and share it with the group.</p>
+      <div class="actions"><a class="btn primary" href="#post" data-view="post">Post a job</a><a class="btn" href="#list-course">List a course</a></div></div>
+    <ul><li>EOD, IEDD and search operators at every IMAS level</li><li>Close protection, maritime and NGO security staff</li><li>Remote and hostile environment medics</li><li>Managers, trainers, logisticians and analysts</li></ul>
+  </div>
 </section>
 
 <section id="job" class="wrap" hidden>
@@ -145,11 +203,12 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </section>
 
 <section id="courses" class="wrap" hidden>
-  <div class="hero">
-    <h1>Courses and training</h1>
+  <div class="page-hero"><div style="padding-block: 40px 20px">
+    <p class="eyebrow">HEAT · EOD &amp; IEDD · Close protection · Medical</p>
+    <h1>Courses <span class="amp">&amp;</span> training</h1>
     <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically.</p>
-    <p class="sample-note" id="course-sample-note" hidden>These are sample courses. Real listings will replace them before launch.</p>
-  </div>
+    <p class="sample-note" id="course-sample-note" hidden>These are sample courses.</p>
+  </div></div>
   <div class="chips" id="course-types" role="group" aria-label="Course type"></div>
   <div class="jobs" id="course-list"></div>
   <p class="empty" id="course-empty" hidden>No courses listed yet. Training providers can list one free below.</p>
@@ -283,6 +342,30 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assemble
 const FACEBOOK_GROUP = "https://www.facebook.com/groups/2015055248777805/";
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 
+
+// Line icons for each line of work, drawn at 24px in the current text colour.
+const ICON_PATHS = {
+  "EOD": '<path d="M9 4h6l1.5 4v9a4.5 4.5 0 0 1-9 0V8z"/><path d="M7.5 10h9M12 1.5V4"/>',
+  "IEDD": '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  "Search": '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 6 6"/>',
+  "Survey & Clearance": '<path d="M5 22V3h12l-2.5 4.5L17 12H5"/>',
+  "Security": '<path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  "Maritime Security": '<circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V21M7 11h10M4 14a8 7 0 0 0 16 0"/>',
+  "Medical": '<path d="M9.5 3h5v6.5H21v5h-6.5V21h-5v-6.5H3v-5h6.5z"/>',
+  "Security Risk & Analysis": '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  "K9": '<circle cx="6" cy="9" r="2"/><circle cx="10" cy="5" r="2"/><circle cx="14" cy="5" r="2"/><circle cx="18" cy="9" r="2"/><path d="M12 11c3 0 5.5 4 5.5 6.5 0 2-1.5 3-3 3-1 0-1.6-.5-2.5-.5s-1.5.5-2.5.5c-1.5 0-3-1-3-3C6.5 15 9 11 12 11z"/>',
+  "CBRN": '<circle cx="12" cy="12" r="2"/><path d="M12 10V3a9 9 0 0 1 7.8 4.5L13.7 11M10.3 11 4.2 7.5A9 9 0 0 1 12 3M10.3 13l-6.1 3.5A9 9 0 0 0 12 21v-7M13.7 13l6.1 3.5A9 9 0 0 1 12 21"/>',
+  "Management": '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 13h18"/>',
+  "Quality & Safety": '<path d="M12 2.5 14.6 5l3.6-.2.4 3.6L21 11l-2 3 .2 3.6-3.6.6L13 21l-3-1.8-3.4 1.4-1-3.5L2.5 15l1.4-3.4L2.5 8.5 5.6 7l.6-3.6 3.5.6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  "Training": '<path d="M2 9 12 4l10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/>',
+  "Life Support & Logistics": '<path d="M2 6h12v10H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  "Aviation": '<path d="M21 15.5 13.5 11V4.5a1.5 1.5 0 0 0-3 0V11L3 15.5v2l7.5-2.5v4L8 20.5V22l4-1 4 1v-1.5L13.5 19v-4l7.5 2.5z"/>',
+  "HEAT": '<path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9 20v-6h6v6"/>',
+  "EOD & IEDD": '<path d="M9 4h6l1.5 4v9a4.5 4.5 0 0 1-9 0V8z"/><path d="M7.5 10h9M12 1.5V4"/>',
+  "Other": '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'
+};
+const icon = (name, size = 24) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ICON_PATHS.Other}</svg>`;
+
 const views = ["jobs", "job", "courses", "careers", "post", "about", "privacy"];
 const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
 let JOBS = [];
@@ -290,6 +373,7 @@ const today = new Date(); today.setHours(0, 0, 0, 0);
 const fmtDate = d => new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const isOpen = j => j.closing === "Rolling" || !j.closing || new Date(j.closing + "T23:59:59") >= today;
+const soonish = j => /^\d{4}-/.test(j.closing || "") && (new Date(j.closing + "T00:00:00") - today) / 864e5 <= 7;
 function due(j) {
   if (j.closing === "Rolling" || !j.closing) return "Open until filled";
   const days = Math.round((new Date(j.closing + "T00:00:00") - today) / 864e5);
@@ -310,36 +394,46 @@ window.addEventListener("hashchange", () => show(location.hash.slice(1) || "jobs
 
 // Filters
 let cat = "";
-const q = document.getElementById("q"), region = document.getElementById("region");
+const q = document.getElementById("q"), region = document.getElementById("region"), sortSel = document.getElementById("sort");
 function renderList() {
   const term = q.value.trim().toLowerCase();
   const open = JOBS.filter(isOpen)
     .filter(j => !cat || j.category === cat)
     .filter(j => !region.value || j.region === region.value)
     .filter(j => !term || [j.title, j.employer, j.location, j.category, ...(j.requirements || [])].join(" ").toLowerCase().includes(term))
-    .sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+    .sort(sortSel.value === "closing"
+      ? (a, b) => (a.closing === "Rolling") - (b.closing === "Rolling") || String(a.closing).localeCompare(String(b.closing))
+      : (a, b) => String(b.posted).localeCompare(String(a.posted)));
   document.getElementById("empty").hidden = open.length > 0;
   const total = JOBS.filter(isOpen).length;
   document.getElementById("count").textContent = `${open.length} of ${total} open jobs` + (lastChecked ? ` · updated ${fmtDate(lastChecked)}` : "");
-  document.getElementById("list").innerHTML = open.map(j => `<article class="job">
+  document.getElementById("list").innerHTML = open.map(j => `<article class="job${soonish(j) ? " soon-card" : ""}">
+    <span class="ico">${icon(j.category)}</span>
     <div><span class="tag">${esc(j.category)}</span>
       <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
-      <div class="who">${esc(j.employer)} · ${esc(j.location)}</div></div>
-    <div class="side">${due(j)}<br>${esc(j.contract || "")}</div>
+      <div class="who">${esc(j.employer)}</div>
+      <ul class="meta"><li>${esc(j.location)}</li>${j.contract && j.contract !== "See advert" ? `<li>${esc(j.contract)}</li>` : ""}${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
+    <div class="side">${due(j)}</div>
   </article>`).join("");
 }
 let lastChecked = "";
 function buildFilters() {
-  const used = new Set(JOBS.filter(isOpen).map(j => j.category));
-  const bar = document.getElementById("cats");
-  const mk = (label, val) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", String(val === cat));
-    b.addEventListener("click", () => { cat = val; bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderList(); }); return b; };
-  bar.append(mk("All", ""));
-  CATEGORIES.filter(c => used.has(c)).forEach(c => bar.append(mk(c, c)));
-  [...new Set(JOBS.filter(isOpen).map(j => j.region).filter(Boolean))].sort().forEach(r => region.append(new Option(r, r)));
+  const openJobs = JOBS.filter(isOpen);
+  const counts = {};
+  openJobs.forEach(j => counts[j.category] = (counts[j.category] || 0) + 1);
+  const bar = document.getElementById("tiles");
+  const mk = (label, val, n) => { const b = document.createElement("button"); b.type = "button"; b.className = "tile"; b.dataset.val = val;
+    b.innerHTML = `${icon(val || "Other", 26)}<span class="t">${esc(label)}</span><span class="n">${n} open</span>`;
+    b.setAttribute("aria-pressed", String(val === cat));
+    b.addEventListener("click", () => { cat = cat === val ? "" : val; bar.querySelectorAll(".tile").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.val === cat))); renderList(); }); return b; };
+  bar.append(mk("All jobs", "", openJobs.length));
+  CATEGORIES.filter(c => counts[c]).forEach(c => bar.append(mk(c, c, counts[c])));
+  document.getElementById("stat-jobs").textContent = openJobs.length;
+  [...new Set(openJobs.map(j => j.region).filter(Boolean))].sort().forEach(r => region.append(new Option(r, r)));
 }
 q.addEventListener("input", renderList);
 region.addEventListener("change", renderList);
+sortSel.addEventListener("change", renderList);
 
 function renderDetail(id) {
   const j = JOBS.find(x => x.id === id);
@@ -390,6 +484,7 @@ function renderCourses() {
     .sort((a, b) => String(a.start).localeCompare(String(b.start)));
   document.getElementById("course-empty").hidden = list.length > 0;
   document.getElementById("course-list").innerHTML = list.map(c => `<article class="job">
+    <span class="ico">${icon(c.type === "Security" ? "Security" : c.type)}</span>
     <div><span class="tag">${esc(c.type)}</span>
       <h3><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
       <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
@@ -406,6 +501,7 @@ fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).cat
     b.addEventListener("click", () => { ctype = val; bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderCourses(); }); return b; };
   bar.append(mk("All", ""));
   COURSE_TYPES.filter(t => used.has(t)).forEach(t => bar.append(mk(t, t)));
+  document.getElementById("stat-courses").textContent = COURSES.filter(courseOpen).length;
   renderCourses();
 });
 
@@ -413,9 +509,14 @@ fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).cat
 document.getElementById("careers").addEventListener("click", e => {
   const a = e.target.closest("a[data-cat], a[data-ctype]");
   if (!a) return;
-  const bar = document.getElementById(a.dataset.cat !== undefined ? "cats" : "course-types");
-  const want = a.dataset.cat ?? a.dataset.ctype;
-  const b = [...bar.querySelectorAll("button")].find(x => x.textContent === want);
+  if (a.dataset.cat !== undefined) {
+    cat = a.dataset.cat;
+    document.querySelectorAll("#tiles .tile").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.val === cat)));
+    renderList();
+    return;
+  }
+  const bar = document.getElementById("course-types");
+  const b = [...bar.querySelectorAll("button")].find(x => x.textContent === a.dataset.ctype);
   (b || bar.querySelector("button"))?.click();
 });
 
@@ -446,6 +547,48 @@ wireForm(document.getElementById("course-form"), document.getElementById("course
 
 document.querySelectorAll("a.em").forEach(a => { a.textContent = CONTACT; a.href = "mailto:" + CONTACT; });
 document.getElementById("fb-link").href = FACEBOOK_GROUP;
+document.querySelectorAll(".fb-join").forEach(a => a.href = FACEBOOK_GROUP);
+
+// Hero backdrop: topographic contour lines drawn from a few smooth "hills", like a survey map.
+(function drawTopo() {
+  const c = document.getElementById("topo");
+  if (!c) return;
+  const draw = () => {
+    const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (!w || !h) return;
+    c.width = w * dpr; c.height = h * dpr;
+    const ctx = c.getContext("2d"); ctx.scale(dpr, dpr);
+    const hills = [[.78, .35, .32, 1], [.55, .9, .25, .7], [.95, .85, .2, .6], [.2, .15, .22, .5], [.4, .45, .18, -.4]];
+    const f = (x, y) => hills.reduce((a, [hx, hy, r, k]) => a + k * Math.exp(-(((x / w - hx) ** 2) + ((y / h - hy) * h / w) ** 2) / (r * r)), 0)
+      + .06 * Math.sin(x / 37) * Math.cos(y / 53);
+    const step = 6, cols = Math.ceil(w / step) + 1, rows = Math.ceil(h / step) + 1, grid = [];
+    for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) grid.push(f(i * step, j * step));
+    const at = (i, j) => grid[j * cols + i];
+    for (let lvl = -0.3; lvl < 1.1; lvl += 0.075) {
+      const major = Math.abs((lvl * 1000) % 300) < 40;
+      ctx.strokeStyle = major ? "rgba(242,154,46,.55)" : "rgba(201,180,138,.22)";
+      ctx.lineWidth = major ? 1.2 : .8;
+      ctx.beginPath();
+      for (let j = 0; j < rows - 1; j++) for (let i = 0; i < cols - 1; i++) {
+        const v = [at(i, j), at(i + 1, j), at(i + 1, j + 1), at(i, j + 1)];
+        const p = [[0, 0], [1, 0], [1, 1], [0, 1]], pts = [];
+        for (let e = 0; e < 4; e++) {
+          const a = v[e], b = v[(e + 1) % 4];
+          if ((a < lvl) !== (b < lvl)) { const t = (lvl - a) / (b - a), [x1, y1] = p[e], [x2, y2] = p[(e + 1) % 4];
+            pts.push([(i + x1 + (x2 - x1) * t) * step, (j + y1 + (y2 - y1) * t) * step]); }
+        }
+        if (pts.length >= 2) { ctx.moveTo(...pts[0]); ctx.lineTo(...pts[1]); }
+        if (pts.length === 4) { ctx.moveTo(...pts[2]); ctx.lineTo(...pts[3]); }
+      }
+      ctx.stroke();
+    }
+    // Grid references along the edge, as on a map sheet.
+    ctx.fillStyle = "rgba(201,180,138,.35)"; ctx.font = "11px IBM Plex Mono, monospace";
+    for (let x = 80, n = 31; x < w; x += 120, n++) ctx.fillText(String(n), x, h - 10);
+  };
+  draw();
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(draw, 150); });
+})();
 document.getElementById("yr").textContent = new Date().getFullYear();
 </script>
 </body>
