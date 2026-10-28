@@ -1,5 +1,85 @@
 [
  {
+  "id": "errg-uxo-technician-iii",
+  "title": "UXO Technician III",
+  "employer": "ERRG",
+  "category": "EOD",
+  "location": "United States (various sites)",
+  "region": "Americas",
+  "contract": "Project-based, travel required",
+  "salary": "Not stated",
+  "requirements": [
+   "UXO Technician I course or military EOD school (US, CA, UK, DE, AU)",
+   "40-hour HAZWOPER plus refresher",
+   "8-hour HAZWOPER supervisor training",
+   "Meets DDESB TP-18"
+  ],
+  "summary": "Senior UXO technician supervising munitions response and UXO clearance work on US environmental projects.",
+  "closing": "Rolling",
+  "apply_url": "https://job-boards.greenhouse.io/errg/jobs/4576019008",
+  "posted": "2026-10-27"
+ },
+ {
+  "id": "errg-uxo-technician-ii",
+  "title": "UXO Technician II",
+  "employer": "ERRG",
+  "category": "EOD",
+  "location": "United States (various sites)",
+  "region": "Americas",
+  "contract": "Project-based, up to 100% travel",
+  "salary": "Not stated",
+  "requirements": [
+   "UXO Technician I course or military EOD school",
+   "40-hour HAZWOPER plus refresher",
+   "5 years documented MEC experience",
+   "Meets DDESB TP-18"
+  ],
+  "summary": "UXO technician on munitions response and clearance projects across the US.",
+  "closing": "Rolling",
+  "apply_url": "https://job-boards.greenhouse.io/errg/jobs/4576015008",
+  "posted": "2026-10-27"
+ },
+ {
+  "id": "drc-hma-mechanical-operator-kharkiv",
+  "title": "Humanitarian Mine Action Team Member (Mechanical Operator)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Kharkiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract",
+  "salary": "From EUR 1,080 gross per month",
+  "requirements": [
+   "3+ years operating demining machines, earth-movers or heavy vehicles",
+   "21 days DRC training on the GCS 200",
+   "Driving licence category B",
+   "Good Ukrainian"
+  ],
+  "summary": "Operate and maintain mechanical demining machines supporting land release in Kharkiv oblast.",
+  "closing": "2026-11-06",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177029&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-10-28"
+ },
+ {
+  "id": "silent-professionals-maritime-anti-piracy",
+  "title": "Maritime Security Operator (Anti-Piracy)",
+  "employer": "Silent Professionals (for a maritime client)",
+  "category": "Maritime Security",
+  "location": "East and West Africa",
+  "region": "Africa",
+  "contract": "Contractor, 2-4 weeks on / 2-4 weeks off",
+  "salary": "USD 2,000 per day",
+  "requirements": [
+   "Ex-military (US, UK, AUS, NZ or CAN)",
+   "Anti-piracy, maritime security or boarding experience",
+   "Offshore experience outside protected waters",
+   "Experience under rules of engagement"
+  ],
+  "summary": "Vessel protection and anti-piracy operations off East and West Africa, working in small teams.",
+  "closing": "Rolling",
+  "apply_url": "https://silentprofessionals.typeform.com/to/Td7VQsdP",
+  "posted": "2026-10-28"
+ },
+ {
   "id": "gardaworld-diplomatic-cpo-iraq-libya",
   "title": "Diplomatic Close Protection Officer",
   "employer": "GardaWorld",
@@ -8,7 +88,12 @@
   "region": "Middle East",
   "contract": "Rotational (see advert)",
   "salary": "Not stated",
-  "requirements": ["British passport holders only", "SIA Close Protection licence and UK driving licence", "FPOS(i), FREC or ATACC first aid (Level 3)", "7+ years military or paramilitary police service, recent Iraq or Afghanistan experience"],
+  "requirements": [
+   "British passport holders only",
+   "SIA Close Protection licence and UK driving licence",
+   "FPOS(i), FREC or ATACC first aid (Level 3)",
+   "7+ years military or paramilitary police service, recent Iraq or Afghanistan experience"
+  ],
   "summary": "Armed mobile protection for FCDO staff in Baghdad, Erbil and Tripoli, including armoured vehicle driving, vehicle commander and personal protection officer duties.",
   "closing": "Rolling",
   "apply_url": "https://jobs.garda.com/job/Baghdad-Diplomatic-Close-Protection-Officer-Iraq/890490900/",
@@ -23,7 +108,12 @@
   "region": "Africa",
   "contract": "US State Department WPS III task order",
   "salary": "Not stated",
-  "requirements": ["US citizens only", "5 years physical security and access control supervision, or WPS/ERT/QRF equivalent", "Supervisory, guard and firearms training", "Security clearance or Public Trust"],
+  "requirements": [
+   "US citizens only",
+   "5 years physical security and access control supervision, or WPS/ERT/QRF equivalent",
+   "Supervisory, guard and firearms training",
+   "Security clearance or Public Trust"
+  ],
   "summary": "Supervise guard and access control operations protecting US government facilities and staff in Mogadishu.",
   "closing": "Rolling",
   "apply_url": "https://acuityinternational.wd5.myworkdayjobs.com/en-US/External/job/10701-Parkridge-Blvd---Reston-VA/Senior-Guard--SRG----WPS-III--Somalia-_JR7985",
@@ -38,7 +128,12 @@
   "region": "Africa",
   "contract": "See advert",
   "salary": "Not stated",
-  "requirements": ["10+ years international humanitarian experience leading security management", "East Africa experience essential", "Fluent English; Arabic, Amharic, Somali or Swahili an asset", "Up to 40% travel"],
+  "requirements": [
+   "10+ years international humanitarian experience leading security management",
+   "East Africa experience essential",
+   "Fluent English; Arabic, Amharic, Somali or Swahili an asset",
+   "Up to 40% travel"
+  ],
   "summary": "Lead safety and security risk management for IRC programmes across East Africa, mentoring country security teams.",
   "closing": "2026-12-31",
   "apply_url": "https://theirc.wd1.myworkdayjobs.com/External_Careers/job/Nairobi-IHUB-Kenya/Regional-Safety---Security-Director_JR00005613",
@@ -53,7 +148,12 @@
   "region": "Africa",
   "contract": "See advert",
   "salary": "GBP 60,000-66,000 (UK) / CHF 100,000-115,000 (Geneva)",
-  "requirements": ["8+ years NGO safety and security in volatile settings", "Humanitarian access, negotiation or civil-military coordination", "Fluent English and French", "Experience as a trainer or coach"],
+  "requirements": [
+   "8+ years NGO safety and security in volatile settings",
+   "Humanitarian access, negotiation or civil-military coordination",
+   "Fluent English and French",
+   "Experience as a trainer or coach"
+  ],
   "summary": "Emergency-focused adviser supporting IRC teams on humanitarian access, safety and security in new and escalating crises.",
   "closing": "2026-12-31",
   "apply_url": "https://theirc.wd1.myworkdayjobs.com/External_Careers/job/Nairobi-Kenya/Emergency-Humanitarian-Access--Safety-and-Security-Advisor_JR00005192-1",
@@ -68,7 +168,12 @@
   "region": "Europe",
   "contract": "Full-time",
   "salary": "Not stated",
-  "requirements": ["Ukrainian nationals only", "2+ years humanitarian security or related experience", "English, Ukrainian and Russian", "Valid Ukrainian driving licence"],
+  "requirements": [
+   "Ukrainian nationals only",
+   "2+ years humanitarian security or related experience",
+   "English, Ukrainian and Russian",
+   "Valid Ukrainian driving licence"
+  ],
   "summary": "Support safety and security management for humanitarian protection teams in southern Ukraine.",
   "closing": "2026-11-10",
   "apply_url": "https://nonviolentpeaceforce.bamboohr.com/careers/712",
@@ -83,7 +188,12 @@
   "region": "Middle East",
   "contract": "US State Department WPS III task order",
   "salary": "Not stated",
-  "requirements": ["US citizens only, Secret clearance", "NREMT Paramedic", "3+ years pre-hospital EMS (not hospital or clinic)", "PHTLS or similar; DOS PSS and weapons qualifications"],
+  "requirements": [
+   "US citizens only, Secret clearance",
+   "NREMT Paramedic",
+   "3+ years pre-hospital EMS (not hospital or clinic)",
+   "PHTLS or similar; DOS PSS and weapons qualifications"
+  ],
   "summary": "Protective security specialist and paramedic on US State Department protective details in Erbil.",
   "closing": "Rolling",
   "apply_url": "https://acuityinternational.wd5.myworkdayjobs.com/en-US/External/job/PSS-Paramedic--PSS-PARA----WPS-III--Iraq-_JR6407-1",
@@ -98,7 +208,11 @@
   "region": "Worldwide",
   "contract": "12 months, possible extension",
   "salary": "Up to GBP 42,440",
-  "requirements": ["Doctor or registered nurse", "Significant humanitarian response experience (conflict, disaster, outbreaks)", "Able to deploy internationally at short notice"],
+  "requirements": [
+   "Doctor or registered nurse",
+   "Significant humanitarian response experience (conflict, disaster, outbreaks)",
+   "Able to deploy internationally at short notice"
+  ],
   "summary": "Deploy to emergency health responses worldwide, advising and setting up UK-Med's medical programmes in conflict and disaster zones.",
   "closing": "2026-11-03",
   "apply_url": "https://grnh.se/t859aukp4us",
