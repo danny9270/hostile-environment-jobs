@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin | Hostile Environment Jobs</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#b4451f">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --ink: #1f2420; --muted: #5d645e; --line: #dcdcd4;
+  --accent: #b4451f; --accent-ink: #ffffff; --soft: #fbe9e1; --ok: #2f6f4f; --ok-soft: #e3f1e9; --warn: #8a5a00; --warn-soft: #fbf0d6;
+  --display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
+  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; --ok-soft: #1c2e24; --warn: #e6b450; --warn-soft: #33290f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #151715; --surface: #1d201d; --ink: #e8eae5; --muted: #a0a69f; --line: #30352f;
+  --accent: #ef8a5f; --accent-ink: #1a0e08; --soft: #3a2219; --ok: #7cc39c; --ok-soft: #1c2e24; --warn: #e6b450; --warn-soft: #33290f; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0 0 .5em; }
+h1 { font-size: 30px; font-weight: 800; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+header.top .wrap { display: flex; align-items: center; gap: 12px; min-height: 56px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink); text-decoration: none; }
+.brand span { color: var(--accent); }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button { background: none; border: 0; font: 600 15px var(--body); color: var(--muted); padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+nav button[aria-current="page"] { color: var(--ink); background: var(--bg); }
+.top-right { margin-left: auto; display: flex; gap: 12px; align-items: center; font-size: 14px; }
+.who { color: var(--muted); }
+
+main { padding: 24px 0 60px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.grid { display: grid; gap: 14px; }
+.tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.tile:hover { border-color: var(--accent); }
+.tile b { display: block; font: 800 30px var(--display); line-height: 1.1; }
+.tile span { color: var(--muted); font-size: 14px; }
+.tile.alert b { color: var(--accent); }
+.two { grid-template-columns: 1fr 1fr; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 600 14px var(--body); padding: 7px 12px; border-radius: 7px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.danger { color: var(--accent); }
+.btn.sm { padding: 4px 9px; font-size: 13px; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+input, select, textarea { width: 100%; font: 16px var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; }
+textarea { resize: vertical; }
+label { display: block; font-weight: 600; font-size: 14px; margin: 0 0 12px; }
+label input, label select, label textarea { margin-top: 4px; font-weight: 400; }
+label .hint { font-weight: 400; color: var(--muted); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+.check input { width: auto; margin: 0; }
+
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.toolbar input { flex: 1 1 220px; width: auto; }
+.toolbar select { width: auto; }
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line); align-items: center; }
+.item:first-child { border-top: 0; }
+.item .t { font-weight: 600; }
+.item .m { color: var(--muted); font-size: 14px; }
+.item .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 600px) { .item { grid-template-columns: 1fr; } .item .acts { justify-content: flex-start; } }
+.badge { display: inline-block; font: 500 12px var(--mono); padding: 1px 7px; border-radius: 99px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+.badge.live { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.badge.soon { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.badge.gone { background: var(--soft); color: var(--accent); border-color: transparent; }
+.empty { padding: 18px 16px; color: var(--muted); }
+
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 150px 1fr 32px; gap: 8px; align-items: center; font-size: 14px; }
+.bar i { display: block; height: 10px; border-radius: 99px; background: var(--accent); min-width: 2px; }
+.bar em { font-style: normal; text-align: right; font-family: var(--mono); font-size: 13px; }
+.spark { display: flex; align-items: flex-end; gap: 2px; height: 70px; margin: 8px 0 4px; }
+.spark i { flex: 1; background: var(--accent); border-radius: 2px 2px 0 0; min-height: 1px; opacity: .85; }
+.attn li { margin-bottom: 6px; }
+.attn { padding-left: 18px; margin: 0; }
+
+.login { max-width: 560px; margin: 40px auto; }
+.login ol { padding-left: 20px; }
+.login li { margin-bottom: 6px; }
+.err { color: var(--accent); font-weight: 600; }
+
+dialog { border: 1px solid var(--line); border-radius: 12px; padding: 0; width: min(680px, calc(100vw - 24px)); background: var(--surface); color: var(--ink); }
+dialog::backdrop { background: rgba(0,0,0,.45); }
+dialog form { padding: 20px; }
+dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+#toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; z-index: 20; max-width: calc(100vw - 32px); }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="../">Hostile Environment Jobs <span>Admin</span></a>
+  <nav id="nav" hidden>
+    <button data-tab="dash" aria-current="page">Dashboard</button>
+    <button data-tab="jobs">Jobs</button>
+    <button data-tab="courses">Courses</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+  <div class="top-right"><span class="who" id="who"></span><a href="../" target="_blank" rel="noopener">View site</a><button class="btn sm" id="signout" hidden>Sign out</button></div>
+</div></header>
+
+<main class="wrap">
+
+<section id="login" class="login card" hidden>
+  <h1>Admin sign in</h1>
+  <p>Sign in with a GitHub key that can edit the <b>hostile-environment-jobs</b> repository. Without one, this page can't see or change anything.</p>
+  <ol class="small">
+    <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub: new fine-grained token</a>.</li>
+    <li>Name it "Jobs admin" and pick an expiry (a year is fine).</li>
+    <li>Under <b>Repository access</b> choose <b>Only select repositories</b> and pick <b>hostile-environment-jobs</b>.</li>
+    <li>Under <b>Permissions</b>, set <b>Contents</b> to <b>Read and write</b>.</li>
+    <li>Click <b>Generate token</b>, copy it and paste it below.</li>
+  </ol>
+  <form id="login-form">
+    <label>GitHub key <input id="token" type="password" autocomplete="off" placeholder="github_pat_..." required></label>
+    <label class="check"><input type="checkbox" id="remember" checked> Remember on this device</label>
+    <button class="btn primary" type="submit">Sign in</button>
+    <p id="login-err" class="err" aria-live="polite"></p>
+  </form>
+</section>
+
+<section id="dash" hidden>
+  <h1>Dashboard</h1>
+  <div class="grid tiles" id="tiles"></div>
+  <div class="grid two">
+    <div class="card"><h2>Needs attention</h2><div id="attention"></div></div>
+    <div class="card" id="visits"></div>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card"><h2>Live jobs by type</h2><div class="bars" id="by-cat"></div></div>
+    <div class="card"><h2>Live jobs by region</h2><div class="bars" id="by-region"></div><h2 style="margin-top:18px">Upcoming courses by type</h2><div class="bars" id="by-type"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2>Submissions</h2>
+    <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>.</p>
+    <p class="small"><a href="https://www.icloud.com/mail" target="_blank" rel="noopener">Open iCloud Mail</a> · <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a> · <a href="https://github.com/danny9270/hostile-environment-jobs/commits/main" target="_blank" rel="noopener">Change history</a></p>
+  </div>
+</section>
+
+<section id="jobs" hidden>
+  <h1>Jobs</h1>
+  <div class="toolbar">
+    <input id="job-q" type="search" placeholder="Search title, employer, location">
+    <select id="job-f"><option value="all">All jobs</option><option value="live">Live</option><option value="soon">Closing in 7 days</option><option value="gone">Closed (hidden on site)</option><option value="stale">Rolling, over 30 days old</option></select>
+    <button class="btn primary" id="add-job">Add job</button>
+  </div>
+  <div class="list" id="job-list"></div>
+</section>
+
+<section id="courses" hidden>
+  <h1>Courses</h1>
+  <div class="toolbar">
+    <input id="course-q" type="search" placeholder="Search title, provider, location">
+    <select id="course-f"><option value="all">All courses</option><option value="live">Upcoming</option><option value="soon">Starting in 14 days</option><option value="gone">Started (hidden on site)</option></select>
+    <button class="btn primary" id="add-course">Add course</button>
+  </div>
+  <div class="list" id="course-list"></div>
+</section>
+
+<section id="settings" hidden>
+  <h1>Settings</h1>
+  <div class="grid two">
+    <div class="card">
+      <h2>Visitor stats (GoatCounter)</h2>
+      <p class="small">Fill these in once your GoatCounter account is set up. Both are kept only in this browser.</p>
+      <form id="gc-form">
+        <label>Site code <span class="hint">(the part before .goatcounter.com)</span><input id="gc-code" placeholder="hostileenvironmentjobs" autocomplete="off"></label>
+        <label>API key <span class="hint">(GoatCounter: Settings, API, "Read statistics")</span><input id="gc-key" type="password" autocomplete="off"></label>
+        <button class="btn primary" type="submit">Save</button>
+        <button class="btn" type="button" id="gc-clear">Clear</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Your sign in</h2>
+      <p class="small" id="token-info"></p>
+      <p class="small">If you lose a device or the key leaks, delete it on <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">GitHub's token page</a> and make a new one.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<dialog id="editor"><form id="edit-form" method="dialog" novalidate>
+  <h2 id="edit-title"></h2>
+  <div id="edit-fields"></div>
+  <p id="edit-err" class="err" aria-live="polite"></p>
+  <div class="foot"><button class="btn" value="cancel" formnovalidate>Cancel</button><button class="btn primary" id="edit-save" value="save">Save and publish</button></div>
+</form></dialog>
+
+<div id="toast" hidden></div>
+
+<script>
+const REPO = "danny9270/hostile-environment-jobs";
+const BRANCH = "main";
+const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
+// Keep in step with CATEGORIES and COURSE_TYPES in ../index.html.
+const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
+const REGIONS = ["Africa", "Americas", "Asia", "Europe", "Middle East", "Worldwide"];
+
+const $ = id => document.getElementById(id);
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const store = {
+  get: k => { try { return localStorage.getItem(k) || sessionStorage.getItem(k); } catch { return null; } },
+  set: (k, v, keep = true) => { try { (keep ? localStorage : sessionStorage).setItem(k, v); } catch {} },
+  del: k => { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch {} },
+};
+const today = new Date(); today.setHours(0, 0, 0, 0);
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const TODAY = iso(today);
+const daysFromToday = s => Math.round((new Date(s + "T00:00:00") - today) / 864e5);
+const fmtDate = s => new Date(s + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
+
+let TOKEN = null;
+const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null } };
+
+function toast(msg, ms = 4000) {
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.hidden = true, ms);
+}
+
+// ---------- GitHub ----------
+async function gh(path, opts = {}) {
+  const res = await fetch("https://api.github.com" + path, {
+    ...opts,
+    headers: { Accept: "application/vnd.github+json", Authorization: "Bearer " + TOKEN, "X-GitHub-Api-Version": "2022-11-28", ...(opts.body ? { "Content-Type": "application/json" } : {}) },
+    cache: "no-store",
+  });
+  if (!res.ok) { const e = new Error((await res.json().catch(() => ({}))).message || res.statusText); e.status = res.status; throw e; }
+  return res.json();
+}
+const b64decode = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g, "")), c => c.charCodeAt(0)));
+function b64encode(str) {
+  const bytes = new TextEncoder().encode(str); let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+// Match the existing layout of each file so diffs stay small.
+const serialise = {
+  jobs: arr => JSON.stringify(arr, null, 1),
+  courses: arr => "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n",
+};
+
+async function load(kind) {
+  const f = files[kind];
+  const r = await gh(`/repos/${REPO}/contents/${f.path}?ref=${BRANCH}`);
+  f.sha = r.sha; f.data = JSON.parse(b64decode(r.content));
+}
+
+// Apply a change to a fresh copy of the file and commit it. Retries once if the file changed meanwhile.
+async function commit(kind, change, message) {
+  const f = files[kind];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const next = structuredClone(f.data);
+    change(next);
+    try {
+      const r = await gh(`/repos/${REPO}/contents/${f.path}`, { method: "PUT", body: JSON.stringify({ message, content: b64encode(serialise[kind](next)), sha: f.sha, branch: BRANCH }) });
+      f.sha = r.content.sha; f.data = next;
+      renderAll();
+      toast("Saved. It will show on the site in a minute or two.");
+      return true;
+    } catch (e) {
+      if ((e.status === 409 || e.status === 422) && attempt === 0) { await load(kind); continue; }
+      toast("Couldn't save: " + e.message, 8000);
+      return false;
+    }
+  }
+}
+
+// ---------- status ----------
+function jobStatus(j) {
+  if (!isDate(j.closing)) return isDate(j.posted) && daysFromToday(j.posted) < -30 ? "stale" : "live";
+  const d = daysFromToday(j.closing);
+  return d < 0 ? "gone" : d <= 7 ? "soon" : "live";
+}
+function courseStatus(c) {
+  if (!isDate(c.start)) return "live";
+  const d = daysFromToday(c.start);
+  return d < 0 ? "gone" : d <= 14 ? "soon" : "live";
+}
+const jobLive = j => jobStatus(j) !== "gone";
+const courseLive = c => courseStatus(c) !== "gone";
+function jobBadge(j) {
+  const s = jobStatus(j);
+  if (!isDate(j.closing)) return `<span class="badge ${s === "stale" ? "soon" : "live"}">${s === "stale" ? "rolling, check" : "rolling"}</span>`;
+  const d = daysFromToday(j.closing);
+  if (s === "gone") return `<span class="badge gone">closed ${fmtDate(j.closing)}</span>`;
+  return `<span class="badge ${s}">${d === 0 ? "closes today" : `closes in ${d}d`}</span>`;
+}
+function courseBadge(c) {
+  if (!isDate(c.start)) return `<span class="badge live">rolling</span>`;
+  const s = courseStatus(c), d = daysFromToday(c.start);
+  if (s === "gone") return `<span class="badge gone">started ${fmtDate(c.start)}</span>`;
+  return `<span class="badge ${s}">${d === 0 ? "starts today" : `starts in ${d}d`}</span>`;
+}
+
+// ---------- rendering ----------
+function bars(el, counts) {
+  const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const max = Math.max(1, ...rows.map(r => r[1]));
+  el.innerHTML = rows.length ? rows.map(([k, n]) => `<div class="bar"><span>${esc(k)}</span><i style="width:${(n / max) * 100}%"></i><em>${n}</em></div>`).join("") : `<p class="muted small">Nothing yet.</p>`;
+}
+const countBy = (arr, key) => arr.reduce((o, x) => (o[x[key] || "Not set"] = (o[x[key] || "Not set"] || 0) + 1, o), {});
+
+function renderDash() {
+  const J = files.jobs.data, C = files.courses.data;
+  const live = J.filter(jobLive), soon = J.filter(j => jobStatus(j) === "soon"), gone = J.filter(j => jobStatus(j) === "gone");
+  const stale = J.filter(j => jobStatus(j) === "stale"), samples = [...J, ...C].filter(x => x.sample);
+  const newWeek = J.filter(j => isDate(j.posted) && daysFromToday(j.posted) >= -7);
+  const cLive = C.filter(courseLive), cSoon = C.filter(c => courseStatus(c) === "soon"), cGone = C.filter(c => courseStatus(c) === "gone");
+  const tile = (n, label, tab, filter, alert) => `<button class="tile${alert && n ? " alert" : ""}" data-go="${tab}" data-filter="${filter}"><b>${n}</b><span>${label}</span></button>`;
+  $("tiles").innerHTML = [
+    tile(live.length, "Live jobs", "jobs", "live"),
+    tile(soon.length, "Jobs closing in 7 days", "jobs", "soon", true),
+    tile(newWeek.length, "Jobs added this week", "jobs", "all"),
+    tile(gone.length, "Closed jobs to tidy", "jobs", "gone", true),
+    tile(cLive.length, "Upcoming courses", "courses", "live"),
+    tile(cSoon.length, "Courses starting in 14 days", "courses", "soon"),
+  ].join("");
+
+  const items = [];
+  if (gone.length) items.push(`${gone.length} closed job${gone.length > 1 ? "s are" : " is"} still in the file (already hidden on the site). <button class="btn sm" data-tidy="jobs">Remove them</button>`);
+  if (cGone.length) items.push(`${cGone.length} course${cGone.length > 1 ? "s have" : " has"} already started. <button class="btn sm" data-tidy="courses">Remove them</button>`);
+  soon.forEach(j => items.push(`<b>${esc(j.title)}</b>, ${esc(j.employer)}: ${jobBadge(j)}`));
+  if (stale.length) items.push(`${stale.length} rolling job${stale.length > 1 ? "s were" : " was"} added over 30 days ago. Worth checking ${stale.length > 1 ? "they're" : "it's"} still open. <button class="btn sm" data-go="jobs" data-filter="stale">Show</button>`);
+  if (samples.length) items.push(`${samples.length} sample listing${samples.length > 1 ? "s" : ""} still on the site.`);
+  if (live.length < 5) items.push(`Only ${live.length} live job${live.length === 1 ? "" : "s"}. The board looks busier with 10 or more.`);
+  $("attention").innerHTML = items.length ? `<ul class="attn">${items.map(i => `<li>${i}</li>`).join("")}</ul>` : `<p class="muted">All clear.</p>`;
+
+  bars($("by-cat"), countBy(live, "category"));
+  bars($("by-region"), countBy(live, "region"));
+  bars($("by-type"), countBy(cLive, "type"));
+  $("contact-link").textContent = CONTACT; $("contact-link").href = "mailto:" + CONTACT;
+}
+
+function renderList(kind) {
+  const isJobs = kind === "jobs";
+  const q = $(isJobs ? "job-q" : "course-q").value.trim().toLowerCase();
+  const f = $(isJobs ? "job-f" : "course-f").value;
+  const status = isJobs ? jobStatus : courseStatus;
+  const rows = files[kind].data.map((x, i) => ({ x, i })).filter(({ x }) => {
+    const s = status(x);
+    if (f === "live" && s === "gone") return false;
+    if (f !== "all" && f !== "live" && s !== f) return false;
+    return !q || [x.title, x.employer, x.provider, x.location, x.category, x.type].join(" ").toLowerCase().includes(q);
+  });
+  $(isJobs ? "job-list" : "course-list").innerHTML = rows.length ? rows.map(({ x }) => `
+    <div class="item">
+      <div>
+        <div class="t">${esc(x.title)} ${isJobs ? jobBadge(x) : courseBadge(x)}${x.sample ? ' <span class="badge">sample</span>' : ""}</div>
+        <div class="m">${esc(isJobs ? x.employer : x.provider)} · ${esc(x.location)} · ${esc(isJobs ? x.category : x.type)}${isDate(x.posted) ? " · added " + fmtDate(x.posted) : ""}</div>
+      </div>
+      <div class="acts">
+        <a class="btn sm" href="${esc(isJobs ? x.apply_url : x.url)}" target="_blank" rel="noopener">Advert</a>
+        <button class="btn sm" data-edit="${kind}" data-id="${esc(x.id)}">Edit</button>
+        ${isJobs && status(x) !== "gone" ? `<button class="btn sm" data-close="${esc(x.id)}">Close</button>` : ""}
+        <button class="btn sm danger" data-del="${kind}" data-id="${esc(x.id)}">Delete</button>
+      </div>
+    </div>`).join("") : `<div class="empty">No ${isJobs ? "jobs" : "courses"} match.</div>`;
+}
+
+function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); }
+
+// ---------- visitor stats ----------
+async function renderVisits() {
+  const el = $("visits"), code = store.get("gc-code"), key = store.get("gc-key");
+  if (!code || !key) {
+    el.innerHTML = `<h2>Visitors</h2><p class="small">Visitor stats come from GoatCounter. Once your account is set up, add the site code and API key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
+    return;
+  }
+  el.innerHTML = `<h2>Visitors</h2><p class="muted small">Loading...</p>`;
+  const base = `https://${encodeURIComponent(code)}.goatcounter.com/api/v0`;
+  const start = new Date(today); start.setDate(start.getDate() - 29);
+  const range = `start=${start.toISOString().slice(0, 19)}Z&end=${new Date().toISOString().slice(0, 19)}Z`;
+  const get = p => fetch(`${base}${p}`, { headers: { Authorization: "Bearer " + key } }).then(r => r.ok ? r.json() : Promise.reject(new Error(r.status === 401 || r.status === 403 ? "GoatCounter didn't accept the API key" : "GoatCounter error " + r.status)));
+  try {
+    const [total, pages, refs] = await Promise.all([get(`/stats/total?${range}`), get(`/stats/hits?${range}&limit=6`), get(`/stats/toprefs?${range}&limit=6`)]);
+    const days = total.stats || [];
+    const week = days.slice(-7).reduce((n, d) => n + (d.daily || 0), 0);
+    const max = Math.max(1, ...days.map(d => d.daily || 0));
+    const list = (arr, name) => arr.length ? `<div class="bars">${arr.map(x => `<div class="bar"><span title="${esc(x[name])}">${esc(x[name] || "(direct)")}</span><i style="width:${(x.count / Math.max(1, arr[0].count)) * 100}%"></i><em>${x.count}</em></div>`).join("")}</div>` : `<p class="muted small">Nothing yet.</p>`;
+    el.innerHTML = `<h2>Visitors</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr"><div><b style="font:800 28px var(--display)">${week}</b><div class="muted small">last 7 days</div></div><div><b style="font:800 28px var(--display)">${total.total ?? 0}</b><div class="muted small">last 30 days</div></div></div>
+      <div class="spark" title="Visitors per day, last 30 days">${days.map(d => `<i style="height:${((d.daily || 0) / max) * 100}%" title="${esc(d.day)}: ${d.daily || 0}"></i>`).join("")}</div>
+      <h3 style="margin-top:14px">Top pages</h3>${list(pages.hits || [], "path")}
+      <h3 style="margin-top:14px">Where visitors came from</h3>${list(refs.stats || [], "name")}
+      <p class="small"><a href="https://${esc(code)}.goatcounter.com" target="_blank" rel="noopener">Full stats on GoatCounter</a></p>`;
+  } catch (e) {
+    el.innerHTML = `<h2>Visitors</h2><p class="err small">${esc(e.message)}.</p><p class="small">Check the site code and key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
+  }
+}
+
+// ---------- editor ----------
+const JOB_FIELDS = [
+  ["title", "Job title", "text", true], ["employer", "Employer", "text", true],
+  ["category", "Job type", CATEGORIES, true], ["region", "Region", REGIONS, true],
+  ["location", "Location", "text", true], ["contract", "Contract", "text"],
+  ["salary", "Salary", "text"], ["closing", "Closing date", "closing"],
+  ["apply_url", "Link to the advert", "url", true], ["summary", "Summary", "area", true],
+  ["requirements", "Key requirements", "lines"], ["posted", "Date added", "date"],
+];
+const COURSE_FIELDS = [
+  ["title", "Course title", "text", true], ["provider", "Provider", "text", true],
+  ["type", "Course type", COURSE_TYPES, true], ["location", "Location", "text", true],
+  ["start", "Start date", "closing"], ["duration", "Duration", "text"],
+  ["price", "Price", "text"], ["accreditation", "Accreditation", "text"],
+  ["url", "Link to the course page", "url", true], ["summary", "Summary", "area", true],
+  ["posted", "Date added", "date"],
+];
+let editing = null;
+
+function field([name, label, type, req], val) {
+  const r = req ? " required" : "";
+  if (Array.isArray(type)) {
+    const opts = type.includes(val) || !val ? type : [...type, val];
+    return `<label>${label}<select name="${name}"${r}><option value="">Choose...</option>${opts.map(o => `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select></label>`;
+  }
+  if (type === "area") return `<label>${label}<textarea name="${name}" rows="3"${r}>${esc(val)}</textarea></label>`;
+  if (type === "lines") return `<label>${label} <span class="hint">(one per line)</span><textarea name="${name}" rows="4">${esc((val || []).join("\n"))}</textarea></label>`;
+  if (type === "closing") {
+    const rolling = !isDate(val) && val !== "";
+    return `<label>${label}<input name="${name}" type="date" value="${rolling ? "" : esc(val)}"${rolling ? " disabled" : ""}></label><label class="check"><input type="checkbox" name="${name}_rolling"${rolling ? " checked" : ""}> Rolling (open until filled)</label>`;
+  }
+  return `<label>${label}<input name="${name}" type="${type}" value="${esc(val)}"${type === "url" ? ' placeholder="https://"' : ""}${r}></label>`;
+}
+
+function openEditor(kind, id) {
+  const fields = kind === "jobs" ? JOB_FIELDS : COURSE_FIELDS;
+  const item = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "" };
+  editing = { kind, id };
+  $("edit-title").textContent = (id ? "Edit " : "Add ") + (kind === "jobs" ? "job" : "course");
+  const html = [];
+  for (let i = 0; i < fields.length; i++) {
+    const f = fields[i], next = fields[i + 1];
+    const short = ["text", "url", "date", "closing"].includes(f[2]) || Array.isArray(f[2]);
+    const nextShort = next && (["text", "url", "date", "closing"].includes(next[2]) || Array.isArray(next[2]));
+    if (short && nextShort && f[2] !== "url" && next[2] !== "url") { html.push(`<div class="row"><div>${field(f, item[f[0]])}</div><div>${field(next, item[next[0]])}</div></div>`); i++; }
+    else html.push(field(f, item[f[0]]));
+  }
+  if (id && item.sample) html.push(`<label class="check"><input type="checkbox" name="sample" checked> Sample listing</label>`);
+  $("edit-fields").innerHTML = html.join("");
+  $("edit-err").textContent = "";
+  $("editor").showModal();
+}
+
+$("edit-fields").addEventListener("change", e => {
+  if (e.target.name?.endsWith("_rolling")) {
+    const d = $("edit-form").elements[e.target.name.replace("_rolling", "")];
+    d.disabled = e.target.checked; if (!e.target.checked) d.focus();
+  }
+});
+
+const slug = s => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_-]+/g, "-").slice(0, 70).replace(/-$/, "");
+
+$("edit-form").addEventListener("submit", async e => {
+  if (e.submitter?.value !== "save") return;
+  e.preventDefault();
+  const { kind, id } = editing, form = e.target, fields = kind === "jobs" ? JOB_FIELDS : COURSE_FIELDS;
+  const old = id ? files[kind].data.find(x => x.id === id) : {};
+  const out = {};
+  for (const [name, label, type, req] of fields) {
+    const el = form.elements[name];
+    let v = el.value.trim();
+    if (type === "lines") v = v.split("\n").map(s => s.trim()).filter(Boolean);
+    if (type === "closing") {
+      if (form.elements[name + "_rolling"].checked) v = "Rolling";
+      else if (!isDate(v)) { $("edit-err").textContent = `${label}: pick a date or tick Rolling.`; return; }
+    }
+    if (req && !v.length) { $("edit-err").textContent = `${label} is needed.`; el.focus(); return; }
+    if (type === "url" && v && !/^https?:\/\//.test(v)) { $("edit-err").textContent = `${label} should start with https://`; el.focus(); return; }
+    out[name] = v;
+  }
+  const item = { id: old.id, ...old, ...out };
+  if (form.elements.sample && !form.elements.sample.checked) delete item.sample;
+  if (!item.posted) item.posted = TODAY;
+  if (!id) {
+    const taken = new Set(files[kind].data.map(x => x.id));
+    let base = slug(`${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
+    while (taken.has(n)) n = `${base}-${k++}`;
+    item.id = n;
+  }
+  $("edit-save").disabled = true;
+  const ok = await commit(kind, arr => {
+    if (id) { const i = arr.findIndex(x => x.id === id); if (i >= 0) arr[i] = item; else arr.unshift(item); }
+    else arr.unshift(item);
+  }, `${id ? "Update" : "Add"} ${kind === "jobs" ? "job" : "course"}: ${item.title}`);
+  $("edit-save").disabled = false;
+  if (ok) $("editor").close();
+});
+
+// ---------- actions ----------
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button, [data-go]");
+  if (!b) return;
+  const d = b.dataset;
+  if (d.tab) return showTab(d.tab);
+  if (d.go) {
+    if (d.filter) $(d.go === "jobs" ? "job-f" : "course-f").value = d.filter;
+    showTab(d.go); renderList("jobs"); renderList("courses");
+    return;
+  }
+  if (d.edit) return openEditor(d.edit, d.id);
+  if (d.close) {
+    const j = files.jobs.data.find(x => x.id === d.close);
+    if (!confirm(`Close "${j.title}"? It will disappear from the site.`)) return;
+    const y = new Date(today); y.setDate(y.getDate() - 1);
+    return commit("jobs", arr => { arr.find(x => x.id === d.close).closing = iso(y); }, `Close job: ${j.title}`);
+  }
+  if (d.del) {
+    const x = files[d.del].data.find(x => x.id === d.id);
+    if (!confirm(`Delete "${x.title}" for good?`)) return;
+    return commit(d.del, arr => { const i = arr.findIndex(y => y.id === d.id); if (i >= 0) arr.splice(i, 1); }, `Remove ${d.del === "jobs" ? "job" : "course"}: ${x.title}`);
+  }
+  if (d.tidy) {
+    const live = d.tidy === "jobs" ? jobLive : courseLive;
+    const n = files[d.tidy].data.filter(x => !live(x)).length;
+    if (!confirm(`Remove ${n} ${d.tidy === "jobs" ? "closed job" : "started course"}${n > 1 ? "s" : ""} from the file? They're already hidden on the site.`)) return;
+    return commit(d.tidy, arr => { const keep = arr.filter(live); arr.length = 0; arr.push(...keep); }, `Tidy up: remove ${n} ${d.tidy === "jobs" ? "closed job" : "past course"}${n > 1 ? "s" : ""}`);
+  }
+});
+$("add-job").onclick = () => openEditor("jobs");
+$("add-course").onclick = () => openEditor("courses");
+["job-q", "job-f"].forEach(id => $(id).addEventListener("input", () => renderList("jobs")));
+["course-q", "course-f"].forEach(id => $(id).addEventListener("input", () => renderList("courses")));
+
+function showTab(tab) {
+  ["dash", "jobs", "courses", "settings"].forEach(t => $(t).hidden = t !== tab);
+  document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
+  if (tab === "settings") { $("gc-code").value = store.get("gc-code") || ""; $("gc-key").value = store.get("gc-key") || ""; }
+  history.replaceState(null, "", "#" + tab);
+  window.scrollTo(0, 0);
+}
+
+$("gc-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const code = $("gc-code").value.trim().replace(/^https?:\/\//, "").replace(/\.goatcounter\.com.*$/, "");
+  store.set("gc-code", code); store.set("gc-key", $("gc-key").value.trim());
+  toast("Saved."); renderVisits();
+});
+$("gc-clear").onclick = () => { store.del("gc-code"); store.del("gc-key"); $("gc-code").value = $("gc-key").value = ""; renderVisits(); };
+
+// ---------- sign in ----------
+async function signIn(token, remember) {
+  TOKEN = token;
+  const repo = await gh(`/repos/${REPO}`);
+  if (!repo.permissions?.push) { const e = new Error("This key can see the repository but can't edit it. Set Contents to Read and write."); e.status = 403; throw e; }
+  await Promise.all([load("jobs"), load("courses")]);
+  store.set("gh-token", token, remember);
+  const user = await gh("/user").catch(() => null);
+  $("who").textContent = user ? "Signed in as " + user.login : "";
+  $("token-info").textContent = `Signed in${user ? " as " + user.login : ""}. ${remember ? "The key is remembered on this device until you sign out." : "The key is forgotten when you close this tab."}`;
+  $("login").hidden = true; $("nav").hidden = false; $("signout").hidden = false;
+  renderAll(); renderVisits();
+  const tab = location.hash.slice(1);
+  showTab(["dash", "jobs", "courses", "settings"].includes(tab) ? tab : "dash");
+}
+
+$("login-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("login-err").textContent = "";
+  try { await signIn($("token").value.trim(), $("remember").checked); $("token").value = ""; }
+  catch (err) { TOKEN = null; $("login-err").textContent = err.status === 401 ? "GitHub didn't accept that key. Check you copied all of it." : err.status === 404 ? "That key can't see the hostile-environment-jobs repository. Check Repository access." : err.message; }
+});
+
+$("signout").onclick = () => { store.del("gh-token"); location.hash = ""; location.reload(); };
+
+(async () => {
+  const saved = store.get("gh-token");
+  if (saved) {
+    let remembered = false; try { remembered = !!localStorage.getItem("gh-token"); } catch {}
+    try { return await signIn(saved, remembered); }
+    catch (err) { store.del("gh-token"); $("login-err").textContent = "Your saved key no longer works. Please sign in again."; }
+  }
+  $("login").hidden = false;
+})();
+</script>
+</body>
+</html>
