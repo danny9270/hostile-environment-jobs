@@ -87,6 +87,21 @@ URL:https://hostileenvironmentjobs.com/jobs/nonviolent-peaceforce-security-
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:course-pcm-imas-eod-1-2-ukr-nov-2026@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261116
+DTEND;VALUE=DATE:20261117
+SUMMARY:Course starts: Field Operator / IMAS EOD Level 1 & 2 (taught in Ukr
+ ainian) (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. See
+  provider. On request\nEntry-level demining and EOD course delivered in Uk
+ rainian. Pre-register online\, then the school sends a booking form.\n\nBo
+ ok: https://www.pcm-erw.com/course-dates-pre-registration/
+URL:https://www.pcm-erw.com/course-dates-pre-registration/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:course-gra-heat-nov-2026@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261124
@@ -191,6 +206,20 @@ DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 3 w
  eeks. On request\nTeam leader level EOD qualification for holders of IMAS 
  EOD Level 2. Further dates May and September 2027.\n\nBook: https://www.pc
  m-erw.com/course-dates-pre-registration/
+URL:https://www.pcm-erw.com/course-dates-pre-registration/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-imas-eod-3plus-mar-2027@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20270301
+DTEND;VALUE=DATE:20270302
+SUMMARY:Course starts: IMAS EOD Level 3+ (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
+ eeks. On request\nAdvanced EOD course for operators already employed at IM
+ AS EOD Level 3. Next run after this is November 2027.\n\nBook: https://www
+ .pcm-erw.com/course-dates-pre-registration/
 URL:https://www.pcm-erw.com/course-dates-pre-registration/
 TRANSP:TRANSPARENT
 END:VEVENT
