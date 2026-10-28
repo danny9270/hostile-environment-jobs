@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index and sitemap.xml from jobs.json.
+"""Build a static page for each open job, a /jobs/ index, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -158,8 +158,70 @@ def jobs_index(jobs):
     return page("Open jobs | Hostile Environment Jobs", "All open EOD, security, medic and mine action jobs on Hostile Environment Jobs.", "/jobs/", body)
 
 
+def ics_text(t):
+    return str(t or "").replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+
+
+def ics_fold(line):
+    # Calendar files cap lines at 75 bytes; longer ones carry on after a newline and a space.
+    out, cur = [], ""
+    for ch in line:
+        if len((cur + ch).encode()) > 75:
+            out.append(cur)
+            cur = " "
+        cur += ch
+    return "\r\n".join(out + [cur])
+
+
+def calendar(jobs, courses):
+    """calendar.ics: course start dates and job closing dates as all-day events people can subscribe to.
+
+    Each is a one-day event (a four-week course would otherwise fill people's calendars). Events stay in the feed for 90 days after they pass, so they don't vanish from people's calendars the next morning.
+    """
+    keep_from = TODAY - datetime.timedelta(days=90)
+    is_date = lambda d: bool(re.fullmatch(r"\d{4}-\d\d-\d\d", d or ""))
+    events = []
+    for c in courses:
+        if c.get("sample") or not is_date(c.get("start")):
+            continue
+        start = datetime.date.fromisoformat(c["start"])
+        if start < keep_from:
+            continue
+        facts = ". ".join(x for x in (f"{c['provider']}, {c['location']}", c.get("duration"), c.get("price")) if x)
+        text = f"{facts}\n{c.get('summary', '')}\n\nBook: {c['url']}"
+        events.append((start, f"course-{c['id']}", f"Course starts: {c['title']} ({c['location']})", c["location"],
+                       start + datetime.timedelta(days=1), text, c["url"], c.get("posted")))
+    for j in jobs:
+        if j.get("sample") or not is_date(j.get("closing")):
+            continue
+        day = datetime.date.fromisoformat(j["closing"])
+        if day < keep_from:
+            continue
+        url = f"{SITE}/jobs/{j['id']}/"
+        text = f"{j['employer']}, {j['location']}\n{j.get('summary', '')}\n\nDetails and how to apply: {url}"
+        events.append((day, f"job-{j['id']}", f"Job closes: {j['title']} ({j['employer']})", j["location"],
+                       day + datetime.timedelta(days=1), text, url, j.get("posted")))
+    lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Hostile Environment Jobs//Calendar//EN", "CALSCALE:GREGORIAN",
+             "METHOD:PUBLISH", "X-WR-CALNAME:Hostile Environment Jobs", "X-WR-TIMEZONE:UTC",
+             "X-WR-CALDESC:Course start dates and job closing dates from hostileenvironmentjobs.com",
+             "REFRESH-INTERVAL;VALUE=DURATION:PT12H", "X-PUBLISHED-TTL:PT12H"]
+    for start, uid, summary, location, end, text, url, posted in sorted(events):
+        # DTSTAMP comes from the listing date, not the build time, so the file only changes when the listings do.
+        stamp = (posted or "2026-01-01").replace("-", "") + "T000000Z"
+        lines += ["BEGIN:VEVENT", f"UID:{uid}@hostileenvironmentjobs.com", f"DTSTAMP:{stamp}",
+                  f"DTSTART;VALUE=DATE:{start:%Y%m%d}", f"DTEND;VALUE=DATE:{end:%Y%m%d}",
+                  f"SUMMARY:{ics_text(summary)}", f"LOCATION:{ics_text(location)}", f"DESCRIPTION:{ics_text(text)}",
+                  f"URL:{url}", "TRANSP:TRANSPARENT", "END:VEVENT"]
+    lines.append("END:VCALENDAR")
+    return "\r\n".join(ics_fold(l) for l in lines) + "\r\n", len(events)
+
+
 def main():
-    jobs = json.loads((ROOT / "jobs.json").read_text())
+    all_jobs = json.loads((ROOT / "jobs.json").read_text())
+    courses = json.loads((ROOT / "courses.json").read_text())
+    ics, n_events = calendar(all_jobs, courses)
+    (ROOT / "calendar.ics").write_bytes(ics.encode())
+    jobs = all_jobs
     jobs = sorted((j for j in jobs if is_open(j) and not j.get("sample") and j.get("id")), key=lambda j: j.get("posted", ""), reverse=True)
     out = ROOT / "jobs"
     if out.exists():
@@ -178,7 +240,7 @@ def main():
     urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
-    print(f"Built {len(jobs)} job pages")
+    print(f"Built {len(jobs)} job pages and {n_events} calendar events")
 
 
 if __name__ == "__main__":
