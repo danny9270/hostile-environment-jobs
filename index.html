@@ -597,12 +597,12 @@ document.querySelectorAll(".fb-join").forEach(a => a.href = FACEBOOK_GROUP);
 document.getElementById("yr").textContent = new Date().getFullYear();
 
 // Visitor stats with GoatCounter (no cookies). Each view (#jobs, #job/..., #courses) counts as its own page.
-function countView() {
-  if (!window.goatcounter || !window.goatcounter.count) return setTimeout(countView, 300);
+function countView(tries = 0) {
+  if (!window.goatcounter || !window.goatcounter.count) return tries < 20 && setTimeout(() => countView(tries + 1), 300);
   window.goatcounter.count({ path: location.pathname + location.hash });
 }
-window.addEventListener("load", countView);
-window.addEventListener("hashchange", countView);
+window.addEventListener("load", () => countView());
+window.addEventListener("hashchange", () => countView());
 </script>
 <script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}' async src="https://gc.zgo.at/count.js"></script>
 </body>
