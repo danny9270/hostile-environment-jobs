@@ -9,6 +9,9 @@
 //   STRIPE_PRICE       the price id (price_...) of the "Job alerts, 1 year" product. Yearly recurring renews on its own;
 //                      a one-off price gives a year and the app offers a renew button when it runs out.
 // The push keys (VAPID) are made by the Worker the first time it runs and kept in the database.
+// Referrals: every account has a short public referral code. Each 3 people who pay through someone's link earn them a
+// free year. For a renewing subscription that pushes the next Stripe charge back a year, which needs the key above to
+// have Subscriptions write as well; without it the year is still added here but Stripe would charge as normal.
 // The Action proves who it is with a GitHub sign-in token for this repository, so there is no shared password.
 // The admin page (/admin/) asks for payments with its own GitHub key; only the repository owner's key gets them.
 // Payments are read from finished Stripe Checkouts, which also covers Payment Links, so the key above needs nothing more.
@@ -22,6 +25,7 @@ const OWNER = REPO.split("/")[0];
 const AUDIENCE = "hej-alerts";
 const YEAR = 365 * 86400;
 const DAY = 86400;
+const REFERRALS_PER_YEAR = 3;
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS accounts (code TEXT PRIMARY KEY, prefs TEXT NOT NULL DEFAULT '{}', paid_until INTEGER NOT NULL DEFAULT 0,
@@ -32,8 +36,15 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS seen (id TEXT PRIMARY KEY, at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS config (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
 ];
+// Columns added after launch. SQLite has no ADD COLUMN IF NOT EXISTS, so each runs on its own and "duplicate column" is ignored.
+const COLUMNS = ["ALTER TABLE accounts ADD COLUMN ref TEXT", "ALTER TABLE accounts ADD COLUMN referred_by TEXT",
+                 "ALTER TABLE accounts ADD COLUMN ref_rewarded INTEGER NOT NULL DEFAULT 0"];
 let ready = null;
-const setup = db => (ready ??= db.batch(SCHEMA.map(s => db.prepare(s))).catch(err => { ready = null; throw err; }));
+const setup = db => (ready ??= (async () => {
+  await db.batch(SCHEMA.map(s => db.prepare(s)));
+  for (const c of COLUMNS) await db.prepare(c).run().catch(err => { if (!/duplicate column/i.test(err.message)) throw err; });
+  await db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS accounts_ref ON accounts (ref)").run();
+})().catch(err => { ready = null; throw err; }));
 
 const now = () => Math.floor(Date.now() / 1000);
 const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -53,6 +64,8 @@ function newCode() {
   const s = [...r].map(x => abc[x & 31]).join("");
   return `HEJ-${s.slice(0, 4)}-${s.slice(4, 8)}-${s.slice(8)}`;
 }
+const newRef = () => { const abc = "23456789ABCDEFGHJKMNPQRSTVWXYZ"; return [...crypto.getRandomValues(new Uint8Array(6))].map(x => abc[x % abc.length]).join(""); };
+const cleanRef = r => String(r || "").toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 6);
 const cleanCode = c => { const s = String(c || "").toUpperCase().replace(/[^0-9A-Z]/g, ""); return (s.length === 15 ? s.slice(3) : s).replace(/O/g, "0").replace(/[IL]/g, "1"); };
 const fmtCode = c => { const s = cleanCode(c); return s.length === 12 ? `HEJ-${s.slice(0, 4)}-${s.slice(4, 8)}-${s.slice(8)}` : null; };
 
@@ -81,9 +94,11 @@ const paying = env => Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE);
 async function refresh(env, acct) {
   if (!paying(env)) return acct;
   const t = now();
+  let firstPayment = false;
   if (acct.pending_session) {
     const s = await stripe(env, "GET", "checkout/sessions/" + acct.pending_session);
     if (s.status === "complete" && s.payment_status !== "unpaid") {
+      firstPayment = acct.source !== "stripe";
       acct.paid_until = Math.max(acct.paid_until, t) + YEAR;
       acct.email = s.customer_details?.email || acct.email;
       acct.customer = s.customer || acct.customer;
@@ -99,13 +114,51 @@ async function refresh(env, acct) {
   } else return acct;
   await env.DB.prepare("UPDATE accounts SET paid_until = ?, email = ?, customer = ?, subscription = ?, pending_session = ?, source = ? WHERE code = ?")
     .bind(acct.paid_until, acct.email, acct.customer, acct.subscription, acct.pending_session, acct.source, acct.code).run();
+  if (firstPayment && acct.referred_by) await reward(env, acct.referred_by).catch(() => {});
+  return acct;
+}
+
+// Counts the people who have paid through a referral code and gives its owner a free year for each 3 not yet rewarded.
+async function reward(env, ref) {
+  const db = env.DB;
+  const owner = await db.prepare("SELECT * FROM accounts WHERE ref = ?").bind(ref).first();
+  if (!owner) return;
+  const paid = (await db.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by = ? AND source = 'stripe'").bind(ref).first()).n;
+  const years = Math.floor(paid / REFERRALS_PER_YEAR) - owner.ref_rewarded;
+  if (years <= 0) return;
+  // Claim the years first, so two payments landing together can't both hand them out.
+  const claimed = await db.prepare("UPDATE accounts SET ref_rewarded = ref_rewarded + ? WHERE code = ? AND ref_rewarded = ?").bind(years, owner.code, owner.ref_rewarded).run();
+  if (!claimed.meta?.changes) return;
+  let until = Math.max(owner.paid_until, now()) + years * YEAR;
+  if (owner.subscription) {
+    // Moves the next charge back by the free years. Stripe treats the gap as a trial, so nothing is charged or refunded now.
+    const sub = await stripe(env, "GET", "subscriptions/" + owner.subscription).catch(() => null);
+    const end = sub && (sub.items?.data?.[0]?.current_period_end || sub.current_period_end);
+    if (sub && ["active", "trialing"].includes(sub.status) && end) {
+      until = Math.max(owner.paid_until, end) + years * YEAR;
+      await stripe(env, "POST", "subscriptions/" + owner.subscription, { trial_end: String(until), proration_behavior: "none" }).catch(() => {});
+    }
+  }
+  await db.prepare("UPDATE accounts SET paid_until = ? WHERE code = ?").bind(until, owner.code).run();
+}
+
+// Gives older accounts a referral code the first time they're looked at.
+async function ensureRef(db, acct) {
+  if (acct.ref) return acct;
+  for (let i = 0; i < 5 && !acct.ref; i++) {
+    const ref = newRef();
+    const r = await db.prepare("UPDATE accounts SET ref = ? WHERE code = ? AND ref IS NULL AND NOT EXISTS (SELECT 1 FROM accounts WHERE ref = ?)").bind(ref, acct.code, ref).run();
+    acct.ref = r.meta?.changes ? ref : (await db.prepare("SELECT ref FROM accounts WHERE code = ?").bind(acct.code).first()).ref;
+  }
   return acct;
 }
 
 const active = (env, acct) => !paying(env) || acct.paid_until > now();
 
-function publicAccount(env, acct, devices) {
-  return { code: acct.code, active: active(env, acct), free: !paying(env), paid_until: acct.paid_until || null,
+async function publicAccount(env, acct, devices) {
+  acct = await ensureRef(env.DB, acct);
+  const referred = (await env.DB.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by = ? AND source = 'stripe'").bind(acct.ref).first()).n;
+  return { code: acct.code, ref: acct.ref, referrals: referred, referrals_per_year: REFERRALS_PER_YEAR, free_years: acct.ref_rewarded || 0, active: active(env, acct), free: !paying(env), paid_until: acct.paid_until || null,
            renews: Boolean(acct.subscription), email: acct.email, prefs: JSON.parse(acct.prefs || "{}"), devices,
            checkout_pending: Boolean(acct.pending_session) };
 }
@@ -173,6 +226,7 @@ async function payments(env) {
     active: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ?"),
     renewing: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ? AND subscription IS NOT NULL"),
     phones: (await db.prepare("SELECT COUNT(*) AS n FROM devices").first()).n,
+    referred: (await db.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by IS NOT NULL AND source = 'stripe'").first()).n,
   };
   if (!env.STRIPE_SECRET_KEY) return { stripe: false, alerts, payments: [] };
   // Up to 500 of the latest finished checkouts. Renewals a year on are invoices, not checkouts, and come later.
@@ -239,8 +293,9 @@ async function handle(req, env) {
   if (path === "/api/checkout" && req.method === "POST") {
     let acct = body.code && await account(body.code);
     if (!acct) {
-      acct = { code: newCode(), prefs: JSON.stringify(CLEAN_PREFS(body.prefs || {})), paid_until: 0, created: now() };
-      await db.prepare("INSERT INTO accounts (code, prefs, paid_until, created) VALUES (?, ?, 0, ?)").bind(acct.code, acct.prefs, acct.created).run();
+      const by = cleanRef(body.ref) && await db.prepare("SELECT ref FROM accounts WHERE ref = ?").bind(cleanRef(body.ref)).first();
+      acct = { code: newCode(), prefs: JSON.stringify(CLEAN_PREFS(body.prefs || {})), paid_until: 0, created: now(), referred_by: by?.ref || null };
+      await db.prepare("INSERT INTO accounts (code, prefs, paid_until, created, referred_by) VALUES (?, ?, 0, ?, ?)").bind(acct.code, acct.prefs, acct.created, acct.referred_by).run();
     }
     if (!paying(env)) return json(req, { code: acct.code, url: null });
     const price = await stripe(env, "GET", "prices/" + env.STRIPE_PRICE);
@@ -264,7 +319,7 @@ async function handle(req, env) {
       await db.prepare("UPDATE accounts SET prefs = ? WHERE code = ?").bind(acct.prefs, acct.code).run();
     }
     acct = await refresh(env, acct);
-    return json(req, publicAccount(env, acct, await devicesOf(acct.code)));
+    return json(req, await publicAccount(env, acct, await devicesOf(acct.code)));
   }
 
   // A phone's push subscription: {code, subscription: {endpoint, keys}} from PushManager, or {code, kind: "fcm", token} from the store apps later.
