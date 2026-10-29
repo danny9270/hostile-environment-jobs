@@ -1,5 +1,84 @@
 [
  {
+  "id": "gardaworld-female-cpo-baghdad",
+  "title": "Female Close Protection Officer",
+  "employer": "GardaWorld",
+  "category": "Security",
+  "location": "Baghdad, Iraq",
+  "region": "Middle East",
+  "contract": "Not stated",
+  "salary": "Not stated",
+  "requirements": [
+   "EU member state or Five Eyes passport",
+   "SIA Close Protection licence or national equivalent, plus driving licence",
+   "5+ years recent military or paramilitary police experience",
+   "Pistol, carbine and LMG experience; able to drive heavy armoured 4x4s"
+  ],
+  "summary": "Armed close protection officer in a mobile protection team, which may include driving or commanding a B6 armoured vehicle.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Baghdad-Female-Close-Protection-Officer-Iraq/680465400/",
+  "posted": "2026-10-29"
+ },
+ {
+  "id": "gardaworld-female-cpo-kyiv",
+  "title": "Female Close Protection Officer",
+  "employer": "GardaWorld",
+  "category": "Security",
+  "location": "Kyiv, Ukraine",
+  "region": "Europe",
+  "contract": "Not stated",
+  "salary": "Not stated",
+  "requirements": [
+   "National and passport holder of a NATO member state",
+   "SIA Frontline Close Protection licence or approved national equivalent",
+   "5+ years recent military, gendarmerie or paramilitary police service",
+   "Fluent written and spoken English"
+  ],
+  "summary": "Unarmed mobile protection role supporting a NATO-related mission in Eastern Europe.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Kyiv-Female-Close-Protection-Officer-Ukraine/1417589900/",
+  "posted": "2026-10-29"
+ },
+ {
+  "id": "gardaworld-medic-iraq-afghanistan",
+  "title": "Medic (FCDO project)",
+  "employer": "GardaWorld",
+  "category": "Medical",
+  "location": "Baghdad, Iraq and Kabul, Afghanistan",
+  "region": "Middle East",
+  "contract": "8 weeks on, 4 weeks off",
+  "salary": "Not stated",
+  "requirements": [
+   "Level F or higher on the RCSEd PHEM Skills Framework",
+   "7+ years military experience including 2 operational tours",
+   "Valid SIA Close Protection licence and CP experience",
+   "British or Commonwealth passport, eligible for SC clearance"
+  ],
+  "summary": "Armed close protection medic providing trauma care and medical support to GardaWorld and client staff on FCDO operations.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Baghdad-Medic-Iraq/911892300/",
+  "posted": "2026-10-29"
+ },
+ {
+  "id": "gardaworld-risk-analyst-intern-dubai",
+  "title": "Risk Analyst Intern",
+  "employer": "GardaWorld",
+  "category": "Security Risk & Analysis",
+  "location": "Dubai, UAE",
+  "region": "Middle East",
+  "contract": "Internship",
+  "salary": "Not stated",
+  "requirements": [
+   "Current or recent graduate in security studies, international relations, conflict studies or similar",
+   "Strong interest in high-risk environments",
+   "Comfortable with large datasets, mapping and analytical tools"
+  ],
+  "summary": "Supports senior analysts producing security risk reporting on Haiti and Sudan, including incident monitoring, mapping and database work.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Dubai-Risk-Analyst-Intern-UAE/1430483200/",
+  "posted": "2026-10-29"
+ },
+ {
   "id": "brimstone-uxo-engineer-uk",
   "title": "UXO Engineer",
   "employer": "Brimstone UXO",
