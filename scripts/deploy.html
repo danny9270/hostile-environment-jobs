@@ -26,6 +26,9 @@
 .panel ul { padding-left: 18px; margin: 6px 0; }
 .panel .src { font: 500 12px var(--mono); color: var(--muted); }
 .panel .src a { color: var(--muted); }
+.clock { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: 6px 0 4px; }
+.clock b { font: 900 30px/1 var(--display); color: var(--accent); }
+.clock span { font: 500 13px var(--mono); color: var(--muted); }
 .panel .region { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0; }
 .lvl { display: block; border-radius: 8px; padding: 9px 12px; margin: 8px 0; font-weight: 600; font-size: 15px; border: 1px solid var(--line); }
 .lvl small { display: block; font: 500 12px var(--mono); color: var(--muted); margin-top: 2px; }
@@ -73,7 +76,25 @@ const WX = { 0: "Clear", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast", 4
   80: "Showers", 81: "Showers", 82: "Violent showers", 85: "Snow showers", 86: "Snow showers", 95: "Thunderstorm", 96: "Thunderstorm, hail", 99: "Thunderstorm, hail" };
 // Countries on INSO's public monthly incident dashboard (ngosafety.org/conflict-data-dashboard).
 const INSO = ["IQ", "KE", "LB", "PS", "SO", "SS", "SD", "SY"];
-let DATA = {};
+// Time zones for the local clock.
+const TZ = { SO: "Africa/Mogadishu", ET: "Africa/Addis_Ababa", ER: "Africa/Asmara", DJ: "Africa/Djibouti", KE: "Africa/Nairobi", SD: "Africa/Khartoum",
+  SS: "Africa/Juba", UG: "Africa/Kampala", MA: "Africa/Casablanca", DZ: "Africa/Algiers", TN: "Africa/Tunis", LY: "Africa/Tripoli", EG: "Africa/Cairo",
+  IL: "Asia/Jerusalem", PS: "Asia/Hebron", LB: "Asia/Beirut", SY: "Asia/Damascus", JO: "Asia/Amman", IQ: "Asia/Baghdad", IR: "Asia/Tehran",
+  SA: "Asia/Riyadh", YE: "Asia/Aden", OM: "Asia/Muscat", AE: "Asia/Dubai", QA: "Asia/Qatar", BH: "Asia/Bahrain", KW: "Asia/Kuwait" };
+let DATA = {}, clockTimer;
+
+// Minutes ahead of UTC in a time zone right now.
+const offset = (tz, d) => Math.round((new Date(d.toLocaleString("en-US", { timeZone: tz })) - new Date(d.toLocaleString("en-US", { timeZone: "UTC" }))) / 60000);
+const hrs = m => (m % 60 ? (m / 60).toFixed(1).replace(".5", "½") : m / 60);
+
+function clock(iso) {
+  const tz = TZ[iso], el = $("#clock");
+  if (!tz || !el) return;
+  const d = new Date(), off = offset(tz, d), uk = off - offset("Europe/London", d);
+  const sign = off < 0 ? "−" : "+";
+  el.innerHTML = `<b>${d.toLocaleTimeString("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit" })}</b>
+    <span>${d.toLocaleDateString("en-GB", { timeZone: tz, weekday: "short", day: "numeric", month: "short" })} · UTC${sign}${hrs(Math.abs(off))} · ${uk ? hrs(Math.abs(uk)) + (Math.abs(uk) === 60 ? " hour " : " hours ") + (uk > 0 ? "ahead of" : "behind") + " the UK" : "same time as the UK"}</span>`;
+}
 
 function weather(c) {
   const u = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=4`;
@@ -82,7 +103,7 @@ function weather(c) {
     const n = w.current, d = w.daily;
     const days = d.time.slice(1).map((t, i) => `<span><b>${new Date(t + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short" })}</b> ${Math.round(d.temperature_2m_max[i + 1])}° / ${Math.round(d.temperature_2m_min[i + 1])}° ${esc(WX[d.weather_code[i + 1]] || "")}</span>`).join("");
     $("#wx").innerHTML = `<div class="wx"><span class="now">${Math.round(n.temperature_2m)}°C</span>
-      <div><b>${esc(WX[n.weather_code] || "")}</b> in ${esc(c.place)}<br><span class="src">Feels ${Math.round(n.apparent_temperature)}°C · humidity ${n.relative_humidity_2m}% · wind ${Math.round(n.wind_speed_10m)} km/h · local time ${esc(n.time.slice(11))}</span></div>
+      <div><b>${esc(WX[n.weather_code] || "")}</b> in ${esc(c.place)}<br><span class="src">Feels ${Math.round(n.apparent_temperature)}°C · humidity ${n.relative_humidity_2m}% · wind ${Math.round(n.wind_speed_10m)} km/h</span></div>
       <div class="days">${days}</div></div><p class="src">Live from <a href="https://open-meteo.com/">Open-Meteo</a></p>`;
   }).catch(() => { if ($("#panel").dataset.iso === c.iso2) $("#wx").innerHTML = `<p class="empty">Weather didn't load. Try again in a minute.</p>`; });
 }
@@ -95,7 +116,7 @@ function show(iso, push) {
   if (push) history.replaceState(null, "", "#" + iso);
   const f = c.fcdo, us = c.us;
   const src = (url, name, date) => `<p class="src">Source: <a href="${esc(url)}" rel="noopener">${esc(name)}</a>${date ? ", updated " + day(date) : ""}</p>`;
-  let h = `<p class="region">${esc(c.region)}</p><h2>${esc(c.name)}</h2>`;
+  let h = `<p class="region">${esc(c.region)}</p><h2>${esc(c.name)}</h2><p class="clock" id="clock" aria-label="Local time"></p>`;
   h += f ? `<a class="lvl l${f.level}" href="${esc(f.url)}" rel="noopener">UK: ${esc(f.alert)}<small>FCDO travel advice, updated ${day(f.updated)}</small></a>` : "";
   h += us ? `<a class="lvl l${us.level}" href="${esc(us.url)}" rel="noopener">US: Level ${us.level}, ${esc(us.title || US_LEVEL[us.level])}<small>State Department advisory${us.date ? ", issued " + day(us.date) : ""}</small></a>` : "";
 
@@ -126,6 +147,9 @@ function show(iso, push) {
   p.dataset.iso = iso;
   p.innerHTML = h;
   weather(c);
+  clock(iso);
+  clearInterval(clockTimer);
+  clockTimer = setInterval(() => clock(iso), 15000);
   if (push && innerWidth < 860) p.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
