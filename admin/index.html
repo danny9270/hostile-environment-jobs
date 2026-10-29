@@ -396,7 +396,7 @@ function renderList(kind) {
   $(isJobs ? "job-list" : "course-list").innerHTML = rows.length ? rows.map(({ x }) => `
     <div class="item">
       <div>
-        <div class="t">${esc(x.title)} ${isJobs ? jobBadge(x) : courseBadge(x)}${x.sample ? ' <span class="badge">sample</span>' : ""}</div>
+        <div class="t">${esc(x.title)} ${isJobs ? jobBadge(x) : courseBadge(x)}${isJobs && isDate(x.featured_until) && daysFromToday(x.featured_until) >= 0 ? ' <span class="badge live">featured</span>' : ""}${x.sample ? ' <span class="badge">sample</span>' : ""}</div>
         <div class="m">${esc(isJobs ? x.employer : x.provider)} · ${esc(x.location)} · ${esc(isJobs ? x.category : x.type)}${isDate(x.posted) ? " · added " + fmtDate(x.posted) : ""}</div>
       </div>
       <div class="acts">
@@ -481,6 +481,7 @@ const JOB_FIELDS = [
   ["salary", "Salary", "text"], ["closing", "Closing date", "closing"],
   ["apply_url", "Link to the advert", "url", true], ["summary", "Summary", "area", true],
   ["requirements", "Key requirements", "lines"], ["posted", "Date added", "date"],
+  ["featured_until", "Featured until (paid)", "date"],
 ];
 const COURSE_FIELDS = [
   ["title", "Course title", "text", true], ["provider", "Provider", "text", true],
@@ -577,6 +578,7 @@ $("edit-form").addEventListener("submit", async e => {
   if (kind === "reviews") out.rating = Number(out.rating);
   const item = { id: old.id, ...old, ...out };
   if (form.elements.sample && !form.elements.sample.checked) delete item.sample;
+  if (!item.featured_until) delete item.featured_until;
   if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));

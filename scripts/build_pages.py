@@ -12,6 +12,8 @@ import pathlib
 import re
 import shutil
 
+import employers as paid
+
 SITE = "https://hostileenvironmentjobs.com"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TODAY = datetime.datetime.now(datetime.timezone.utc).date()
@@ -110,8 +112,9 @@ def page(title, description, path, body, head_extra=""):
 """
 
 
-def job_page(j):
+def job_page(j, employers=()):
     path = f"/jobs/{j['id']}/"
+    profile = paid.profile_for(j, employers)
     reqs = j.get("requirements") or []
     description = f"<p>{e(j['summary'])}</p>" + (f"<ul>{''.join(f'<li>{e(r)}</li>' for r in reqs)}</ul>" if reqs else "")
     posting = {
@@ -119,7 +122,7 @@ def job_page(j):
         "title": j["title"], "description": description,
         "identifier": {"@type": "PropertyValue", "name": j["employer"], "value": j["id"]},
         "datePosted": j.get("posted"),
-        "hiringOrganization": {"@type": "Organization", "name": j["employer"]},
+        "hiringOrganization": {"@type": "Organization", "name": j["employer"], **({"sameAs": profile["website"]} if profile and profile.get("website") else {})},
         "jobLocation": {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": j["location"]}},
         "directApply": False, "url": SITE + path,
     }
@@ -132,9 +135,9 @@ def job_page(j):
     ld = json.dumps({k: v for k, v in posting.items() if v}, ensure_ascii=False).replace("</", "<\\/")
     body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
 <article class="detail">
-  <span class="tag">{e(j['category'])}</span>
+  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
   <h1>{e(j['title'])}</h1>
-  <div class="who">{e(j['employer'])} · {e(j['location'])}</div>
+  <div class="who">{f'<a href="/employers/{e(profile["id"])}/">{e(j["employer"])}</a>' if profile else e(j['employer'])} · {e(j['location'])}</div>
   <p>{e(j['summary'])}</p>
   <dl><dt>Closing</dt><dd>{closing_text(j)}</dd><dt>Contract</dt><dd>{e(j.get('contract'))}</dd><dt>Salary</dt><dd>{e(j.get('salary') or 'Not stated')}</dd>
     <dt>Requirements</dt><dd>{'<br>'.join(e(r) for r in reqs)}</dd><dt>Added</dt><dd>{fmt(j['posted']) if j.get('posted') else ''}</dd></dl>
@@ -149,8 +152,8 @@ def job_page(j):
 
 
 def jobs_index(jobs):
-    cards = "\n".join(f"""<article class="detail">
-  <span class="tag">{e(j['category'])}</span>
+    cards = "\n".join(f"""<article class="detail{' featured' if j.get('_featured') else ''}">
+  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
   <h2><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h2>
   <div class="who">{e(j['employer'])} · {e(j['location'])} · {closing_text(j)}</div>
   <p>{e(j['summary'])}</p>
@@ -227,14 +230,33 @@ def main():
     (ROOT / "calendar.ics").write_bytes(ics.encode())
     jobs = all_jobs
     jobs = sorted((j for j in jobs if is_open(j) and not j.get("sample") and j.get("id")), key=lambda j: j.get("posted", ""), reverse=True)
+    employers = paid.load(ROOT, TODAY)
+    for j in jobs:
+        j["_featured"] = paid.is_featured(j, employers, TODAY)
+    jobs.sort(key=lambda j: not j["_featured"])  # featured first, newest first within each group
     out = ROOT / "jobs"
     if out.exists():
         shutil.rmtree(out)
     for j in jobs:
         (out / j["id"]).mkdir(parents=True)
-        (out / j["id"] / "index.html").write_text(job_page(j))
+        (out / j["id"] / "index.html").write_text(job_page(j, employers))
     out.mkdir(exist_ok=True)
     (out / "index.html").write_text(jobs_index(jobs))
+
+    # Employer profiles last only while paid for, so the folder is rebuilt each time.
+    emp_out = ROOT / "employers"
+    if emp_out.exists():
+        shutil.rmtree(emp_out)
+    emp_out.mkdir()
+    profile_urls = []
+    for x in employers:
+        path, html_text = paid.profile_page(x, [j for j in jobs if paid.profile_for(j, [x])], page, e, closing_text, SITE)
+        (ROOT / path.strip("/")).mkdir(parents=True)
+        (ROOT / path.strip("/") / "index.html").write_text(html_text)
+        profile_urls.append((SITE + path, "weekly"))
+    (emp_out / "index.html").write_text(paid.employers_index(employers, page, e))
+    (ROOT / "advertise").mkdir(exist_ok=True)
+    (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e))
 
     # Closed jobs' pages are deleted, so old shared links land here instead.
     (ROOT / "404.html").write_text(page("Page not found | Hostile Environment Jobs", "This page or job has gone.", "/404.html",
@@ -249,10 +271,11 @@ def main():
         "Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.",
         "/pay/", pay[len(pay_style):], pay_style))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls += ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
-    print(f"Built {len(jobs)} job pages and {n_events} calendar events")
+    print(f"Built {len(jobs)} job pages, {len(employers)} employer profiles and {n_events} calendar events")
 
 
 if __name__ == "__main__":

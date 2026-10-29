@@ -30,6 +30,19 @@ Visitor stats on the dashboard come from GoatCounter: the site code (`hostileenv
 
 `scripts/build_pages.py` builds a page for each open job at `/jobs/<id>/` (with Google for Jobs data), a `/jobs/` list, `404.html` and `sitemap.xml`. The "Build job pages" GitHub Action runs it whenever `jobs.json` changes and every morning, so closed jobs drop off. Don't edit those generated files by hand.
 
+## Featured jobs and employer profiles (paid)
+
+- **Featured job:** add `"featured_until": "YYYY-MM-DD"` to a job in `jobs.json` (or set "Featured until" in the admin page). Until that date it's pinned to the top of the list with a Featured badge; after it, it goes back to a normal listing on its own.
+- **Featured employer:** add an entry to `employers.json`. While its `featured_until` date hasn't passed, the employer gets a profile page at `/employers/<id>/` and all their jobs are featured. Jobs are matched by `employer` name (or any of `aliases`). Fields: `id`, `name`, `featured_until`, and optionally `tagline`, `about` (blank line between paragraphs), `based`, `works_in`, `sectors` (list), `website`, `careers_url`, `logo` (e.g. `/img/logos/name.png`), `aliases` (list).
+- **Prices and payment:** the plans on `/advertise/` live in `PLANS` at the top of `scripts/employers.py`. Paste a Stripe Payment Link into a plan's `payment_link` to show a "Pay and book" button; left empty, the button goes to the enquiry form instead.
+
+Example `employers.json` entry:
+
+```json
+[{"id": "acme-demining", "name": "Acme Demining", "featured_until": "2027-01-31", "tagline": "Humanitarian mine action across Africa",
+  "website": "https://example.com", "careers_url": "https://example.com/careers", "sectors": ["EOD", "Survey & Clearance"]}]
+```
+
 ## Pay guide
 
 `/pay/` shows indicative day rates and salaries from `pay.json`, community pay reports, and the stated pay on open jobs (read live from `jobs.json`). The page body lives in `scripts/pay.html`; `scripts/build_pages.py` wraps it in the site header and footer, so don't edit `pay/index.html` by hand.

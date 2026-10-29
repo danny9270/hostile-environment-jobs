@@ -175,6 +175,21 @@ form label.check input { width: auto; flex: none; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
 .legend .lj::before { background: var(--accent); }
+/* Paid extras: featured jobs, employer profiles, Advertise page */
+.job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
+.tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
+.detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.who a { color: inherit; }
+.profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0 10px; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; align-content: start; gap: 6px; }
+.plan.best { border-color: var(--accent); }
+.plan h2 { margin: 0; font-size: 22px; }
+.plan .price { font: 900 40px/1 var(--display); margin: 6px 0; }
+.plan .price span { font: 500 13px var(--mono); color: var(--muted); }
+.plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
+.plan .btn { justify-self: start; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
@@ -257,7 +272,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="wrap employers">
     <div><p class="eyebrow">For employers and training providers</p><h2>Reach people who've <span class="amp">done the job</span></h2>
       <p>Post a vacancy or course for free. We check it, list it here and share it with the group.</p>
-      <div class="actions"><a class="btn primary" href="#post" data-view="post">Post a job</a><a class="btn" href="#list-course">List a course</a></div></div>
+      <div class="actions"><a class="btn primary" href="#post" data-view="post">Post a job</a><a class="btn" href="#list-course">List a course</a><a class="btn" href="/advertise/">Feature a job</a></div></div>
     <ul><li>EOD, IEDD and search operators at every IMAS level</li><li>Close protection, maritime and NGO security staff</li><li>Remote and hostile environment medics</li><li>Managers, trainers, logisticians and analysts</li></ul>
   </div>
 </section>
@@ -410,7 +425,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="post" class="wrap" hidden>
   <div class="page">
     <h1>Post a job</h1>
-    <p>Send us the vacancy and we'll check it and post it here and in the Facebook group, usually within a day. Posting is free.</p>
+    <p>Send us the vacancy and we'll check it and post it here and in the Facebook group, usually within a day. Posting is free. Want it pinned to the top? <a href="/advertise/">Feature it</a>.</p>
     <form id="post-form" novalidate>
       <input type="hidden" name="_subject" value="New job for Hostile Environment Jobs">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -460,6 +475,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="/pay/">Pay guide</a>
   <a href="#post" data-view="post">Post a job</a>
+  <a href="/advertise/">Advertise</a>
   <a href="#list-course" data-view="courses">List a course</a>
   <a href="#calendar" data-view="calendar">Calendar</a>
   <a href="/#sitrep">Sitrep newsletter</a>
@@ -536,13 +552,14 @@ function renderList() {
     .filter(j => !term || [j.title, j.employer, j.location, j.category, ...(j.requirements || [])].join(" ").toLowerCase().includes(term))
     .sort(sortSel.value === "closing"
       ? (a, b) => (a.closing === "Rolling") - (b.closing === "Rolling") || String(a.closing).localeCompare(String(b.closing))
-      : (a, b) => String(b.posted).localeCompare(String(a.posted)));
+      : (a, b) => String(b.posted).localeCompare(String(a.posted)))
+    .sort((a, b) => featured(b) - featured(a)); // paid featured jobs pinned to the top
   document.getElementById("empty").hidden = open.length > 0;
   const total = JOBS.filter(isOpen).length;
   document.getElementById("count").textContent = `${open.length} of ${total} open jobs` + (lastChecked ? ` · updated ${fmtDate(lastChecked)}` : "");
-  document.getElementById("list").innerHTML = open.map(j => `<article class="job${soonish(j) ? " soon-card" : ""}">
+  document.getElementById("list").innerHTML = open.map(j => `<article class="job${featured(j) ? " featured" : soonish(j) ? " soon-card" : ""}">
     <span class="ico">${icon(j.category)}</span>
-    <div><span class="tag">${esc(j.category)}</span>
+    <div><span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
       <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
       <div class="who">${esc(j.employer)}</div>
       <ul class="meta"><li>${esc(j.location)}</li>${j.contract && j.contract !== "See advert" ? `<li>${esc(j.contract)}</li>` : ""}${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
@@ -574,9 +591,10 @@ function renderDetail(id) {
   if (!j) { el.innerHTML = "<h2>Job not found</h2><p>It may have closed. See the current jobs instead.</p>"; return; }
   const closed = !isOpen(j);
   const link = location.origin + "/jobs/" + encodeURIComponent(j.id) + "/"; // its own page, built by scripts/build_pages.py
-  el.innerHTML = `<span class="tag">${esc(j.category)}</span>
+  const prof = profileFor(j);
+  el.innerHTML = `<span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
     <h1>${esc(j.title)}</h1>
-    <div class="who">${esc(j.employer)} · ${esc(j.location)}</div>
+    <div class="who">${prof ? `<a href="/employers/${encodeURIComponent(prof.id)}/">${esc(j.employer)}</a>` : esc(j.employer)} · ${esc(j.location)}</div>
     ${closed ? `<p class="note"><strong>This job has closed.</strong></p>` : ""}
     <p>${esc(j.summary)}</p>
     <dl><dt>Closing</dt><dd>${due(j)}</dd><dt>Contract</dt><dd>${esc(j.contract)}</dd><dt>Salary</dt><dd>${esc(j.salary || "Not stated")}</dd>
@@ -590,7 +608,14 @@ function renderDetail(id) {
   document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
 }
 
-const jobsLoaded = fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+// Featured: a job's own "featured_until" date, or any job from an employer with a live profile in employers.json.
+let EMPLOYERS = [];
+const liveDate = d => /^\d{4}-\d\d-\d\d$/.test(d || "") && new Date(d + "T23:59:59") >= today;
+const profileFor = j => EMPLOYERS.find(x => [x.name, ...(x.aliases || [])].includes(j.employer));
+const featured = j => liveDate(j.featured_until) || !!profileFor(j);
+const employersLoaded = fetch("employers.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => [])
+  .then(data => EMPLOYERS = (Array.isArray(data) ? data : []).filter(x => x.id && x.name && (!x.featured_until || liveDate(x.featured_until))));
+const jobsLoaded = Promise.all([fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []), employersLoaded]).then(([data]) => {
   JOBS = Array.isArray(data) ? data : (data.jobs || []);
   lastChecked = JOBS.map(j => j.posted).filter(Boolean).sort().pop() || "";
   document.getElementById("sample-note").hidden = !JOBS.some(j => j.sample);
