@@ -1,0 +1,30 @@
+# Sends job alert notifications to app subscribers after new jobs or courses go up.
+# Runs when "Build job pages" finishes (so each new job's page exists), every 3 hours as a catch-up, and by hand.
+# Needs the repository variable ALERTS_API (the alerts Worker's address); until it's set this does nothing.
+# Signs in to the Worker with GitHub's own token for this repo, so there is no secret to keep.
+name: Job alerts
+on:
+  workflow_run:
+    workflows: [Build job pages]
+    types: [completed]
+  schedule:
+    - cron: "40 */3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+concurrency: job-alerts
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    if: vars.ALERTS_API != ''
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - run: pip install pywebpush==2.5.0
+      - name: Wait for GitHub Pages to publish the latest listings
+        run: sleep 90
+      - run: python3 alerts/send_alerts.py
+        env:
+          ALERTS_API: ${{ vars.ALERTS_API }}

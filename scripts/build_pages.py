@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /app/ job alerts page, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -271,7 +271,15 @@ def main():
         "Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.",
         "/pay/", pay[len(pay_style):], pay_style))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/cv/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # Job alerts app: like the pay guide, the page does its work in the browser.
+    app = (ROOT / "scripts" / "app.html").read_text()
+    app_style = re.match(r"\s*<style>.*?</style>\n", app, re.S).group(0)
+    (ROOT / "app").mkdir(exist_ok=True)
+    (ROOT / "app" / "index.html").write_text(page("Job alerts app: new jobs on your phone | Hostile Environment Jobs",
+        "Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up.",
+        "/app/", app[len(app_style):], app_style).replace('<a href="/app/">', '<a href="/app/" aria-current="page">', 1))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")

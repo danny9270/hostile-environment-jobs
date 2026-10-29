@@ -1,0 +1,324 @@
+<style>
+/* Job alerts app: pick what you want, pay once a year, get a notification on your phone when a matching job goes up.
+   The page talks to the alerts Worker (ALERTS_API); the push itself is sent by the "Job alerts" GitHub Action. */
+.app { max-width: 760px; padding-bottom: 48px; }
+.app > p, .app .sub { color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0; }
+.panel h2 { margin-bottom: 8px; }
+.panel.hot { border-color: #5a3a1a; border-left: 4px solid var(--accent); }
+.panel p { margin: 6px 0; }
+.steps { margin: 8px 0 0; padding-left: 22px; }
+.steps li { margin: 6px 0; }
+.price { font: 900 44px/1 var(--display); color: var(--accent); }
+.price small { font: 500 14px var(--mono); color: var(--muted); margin-left: 6px; }
+.perks { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 6px; }
+.perks li::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); margin-right: 10px; }
+.pick h3 { margin: 16px 0 6px; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.pick .hint { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
+.code { font: 500 20px var(--mono); letter-spacing: .06em; background: var(--raised); border: 1px dashed var(--sand); border-radius: 8px; padding: 8px 12px; display: inline-block; user-select: all; }
+.status { font: 500 14px var(--mono); color: var(--muted); }
+.status b { color: var(--ok); font-weight: 500; }
+.status b.off { color: var(--warn); }
+.msg { min-height: 1.4em; font-size: 15px; color: var(--sand); }
+.row-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.restore { display: flex; gap: 8px; margin-top: 8px; }
+.restore input { flex: 1; min-width: 0; font: 500 16px var(--mono); text-transform: uppercase; }
+#matches .job { grid-template-columns: minmax(0, 1fr) auto; }
+details summary { cursor: pointer; font-weight: 600; }
+</style>
+<div class="app">
+  <p class="eyebrow" style="margin-top:32px">Job alerts app</p>
+  <h1>New jobs, straight to your <span class="amp">phone</span></h1>
+  <p>Pick the work and regions you want. When a matching job or course goes up on the site, your phone gets a notification within a few hours, wherever you are. No laptop needed and no app store: it installs from this page.</p>
+
+  <div class="panel hot" id="install" hidden>
+    <h2>First, add it to your home screen</h2>
+    <div id="install-ios" hidden>
+      <p>On iPhone, notifications only work once the app is on your home screen (iOS 16.4 or newer).</p>
+      <ol class="steps">
+        <li>Tap the <b>Share</b> button in Safari (the square with an arrow).</li>
+        <li>Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+        <li>Open <b>HE Jobs</b> from your home screen and come back to this page.</li>
+      </ol>
+      <p class="sub">Using Chrome on iPhone? Open this page in Safari first.</p>
+    </div>
+    <div id="install-android" hidden>
+      <p>Alerts work in Chrome straight away, but it's tidier as an app.</p>
+      <div class="row-btns"><button class="btn" id="install-btn" type="button">Install the app</button></div>
+      <p class="sub" id="install-manual">Or tap Chrome's <b>⋮</b> menu, then <b>Add to Home screen</b>.</p>
+    </div>
+  </div>
+
+  <div class="panel hot" id="notify" hidden>
+    <h2>Turn on notifications</h2>
+    <p>Last step. Tap below and choose <b>Allow</b> when your phone asks.</p>
+    <div class="row-btns"><button class="btn primary" type="button" id="enable">Turn on notifications</button></div>
+    <p class="msg" id="notify-msg"></p>
+  </div>
+
+  <div class="panel" id="off" hidden>
+    <p>Job alerts are being switched on. Check back soon, or join the <a href="/#sitrep">weekly Sitrep</a> in the meantime.</p>
+  </div>
+
+  <form class="panel pick" id="prefs" hidden onsubmit="return false">
+    <h2>What should we alert you about?</h2>
+    <h3>Job types</h3>
+    <p class="hint">Leave them all off to hear about every job.</p>
+    <div class="chips" id="p-cats"></div>
+    <h3>Regions</h3>
+    <p class="hint">Leave them all off for anywhere. Worldwide jobs always count.</p>
+    <div class="chips" id="p-regions"></div>
+    <h3>Keywords <span class="hint">(optional)</span></h3>
+    <label><span class="hint">Only jobs mentioning any of these, separated by commas, e.g. <i>IEDD, Ukraine, team leader</i></span>
+      <input id="p-keys" maxlength="200" autocomplete="off"></label>
+    <h3>Courses</h3>
+    <label class="check"><input type="checkbox" id="p-courses"> Also tell me about new courses</label>
+    <div class="chips" id="p-ctypes" hidden></div>
+    <div class="row-btns" id="save-row" hidden><button class="btn" type="button" id="save">Save preferences</button></div>
+    <p class="msg" id="save-msg"></p>
+  </form>
+
+  <div class="panel" id="buy" hidden>
+    <div class="price" id="price">$6<small>a year</small></div>
+    <ul class="perks">
+      <li>Alerts for new jobs and courses that match what you picked</li>
+      <li>Change what you get any time</li>
+      <li>Use it on up to 5 phones</li>
+      <li id="renew-perk">Renews each year, cancel any time</li>
+    </ul>
+    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get job alerts</button></div>
+    <p class="msg" id="pay-msg"></p>
+    <details style="margin-top:10px"><summary>Already paid? Use your code</summary>
+      <p class="sub">Your code was shown after you paid and is under "Your account" on your other phone.</p>
+      <div class="restore"><input id="restore-code" placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your code"><button class="btn" type="button" id="restore">Use code</button></div>
+      <p class="msg" id="restore-msg"></p>
+    </details>
+  </div>
+
+  <div class="panel" id="account" hidden>
+    <h2>Your account</h2>
+    <p class="status" id="acct-status"></p>
+    <p>Your code: <span class="code" id="acct-code"></span></p>
+    <p class="sub">Keep this code safe. Enter it to use your alerts on another phone, or if you reinstall the app. Lost it? Email <a href="mailto:contact@hostileenvironmentjobs.com">contact@hostileenvironmentjobs.com</a> with the email you paid with.</p>
+    <div class="row-btns">
+      <button class="btn" type="button" id="copy">Copy code</button>
+      <button class="btn" type="button" id="sample">Show a sample notification</button>
+      <button class="btn" type="button" id="renew" hidden>Renew for a year</button>
+    </div>
+    <p class="msg" id="acct-msg"></p>
+  </div>
+
+  <section id="matches" hidden>
+    <h2 style="margin-top:28px">Open jobs that match</h2>
+    <p class="sub" id="match-count"></p>
+    <div class="jobs" id="match-list"></div>
+    <div class="actions"><a class="btn" href="/#jobs">See all jobs</a></div>
+  </section>
+</div>
+<script>
+// The alerts Worker's address. Empty means alerts aren't switched on yet and the page says so.
+const ALERTS_API = "";
+const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+const REGIONS = ["Africa", "Middle East", "Europe", "Asia", "Americas", "Oceania"];
+const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} } };
+const params = new URLSearchParams(location.search);
+const API = (params.get("api") && /^http:\/\/(localhost|127\.0\.0\.1)/.test(params.get("api")) ? params.get("api") : ALERTS_API).replace(/\/$/, "");
+const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const pushable = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+
+let config = null, acct = null, prefs = JSON.parse(store.get("hej-prefs") || "{}"), JOBS = [];
+if (params.get("code")) store.set("hej-code", params.get("code"));
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, { ...opts, headers: { "Content-Type": "application/json" }, body: opts.body && JSON.stringify(opts.body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Something went wrong (" + res.status + ")");
+  return data;
+}
+
+function chips(el, values, key) {
+  prefs[key] ||= [];
+  el.innerHTML = "";
+  values.forEach(v => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = v; b.setAttribute("aria-pressed", prefs[key].includes(v));
+    b.onclick = () => {
+      prefs[key] = prefs[key].includes(v) ? prefs[key].filter(x => x !== v) : [...prefs[key], v];
+      b.setAttribute("aria-pressed", prefs[key].includes(v));
+      changed();
+    };
+    el.append(b);
+  });
+}
+function drawPrefs() {
+  chips($("p-cats"), CATEGORIES, "categories");
+  chips($("p-regions"), REGIONS, "regions");
+  chips($("p-ctypes"), COURSE_TYPES, "course_types");
+  $("p-keys").value = prefs.keywords || "";
+  $("p-courses").checked = Boolean(prefs.courses);
+  $("p-ctypes").hidden = !prefs.courses;
+}
+function changed() {
+  prefs.keywords = $("p-keys").value;
+  prefs.courses = $("p-courses").checked;
+  $("p-ctypes").hidden = !prefs.courses;
+  store.set("hej-prefs", JSON.stringify(prefs));
+  $("save-msg").textContent = acct ? "Not saved yet." : "";
+  drawMatches();
+}
+$("p-keys").oninput = changed;
+$("p-courses").onchange = changed;
+
+// Same rules as alerts/send_alerts.py, so the list shows what you'd have been alerted about.
+function matches(j) {
+  if (prefs.categories?.length && !prefs.categories.includes(j.category)) return false;
+  if (prefs.regions?.length && !prefs.regions.includes(j.region) && !["Worldwide", "", undefined].includes(j.region)) return false;
+  const keys = (prefs.keywords || "").split(/[,;\n]/).map(w => w.trim().toLowerCase()).filter(Boolean);
+  const hay = ["title", "employer", "location", "summary", "category"].map(k => j[k] || "").join(" ").toLowerCase();
+  return !keys.length || keys.some(k => hay.includes(k));
+}
+const isOpen = j => !j.sample && (!j.closing || j.closing === "Rolling" || new Date(j.closing + "T23:59:59") >= new Date());
+function drawMatches() {
+  if (!JOBS.length) return;
+  const list = JOBS.filter(isOpen).filter(matches).sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+  $("matches").hidden = false;
+  $("match-count").textContent = `${list.length} of ${JOBS.filter(isOpen).length} open jobs match what you picked.`;
+  $("match-list").innerHTML = list.map(j => `<article class="job"><div><span class="tag">${esc(j.category)}</span>
+    <h3><a href="/jobs/${encodeURIComponent(j.id)}/">${esc(j.title)}</a></h3><div class="who">${esc(j.employer)}</div>
+    <ul class="meta"><li>${esc(j.location)}</li>${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
+    <div class="side">${j.closing && j.closing !== "Rolling" ? "Closes " + esc(j.closing) : "Open"}</div></article>`).join("");
+}
+
+const fmtDate = t => new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+async function subscribed() {
+  if (!pushable || Notification.permission !== "granted") return null;
+  const reg = await navigator.serviceWorker.getRegistration("/");
+  return reg && reg.pushManager.getSubscription();
+}
+
+async function draw() {
+  $("off").hidden = Boolean(API);
+  if (!API) return;
+  $("prefs").hidden = false;
+  $("install").hidden = standalone || !(ios || /Android/.test(navigator.userAgent));
+  $("install-ios").hidden = !ios;
+  $("install-android").hidden = ios;
+  if (config?.price) {
+    const p = config.price, money = new Intl.NumberFormat("en", { style: "currency", currency: p.currency }).format(p.amount);
+    $("price").innerHTML = `${esc(money.replace(/\.00$/, ""))}<small>${p.recurring ? "a year" : "for a year"}</small>`;
+    $("renew-perk").textContent = p.recurring ? "Renews each year, cancel any time" : "One payment covers a whole year";
+  } else if (config?.free) {
+    $("price").innerHTML = "Free<small>while we test it</small>";
+    $("renew-perk").textContent = "Free during testing";
+  }
+  const needsHome = ios && !standalone;
+  $("pay").disabled = needsHome;
+  $("pay-msg").textContent = needsHome ? "Add the app to your home screen first (see above), then open it from there." : (!pushable ? "This browser can't show notifications. Try Chrome on Android or Safari on iPhone." : "");
+  $("buy").hidden = Boolean(acct?.active);
+  $("save-row").hidden = !acct;
+  $("account").hidden = !acct;
+  $("notify").hidden = true;
+  if (!acct) return;
+  $("acct-code").textContent = acct.code;
+  const sub = await subscribed().catch(() => null);
+  const until = acct.free ? "free while testing" : acct.active ? (acct.renews ? "renews " : "paid until ") + fmtDate(acct.paid_until) : acct.paid_until ? "ran out " + fmtDate(acct.paid_until) : "not paid yet";
+  $("acct-status").innerHTML = `Alerts: <b class="${acct.active && sub ? "" : "off"}">${acct.active ? (sub ? "on for this phone" : "notifications not on yet") : "off"}</b> · ${esc(until)} · ${acct.devices.length} phone${acct.devices.length === 1 ? "" : "s"}`;
+  $("renew").hidden = acct.free || acct.renews || (acct.active && acct.paid_until - Date.now() / 1000 > 30 * 86400);
+  if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get job alerts again.";
+  $("notify").hidden = !acct.active || Boolean(sub) || !pushable;
+  if (acct.active && !$("notify").hidden && needsHome) {
+    $("enable").disabled = true;
+    $("notify-msg").textContent = "Add the app to your home screen first, open it from there and enter your code under 'Already paid?'.";
+    $("buy").hidden = false;
+  }
+}
+
+async function load() {
+  const code = store.get("hej-code");
+  if (!code) return draw();
+  try {
+    acct = await api("/api/account?code=" + encodeURIComponent(code));
+    prefs = acct.prefs; store.set("hej-prefs", JSON.stringify(prefs)); drawPrefs(); drawMatches();
+    const sub = await subscribed().catch(() => null);
+    if (sub && acct.active) api("/api/devices", { method: "POST", body: { code: acct.code, subscription: sub.toJSON() } }).catch(() => {});
+  } catch (err) {
+    if (/No account/.test(err.message)) store.set("hej-code", null);
+    $("pay-msg").textContent = err.message;
+  }
+  draw();
+}
+
+$("pay").onclick = $("renew").onclick = async () => {
+  $("pay-msg").textContent = "One moment…";
+  try {
+    const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs } });
+    store.set("hej-code", r.code);
+    if (r.url) location.href = r.url;
+    else { await load(); $("pay-msg").textContent = ""; }
+  } catch (err) { $("pay-msg").textContent = err.message; }
+};
+
+$("restore").onclick = async () => {
+  const code = $("restore-code").value.trim();
+  $("restore-msg").textContent = "Checking…";
+  try {
+    await api("/api/account?code=" + encodeURIComponent(code));
+    store.set("hej-code", code);
+    $("restore-msg").textContent = "";
+    await load();
+  } catch (err) { $("restore-msg").textContent = err.message; }
+};
+
+$("save").onclick = async () => {
+  $("save-msg").textContent = "Saving…";
+  try { acct = await api("/api/account", { method: "PUT", body: { code: acct.code, prefs } }); $("save-msg").textContent = "Saved. New alerts will follow these."; }
+  catch (err) { $("save-msg").textContent = err.message; }
+};
+
+$("enable").onclick = async () => {
+  $("notify-msg").textContent = "";
+  try {
+    // Must come straight from the tap, or iPhones won't ask.
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") throw new Error(perm === "denied" ? "Notifications are blocked. Turn them on for HE Jobs in your phone's Settings, then try again." : "You'll need to tap Allow to get alerts.");
+    const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    await navigator.serviceWorker.ready;
+    const key = Uint8Array.from(atob(config.vapid_public_key.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+    const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    await api("/api/devices", { method: "POST", body: { code: acct.code, subscription: sub.toJSON() } });
+    acct = await api("/api/account?code=" + encodeURIComponent(acct.code));
+    await draw();
+    $("acct-msg").textContent = "Done. You'll get a notification when a matching job goes up.";
+  } catch (err) { $("notify-msg").textContent = err.message; }
+};
+
+$("sample").onclick = async () => {
+  try {
+    if (Notification.permission !== "granted") throw new Error("Turn on notifications first.");
+    const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    await navigator.serviceWorker.ready;
+    const j = JOBS.filter(isOpen).filter(matches)[0] || JOBS[0];
+    await reg.showNotification(j ? `New ${j.category} job: ${j.title}` : "New job", { body: j ? `${j.employer} · ${j.location}` : "", icon: "/icon-192.png", badge: "/favicon-96x96.png", tag: "sample", data: { url: j ? `/jobs/${j.id}/` : "/app/" } });
+    $("acct-msg").textContent = "That's what an alert looks like.";
+  } catch (err) { $("acct-msg").textContent = err.message; }
+};
+
+$("copy").onclick = () => navigator.clipboard?.writeText(acct.code).then(() => $("acct-msg").textContent = "Code copied.", () => {});
+
+let installPrompt = null;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installPrompt = e; $("install-manual").hidden = true; });
+$("install-btn").onclick = () => installPrompt ? installPrompt.prompt() : $("install-manual").hidden = false;
+addEventListener("appinstalled", () => $("install").hidden = true);
+// Coming back from the payment page (or from Settings) picks up the new state.
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && store.get("hej-code")) load(); });
+
+drawPrefs();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); }).catch(() => {});
+(API ? api("/api/config").then(c => config = c).catch(err => { $("pay-msg").textContent = "Alerts are unavailable just now: " + err.message; }) : Promise.resolve()).then(load);
+</script>
