@@ -1,7 +1,7 @@
 # Builds the weekly Sitrep newsletter every Monday morning, publishes it at /sitrep/ and hands it to Kit.
 # Needs the repository secret KIT_API_KEY (Kit > Settings > Developer > API key, v4).
-# By default Kit gets a draft to check and send. Set the repository variable SITREP_AUTOSEND to "true"
-# and Kit sends it on its own at 07:00 UTC instead (no subscriber filter, so it goes to everyone).
+# Kit sends it on its own at 07:00 UTC to every subscriber. To check each issue before it goes, set the
+# repository variable SITREP_AUTOSEND to "false" and Kit keeps it as a draft for you to send.
 name: Weekly Sitrep
 on:
   schedule:
@@ -40,7 +40,7 @@ jobs:
           tmp = os.environ["RUNNER_TEMP"]
           meta = json.load(open(f"{tmp}/sitrep.html.json"))
           now = datetime.datetime.now(datetime.timezone.utc)
-          send_at = now.replace(hour=7, minute=0, second=0, microsecond=0) if os.environ.get("AUTOSEND") == "true" else None
+          send_at = now.replace(hour=7, minute=0, second=0, microsecond=0) if os.environ.get("AUTOSEND") != "false" else None
           if send_at and send_at < now + datetime.timedelta(minutes=10):
               send_at = now + datetime.timedelta(minutes=10)
           body = {
