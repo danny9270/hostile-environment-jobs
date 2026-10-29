@@ -10,9 +10,12 @@
 //                      a one-off price gives a year and the app offers a renew button when it runs out.
 // The push keys (VAPID) are made by the Worker the first time it runs and kept in the database.
 // The Action proves who it is with a GitHub sign-in token for this repository, so there is no shared password.
+// The admin page (/admin/) asks for payments with its own GitHub key; only the repository owner's key gets them.
+// Payments are read from finished Stripe Checkouts, which also covers Payment Links, so the key above needs nothing more.
 
 const SITE = "https://hostileenvironmentjobs.com";
 const REPO = "danny9270/hostile-environment-jobs";
+const OWNER = REPO.split("/")[0];
 const AUDIENCE = "hej-alerts";
 const YEAR = 365 * 86400;
 const DAY = 86400;
@@ -111,6 +114,64 @@ const CLEAN_PREFS = p => ({
   courses: Boolean(p.courses),
   course_types: (Array.isArray(p.course_types) ? p.course_types : []).map(String).slice(0, 20),
 });
+
+// Admin sign-in: the GitHub key the admin page already uses, accepted only if it belongs to the repository owner.
+// Answers are remembered for a few minutes so the admin page doesn't ask GitHub on every load.
+const admins = new Map();
+async function fromAdmin(req) {
+  const token = (req.headers.get("Authorization") || "").replace(/^Bearer /, "");
+  if (token.length < 20) return false;
+  const id = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token)));
+  const hit = admins.get(id);
+  if (hit && hit.until > Date.now()) return hit.ok;
+  const res = await fetch("https://api.github.com/user", { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "User-Agent": "hej-alerts" } });
+  const ok = res.ok && (await res.json()).login?.toLowerCase() === OWNER.toLowerCase();
+  if (admins.size > 50) admins.clear();
+  admins.set(id, { ok, until: Date.now() + 5 * 60 * 1000 });
+  return ok;
+}
+
+// What a finished checkout was for: the alerts app tags its own; Payment Links are named by their product, or guessed from the price.
+function paymentLabel(s) {
+  if (/^HEJ-/.test(s.client_reference_id || s.metadata?.code || "")) return "Job alerts, 1 year";
+  const item = s.line_items?.data?.[0]?.description;
+  if (item) return item;
+  if (s.currency === "gbp" && s.amount_total === 4900) return "Featured job";
+  if (s.currency === "gbp" && s.amount_total === 14900) return "Featured employer";
+  return s.payment_link ? "Payment link" : "Other";
+}
+
+async function payments(env) {
+  const t = now(), db = env.DB;
+  const one = q => db.prepare(q).bind(t).first().then(r => r.n);
+  const alerts = {
+    accounts: (await db.prepare("SELECT COUNT(*) AS n FROM accounts").first()).n,
+    active: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ?"),
+    renewing: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ? AND subscription IS NOT NULL"),
+    phones: (await db.prepare("SELECT COUNT(*) AS n FROM devices").first()).n,
+  };
+  if (!env.STRIPE_SECRET_KEY) return { stripe: false, alerts, payments: [] };
+  // Up to 500 of the latest finished checkouts. Renewals a year on are invoices, not checkouts, and come later.
+  const list = [];
+  let after = null, expand = true;
+  for (let page = 0; page < 5; page++) {
+    const q = new URLSearchParams({ limit: "100", status: "complete" });
+    if (expand) q.append("expand[]", "data.line_items");
+    if (after) q.set("starting_after", after);
+    let r;
+    try { r = await stripe(env, "GET", "checkout/sessions?" + q); }
+    catch (err) { if (!expand) throw err; expand = false; page--; continue; }
+    list.push(...r.data);
+    if (!r.has_more || !r.data.length) break;
+    after = r.data[r.data.length - 1].id;
+  }
+  const rows = list.filter(s => s.payment_status === "paid" || s.payment_status === "no_payment_required").map(s => ({
+    id: s.id, created: s.created, amount: (s.amount_total || 0) / 100, currency: (s.currency || "").toUpperCase(),
+    what: paymentLabel(s), email: s.customer_details?.email || null, name: s.customer_details?.name || null, mode: s.mode,
+    test: !s.livemode,
+  }));
+  return { stripe: true, alerts, payments: rows };
+}
 
 // GitHub Actions sign-in: an RS256 token from token.actions.githubusercontent.com, for this repo's main branch.
 let jwks = null;
@@ -223,6 +284,12 @@ async function handle(req, env) {
     for (const ep of (body.gone || []).slice(0, 2000)) stmts.push(db.prepare("DELETE FROM devices WHERE endpoint = ?").bind(String(ep)));
     if (stmts.length) await db.batch(stmts);
     return json(req, { ok: true });
+  }
+
+  // For the admin page only: payments received and alert subscriber numbers.
+  if (path === "/api/admin/payments" && req.method === "GET") {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    return json(req, await payments(env));
   }
 
   if (path === "" || path === "/") return new Response("Hostile Environment Jobs alerts. The app is at " + SITE + "/app/", { headers: cors(req) });

@@ -127,6 +127,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button data-tab="jobs">Jobs</button>
     <button data-tab="courses">Courses</button>
     <button data-tab="reviews">Reviews</button>
+    <button data-tab="payments">Payments</button>
     <button data-tab="settings">Settings</button>
   </nav>
   <div class="top-right"><span class="who" id="who"></span><a href="../" target="_blank" rel="noopener">View site</a><button class="btn sm" id="signout" hidden>Sign out</button></div>
@@ -163,6 +164,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <div class="card"><h2>Live jobs by type</h2><div class="bars" id="by-cat"></div></div>
     <div class="card"><h2>Live jobs by region</h2><div class="bars" id="by-region"></div><h2 style="margin-top:18px">Upcoming courses by type</h2><div class="bars" id="by-type"></div></div>
   </div>
+  <div class="card" style="margin-top:14px" id="pay-summary"></div>
   <div class="card" style="margin-top:14px">
     <h2>Submissions</h2>
     <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>. Course reviews arrive as "New course review"; read it, then paste its review code into <b>Reviews</b>, <b>Add review</b>.</p>
@@ -198,6 +200,18 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button class="btn primary" id="add-review">Add review</button>
   </div>
   <div class="list" id="review-list"></div>
+</section>
+
+<section id="payments" hidden>
+  <h1>Payments</h1>
+  <div class="grid tiles" id="pay-tiles"></div>
+  <div class="toolbar">
+    <select id="pay-f"><option value="all">All payments</option><option value="alerts">Job alerts</option><option value="featured">Featured listings</option></select>
+    <button class="btn" id="pay-reload">Refresh</button>
+    <a class="btn" href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener">Open Stripe</a>
+  </div>
+  <div class="list" id="pay-list"></div>
+  <p class="small muted">Payments made through Stripe Checkout: the job alerts app and any Stripe Payment Links (featured job, featured employer). Refunds, disputes and Stripe's fees aren't shown here, so check Stripe for payouts. Yearly renewals will show in Stripe from next year.</p>
 </section>
 
 <section id="settings" hidden>
@@ -240,6 +254,7 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
 const GC_CODE = "hostileenvironmentjobs"; // GoatCounter site code, overridable in Settings
+const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev"; // the job alerts Worker, which also reports payments
 const REGIONS = ["Africa", "Americas", "Asia", "Europe", "Middle East", "Worldwide"];
 
 const $ = id => document.getElementById(id);
@@ -259,7 +274,7 @@ const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
 let TOKEN = null;
 const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null } };
 const NOUN = { jobs: "job", courses: "course", reviews: "review" };
-const TABS = ["dash", "jobs", "courses", "reviews", "settings"];
+const TABS = ["dash", "jobs", "courses", "reviews", "payments", "settings"];
 const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : x.title;
 
 function toast(msg, ms = 4000) {
@@ -473,6 +488,71 @@ async function renderVisits() {
   }
 }
 
+// ---------- payments ----------
+// The alerts Worker reads finished Stripe Checkouts and checks this page's GitHub key belongs to the site owner.
+let PAY = null;
+const money = (n, cur) => n.toLocaleString("en-GB", { style: "currency", currency: cur || "GBP", minimumFractionDigits: n % 1 ? 2 : 0 });
+const moneyList = (rows) => {
+  const by = rows.reduce((o, p) => (o[p.currency] = (o[p.currency] || 0) + p.amount, o), {});
+  const parts = Object.entries(by).map(([c, n]) => money(n, c));
+  return parts.length ? parts.join(" + ") : money(0, "GBP");
+};
+const payDate = t => new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const isAlerts = p => p.what === "Job alerts, 1 year";
+
+async function loadPayments() {
+  $("pay-summary").innerHTML = `<h2>Payments</h2><p class="muted small">Loading...</p>`;
+  $("pay-list").innerHTML = `<div class="empty">Loading...</div>`;
+  try {
+    const r = await fetch(ALERTS_API + "/api/admin/payments", { headers: { Authorization: "Bearer " + TOKEN }, cache: "no-store" });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(r.status === 403 ? "The payments service only answers the site owner's GitHub key" : body.error || "Payments service error " + r.status);
+    PAY = body;
+  } catch (e) {
+    PAY = null;
+    const msg = e.message === "Failed to fetch" ? "Couldn't reach the payments service. If the job alerts Worker hasn't been updated with the payments code yet, it won't answer" : e.message;
+    $("pay-summary").innerHTML = `<h2>Payments</h2><p class="err small">${esc(msg)}.</p>`;
+    $("pay-tiles").innerHTML = "";
+    $("pay-list").innerHTML = `<div class="empty">${esc(msg)}.</div>`;
+    return;
+  }
+  renderPayments();
+}
+
+function renderPayments() {
+  if (!PAY) return;
+  const all = PAY.payments.filter(p => !p.test), a = PAY.alerts;
+  const month = all.filter(p => p.created > Date.now() / 1000 - 30 * 86400);
+  const tile = (v, label, filter) => `<button class="tile" data-go="payments" data-pay="${filter || "all"}"><b${String(v).includes("+") ? ' style="font-size:22px"' : ""}>${v}</b><span>${label}</span></button>`;
+  const tiles = [
+    tile(esc(moneyList(all)), "Received in total"),
+    tile(esc(moneyList(month)), "Last 30 days"),
+    tile(all.length, "Payments"),
+    tile(a.active, "Paid job alert subscribers", "alerts"),
+    tile(all.filter(p => !isAlerts(p)).length, "Featured listings sold", "featured"),
+  ].join("");
+  $("pay-tiles").innerHTML = tiles;
+  const recent = all.slice(0, 5);
+  $("pay-summary").innerHTML = `<h2>Payments</h2>
+    ${PAY.stripe ? "" : `<p class="small muted">Stripe isn't connected to the alerts Worker, so there are no payments to show.</p>`}
+    <div class="grid tiles" style="margin-bottom:8px">${tiles}</div>
+    <p class="small muted">${a.active} of ${a.accounts} job alert account${a.accounts === 1 ? "" : "s"} paid up, ${a.renewing} renewing automatically, ${a.phones} phone${a.phones === 1 ? "" : "s"} getting alerts.</p>
+    ${recent.length ? `<h3>Latest</h3><ul class="attn">${recent.map(p => `<li><b>${esc(money(p.amount, p.currency))}</b> ${esc(p.what)} · ${esc(p.email || p.name || "")} · ${payDate(p.created)}</li>`).join("")}</ul>` : `<p class="muted small">No payments yet.</p>`}
+    <p class="small"><button class="btn sm" data-go="payments">All payments</button></p>`;
+  const f = $("pay-f").value;
+  const rows = all.filter(p => f === "all" || (f === "alerts") === isAlerts(p));
+  $("pay-list").innerHTML = rows.length ? rows.map(p => `
+    <div class="item">
+      <div>
+        <div class="t">${esc(money(p.amount, p.currency))} ${esc(p.what)}${p.mode === "subscription" ? ' <span class="badge live">renews yearly</span>' : ""}</div>
+        <div class="m">${esc([p.name, p.email].filter(Boolean).join(" · ") || "No email given")} · ${payDate(p.created)}</div>
+      </div>
+      <div class="acts"><a class="btn sm" href="https://dashboard.stripe.com/checkout/sessions/${encodeURIComponent(p.id)}" target="_blank" rel="noopener">In Stripe</a></div>
+    </div>`).join("") : `<div class="empty">${all.length ? "No payments match." : "No payments yet."}</div>`;
+}
+$("pay-f").addEventListener("input", renderPayments);
+$("pay-reload").onclick = loadPayments;
+
 // ---------- editor ----------
 const JOB_FIELDS = [
   ["title", "Job title", "text", true], ["employer", "Employer", "text", true],
@@ -602,6 +682,7 @@ document.addEventListener("click", async e => {
   const d = b.dataset;
   if (d.tab) return showTab(d.tab);
   if (d.go) {
+    if (d.pay) { $("pay-f").value = d.pay; renderPayments(); }
     if (d.filter) $(d.go === "jobs" ? "job-f" : "course-f").value = d.filter;
     showTab(d.go); renderList("jobs"); renderList("courses");
     return;
@@ -659,7 +740,7 @@ async function signIn(token, remember) {
   $("who").textContent = user ? "Signed in as " + user.login : "";
   $("token-info").textContent = `Signed in${user ? " as " + user.login : ""}. ${remember ? "The key is remembered on this device until you sign out." : "The key is forgotten when you close this tab."}`;
   $("login").hidden = true; $("nav").hidden = false; $("signout").hidden = false;
-  renderAll(); renderVisits();
+  renderAll(); renderVisits(); loadPayments();
   const tab = location.hash.slice(1);
   showTab(TABS.includes(tab) ? tab : "dash");
 }
