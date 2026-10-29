@@ -1,0 +1,58 @@
+=== FULL VERSION ===
+
+📢 Big update on hostileenvironmentjobs.com
+
+Lads and lasses, I've been busy. The site started as a home for the jobs we share in here, and it's grown into a proper toolkit for anyone working where it's hard to reach. Here's what's new 👇
+
+📲 Job alerts app
+Pick your trade, region and job types and get a push notification on your phone the second a matching job goes up. $6 for the year. Refer 3 mates who sign up and your year is free.
+👉 hostileenvironmentjobs.com/app/
+
+🗺️ Deployment guide
+Clickable map of 27 countries across the Horn of Africa and Middle East/North Africa. FCDO and US travel advice levels, live weather, local time, visas and local culture. It's a guide only, always check your company's security brief.
+👉 hostileenvironmentjobs.com/deploy/
+
+📄 CV builder
+Free. Build your CV in UN, NGO or security contractor format and download it as a PDF.
+👉 hostileenvironmentjobs.com/cv/
+
+💷 Pay and day-rate guide
+Rough salary and day rates by role and region, so you know what to ask for.
+👉 hostileenvironmentjobs.com/pay/
+
+⭐ Course reviews
+Done a course? Rate it and leave a review so the next person knows what they're paying for.
+👉 hostileenvironmentjobs.com/#courses
+
+📅 Course calendar
+Every upcoming course in one calendar. Subscribe and new dates drop straight into your phone's calendar.
+👉 hostileenvironmentjobs.com/#calendar
+
+📰 The Sitrep
+A free weekly email with the best new jobs and courses. Sign up now and you'll get the first issue soon.
+👉 hostileenvironmentjobs.com/sitrep/
+
+🔎 Quick search pages
+EOD, mine action, CP, HE medic, maritime, K9 and jobs by country.
+👉 hostileenvironmentjobs.com/work/
+
+🏢 Hiring?
+Employers can feature a job (£49) or get a full employer profile (£149).
+👉 hostileenvironmentjobs.com/advertise/
+
+Jobs and courses are still checked and updated every couple of days, and I'll keep sharing the best ones in here as always.
+
+Have a look and tell me what you think, what's broken, or what you'd like added. Drop it in the comments 👇
+
+=== SHORT VERSION ===
+
+📢 New on hostileenvironmentjobs.com
+
+📲 Job alerts app with push notifications ($6/yr, free if 3 mates join): /app/
+🗺️ Deployment guide map, 27 HoA and MENA countries: /deploy/
+📄 Free CV builder (UN/NGO/security formats): /cv/
+💷 Pay and day-rate guide: /pay/
+⭐ Course reviews, 📅 course calendar, 📰 weekly Sitrep email (sign up now, first issue soon)
+🏢 Employers: featured jobs from £49: /advertise/
+
+All at hostileenvironmentjobs.com. Tell me what you think 👇
