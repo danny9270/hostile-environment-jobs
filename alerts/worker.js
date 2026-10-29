@@ -18,6 +18,8 @@
 //   GOATCOUNTER_KEY    secret. A GoatCounter API key with "Read statistics" ticked. The admin page then shows visitor
 //                      stats in any browser it's signed in on, without pasting the key into each one.
 //   GOATCOUNTER_SITE   optional, the GoatCounter site code if it isn't "hostileenvironmentjobs".
+// Course reviews: the "Review a course" form on the site posts here. Reviews wait in the database until the admin page
+// publishes them (into reviews.json) or rejects them; nothing a visitor sends goes on the site by itself.
 
 const SITE = "https://hostileenvironmentjobs.com";
 const REPO = "danny9270/hostile-environment-jobs";
@@ -35,6 +37,7 @@ const SCHEMA = [
   `CREATE INDEX IF NOT EXISTS devices_code ON devices (code)`,
   `CREATE TABLE IF NOT EXISTS seen (id TEXT PRIMARY KEY, at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS config (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY, data TEXT NOT NULL, email TEXT, sender TEXT, created INTEGER NOT NULL)`,
 ];
 // Columns added after launch. SQLite has no ADD COLUMN IF NOT EXISTS, so each runs on its own and "duplicate column" is ignored.
 const COLUMNS = ["ALTER TABLE accounts ADD COLUMN ref TEXT", "ALTER TABLE accounts ADD COLUMN referred_by TEXT",
@@ -363,6 +366,37 @@ async function handle(req, env) {
     for (const ep of (body.gone || []).slice(0, 2000)) stmts.push(db.prepare("DELETE FROM devices WHERE endpoint = ?").bind(String(ep)));
     if (stmts.length) await db.batch(stmts);
     return json(req, { ok: true });
+  }
+
+  // Course reviews from the site, held until the admin page publishes or rejects them.
+  if (path === "/api/reviews" && req.method === "POST") {
+    if (body._honey) return json(req, { ok: true }); // the hidden box only bots fill in
+    const t = (v, n) => String(v ?? "").trim().slice(0, n);
+    const r = { provider: t(body.provider, 120), course: t(body.course, 160), rating: Number(body.rating), headline: t(body.headline, 80),
+                text: t(body.text, 2000), name: t(body.name, 40), background: t(body.background, 60),
+                attended: /^\d{4}-\d\d$/.test(body.attended || "") ? body.attended : "", posted: new Date().toISOString().slice(0, 10) };
+    const email = t(body.email, 200);
+    if (!r.provider || !r.course || !(r.rating >= 1 && r.rating <= 5) || !Number.isInteger(r.rating) || r.text.length < 20 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+      return json(req, { error: "Some of the review is missing. Check the form and send it again." }, 400);
+    // A few reviews a day from one connection is plenty; the address is only kept as a one-way hash.
+    const sender = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("hej-review:" + (req.headers.get("CF-Connecting-IP") || "")))).slice(0, 22);
+    const recent = await db.prepare("SELECT COUNT(*) AS n FROM reviews WHERE sender = ? AND created > ?").bind(sender, now() - DAY).first();
+    const waiting = await db.prepare("SELECT COUNT(*) AS n FROM reviews").first();
+    if (recent.n >= 5 || waiting.n >= 500) return json(req, { error: "We've had a lot of reviews from here today. Please try again tomorrow." }, 429);
+    const id = b64url(crypto.getRandomValues(new Uint8Array(9)));
+    await db.prepare("INSERT INTO reviews (id, data, email, sender, created) VALUES (?, ?, ?, ?, ?)").bind(id, JSON.stringify(r), email, sender, now()).run();
+    return json(req, { ok: true });
+  }
+
+  // For the admin page only: reviews waiting to be checked, and removing one once it's published or rejected.
+  if (path === "/api/admin/reviews" && ["GET", "DELETE"].includes(req.method)) {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    if (req.method === "DELETE") {
+      await db.prepare("DELETE FROM reviews WHERE id = ?").bind(String(url.searchParams.get("id") || "")).run();
+      return json(req, { ok: true });
+    }
+    const rows = (await db.prepare("SELECT id, data, email, created FROM reviews ORDER BY created").all()).results;
+    return json(req, { reviews: rows.map(x => ({ id: x.id, email: x.email, created: x.created, review: JSON.parse(x.data) })) });
   }
 
   // For the admin page only: visitor stats for the last 30 days from GoatCounter.

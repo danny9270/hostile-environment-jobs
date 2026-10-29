@@ -12,7 +12,7 @@ Static jobs and training board for EOD, IEDD, search, mine action, security, hos
 
 - Approved reviews go in `reviews.json`. Each has `id`, `provider`, `course`, `rating` (1 to 5), `text`, and optionally `headline`, `name` (blank shows "Anonymous"), `background`, `attended` (`YYYY-MM`) and `posted`.
 - A review attaches to every listing whose provider and title match `provider` and `course` (ignoring case and spacing), so it carries over to later dates of the same course. Reviews for a course that isn't listed are kept and show again when it is.
-- Nothing goes up automatically. The "Review a course" form emails the review, with a `review_code` line, to `CONTACT`; paste that code into Reviews, Add review on `/admin/` to publish it.
+- Nothing goes up automatically. The "Review a course" form sends the review to the job alerts Worker (`alerts/worker.js`, `POST /api/reviews`), which keeps it in its D1 database. It shows under Reviews, Waiting for approval on `/admin/`: Publish adds it to `reviews.json`, Reject deletes it.
 
 ## Settings
 

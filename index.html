@@ -299,9 +299,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <h2>Review a course</h2>
     <p>Done one of these courses? Tell others what it was really like. We read every review before it goes up, and we don't publish personal attacks, instructors' names or anything that shouldn't be public.</p>
     <form id="review-form" novalidate>
-      <input type="hidden" name="_subject" value="New course review for Hostile Environment Jobs">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-      <input type="hidden" name="review_code" id="r-code">
       <label>Course <select name="course" id="r-course" required><option value="">Choose a course...</option></select></label>
       <div class="row" id="r-other" hidden>
         <label>Course name <input id="r-title" name="course_name"></label>
@@ -468,7 +466,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we keep it on our own server until we've checked it, show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -492,6 +490,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <script>
 // Settings to fill in before launch.
 const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
+const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev"; // the job alerts Worker, which also takes course reviews
 const FACEBOOK_GROUP = "https://www.facebook.com/groups/2015055248777805/";
 const SITREP_FORM = ""; // Kit form ID for the Sitrep signup box. Until it's set, signups are emailed to CONTACT.
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
@@ -700,20 +699,33 @@ Promise.all([coursesLoaded, reviewsLoaded]).then(() => {
     sel.value = b.dataset.review; toggleOther();
     document.getElementById("review-course").scrollIntoView({ behavior: "smooth" });
   });
-  // The email includes a ready-made line to paste into /admin/ (Reviews, Add review) once it's approved.
-  form.addEventListener("submit", () => {
+  // Reviews go to the job alerts Worker, which holds them until they're published or rejected in /admin/ (Reviews).
+  const note = document.getElementById("review-note");
+  const missing = bad => ({ course: "Pick the course you did.", rating: "Tap the stars to give your rating.", course_name: "Add the course name.", provider: "Add the course provider.",
+    review: `Write a little more in your review (at least 20 characters, you have ${bad.value.trim().length}).`, email: "Add your email address. It won't be shown.",
+    confirm: "Tick the box to confirm you did this course." })[bad?.name] || "Check the form, then send again.";
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      const bad = form.querySelector("input:invalid, select:invalid, textarea:invalid");
+      note.className = "note"; note.textContent = missing(bad); bad?.focus(); return;
+    }
     const f = form.elements, c = COURSES.find(c => ckey(c.provider, c.title) === sel.value);
-    document.getElementById("r-code").value = JSON.stringify({
+    const review = {
       provider: c ? c.provider : f.provider.value.trim(), course: c ? c.title : f.course_name.value.trim(),
-      rating: Number(f.rating.value), headline: f.headline.value.trim(), text: f.review.value.trim(),
-      name: f.name.value.trim(), background: f.background.value.trim(), attended: f.attended.value, posted: new Date().toISOString().slice(0, 10) });
+      rating: Number(f.rating.value), headline: f.headline.value.trim(), text: f.review.value.trim(), name: f.name.value.trim(),
+      background: f.background.value.trim(), attended: f.attended.value, email: f.email.value.trim(), _honey: f._honey.value };
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      const res = await fetch(ALERTS_API + "/api/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(review) });
+      const reply = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(reply.error || "error " + res.status);
+      form.reset(); note.className = "sent"; note.textContent = "Thanks for the review. We'll check it and put it up, usually within a day.";
+    } catch (err) { note.className = "note"; note.textContent = `That didn't send (${err.message}). Please try again, or email ${CONTACT}.`; }
+    finally { btn.disabled = false; }
   });
-  wireForm(form, document.getElementById("review-note"),
-    bad => ({ course: "Pick the course you did.", rating: "Tap the stars to give your rating.", course_name: "Add the course name.", provider: "Add the course provider.",
-      review: `Write a little more in your review (at least 20 characters, you have ${bad.value.trim().length}).`, email: "Add your email address. It won't be shown.",
-      confirm: "Tick the box to confirm you did this course." })[bad?.name] || "Check the form, then send again.",
-    "Thanks for the review. We'll check it and put it up, usually within a day.");
 }
+
 
 // Calendar: course starts and job closing dates, drawn once both lists have loaded.
 // The same dates are published as calendar.ics by scripts/build_pages.py for people to subscribe to.

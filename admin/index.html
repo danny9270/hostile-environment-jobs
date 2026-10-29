@@ -167,7 +167,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   <div class="card" style="margin-top:14px" id="pay-summary"></div>
   <div class="card" style="margin-top:14px">
     <h2>Submissions</h2>
-    <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>. Course reviews arrive as "New course review"; read it, then paste its review code into <b>Reviews</b>, <b>Add review</b>.</p>
+    <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>. Course reviews wait in <b>Reviews</b> for you to publish or reject.</p>
     <p class="small"><a href="https://www.icloud.com/mail" target="_blank" rel="noopener">Open iCloud Mail</a> · <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a> · <a href="https://github.com/danny9270/hostile-environment-jobs/commits/main" target="_blank" rel="noopener">Change history</a></p>
   </div>
 </section>
@@ -194,7 +194,10 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
 
 <section id="reviews" hidden>
   <h1>Reviews</h1>
-  <p class="small">Reviews sent from the site arrive by email and only go up once you add them here. Copy the "review_code" line from the email, press <b>Add review</b> and paste it in. Leave out anything abusive, names of instructors, or details that shouldn't be public.</p>
+  <p class="small">Reviews sent from the site wait below until you check them. <b>Publish</b> lets you tidy the wording first, then puts it on the site; <b>Reject</b> deletes it. Leave out anything abusive, names of instructors, or details that shouldn't be public.</p>
+  <h2>Waiting for approval</h2>
+  <div class="list" id="pending-list"><div class="empty">Loading...</div></div>
+  <h2 style="margin-top:22px">Published</h2>
   <div class="toolbar">
     <input id="review-q" type="search" placeholder="Search course, provider, reviewer">
     <button class="btn primary" id="add-review">Add review</button>
@@ -444,6 +447,41 @@ function renderReviews() {
     </div>`).join("") : `<div class="empty">${files.reviews.data.length ? "No reviews match." : "No reviews yet."}</div>`;
 }
 
+// Reviews sent from the site wait in the job alerts Worker until they're published (into reviews.json) or rejected.
+let PENDING = [];
+async function loadPending() {
+  try {
+    const r = await fetch(ALERTS_API + "/api/admin/reviews", { headers: { Authorization: "Bearer " + TOKEN }, cache: "no-store" });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(r.status === 404 ? "The job alerts Worker hasn't been updated with the reviews code yet" : body.error || "Reviews service error " + r.status);
+    PENDING = body.reviews || [];
+    renderPending();
+  } catch (e) {
+    PENDING = [];
+    $("pending-list").innerHTML = `<div class="empty err">${esc(e.message === "Failed to fetch" ? "Couldn't reach the job alerts Worker" : e.message)}.</div>`;
+  }
+  document.querySelector('nav [data-tab="reviews"]').textContent = PENDING.length ? `Reviews (${PENDING.length})` : "Reviews";
+}
+function renderPending() {
+  $("pending-list").innerHTML = PENDING.length ? PENDING.map(({ id, email, created, review: r }) => `
+    <div class="item">
+      <div>
+        <div class="t">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)} ${esc(r.course)}</div>
+        <div class="m">${esc(r.provider)} · ${esc(r.name || "Anonymous")}${r.background ? ", " + esc(r.background) : ""} · <a href="mailto:${esc(email)}">${esc(email)}</a> · sent ${fmtDate(iso(new Date(created * 1000)))}</div>
+        <div class="m">${r.headline ? `<b>${esc(r.headline)}</b> ` : ""}${esc(r.text)}</div>
+      </div>
+      <div class="acts">
+        <button class="btn sm primary" data-publish="${esc(id)}">Publish</button>
+        <button class="btn sm danger" data-reject="${esc(id)}">Reject</button>
+      </div>
+    </div>`).join("") : `<div class="empty">Nothing waiting.</div>`;
+}
+async function dropPending(id) {
+  const r = await fetch(ALERTS_API + "/api/admin/reviews?id=" + encodeURIComponent(id), { method: "DELETE", headers: { Authorization: "Bearer " + TOKEN } });
+  if (!r.ok) toast("Couldn't clear it from the waiting list: error " + r.status, 8000);
+  await loadPending();
+}
+
 function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); }
 
 // ---------- visitor stats ----------
@@ -619,14 +657,14 @@ function field([name, label, type, req], val) {
   return `<label>${label}<input name="${name}" type="${type}" value="${esc(val)}"${type === "url" ? ' placeholder="https://"' : ""}${r}></label>`;
 }
 
-function openEditor(kind, id) {
+function openEditor(kind, id, prefill, pending) {
   const fields = FIELDS[kind];
-  const found = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "" };
+  const found = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "", ...prefill };
   const item = kind === "reviews" ? { ...found, rating: found.rating ? String(found.rating) : "" } : found;
-  editing = { kind, id };
+  editing = { kind, id, pending };
   $("edit-title").textContent = (id ? "Edit " : "Add ") + NOUN[kind];
   const html = [];
-  if (kind === "reviews" && !id) html.push(`<label>Review code from the email <span class="hint">(paste it to fill in the boxes below)</span><textarea id="paste-code" rows="3"></textarea></label>`);
+  if (kind === "reviews" && !id && !pending) html.push(`<label>Review code from the email <span class="hint">(paste it to fill in the boxes below)</span><textarea id="paste-code" rows="3"></textarea></label>`);
   for (let i = 0; i < fields.length; i++) {
     const f = fields[i], next = fields[i + 1];
     const short = ["text", "url", "date", "closing"].includes(f[2]) || Array.isArray(f[2]);
@@ -695,7 +733,7 @@ $("edit-form").addEventListener("submit", async e => {
     else arr.unshift(item);
   }, `${id ? "Update" : "Add"} ${NOUN[kind]}: ${itemName(kind, item)}`);
   $("edit-save").disabled = false;
-  if (ok) $("editor").close();
+  if (ok) { $("editor").close(); if (editing.pending) await dropPending(editing.pending); }
 });
 
 // ---------- actions ----------
@@ -711,6 +749,15 @@ document.addEventListener("click", async e => {
     return;
   }
   if (d.edit) return openEditor(d.edit, d.id);
+  if (d.publish) {
+    const p = PENDING.find(x => x.id === d.publish);
+    return openEditor("reviews", null, { ...p.review, posted: TODAY }, p.id);
+  }
+  if (d.reject) {
+    const p = PENDING.find(x => x.id === d.reject);
+    if (!confirm(`Reject the review of "${p.review.course}"? It will be deleted.`)) return;
+    return dropPending(p.id);
+  }
   if (d.close) {
     const j = files.jobs.data.find(x => x.id === d.close);
     if (!confirm(`Close "${j.title}"? It will disappear from the site.`)) return;
@@ -739,6 +786,7 @@ $("review-q").addEventListener("input", renderReviews);
 function showTab(tab) {
   TABS.forEach(t => $(t).hidden = t !== tab);
   document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
+  if (tab === "reviews" && TOKEN) loadPending();
   if (tab === "settings") { $("gc-code").value = store.get("gc-code") || GC_CODE; $("gc-key").value = store.get("gc-key") || ""; }
   history.replaceState(null, "", "#" + tab);
   window.scrollTo(0, 0);
@@ -758,6 +806,7 @@ async function signIn(token, remember) {
   const repo = await gh(`/repos/${REPO}`);
   if (!repo.permissions?.push) { const e = new Error("This key can see the repository but can't edit it. Set Contents to Read and write."); e.status = 403; throw e; }
   await Promise.all([load("jobs"), load("courses"), load("reviews")]);
+  loadPending();
   store.set("gh-token", token, remember);
   const user = await gh("/user").catch(() => null);
   $("who").textContent = user ? "Signed in as " + user.login : "";
