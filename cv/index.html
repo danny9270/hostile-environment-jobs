@@ -159,6 +159,8 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; max-width: 1080px; }
   .paper { padding: 22px 18px; font-size: 13px; }
   .paper .cols { columns: 1; }
   .paper .entry-head { display: block; }
+  .paper .facts { display: grid; gap: 2px; }
+  .paper .facts span { padding: 0; border-left: 0; }
 }
 @media print {
   @page { size: A4; margin: 14mm 15mm; }
@@ -468,13 +470,14 @@ const JARGON = [
   [/\bin theatre\b/i, "in the deployment area"],
   [/\bsoldiers\b/i, "personnel"], [/\btroops\b/, "personnel"], [/\bmy (?:men|lads|blokes)\b/i, "my team"],
   [/\bOC\b/, "officer commanding (unit manager)"], [/\bCO\b/, "commanding officer (head of unit)"],
-  [/\b2IC\b/, "deputy"], [/\bSNCOs?\b/, "senior supervisors"], [/\bJNCOs?\b/, "junior supervisors"], [/\bNCOs?\b/, "supervisors"],
+  [/\b2IC\b/, "deputy"], [/\bSNCOs\b/, "senior supervisors"], [/\bSNCO\b/, "senior supervisor"], [/\bJNCOs\b/, "junior supervisors"],
+  [/\bJNCO\b/, "junior supervisor"], [/\bNCOs\b/, "supervisors"], [/\bNCO\b/, "supervisor"],
   [/\bplatoon\b/i, "team of about 30"], [/\btroop commander\b/i, "manager of a 30-person team"],
   [/\brecces?\b/i, "reconnaissance and site surveys"], [/\bFOB\b/, "forward operating base"], [/\bPB\b/, "patrol base"],
   [/\bQM\b/, "quartermaster (stores and logistics manager)"], [/\bMT\b/, "vehicle fleet"],
   [/\bops room\b/i, "operations centre"], [/\bops\b/, "operations"], [/\bcomms\b/i, "communications"], [/\bkit\b/i, "equipment"],
   [/\bbergens?\b/i, "rucksack"], [/\bSOPs\b/, "standard operating procedures (SOPs)", true], [/\bROE\b/, "rules of engagement"],
-  [/\bVCPs?\b/, "vehicle checkpoint"], [/\bQRF\b/, "quick reaction force"], [/\bOPTAG\b/, "pre-deployment training"],
+  [/\bVCPs\b/, "vehicle checkpoints"], [/\bVCP\b/, "vehicle checkpoint"], [/\bQRF\b/, "quick reaction force"], [/\bOPTAG\b/, "pre-deployment training"],
   [/\bMATTs?\b/, "mandatory annual training"], [/\bCLM\b/, "leadership and management course"],
   [/\bCASEVAC\b/, "casualty evacuation (CASEVAC)", true], [/\bMEDEVAC\b/, "medical evacuation (MEDEVAC)", true],
   [/\bCMD\b/, "conventional munitions disposal (CMD)", true], [/\bECM\b/, "electronic countermeasures (ECM)", true],
@@ -632,7 +635,7 @@ function serviceBlock() {
 function jobEntry(j, opts = {}) {
   const team = j.team ? (opts.un ? "" : `<div class="sub">Led and supervised ${esc(j.team)} staff</div>`) : "";
   const unMeta = opts.un ? `<table class="un-meta"><tbody>
-      <tr><th>Dates</th><td>${dates(j.from, j.to) || "&nbsp;"}</td></tr>
+      ${dates(j.from, j.to) ? `<tr><th>Dates</th><td>${dates(j.from, j.to)}</td></tr>` : ""}
       <tr><th>Employer</th><td>${esc(j.org)}${j.military ? " (military service)" : ""}</td></tr>
       ${j.location ? `<tr><th>Location</th><td>${esc(j.location)}</td></tr>` : ""}
       ${j.team ? `<tr><th>Staff supervised</th><td>${esc(j.team)}</td></tr>` : ""}</tbody></table><p class="sub" style="margin:6px 0 0">Duties and achievements</p>` : "";
