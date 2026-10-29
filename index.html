@@ -317,7 +317,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
         <label>Headline <input id="r-headline" name="headline" maxlength="80" placeholder="e.g. Realistic scenarios, good medics"></label>
         <label>When did you do it? <input id="r-attended" name="attended" type="month" placeholder="e.g. 2025-06"></label>
       </div>
-      <label>Your review <textarea id="r-text" name="review" rows="5" minlength="40" maxlength="2000" required placeholder="What was good, what wasn't, and who you'd recommend it to."></textarea></label>
+      <label>Your review <textarea id="r-text" name="review" rows="5" minlength="20" maxlength="2000" required placeholder="What was good, what wasn't, and who you'd recommend it to."></textarea></label>
       <div class="row">
         <label>Name to show <input id="r-name" name="name" maxlength="40" placeholder="Leave blank to post anonymously"></label>
         <label>Your background <input id="r-bg" name="background" maxlength="60" placeholder="e.g. Ex-RE, now NGO team leader"></label>
@@ -707,7 +707,9 @@ Promise.all([coursesLoaded, reviewsLoaded]).then(() => {
       name: f.name.value.trim(), background: f.background.value.trim(), attended: f.attended.value, posted: new Date().toISOString().slice(0, 10) });
   });
   wireForm(form, document.getElementById("review-note"),
-    "Pick the course and a star rating, write at least a few lines, add your email and tick the box, then send again.",
+    bad => ({ course: "Pick the course you did.", rating: "Tap the stars to give your rating.", course_name: "Add the course name.", provider: "Add the course provider.",
+      review: `Write a little more in your review (at least 20 characters, you have ${bad.value.trim().length}).`, email: "Add your email address. It won't be shown.",
+      confirm: "Tick the box to confirm you did this course." })[bad?.name] || "Check the form, then send again.",
     "Thanks for the review. We'll check it and put it up, usually within a day.");
 }
 
@@ -782,13 +784,19 @@ COURSE_TYPES.forEach(c => courseCat.append(new Option(c, c)));
 function wireForm(form, note, missing, thanks) {
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    if (!form.checkValidity()) { note.className = "note"; note.textContent = missing; return; }
+    if (!form.checkValidity()) {
+      const bad = form.querySelector("input:invalid, select:invalid, textarea:invalid");
+      note.className = "note"; note.textContent = typeof missing === "function" ? missing(bad) : missing;
+      bad?.focus(); return;
+    }
     const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
     try {
       const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
-      if (!res.ok) throw new Error(res.status);
+      // FormSubmit can answer 200 with success "false" (for example before the address is activated), so check the body too.
+      const reply = await res.json().catch(() => ({}));
+      if (!res.ok || String(reply.success) === "false") throw new Error(reply.message || "error " + res.status);
       form.reset(); note.className = "sent"; note.textContent = thanks;
-    } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+    } catch (err) { note.className = "note"; note.textContent = `That didn't send (${err.message}). Please try again, or email ${CONTACT}.`; }
     finally { btn.disabled = false; }
   });
 }
