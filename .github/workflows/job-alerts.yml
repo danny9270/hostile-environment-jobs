@@ -1,6 +1,6 @@
 # Sends job alert notifications to app subscribers after new jobs or courses go up.
 # Runs when "Build job pages" finishes (so each new job's page exists), every 3 hours as a catch-up, and by hand.
-# Needs the repository variable ALERTS_API (the alerts Worker's address); until it's set this does nothing.
+# The alerts Worker's address can be changed with the repository variable ALERTS_API.
 # Signs in to the Worker with GitHub's own token for this repo, so there is no secret to keep.
 name: Job alerts
 on:
@@ -17,7 +17,6 @@ concurrency: job-alerts
 jobs:
   send:
     runs-on: ubuntu-latest
-    if: vars.ALERTS_API != ''
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,4 +26,4 @@ jobs:
         run: sleep 90
       - run: python3 alerts/send_alerts.py
         env:
-          ALERTS_API: ${{ vars.ALERTS_API }}
+          ALERTS_API: ${{ vars.ALERTS_API || 'https://hej-alerts.danieldobb.workers.dev' }}
