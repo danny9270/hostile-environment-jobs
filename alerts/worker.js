@@ -12,6 +12,9 @@
 // The Action proves who it is with a GitHub sign-in token for this repository, so there is no shared password.
 // The admin page (/admin/) asks for payments with its own GitHub key; only the repository owner's key gets them.
 // Payments are read from finished Stripe Checkouts, which also covers Payment Links, so the key above needs nothing more.
+//   GOATCOUNTER_KEY    secret. A GoatCounter API key with "Read statistics" ticked. The admin page then shows visitor
+//                      stats in any browser it's signed in on, without pasting the key into each one.
+//   GOATCOUNTER_SITE   optional, the GoatCounter site code if it isn't "hostileenvironmentjobs".
 
 const SITE = "https://hostileenvironmentjobs.com";
 const REPO = "danny9270/hostile-environment-jobs";
@@ -129,6 +132,27 @@ async function fromAdmin(req) {
   if (admins.size > 50) admins.clear();
   admins.set(id, { ok, until: Date.now() + 5 * 60 * 1000 });
   return ok;
+}
+
+// Visitor stats: GoatCounter allows about 4 calls a second, so ask one at a time and keep the answer for a few minutes.
+let visitsCache = null;
+async function visits(env) {
+  if (visitsCache && visitsCache.until > Date.now()) return visitsCache.body;
+  const base = `https://${env.GOATCOUNTER_SITE || "hostileenvironmentjobs"}.goatcounter.com/api/v0`;
+  const end = new Date(), start = new Date(end - 29 * DAY * 1000); start.setUTCHours(0, 0, 0, 0);
+  const range = `start=${start.toISOString().slice(0, 19)}Z&end=${end.toISOString().slice(0, 19)}Z`;
+  async function get(p) {
+    for (let attempt = 0; ; attempt++) {
+      const r = await fetch(base + p, { headers: { Authorization: "Bearer " + env.GOATCOUNTER_KEY, "Content-Type": "application/json" } });
+      if (r.ok) { await new Promise(res => setTimeout(res, 300)); return r.json(); }
+      if (r.status === 429 && attempt < 3) { await new Promise(res => setTimeout(res, 1500 * (attempt + 1))); continue; }
+      const why = await r.text().catch(() => "");
+      throw new Error(`GoatCounter error ${r.status}${why ? ": " + why.slice(0, 200) : ""}`);
+    }
+  }
+  const body = { total: await get(`/stats/total?${range}`), pages: await get(`/stats/hits?${range}&limit=6`), refs: await get(`/stats/toprefs?${range}&limit=6`) };
+  visitsCache = { body, until: Date.now() + 5 * 60 * 1000 };
+  return body;
 }
 
 // What a finished checkout was for: the alerts app tags its own; Payment Links are named by their product, or guessed from the price.
@@ -284,6 +308,13 @@ async function handle(req, env) {
     for (const ep of (body.gone || []).slice(0, 2000)) stmts.push(db.prepare("DELETE FROM devices WHERE endpoint = ?").bind(String(ep)));
     if (stmts.length) await db.batch(stmts);
     return json(req, { ok: true });
+  }
+
+  // For the admin page only: visitor stats for the last 30 days from GoatCounter.
+  if (path === "/api/admin/visits" && req.method === "GET") {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    if (!env.GOATCOUNTER_KEY) return json(req, { error: "not set up" }, 501);
+    return json(req, await visits(env));
   }
 
   // For the admin page only: payments received and alert subscriber numbers.
