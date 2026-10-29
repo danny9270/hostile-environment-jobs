@@ -271,7 +271,7 @@ def main():
         "Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.",
         "/pay/", pay[len(pay_style):], pay_style))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/cv/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")

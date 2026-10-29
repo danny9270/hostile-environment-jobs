@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Free service leaver CV builder | Hostile Environment Jobs</title>
+<meta name="description" content="Turn your military service into a contractor CV in UN, NGO or private security format. Free, works in your browser, nothing is stored. Print or save as PDF.">
+<link rel="canonical" href="https://hostileenvironmentjobs.com/cv/">
+<meta property="og:title" content="Free service leaver CV builder | Hostile Environment Jobs">
+<meta property="og:description" content="Turn military service into a UN, NGO or private security CV. Free, private, print to PDF.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hostileenvironmentjobs.com/cv/">
+<meta property="og:site_name" content="Hostile Environment Jobs">
+<meta property="og:image" content="https://hostileenvironmentjobs.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#111310">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Same dark "field kit" look as the main site. Editor on the left, the CV on white paper on the right;
+   printing shows only the paper, so "Save as PDF" in the print dialog gives a clean CV. */
+:root {
+  --bg: #111310; --surface: #1a1d19; --raised: #222620; --ink: #ecebe4; --muted: #a3a79c; --line: #30352d;
+  --accent: #f29a2e; --accent-ink: #1b1204; --sand: #c9b48a; --soft: #3a2a14; --ok: #8fd19e; --warn: #ff7a59;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: clamp(36px, 6vw, 60px); font-weight: 900; text-transform: uppercase; letter-spacing: .01em; }
+h2 { font-size: 26px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+h3 { font-size: 20px; font-weight: 800; }
+.amp { color: var(--accent); }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+header.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; flex-wrap: wrap; max-width: 1080px; }
+.brand { font: 900 21px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; color: var(--accent); }
+nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 15px; }
+nav a:hover { color: var(--ink); }
+nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); }
+.hero { border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, #2b2416 0%, var(--bg) 60%); }
+.hero .wrap { padding-block: 40px 28px; }
+.eyebrow { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sand); margin: 0 0 14px; }
+.lede { max-width: 720px; margin: 0; font-size: 19px; opacity: .88; }
+.pledge { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 18px 0 0; padding: 0; list-style: none; font: 500 13.5px var(--mono); color: var(--muted); }
+.pledge li::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); margin-right: 8px; }
+
+.btn { display: inline-block; font: 800 15px var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--sand); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.small { font-size: 13px; padding: 6px 10px; }
+.btn.ghost { background: transparent; }
+.mobile-only { display: none; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.builder { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 24px; padding-block: 24px 48px; align-items: start; }
+.editor { display: grid; gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.card > h2 { font-size: 22px; margin: 0 0 4px; display: flex; align-items: baseline; gap: 10px; }
+.card > h2 .n { font: 500 13px var(--mono); color: var(--accent); }
+.card > p.hint { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fields .full { grid-column: 1 / -1; }
+label { display: grid; gap: 4px; font-weight: 600; font-size: 14.5px; }
+label small { font-weight: 400; color: var(--muted); }
+input, select, textarea { font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; width: 100%; }
+textarea { min-height: 96px; resize: vertical; line-height: 1.45; }
+input[type="checkbox"] { width: auto; accent-color: var(--accent); }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
+.formats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.formats button { text-align: left; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; cursor: pointer; display: grid; gap: 4px; align-content: start; }
+.formats button b { font: 800 19px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; }
+.formats button span { font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+.formats button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.formats button[aria-pressed="true"] span { color: var(--accent-ink); }
+.tips { margin: 12px 0 0; padding: 12px 14px 12px 32px; background: var(--raised); border-radius: 8px; font-size: 14.5px; color: var(--ink); }
+.tips li { margin-bottom: 4px; }
+.equiv { margin: 10px 0 0; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--soft); border-radius: 0 8px 8px 0; font-size: 15px; }
+.equiv b { color: var(--accent); }
+.item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 10px; background: var(--bg); }
+.item .fields input, .item .fields select, .item .fields textarea { background: var(--surface); }
+.item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; font: 500 12.5px var(--mono); color: var(--sand); text-transform: uppercase; letter-spacing: .06em; }
+.item-head .actions { gap: 4px; }
+.icon-btn { font: 600 13px var(--body); background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 3px 8px; cursor: pointer; }
+.icon-btn:hover { color: var(--ink); border-color: var(--sand); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.chips button { font: 600 13.5px var(--body); border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: 4px 11px; cursor: pointer; }
+.chips button:hover { border-color: var(--sand); }
+.jargon-list { display: grid; gap: 6px; margin-top: 12px; }
+.jargon-list .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 15px; }
+.jargon-list s { color: var(--warn); text-decoration-thickness: 1px; }
+.jargon-list .to { color: var(--ok); }
+.jargon-list .where { font: 500 12px var(--mono); color: var(--muted); display: block; }
+.ok-msg { color: var(--ok); margin: 10px 0 0; }
+
+.preview { position: sticky; top: 76px; display: grid; gap: 10px; }
+.preview-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.preview-bar .status { font: 500 13px var(--mono); color: var(--muted); }
+.preview-bar .status.warn { color: var(--accent); }
+.paper-scroll { max-height: calc(100vh - 150px); overflow: auto; border-radius: 6px; }
+
+/* The CV itself: plain, print-friendly, black on white. */
+.paper { background: #fff; color: #1d1f1c; font: 13.5px/1.45 var(--body); padding: 34px 38px; border-radius: 6px; color-scheme: light; min-height: 600px; }
+.paper h1 { font: 800 30px/1.05 var(--body); text-transform: none; letter-spacing: 0; margin: 0 0 2px; color: #111; }
+.paper .headline { font-size: 15px; color: #4a4d47; margin: 0 0 8px; }
+.paper .contact { font-size: 12.5px; color: #4a4d47; margin: 0; }
+.paper .contact span + span::before { content: " · "; color: #a0a39b; }
+.paper h2 { font: 700 12.5px/1.2 var(--body); text-transform: uppercase; letter-spacing: .09em; color: #8a4b08; border-bottom: 1px solid #d9d6cc; padding-bottom: 3px; margin: 18px 0 8px; }
+.paper h3 { font: 700 14px/1.3 var(--body); margin: 0; color: #111; }
+.paper p { margin: 0 0 6px; }
+.paper ul { margin: 4px 0 0; padding-left: 18px; }
+.paper li { margin-bottom: 2px; }
+.paper .entry { margin-bottom: 10px; break-inside: avoid; }
+.paper .entry-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.paper .dates { font-size: 12.5px; color: #4a4d47; white-space: nowrap; }
+.paper .sub { color: #4a4d47; font-size: 13px; }
+.paper .cols { columns: 2; column-gap: 24px; }
+.paper .cols li { break-inside: avoid; }
+.paper table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.paper th, .paper td { text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid #ebe8df; vertical-align: top; }
+.paper th { font-weight: 700; color: #4a4d47; width: 34%; }
+.paper thead th { width: auto; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; }
+.paper .facts { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 10px 0 0; padding: 8px 0; border-block: 2px solid #1d1f1c; font-size: 12.5px; }
+.paper .facts span { padding: 0 12px; border-left: 1px solid #c9c6bc; }
+.paper .facts span:first-child { padding-left: 0; border-left: 0; }
+.paper .facts b { font-weight: 700; }
+.paper .expired { color: #b3261e; font-weight: 700; }
+.paper .ph { background: #ffe9a8; border-radius: 2px; padding: 0 2px; }
+.paper .empty-cv { color: #7a7d75; text-align: center; padding: 120px 20px; font-size: 15px; }
+.paper .un-meta th { width: 30%; }
+
+footer { color: var(--muted); font-size: 14px; padding: 20px 0 32px; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; max-width: 1080px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 980px) {
+  .builder { grid-template-columns: 1fr; }
+  .preview { position: static; scroll-margin-top: 130px; }
+  .mobile-only { display: inline-block !important; }
+  .paper-scroll { max-height: none; }
+}
+@media (max-width: 640px) {
+  .fields, .formats { grid-template-columns: 1fr; }
+  nav { margin-left: 0; }
+  .paper { padding: 22px 18px; font-size: 13px; }
+  .paper .cols { columns: 1; }
+  .paper .entry-head { display: block; }
+}
+@media print {
+  @page { size: A4; margin: 14mm 15mm; }
+  body { background: #fff; }
+  body::before, header.top, .hero, .editor, .preview-bar, footer { display: none !important; }
+  .wrap, .builder { display: block; padding: 0; max-width: none; }
+  .preview, .paper-scroll { position: static; max-height: none; overflow: visible; }
+  .paper { padding: 0; border-radius: 0; min-height: 0; font-size: 10.5pt; }
+  .paper .ph { background: none; }
+  .paper .expired { color: inherit; font-weight: inherit; }
+  .screen-only { display: none; }
+  .paper h2 { break-after: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/#jobs">
+    <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="14" r="3" fill="currentColor"/></svg>
+    Hostile Environment <span class="amp">Jobs</span></a>
+  <nav>
+    <a href="/#jobs">Jobs</a>
+    <a href="/#courses">Courses</a>
+    <a href="/#calendar">Calendar</a>
+    <a href="/#careers">Getting in</a>
+    <a href="/pay/">Pay guide</a>
+    <a href="/cv/" aria-current="page">CV builder</a>
+    <a href="/#post">Post a job</a>
+    <a href="/#about">About</a>
+  </nav>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <p class="eyebrow">Free tool for service leavers</p>
+  <h1>Turn your service into a <span class="amp">contractor CV</span></h1>
+  <p class="lede">Fill in your service and experience, pick the format the employer expects, and the builder lays it out and swaps military jargon for words a UN, NGO or security company recruiter will understand. Then print it or save it as a PDF.</p>
+  <div class="actions" style="margin-top:18px"><button type="button" class="btn primary" data-example>See an example</button><a class="btn mobile-only" href="#preview">Jump to my CV</a></div>
+  <ul class="pledge"><li>Free, no sign-up</li><li>Nothing leaves your device</li><li>Nothing is saved unless you download it</li></ul>
+</div></div>
+
+<div class="wrap builder">
+<form class="editor" id="editor" autocomplete="on" onsubmit="return false">
+
+  <section class="card">
+    <h2><span class="n">01</span> Format</h2>
+    <p class="hint">Each employer type reads CVs differently. You can switch at any time; your details stay the same.</p>
+    <div class="formats" id="formats" role="group" aria-label="CV format">
+      <button type="button" data-format="un" aria-pressed="false"><b>UN</b><span>UN agencies and missions: full employment record, staff supervised, languages.</span></button>
+      <button type="button" data-format="ngo" aria-pressed="true"><b>NGO</b><span>Mine action and humanitarian NGOs: two pages, results and capacity building.</span></button>
+      <button type="button" data-format="psc" aria-pressed="false"><b>Security</b><span>Private security and commercial EOD: tickets, clearance and deployments first.</span></button>
+    </div>
+    <ul class="tips" id="tips"></ul>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">02</span> About you</h2>
+    <div class="fields">
+      <label class="full">Full name<input data-k="p.name" autocomplete="name"></label>
+      <label class="full">Headline <small>The job you want, in their words</small><input data-k="p.headline" placeholder="e.g. EOD Technical Advisor, IMAS EOD Level 3+"></label>
+      <label>Email<input data-k="p.email" type="email" autocomplete="email"></label>
+      <label>Phone<input data-k="p.phone" type="tel" autocomplete="tel"></label>
+      <label>Based in<input data-k="p.location" placeholder="e.g. Hereford, UK"></label>
+      <label>LinkedIn or website<input data-k="p.link" placeholder="linkedin.com/in/..."></label>
+      <label>Nationality<input data-k="p.nationality" placeholder="e.g. British"></label>
+      <label>Passports held<input data-k="p.passports" placeholder="e.g. UK, Irish"></label>
+      <label>Security clearance<input data-k="p.clearance" placeholder="e.g. UK SC (lapsed 2024)"></label>
+      <label>Availability<input data-k="p.availability" placeholder="e.g. Immediate, rotations OK"></label>
+      <label class="full">Driving licences<input data-k="p.licence" placeholder="e.g. UK full B, C+E; 4x4 trained"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">03</span> Military service</h2>
+    <p class="hint">Pick your trade to get a starter set of civilian-language duties and skills, then edit them to fit what you actually did.</p>
+    <div class="fields">
+      <label>Service<input data-k="s.branch" placeholder="e.g. British Army"></label>
+      <label>Corps, regiment or unit<input data-k="s.unit" placeholder="e.g. Royal Logistic Corps"></label>
+      <label class="full">Trade or role<input data-k="s.trade" placeholder="e.g. Ammunition Technician"></label>
+      <label>Final rank, as written<input data-k="s.rank" placeholder="e.g. Staff Sergeant"></label>
+      <label>Rank level<select data-k="s.level" id="level"></select></label>
+      <label>From<input data-k="s.from" placeholder="e.g. 2004"></label>
+      <label>To<input data-k="s.to" placeholder="e.g. 2026"></label>
+      <label class="check full"><input type="checkbox" data-k="s.showEquiv"> Show the civilian equivalent of my rank on the CV</label>
+    </div>
+    <p class="equiv" id="equiv" hidden></p>
+    <div class="fields" style="margin-top:12px">
+      <label class="full">Start from my trade <small>Adds a draft job entry and key skills you can edit</small>
+        <select id="trade"><option value="">Choose a trade…</option></select></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">04</span> Profile and key skills</h2>
+    <div class="fields">
+      <label class="full">Profile <small>Three or four lines: who you are, years of experience, what you can do for them</small><textarea data-k="summary"></textarea></label>
+      <label class="full">Key skills <small>One per line or comma separated</small><textarea data-k="skills"></textarea></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">05</span> Experience</h2>
+    <p class="hint">Newest first. Add each military posting or tour as its own entry, then civilian jobs. One duty or achievement per line, with numbers where you can.</p>
+    <div id="jobs"></div>
+    <button type="button" class="btn small" data-add="jobs">+ Add a job or posting</button>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">06</span> Qualifications and tickets</h2>
+    <p class="hint">Tap to add common ones, then fill in the details. Expiry dates matter most to security companies.</p>
+    <div class="chips" id="qual-chips"></div>
+    <div id="quals"></div>
+    <button type="button" class="btn small" data-add="quals">+ Add a qualification</button>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">07</span> Education and languages</h2>
+    <div id="edu"></div>
+    <button type="button" class="btn small" data-add="edu">+ Add education</button>
+    <div id="langs" style="margin-top:14px"></div>
+    <button type="button" class="btn small" data-add="langs">+ Add a language</button>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">08</span> References</h2>
+    <div class="fields">
+      <label class="full">References <small>Leave blank to show "Available on request"</small><textarea data-k="refs" style="min-height:70px"></textarea></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">09</span> Check for military jargon</h2>
+    <p class="hint">Recruiters at NGOs and the UN often have no military background. This finds abbreviations and service terms and suggests plain wording.</p>
+    <button type="button" class="btn primary" id="scan">Check my CV</button>
+    <div id="jargon"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">10</span> Keep your work</h2>
+    <p class="hint">This page doesn't save anything. To come back later, download your details as a file and open it here next time.</p>
+    <div class="actions">
+      <button type="button" class="btn" id="save">Download my details</button>
+      <label class="btn" style="display:inline-block">Open a saved file<input type="file" id="load" accept=".json,application/json" hidden></label>
+      <button type="button" class="btn ghost" id="example">Fill with an example</button>
+      <button type="button" class="btn ghost" id="clear">Clear everything</button>
+    </div>
+  </section>
+</form>
+
+<div class="preview" id="preview">
+  <div class="preview-bar">
+    <span class="status" id="status"></span>
+    <div class="actions">
+      <button type="button" class="btn small" id="copy">Copy as text</button>
+      <button type="button" class="btn primary small" id="print">Print or save PDF</button>
+    </div>
+  </div>
+  <div class="paper-scroll"><article class="paper" id="paper" aria-label="CV preview"></article></div>
+</div>
+</div>
+</main>
+
+<footer><div class="wrap">
+  <span>&copy; <span id="yr"></span> Hostile Environment Jobs</span>
+  <a href="/#privacy">Privacy</a>
+  <a href="/jobs/">All open jobs</a>
+  <a href="/#careers">Getting in</a>
+  <a href="/#courses">Courses</a>
+  <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
+  <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
+</div></footer>
+
+<script>
+// Everything lives in this one object in memory. Nothing is sent anywhere or written to browser storage.
+const blank = () => ({
+  format: "ngo",
+  p: { name: "", headline: "", email: "", phone: "", location: "", link: "", nationality: "", passports: "", clearance: "", availability: "", licence: "" },
+  s: { branch: "", unit: "", trade: "", rank: "", level: "", from: "", to: "", showEquiv: true },
+  summary: "", skills: "", jobs: [], quals: [], edu: [], langs: [], refs: "",
+});
+let cv = blank();
+let dirty = false;
+
+const FORMATS = {
+  un: { name: "UN", tips: [
+    "List every job in full, newest first, with month and year. Gaps raise questions on UN systems such as Inspira.",
+    "Give the number of staff you supervised for each post. UN grading leans on it.",
+    "Write duties as results: what changed because you were there.",
+    "State each language and how well you speak it. English and French are the UN working languages.",
+    "Copy the text into the online Personal History Profile as well; the PDF alone is rarely enough.",
+  ] },
+  ngo: { name: "NGO", tips: [
+    "Keep it to two pages. Lead with your profile and your most relevant mine action or field work.",
+    "Show you can train and hand over to national staff. NGOs care about capacity building.",
+    "Quote IMAS levels and standards (IMAS, NMAS, SOPs) rather than military course names alone.",
+    "Swap military terms for plain ones. Use the jargon check below.",
+  ] },
+  psc: { name: "Security", tips: [
+    "Put tickets, licences and expiry dates near the top. Recruiters screen on them first.",
+    "List deployments by country, client or contract, and role.",
+    "Include nationality, passports, clearance and availability. They decide who can be sent where.",
+    "Keep weapons and tactics detail factual and brief. Don't name clients if your contract says not to.",
+  ] },
+};
+
+// NATO rank codes, with UK Army and US Army names, mapped to a plain civilian level of responsibility.
+const LEVELS = [
+  ["OR-2", "Private (UK) · Private/PFC E-2/E-3 (US)", "operative or technician"],
+  ["OR-3", "Lance Corporal (UK)", "senior operative and deputy team leader"],
+  ["OR-4", "Corporal (UK) · Specialist/Corporal E-4 (US)", "team leader responsible for 4 to 10 people"],
+  ["OR-5", "Sergeant E-5 (US)", "team leader responsible for up to 12 people"],
+  ["OR-6", "Sergeant (UK) · Staff Sergeant E-6 (US)", "supervisor responsible for 10 to 30 people"],
+  ["OR-7", "Staff/Colour Sergeant (UK) · Sergeant First Class E-7 (US)", "senior supervisor and technical specialist"],
+  ["OR-8", "Warrant Officer Class 2 (UK) · Master/First Sergeant E-8 (US)", "operations manager for up to 120 people"],
+  ["OR-9", "Warrant Officer Class 1 (UK) · Sergeant Major E-9 (US)", "senior operations manager and principal adviser"],
+  ["OF-1", "Second Lieutenant/Lieutenant (UK) · O-1/O-2 (US)", "junior manager leading about 30 people"],
+  ["OF-2", "Captain (UK) · Captain O-3 (US)", "operations manager and deputy head of a 100-person unit"],
+  ["OF-3", "Major (UK) · Major O-4 (US)", "programme manager leading 100 to 150 people"],
+  ["OF-4", "Lieutenant Colonel (UK) · Lt Col O-5 (US)", "senior manager leading 500 to 700 people"],
+  ["OF-5", "Colonel (UK) · Colonel O-6 (US)", "director-level leader"],
+];
+
+// Starter content per trade, written for civilian readers. [N] and [X] are left for the user to fill in.
+const TRADES = {
+  at: { label: "Ammunition Technician / ATO / EOD technician", role: "Ammunition Technician (EOD and IEDD operator)",
+    duties: ["Made safe and disposed of conventional munitions and improvised explosive devices (IEDs) in high-threat areas.",
+      "Led a bomb disposal team of [N], responsible for safety, equipment and planning every task.",
+      "Inspected, stored and accounted for ammunition stockpiles worth [X] to national and NATO safety standards.",
+      "Wrote technical reports and incident records used by commanders and investigators.",
+      "Trained and assessed junior operators and partner-force EOD teams."],
+    skills: "Conventional munitions disposal (CMD)\nIED disposal\nAmmunition and stockpile management\nExplosive safety and risk assessment\nTechnical report writing\nTeam leadership" },
+  re: { label: "Royal Engineers / combat engineer (EOD and search)", role: "Combat Engineer (EOD and search)",
+    duties: ["Cleared routes and areas of explosive hazards using manual, detector and mechanical methods.",
+      "Planned and led searches of buildings, vehicles and routes as part of a [N]-person search team.",
+      "Operated and maintained detectors, ground-penetrating radar and plant.",
+      "Built and repaired roads, bridges, water supply and protective works.",
+      "Wrote search reports and briefed commanders on findings and risk."],
+    skills: "Explosive hazard clearance\nHigh-assurance search\nRoute and area clearance\nDetector and plant operation\nConstruction and field engineering\nRisk assessment" },
+  inf: { label: "Infantry / Royal Marines", role: "Infantry Section Commander",
+    duties: ["Led a team of [N] on operations in [country], responsible for their training, welfare and safety.",
+      "Planned and ran patrols, guarding and protection of sites, convoys and key people.",
+      "Trained local security forces in weapon handling, first aid and checkpoint drills.",
+      "Managed weapons, ammunition and equipment worth [X] with no losses.",
+      "Worked with interpreters and community leaders to gather information and reduce tension."],
+    skills: "Leadership under pressure\nSite and convoy security\nThreat and risk assessment\nTraining and mentoring\nFirst aid\nWeapons handling and safety" },
+  med: { label: "Combat medic / CMT / corpsman", role: "Combat Medical Technician",
+    duties: ["Gave pre-hospital emergency care to casualties in remote and hostile environments.",
+      "Ran a medical post for [N] personnel: daily clinics, treatment under protocols and patient records.",
+      "Planned casualty evacuation and worked with hospitals and aircrew to move patients.",
+      "Taught first aid and casualty care to [N] soldiers and partner-force staff a year.",
+      "Managed medical stores, cold chain and controlled drugs to audit standard."],
+    skills: "Pre-hospital trauma care\nPrimary health care in austere settings\nCasualty evacuation planning\nMedical stores and controlled drugs\nFirst aid instruction\nClinical record keeping" },
+  mp: { label: "Military Police / close protection", role: "Close Protection Team Member",
+    duties: ["Protected senior officers and visiting VIPs in [country], planning routes, venues and contingencies.",
+      "Led a protection team of [N]: advance work, vehicle drills and emergency procedures.",
+      "Investigated incidents and wrote evidence-standard reports and statements.",
+      "Worked with host-nation police, embassies and security contractors.",
+      "Carried out security surveys of sites and residences and recommended improvements."],
+    skills: "Close protection\nAdvance and route planning\nInvestigations and evidence handling\nSecurity surveys\nLiaison with police and embassies\nDefensive driving" },
+  sig: { label: "Signals / intelligence", role: "Communications and Intelligence Specialist",
+    duties: ["Set up and ran HF, VHF and satellite communications for teams spread across [area].",
+      "Kept networks running around the clock, fixing faults and managing users and encryption.",
+      "Collected and analysed information to produce threat and security assessments.",
+      "Briefed commanders daily on the security situation and trends.",
+      "Trained staff to use radios, trackers and reporting systems."],
+    skills: "HF, VHF and satellite communications\nNetwork and IT support\nThreat analysis and reporting\nInformation management\nSecurity briefings\nTraining" },
+  log: { label: "Logistics / supply / transport", role: "Logistics Supervisor",
+    duties: ["Ran supply, warehousing and fuel for a base of [N] personnel.",
+      "Planned and led road convoys moving people and stores through high-risk areas.",
+      "Managed a vehicle fleet of [N], including servicing schedules and driver training.",
+      "Accounted for equipment and stores worth [X] with clean audits.",
+      "Arranged procurement, customs and transport with local suppliers."],
+    skills: "Supply chain and warehousing\nConvoy planning and movement control\nFleet management\nProcurement\nAsset accounting\nBase and camp management" },
+  off: { label: "Officer (troop, platoon or company command)", role: "Officer Commanding",
+    duties: ["Led a unit of [N] personnel, responsible for operations, training, welfare and discipline.",
+      "Planned and led operations in [country] alongside partner forces, NGOs and local authorities.",
+      "Managed an annual budget of [X] and equipment worth [X].",
+      "Wrote plans, risk assessments and reports for senior leaders.",
+      "Built working relationships with government, UN and NGO partners."],
+    skills: "Operational planning\nPeople management\nBudget management\nStakeholder liaison\nRisk management\nReport writing" },
+};
+
+const QUAL_PRESETS = ["HEAT / HEFAT", "IMAS EOD Level 1", "IMAS EOD Level 2", "IMAS EOD Level 3", "IMAS EOD Level 3+",
+  "IMAS Non-Technical Survey", "Battle Area Clearance (BAC)", "PSSM / ammunition management", "Military IEDD (high threat)",
+  "Military search adviser", "FREC 3", "FREC 4", "TCCC", "SIA Close Protection licence", "NEBOSH International General Certificate",
+  "Off-road 4x4 driving", "HGV C+E licence"];
+const LANG_LEVELS = ["Native", "Fluent", "Working knowledge", "Basic"];
+
+// Military terms and abbreviations with plain replacements. "once" entries spell out an abbreviation the first time only.
+// Trade terms the whole sector uses (EOD, IED, IEDD, UXO, IMAS) are left alone.
+const JARGON = [
+  [/\bOp(?:eration)?\.?\s+HERRICK\b|\bHERRICK\b/i, "Op HERRICK (Afghanistan)"],
+  [/\bOp(?:eration)?\.?\s+TORAL\b|\bTORAL\b/i, "Op TORAL (Afghanistan)"],
+  [/\bOp(?:eration)?\.?\s+TELIC\b|\bTELIC\b/i, "Op TELIC (Iraq)"],
+  [/\bOp(?:eration)?\.?\s+SHADER\b|\bSHADER\b/i, "Op SHADER (Iraq and Syria)"],
+  [/\bOp(?:eration)?\.?\s+NEWCOMBE\b|\bNEWCOMBE\b/i, "Op NEWCOMBE (Mali, UN mission)"],
+  [/\bOp(?:eration)?\.?\s+TRENTON\b|\bTRENTON\b/i, "Op TRENTON (South Sudan, UN mission)"],
+  [/\bOp(?:eration)?\.?\s+TOSCA\b|\bTOSCA\b/i, "Op TOSCA (Cyprus, UN mission)"],
+  [/\bOp(?:eration)?\.?\s+CABRIT\b|\bCABRIT\b/i, "Op CABRIT (Estonia, NATO mission)"],
+  [/\bOp(?:eration)?\.?\s+BANNER\b|\bBANNER\b/, "Op BANNER (Northern Ireland)"],
+  [/\bOIF\b/, "Operation Iraqi Freedom (Iraq)"],
+  [/\bOEF\b/, "Operation Enduring Freedom (Afghanistan)"],
+  [/\btours? of duty\b/i, "deployment"],
+  [/\btours\b/, "deployments"], [/\btour\b/, "deployment"],
+  [/\bin theatre\b/i, "in the deployment area"],
+  [/\bsoldiers\b/i, "personnel"], [/\btroops\b/, "personnel"], [/\bmy (?:men|lads|blokes)\b/i, "my team"],
+  [/\bOC\b/, "officer commanding (unit manager)"], [/\bCO\b/, "commanding officer (head of unit)"],
+  [/\b2IC\b/, "deputy"], [/\bSNCOs?\b/, "senior supervisors"], [/\bJNCOs?\b/, "junior supervisors"], [/\bNCOs?\b/, "supervisors"],
+  [/\bplatoon\b/i, "team of about 30"], [/\btroop commander\b/i, "manager of a 30-person team"],
+  [/\brecces?\b/i, "reconnaissance and site surveys"], [/\bFOB\b/, "forward operating base"], [/\bPB\b/, "patrol base"],
+  [/\bQM\b/, "quartermaster (stores and logistics manager)"], [/\bMT\b/, "vehicle fleet"],
+  [/\bops room\b/i, "operations centre"], [/\bops\b/, "operations"], [/\bcomms\b/i, "communications"], [/\bkit\b/i, "equipment"],
+  [/\bbergens?\b/i, "rucksack"], [/\bSOPs\b/, "standard operating procedures (SOPs)", true], [/\bROE\b/, "rules of engagement"],
+  [/\bVCPs?\b/, "vehicle checkpoint"], [/\bQRF\b/, "quick reaction force"], [/\bOPTAG\b/, "pre-deployment training"],
+  [/\bMATTs?\b/, "mandatory annual training"], [/\bCLM\b/, "leadership and management course"],
+  [/\bCASEVAC\b/, "casualty evacuation (CASEVAC)", true], [/\bMEDEVAC\b/, "medical evacuation (MEDEVAC)", true],
+  [/\bCMD\b/, "conventional munitions disposal (CMD)", true], [/\bECM\b/, "electronic countermeasures (ECM)", true],
+  [/\bATO\b/, "Ammunition Technical Officer"], [/\bAT\b/, "Ammunition Technician"],
+  [/\bRLC\b/, "Royal Logistic Corps"], [/\bRAMC\b/, "Royal Army Medical Corps"], [/\bRMP\b/, "Royal Military Police"],
+  [/\bR SIGNALS\b/i, "Royal Corps of Signals"], [/\bCMT\b/, "Combat Medical Technician"],
+];
+
+const $ = s => document.querySelector(s);
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// Highlight [N], [X], [country] placeholders on screen so nothing gets sent half-filled.
+const fmt = t => esc(t).replace(/\[[^\]\n]{1,20}\]/g, m => `<span class="ph">${m}</span>`);
+const lines = t => String(t || "").split(/\n/).map(s => s.replace(/^\s*[-•*]\s*/, "").trim()).filter(Boolean);
+const list = t => String(t || "").split(/\n|,(?![^(]*\))/).map(s => s.replace(/^\s*[-•*]\s*/, "").trim()).filter(Boolean);
+const get = path => path.split(".").reduce((o, k) => o?.[k], cv);
+const set = (path, v) => { const ks = path.split("."), last = ks.pop(); ks.reduce((o, k) => o[k], cv)[last] = v; };
+
+// ---------- Editor ----------
+const ROWS = {
+  jobs: { label: "Job", make: () => ({ role: "", org: "", location: "", from: "", to: "", team: "", military: false, duties: "" }), fields: [
+    ["role", "Job title", "full"], ["org", "Employer or unit"], ["location", "Location", "", "e.g. Helmand, Afghanistan"],
+    ["from", "From", "", "e.g. 03/2019"], ["to", "To", "", "e.g. 09/2021 or Present"],
+    ["team", "Staff you supervised", "", "e.g. 12"], ["military", "This was military service", "check"],
+    ["duties", "Duties and achievements, one per line", "full area"]] },
+  quals: { label: "Qualification", make: () => ({ name: "", issuer: "", year: "", expiry: "" }), fields: [
+    ["name", "Qualification", "full"], ["issuer", "Issued by"], ["year", "Year", "", "e.g. 2022"],
+    ["expiry", "Expires", "", "e.g. 06/2027"]] },
+  edu: { label: "Education", make: () => ({ what: "", where: "", year: "" }), fields: [
+    ["what", "Qualification or course", "full", "e.g. BSc Explosive Ordnance Engineering"], ["where", "Where"], ["year", "Year"]] },
+  langs: { label: "Language", make: () => ({ name: "", level: "Fluent" }), fields: [["name", "Language"], ["level", "Level", "select"]] },
+};
+
+function rowHTML(kind, item, i, n) {
+  const def = ROWS[kind];
+  const field = ([f, label, cls = "", ph = ""]) => {
+    const attr = `data-list="${kind}" data-i="${i}" data-f="${f}"`;
+    if (cls.includes("check")) return `<label class="check full"><input type="checkbox" ${attr}${item[f] ? " checked" : ""}> ${label}</label>`;
+    if (cls.includes("select")) return `<label>${label}<select ${attr}>${LANG_LEVELS.map(l => `<option${l === item[f] ? " selected" : ""}>${l}</option>`).join("")}</select></label>`;
+    if (cls.includes("area")) return `<label class="full">${label}<textarea ${attr} placeholder="${esc(ph)}">${esc(item[f])}</textarea></label>`;
+    return `<label class="${cls}">${label}<input ${attr} value="${esc(item[f])}" placeholder="${esc(ph)}"></label>`;
+  };
+  return `<div class="item"><div class="item-head"><span>${def.label} ${i + 1}</span><span class="actions">
+    ${i > 0 ? `<button type="button" class="icon-btn" data-move="${kind}" data-i="${i}" data-d="-1" aria-label="Move up">&uarr;</button>` : ""}
+    ${i < n - 1 ? `<button type="button" class="icon-btn" data-move="${kind}" data-i="${i}" data-d="1" aria-label="Move down">&darr;</button>` : ""}
+    <button type="button" class="icon-btn" data-del="${kind}" data-i="${i}">Remove</button></span></div>
+    <div class="fields">${def.fields.map(field).join("")}</div></div>`;
+}
+function renderRows(kind) { $("#" + kind).innerHTML = cv[kind].map((it, i, a) => rowHTML(kind, it, i, a.length)).join(""); }
+
+function fillForm() {
+  document.querySelectorAll("[data-k]").forEach(el => { const v = get(el.dataset.k); el.type === "checkbox" ? el.checked = !!v : el.value = v ?? ""; });
+  Object.keys(ROWS).forEach(renderRows);
+  setFormat(cv.format);
+  showEquiv();
+}
+
+function setFormat(f) {
+  cv.format = f;
+  document.querySelectorAll("#formats button").forEach(b => b.setAttribute("aria-pressed", b.dataset.format === f));
+  $("#tips").innerHTML = FORMATS[f].tips.map(t => `<li>${t}</li>`).join("");
+}
+
+function showEquiv() {
+  const lv = LEVELS.find(l => l[0] === cv.s.level);
+  $("#equiv").hidden = !lv;
+  if (lv) $("#equiv").innerHTML = `${lv[0]} in civilian terms: <b>${lv[2]}</b>.`;
+}
+
+const editor = $("#editor");
+editor.addEventListener("input", e => {
+  const el = e.target, v = el.type === "checkbox" ? el.checked : el.value;
+  if (el.dataset.k) { set(el.dataset.k, v); if (el.dataset.k === "s.level") showEquiv(); }
+  else if (el.dataset.list) cv[el.dataset.list][+el.dataset.i][el.dataset.f] = v;
+  else return;
+  dirty = true; render();
+});
+editor.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.format) { setFormat(b.dataset.format); render(); }
+  else if (b.dataset.add) { cv[b.dataset.add].push(ROWS[b.dataset.add].make()); renderRows(b.dataset.add); render(); $(`#${b.dataset.add} .item:last-child input, #${b.dataset.add} .item:last-child textarea`)?.focus(); }
+  else if (b.dataset.del) { cv[b.dataset.del].splice(+b.dataset.i, 1); renderRows(b.dataset.del); render(); }
+  else if (b.dataset.move) { const a = cv[b.dataset.move], i = +b.dataset.i, j = i + +b.dataset.d; [a[i], a[j]] = [a[j], a[i]]; renderRows(b.dataset.move); render(); }
+  else if (b.dataset.qual) { cv.quals.push({ ...ROWS.quals.make(), name: b.dataset.qual }); renderRows("quals"); render(); dirty = true; }
+});
+
+$("#level").innerHTML = `<option value="">Choose…</option>` + LEVELS.map(([c, l]) => `<option value="${c}">${c} · ${esc(l)}</option>`).join("");
+$("#trade").innerHTML += Object.entries(TRADES).map(([k, t]) => `<option value="${k}">${esc(t.label)}</option>`).join("");
+$("#qual-chips").innerHTML = QUAL_PRESETS.map(q => `<button type="button" data-qual="${esc(q)}">+ ${esc(q)}</button>`).join("");
+
+$("#trade").addEventListener("change", e => {
+  const t = TRADES[e.target.value]; if (!t) return;
+  cv.jobs.push({ ...ROWS.jobs.make(), role: t.role, org: [cv.s.branch, cv.s.unit].filter(Boolean).join(", "), from: cv.s.from, to: cv.s.to, military: true, duties: t.duties.join("\n") });
+  if (!cv.s.trade) cv.s.trade = t.role;
+  cv.skills = [cv.skills.trim(), t.skills].filter(Boolean).join("\n");
+  e.target.value = ""; dirty = true; fillForm(); render();
+  $("#jobs .item:last-child").scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+// ---------- Jargon check ----------
+function textFields() {
+  const out = [["summary", "Profile"], ["skills", "Key skills"], ["s.trade", "Trade"], ["refs", "References"]].map(([k, l]) => ({ label: l, read: () => get(k), write: v => set(k, v) }));
+  cv.jobs.forEach((j, i) => ["role", "location", "duties"].forEach(f => out.push({ label: `Job ${i + 1} ${f === "role" ? "title" : f}`, read: () => j[f], write: v => j[f] = v })));
+  return out;
+}
+function findJargon() {
+  const hits = [];
+  textFields().forEach((fld, fi) => JARGON.forEach(([re, to, once], ji) => {
+    const text = fld.read() || "";
+    // Ignore terms that are already inside our own replacement text, e.g. "(IED)".
+    if (once && text.includes(to)) return;
+    const m = text.split(to).join("\u0000".repeat(to.length)).match(re);
+    if (m) hits.push({ fi, ji, field: fld.label, from: m[0], to, once });
+  }));
+  return hits;
+}
+function applyFix(h) {
+  const fld = textFields()[h.fi], [re, to, once] = JARGON[h.ji];
+  const text = fld.read(), masked = text.split(to).join("\u0000".repeat(to.length));
+  const flags = re.flags.replace("g", "");
+  if (once) { const m = masked.match(re); fld.write(text.slice(0, m.index) + to + text.slice(m.index + m[0].length)); }
+  else { let out = "", last = 0; for (const m of masked.matchAll(new RegExp(re.source, flags + "g"))) { out += text.slice(last, m.index) + to; last = m.index + m[0].length; } fld.write(out + text.slice(last)); }
+}
+function showJargon(fixedSome) {
+  const hits = findJargon();
+  $("#jargon").innerHTML = !hits.length ? `<p class="ok-msg">${fixedSome ? "All fixed. " : ""}No military jargon found. Read it once more as someone who has never served.</p>`
+    : `<div class="jargon-list">${hits.map((h, i) => `<div class="row"><span><span class="where">${esc(h.field)}</span><s>${esc(h.from)}</s> &rarr; <span class="to">${esc(h.to)}</span></span><button type="button" class="icon-btn" data-fix="${i}">Replace</button></div>`).join("")}</div>
+       <div class="actions" style="margin-top:10px"><button type="button" class="btn small" data-fix="all">Replace all ${hits.length}</button></div>`;
+  $("#jargon").onclick = e => {
+    const b = e.target.closest("[data-fix]"); if (!b) return;
+    if (b.dataset.fix === "all") { for (let n = 0, h; n < 200 && (h = findJargon()[0]); n++) applyFix(h); }
+    else applyFix(hits[+b.dataset.fix]);
+    dirty = true; fillForm(); render(); showJargon(true);
+  };
+}
+$("#scan").addEventListener("click", () => showJargon(false));
+
+// ---------- CV rendering ----------
+const contact = () => [cv.p.location, cv.p.phone, cv.p.email, cv.p.link].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("");
+const sec = (title, body) => body ? `<h2>${title}</h2>${body}` : "";
+const bullets = t => { const l = lines(t); return l.length ? `<ul>${l.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : ""; };
+const dates = (a, b) => [a, b].filter(Boolean).map(esc).join(" – ");
+const level = () => LEVELS.find(l => l[0] === cv.s.level);
+const rankLine = () => {
+  const lv = level(), r = cv.s.rank || (lv ? lv[1].split(" (")[0] : "");
+  return r ? esc(r) + (cv.s.showEquiv && lv ? ` <span class="sub">(civilian equivalent: ${esc(lv[2])})</span>` : "") : "";
+};
+const isExpired = exp => { const m = String(exp).match(/(?:(\d{1,2})\s*[\/.-]\s*)?(\d{4})/); if (!m) return false; const end = new Date(+m[2], m[1] ? +m[1] : 12, 1); return end < new Date(); };
+
+function serviceBlock() {
+  const s = cv.s;
+  if (![s.branch, s.unit, s.trade, s.rank, s.level].some(Boolean)) return "";
+  return `<div class="entry"><div class="entry-head"><h3>${esc([s.branch, s.unit].filter(Boolean).join(", ") || "Military service")}</h3><span class="dates">${dates(s.from, s.to)}</span></div>
+    ${s.trade ? `<div class="sub">${fmt(s.trade)}</div>` : ""}${rankLine() ? `<div>Final rank: ${rankLine()}</div>` : ""}</div>`;
+}
+function jobEntry(j, opts = {}) {
+  const team = j.team ? (opts.un ? "" : `<div class="sub">Led and supervised ${esc(j.team)} staff</div>`) : "";
+  const unMeta = opts.un ? `<table class="un-meta"><tbody>
+      <tr><th>Dates</th><td>${dates(j.from, j.to) || "&nbsp;"}</td></tr>
+      <tr><th>Employer</th><td>${esc(j.org)}${j.military ? " (military service)" : ""}</td></tr>
+      ${j.location ? `<tr><th>Location</th><td>${esc(j.location)}</td></tr>` : ""}
+      ${j.team ? `<tr><th>Staff supervised</th><td>${esc(j.team)}</td></tr>` : ""}</tbody></table><p class="sub" style="margin:6px 0 0">Duties and achievements</p>` : "";
+  return `<div class="entry"><div class="entry-head"><h3>${fmt(j.role || "Job title")}</h3>${opts.un ? "" : `<span class="dates">${dates(j.from, j.to)}</span>`}</div>
+    ${opts.un ? unMeta : `<div class="sub">${esc([j.org, j.location].filter(Boolean).join(", "))}</div>${team}`}${bullets(j.duties)}</div>`;
+}
+const quals = (withExpiry) => cv.quals.filter(q => q.name).map(q => `<li><b>${esc(q.name)}</b>${q.issuer ? `, ${esc(q.issuer)}` : ""}${q.year ? ` (${esc(q.year)})` : ""}${withExpiry && q.expiry ? `, valid to ${esc(q.expiry)}` : ""}</li>`).join("");
+const edu = () => cv.edu.filter(e => e.what).map(e => `<li><b>${esc(e.what)}</b>${e.where ? `, ${esc(e.where)}` : ""}${e.year ? ` (${esc(e.year)})` : ""}</li>`).join("");
+const langs = () => cv.langs.filter(l => l.name).map(l => `${esc(l.name)} (${esc(l.level.toLowerCase())})`).join(", ");
+const refs = () => cv.refs.trim() ? bullets(cv.refs) : "<p>Available on request.</p>";
+const skills = () => { const s = list(cv.skills); return s.length ? `<ul class="cols">${s.map(x => `<li>${fmt(x)}</li>`).join("")}</ul>` : ""; };
+const head = () => `<h1>${esc(cv.p.name || "Your Name")}</h1>${cv.p.headline ? `<p class="headline">${esc(cv.p.headline)}</p>` : ""}<p class="contact">${contact()}</p>`;
+const personal = keys => keys.map(([k, l]) => cv.p[k] ? `<tr><th>${l}</th><td>${esc(cv.p[k])}</td></tr>` : "").join("");
+
+const RENDER = {
+  ngo: () => head()
+    + sec("Profile", cv.summary.trim() && `<p>${fmt(cv.summary.trim()).replace(/\n+/g, "<br>")}</p>`)
+    + sec("Key skills", skills())
+    + sec("Experience", cv.jobs.map(j => jobEntry(j)).join(""))
+    + sec("Military service", serviceBlock())
+    + sec("Qualifications and training", quals(false) && `<ul>${quals(false)}</ul>`)
+    + sec("Education", edu() && `<ul>${edu()}</ul>`)
+    + sec("Languages", langs() && `<p>${langs()}</p>`)
+    + sec("Additional information", personal([["nationality", "Nationality"], ["licence", "Driving"], ["availability", "Availability"]]) && `<table><tbody>${personal([["nationality", "Nationality"], ["licence", "Driving"], ["availability", "Availability"]])}</tbody></table>`)
+    + sec("References", refs()),
+  un: () => head()
+    + sec("Personal details", personal([["nationality", "Nationality"], ["passports", "Passports"], ["location", "Current location"], ["availability", "Availability"], ["licence", "Driving licences"]]) && `<table><tbody>${personal([["nationality", "Nationality"], ["passports", "Passports"], ["location", "Current location"], ["availability", "Availability"], ["licence", "Driving licences"]])}</tbody></table>`)
+    + sec("Summary of qualifications", cv.summary.trim() && `<p>${fmt(cv.summary.trim()).replace(/\n+/g, "<br>")}</p>`)
+    + sec("Languages", cv.langs.some(l => l.name) && `<table><thead><tr><th>Language</th><th>Proficiency</th></tr></thead><tbody>${cv.langs.filter(l => l.name).map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.level)}</td></tr>`).join("")}</tbody></table>`)
+    + sec("Employment record (most recent first)", cv.jobs.map(j => jobEntry(j, { un: true })).join(""))
+    + sec("Military service", serviceBlock())
+    + sec("Education", edu() && `<ul>${edu()}</ul>`)
+    + sec("Training and certification", quals(false) && `<ul>${quals(false)}</ul>`)
+    + sec("Core competencies", skills())
+    + sec("References", refs()),
+  psc: () => head()
+    + (() => { const f = [["nationality", "Nationality"], ["passports", "Passports"], ["clearance", "Clearance"], ["availability", "Available"], ["licence", "Driving"]].filter(([k]) => cv.p[k]);
+        return f.length ? `<div class="facts">${f.map(([k, l]) => `<span><b>${l}:</b> ${esc(cv.p[k])}</span>`).join("")}</div>` : ""; })()
+    + sec("Tickets and certifications", cv.quals.some(q => q.name) && `<table><thead><tr><th>Certification</th><th>Issued by</th><th>Year</th><th>Valid to</th></tr></thead><tbody>${cv.quals.filter(q => q.name).map(q => `<tr><td><b>${esc(q.name)}</b></td><td>${esc(q.issuer)}</td><td>${esc(q.year)}</td><td${isExpired(q.expiry) ? ' class="expired"' : ""}>${esc(q.expiry) || "–"}${isExpired(q.expiry) ? '<span class="screen-only"> (expired)</span>' : ""}</td></tr>`).join("")}</tbody></table>`)
+    + sec("Profile", cv.summary.trim() && `<p>${fmt(cv.summary.trim()).replace(/\n+/g, "<br>")}</p>`)
+    + sec("Military background", serviceBlock())
+    + sec("Deployments and employment", cv.jobs.map(j => jobEntry(j)).join(""))
+    + sec("Core skills", skills())
+    + sec("Education", edu() && `<ul>${edu()}</ul>`)
+    + sec("Languages", langs() && `<p>${langs()}</p>`)
+    + sec("References", refs()),
+};
+
+function isEmpty() { return !cv.p.name && !cv.summary && !cv.jobs.length && !cv.quals.length && !cv.s.branch && !cv.skills; }
+function render() {
+  $("#paper").innerHTML = isEmpty() ? `<p class="empty-cv">Your CV appears here as you type.<br>Not sure where to start? Pick your trade in section 03, or fill with an example in section 10.</p>` : RENDER[cv.format]();
+  const ph = $("#paper").querySelectorAll(".ph").length;
+  const st = $("#status");
+  st.textContent = isEmpty() ? FORMATS[cv.format].name + " format" : ph ? `${FORMATS[cv.format].name} format · ${ph} placeholder${ph > 1 ? "s" : ""} like [N] still to fill in` : `${FORMATS[cv.format].name} format · looks complete`;
+  st.classList.toggle("warn", ph > 0);
+}
+
+// ---------- Output ----------
+$("#print").addEventListener("click", () => {
+  const ph = $("#paper").querySelectorAll(".ph").length;
+  if (ph && !confirm(`There ${ph > 1 ? `are ${ph} placeholders` : "is 1 placeholder"} like [N] still in your CV. Print anyway?`)) return;
+  const t = document.title;
+  document.title = (cv.p.name ? cv.p.name + " CV" : "CV") + ` (${FORMATS[cv.format].name})`;
+  window.print();
+  document.title = t;
+});
+$("#copy").addEventListener("click", async () => {
+  const b = $("#copy");
+  try { await navigator.clipboard.writeText($("#paper").innerText); b.textContent = "Copied"; }
+  catch { b.textContent = "Couldn't copy"; }
+  setTimeout(() => b.textContent = "Copy as text", 1800);
+});
+$("#save").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(cv, null, 2)], { type: "application/json" }));
+  a.download = (cv.p.name ? cv.p.name.replace(/[^\w-]+/g, "-") : "my") + "-cv-details.json";
+  a.click(); URL.revokeObjectURL(a.href); dirty = false;
+});
+$("#load").addEventListener("change", async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text()), b = blank();
+    cv = { ...b, ...d, p: { ...b.p, ...d.p }, s: { ...b.s, ...d.s } };
+    for (const k of Object.keys(ROWS)) cv[k] = Array.isArray(d[k]) ? d[k].map(x => ({ ...ROWS[k].make(), ...x })) : [];
+    if (!FORMATS[cv.format]) cv.format = "ngo";
+    fillForm(); render(); dirty = false;
+  } catch { alert("That file couldn't be read. Choose a file you downloaded from this page."); }
+  e.target.value = "";
+});
+$("#clear").addEventListener("click", () => { if (confirm("Clear everything on this page?")) { cv = blank(); fillForm(); render(); $("#jargon").innerHTML = ""; dirty = false; } });
+document.querySelector("[data-example]").addEventListener("click", () => { $("#example").click(); $("#preview").scrollIntoView({ behavior: "smooth" }); });
+$("#example").addEventListener("click", () => {
+  if (!isEmpty() && !confirm("Replace what you've typed with the example?")) return;
+  cv = {
+    format: cv.format,
+    p: { name: "Sam Example", headline: "EOD Technical Advisor · IMAS EOD Level 3+", email: "sam@example.com", phone: "+44 7700 900123", location: "Hereford, UK", link: "", nationality: "British", passports: "UK", clearance: "UK SC (lapsed 2025)", availability: "Immediate, rotations OK", licence: "UK full B and C+E, off-road 4x4" },
+    s: { branch: "British Army", unit: "Royal Logistic Corps", trade: "Ammunition Technician", rank: "Staff Sergeant", level: "OR-7", from: "2004", to: "2026", showEquiv: true },
+    summary: "Former British Army Ammunition Technician with 22 years in EOD, IEDD and ammunition management, including deployments to Afghanistan and Iraq and a UN mission in Mali. I have led teams of up to 30, trained partner-force operators, and now want to bring that experience to humanitarian mine action.",
+    skills: "Conventional munitions disposal\nIED disposal\nAmmunition and stockpile management\nTraining and mentoring national staff\nRisk assessment and safety\nTechnical report writing",
+    jobs: [
+      { role: "Senior Ammunition Technician", org: "British Army, 11 EOD & Search Regiment RLC", location: "UK, and Mali with the UN mission", from: "04/2019", to: "03/2026", team: "30", military: true,
+        duties: "Ran explosive safety and ammunition management for a 300-person UN contingent, with no safety incidents in 3 years.\nLed a team of 30 operators and supervisors, planning [N] EOD tasks a year.\nWrote the unit's ammunition SOPs and inspected storage to IATG standards.\nTrained 45 partner-force operators to national EOD Level 2." },
+      { role: "IEDD Team Leader", org: "British Army, 321 EOD & Search Squadron", location: "Helmand, Afghanistan", from: "09/2011", to: "03/2019", team: "8", military: true,
+        duties: "Commanded a high-threat IEDD team on two tours of Op HERRICK, clearing more than 120 IEDs.\nBriefed the OC and partner forces after every task.\nMaintained ECM and robotic equipment worth £2m." },
+    ],
+    quals: [{ name: "Military IEDD (high threat)", issuer: "Defence EOD, Munitions and Search Training Regiment", year: "2011", expiry: "" },
+      { name: "IMAS EOD Level 3+", issuer: "Mine action training provider", year: "2024", expiry: "" },
+      { name: "HEAT / HEFAT", issuer: "Centurion", year: "2023", expiry: "05/2026" },
+      { name: "FREC 3", issuer: "Qualsafe", year: "2024", expiry: "11/2027" }],
+    edu: [{ what: "Foundation Degree in Explosive Ordnance Engineering", where: "Cranfield University", year: "2016" }],
+    langs: [{ name: "English", level: "Native" }, { name: "French", level: "Basic" }],
+    refs: "",
+  };
+  fillForm(); render(); dirty = false;
+});
+
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+$("#yr").textContent = new Date().getFullYear();
+fillForm(); render();
+</script>
+<script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
