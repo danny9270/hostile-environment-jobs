@@ -241,7 +241,7 @@ def main():
         '<h1 style="margin-top:32px">Not found</h1>\n<p>This job may have closed, or the link is wrong.</p>\n'
         '<div class="actions"><a class="btn primary" href="/#jobs">See open jobs</a></div>').replace('<meta name="description"', '<meta name="robots" content="noindex">\n<meta name="description"'))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/cv/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
     print(f"Built {len(jobs)} job pages and {n_events} calendar events")
