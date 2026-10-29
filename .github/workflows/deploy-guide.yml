@@ -1,0 +1,35 @@
+# Refreshes deploy.json (FCDO and US travel advice, ReliefWeb reports) for the /deploy/ guide every day.
+name: Refresh deployment guide
+on:
+  push:
+    branches: [main]
+    paths: [deploy-countries.json, scripts/build_deploy.py, .github/workflows/deploy-guide.yml]
+  schedule:
+    - cron: "40 4 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency: deploy-guide
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/build_deploy.py
+        env:
+          # Optional: an approved ReliefWeb app name (https://apidoc.reliefweb.int/parameters#appname), set as a repo variable.
+          RELIEFWEB_APPNAME: ${{ vars.RELIEFWEB_APPNAME }}
+      - name: Commit changes and rebuild the site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add deploy.json
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh deployment guide"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+          # Pushes made with the workflow token don't start a Pages build on their own.
+          if [ "${{ github.ref_name }}" = main ]; then gh api -X POST "repos/${{ github.repository }}/pages/builds"; fi
