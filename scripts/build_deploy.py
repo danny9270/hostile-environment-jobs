@@ -96,13 +96,16 @@ def fcdo(slug):
     d = json.loads(get(f"https://www.gov.uk/api/content/foreign-travel-advice/{slug}"))
     det = d["details"]
     parts = {p["slug"]: p for p in det.get("parts", [])}
+    if not parts:
+        raise ValueError("no advice parts (page moved or withdrawn?)")
     level, alert = max((ALERTS.get(a, (0, "")) for a in det.get("alert_status") or []), default=(1, "FCDO does not advise against travel"))
 
     def link(part):
         return f"{url}/{part}"
 
     warnings = [clip(t) for h2, h3, ps in sections(parts.get("warnings-and-insurance", {}).get("body"))
-                if not re.search(r"insurance|before you travel|travel advice help|consular", h2 + h3, re.I) for t in ps][:4]
+                if not re.search(r"insurance|before you travel|travel advice help|consular", h2 + h3, re.I)
+                for t in ps if not re.search(r"insurance could be invalidated", t)][:4]
 
     security, laws = [], []
     for slug_ in ("safety-and-security", "terrorism", "local-laws-and-customs", "regional-risks"):
@@ -110,7 +113,9 @@ def fcdo(slug):
             head = h3 or h2
             if re.search(r"law|custom|cultur", h2 + " " + slug_, re.I):
                 if h3 and len(laws) < 8:
-                    laws.append({"heading": h3, "text": clip(ps[0], 320), "url": link(slug_)})
+                    laws.append({"heading": h3, "text": clip(" ".join(ps[:4]), 320), "url": link(slug_)})
+            elif ps[0].startswith("There is a high threat of terrorist attack globally"):
+                continue  # the same worldwide paragraph appears on every country
             elif SECURITY.search(head) and len(security) < 8 and not any(s["heading"] == head for s in security):
                 security.append({"heading": head, "text": clip(" ".join(ps[:2])), "url": link(slug_)})
 
@@ -138,7 +143,7 @@ def us_advisories():
                 date = datetime.datetime.strptime(date.strip()[:16], "%a, %d %b %Y").date().isoformat()
             except ValueError:
                 date = ""
-            out[m.group(1).strip()] = {"level": int(m.group(2)), "title": m.group(3).strip(), "date": date,
+            out[m.group(1).strip().lower()] = {"level": int(m.group(2)), "title": m.group(3).strip(), "date": date,
                                        "url": (item.findtext("link") or "").strip()}
     return out
 
@@ -175,7 +180,9 @@ def main():
         except Exception as err:
             errors.append(f"FCDO {c['fcdo']}: {err}")
             row["fcdo"] = prev.get("fcdo")
-        adv = us.get(US_NAMES.get(c["iso2"], c["name"]))
+        adv = us.get(US_NAMES.get(c["iso2"], c["name"]).lower())
+        if us and not adv:
+            errors.append(f"US advisory not found for {c['name']}; names starting {c['name'][:3]!r}: {[k for k in us if k.startswith(c['name'][:3].lower())]}")
         row["us"] = adv or prev.get("us")
         row["reports"] = prev.get("reports", [])
         if rw_ok:
