@@ -1,7 +1,9 @@
 {
- "updated": "2026-10-29T15:38:46Z",
+ "updated": "2026-10-29T15:40:05Z",
  "errors": [
-  "ReliefWeb: HTTP Error 403: Forbidden"
+  "ReliefWeb: HTTP Error 403: Forbidden",
+  "US advisory not found for Israel; names starting 'Isr': ['israel']",
+  "US advisory not found for Palestine; names starting 'Pal': ['palau']"
  ],
  "countries": [
   {
@@ -47,17 +49,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Somalia, including Somaliland, except for the regions of Awdal, Maroodijeh, and Sahil.",
      "FCDO advises against all but essential travel to the regions of Awdal, Maroodijeh, and Sahil.",
-     "This is due to the threat from terrorist groups and continuing violence. If you choose to remain in Somalia, you do so at your own risk. You should have a personal emergency plan that does not rely on the UK government."
+     "This is due to the threat from terrorist groups and continuing violence. If you choose to remain in Somalia, you do so at your own risk. You should have a personal emergency plan that does not rely on the UK government.",
+     "Find out more about why FCDO advises against travel. There has recently been an increase in fighting between al-Shabaab and the Somali Government close to the capital Mogadishu. Please see the Terrorism section for more information."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/somalia/safety-and-security"
-     },
      {
       "heading": "Terrorism in Somalia",
       "text": "Terrorists are very likely to try to carry out attacks in Somalia, including Somaliland. The terrorist group Al Shabaab, and other groups opposed to the Federal Government, continue to carry out frequent attacks, including in the capital Mogadishu. Terrorist groups operating in Somalia have made threats against westerners and those working for western organisations in Somalia, including Somaliland.",
@@ -92,12 +89,12 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/somalia/safety-and-security"
      },
      {
       "heading": "Public offences",
-      "text": "Somalia has adopted Sharia law but is yet to implement it throughout the country. Al-Shabaab and other insurgent groups often have an extreme view on how to apply Sharia law.",
+      "text": "Somalia has adopted Sharia law but is yet to implement it throughout the country. Al-Shabaab and other insurgent groups often have an extreme view on how to apply Sharia law. It’s illegal for Somali Muslims to convert to another religion or promote any religion other than Islam.",
       "url": "https://www.gov.uk/foreign-travel-advice/somalia/safety-and-security"
      },
      {
@@ -112,12 +109,12 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual activity is illegal in Somalia. LGBT+ partners should not show affection in public.",
+      "text": "Same-sex sexual activity is illegal in Somalia. LGBT+ partners should not show affection in public. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/somalia/safety-and-security"
      },
      {
       "heading": "Money",
-      "text": "Credit cards are not widely accepted in Somalia and it is not possible to get currency advances using a credit card. You should take cash with you into the country. The US dollar is the main currency for exchanging in Somalia.",
+      "text": "Credit cards are not widely accepted in Somalia and it is not possible to get currency advances using a credit card. You should take cash with you into the country. The US dollar is the main currency for exchanging in Somalia. In Hargeisa you can withdraw US dollars from ATMs using international credit and debit cards.",
       "url": "https://www.gov.uk/foreign-travel-advice/somalia/safety-and-security"
      }
     ],
@@ -191,11 +188,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Ethiopia",
       "text": "Terrorists are very likely to try to carry out attacks in Ethiopia. There is a threat of terrorism across Ethiopia. Attacks could target westerners, including British nationals. These could occur at any time including at religious events, public holidays or celebrations. Attacks could be indiscriminate and occur in places visited by foreign nationals, such as:",
       "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
@@ -229,6 +221,11 @@
       "heading": "Landmines and unexploded bombs",
       "text": "There is a continued risk of landmines and other unexploded ordinances following the end of the 2020-2022 northern Ethiopia conflict. The main areas of risk are:",
       "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
+     },
+     {
+      "heading": "Border areas",
+      "text": "FCDO advises against all travel to within: 20km of the border with Sudan",
+      "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/regional-risks"
      }
     ],
     "laws": [
@@ -239,7 +236,7 @@
      },
      {
       "heading": "Religious customs",
-      "text": "Ethiopia is religiously diverse and largely tolerant. However, many people are devout in their faith. Take care to not offend local traditions, customs, laws and religions. Dress conservatively and observe local customs. Take particular care if travelling:",
+      "text": "Ethiopia is religiously diverse and largely tolerant. However, many people are devout in their faith. Take care to not offend local traditions, customs, laws and religions. Dress conservatively and observe local customs. Take particular care if travelling: during the Islamic holy month of Ramadan to religious sites of…",
       "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
      },
      {
@@ -249,7 +246,7 @@
      },
      {
       "heading": "Date and time",
-      "text": "Traditionally Ethiopia has a different calendar and way of expressing time than are widely used internationally.",
+      "text": "Traditionally Ethiopia has a different calendar and way of expressing time than are widely used internationally. Most documents issued by hotels and larger organisations, including airline tickets, use the international calendar and clock. However: official documents are often dated using the Ethiopian calendar…",
       "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
      },
      {
@@ -259,7 +256,7 @@
      },
      {
       "heading": "Illegal drugs and prison sentences",
-      "text": "Drug offences are treated seriously in Ethiopia. Possession of drugs can lead to prison sentences of 5 to 10 years and potentially large fines.",
+      "text": "Drug offences are treated seriously in Ethiopia. Possession of drugs can lead to prison sentences of 5 to 10 years and potentially large fines. Khat is legal in Ethiopia, but it is illegal to take it out of the country. If you’re found with it in your baggage, the authorities are likely to prosecute you.",
       "url": "https://www.gov.uk/foreign-travel-advice/ethiopia/safety-and-security"
      },
      {
@@ -335,17 +332,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against FCDO advice.",
      "FCDO advises against all travel to within 25km of all of Eritrea’s land borders.",
      "FCDO advises against all but essential travel to the rest of Eritrea.",
-     "Find out more about why FCDO advises against travel."
+     "Find out more about why FCDO advises against travel.",
+     "Tensions between Eritrea and Ethiopia are high. If a crisis develops in Eritrea, the situation could change quickly, including your ability to travel within Eritrea or leave the country. Practical support from the British government such as face-to-face consular support or evacuation may be severely limited in a crisis. Read our general guidance on consular support in a crisis."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/eritrea/safety-and-security"
-     },
      {
       "heading": "Terrorism in Eritrea",
       "text": "Although there’s no recent history of terrorism in Eritrea, attacks cannot be ruled out.",
@@ -380,6 +372,11 @@
       "heading": "Eritrea-Sudan border",
       "text": "FCDO advises against all travel to within 25km of Eritrea’s border with Sudan because of military activity on both sides of the border.",
       "url": "https://www.gov.uk/foreign-travel-advice/eritrea/regional-risks"
+     },
+     {
+      "heading": "Landmines near borders",
+      "text": "There is a risk of landmines near Eritrea’s borders, particularly in the Eritrea-Ethiopia and Eritrea-Djibouti border areas. If you are in the border area against FCDO advice, do not leave the main paved highways by car or on foot.",
+      "url": "https://www.gov.uk/foreign-travel-advice/eritrea/regional-risks"
      }
     ],
     "laws": [
@@ -390,7 +387,7 @@
      },
      {
       "heading": "Internet and phone access",
-      "text": "Internet access is highly restricted in Eritrea, mainly limited to hotels and a small number of internet cafes. There is no 3G in the country. The national telephone networks are often unreliable and may only work for limited periods each day outside Asmara and larger towns.",
+      "text": "Internet access is highly restricted in Eritrea, mainly limited to hotels and a small number of internet cafes. There is no 3G in the country. The national telephone networks are often unreliable and may only work for limited periods each day outside Asmara and larger towns. International SIM cards do not work in…",
       "url": "https://www.gov.uk/foreign-travel-advice/eritrea/safety-and-security"
      },
      {
@@ -400,7 +397,7 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual activity is illegal. If convicted, you can get a prison sentence.",
+      "text": "Same-sex sexual activity is illegal. If convicted, you can get a prison sentence. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/eritrea/safety-and-security"
      }
     ],
@@ -462,17 +459,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to the Djibouti-Eritrea border.",
      "FCDO provides advice about risks of travel to help you make informed decisions. Find out more about FCDO travel advice.",
-     "Sign up to get email notifications when this travel advice is updated."
+     "Sign up to get email notifications when this travel advice is updated.",
+     "Follow FCDO:"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/djibouti/safety-and-security"
-     },
      {
       "heading": "Terrorism in Djibouti",
       "text": "Terrorists are likely to try to carry out attacks in Djibouti. Terrorism attacks could be indiscriminate, including in crowded areas and places frequented by foreign nationals, such as:",
@@ -502,7 +494,7 @@
     "laws": [
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/djibouti/safety-and-security"
      },
      {
@@ -522,7 +514,7 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual behaviour is not illegal but is not common in Djiboutian public life. Same-sex couples showing affection in public could attract the attention of the authorities under laws around “good morals”.",
+      "text": "Same-sex sexual behaviour is not illegal but is not common in Djiboutian public life. Same-sex couples showing affection in public could attract the attention of the authorities under laws around “good morals”. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/djibouti/safety-and-security"
      }
     ],
@@ -588,17 +580,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "Due to the risk of terrorism from groups based in Somalia, FCDO advises against all travel to:",
      "Mandera County",
-     "Tarbaj and Wajir East constituencies in Wajir County, except for Wajir Town"
+     "Tarbaj and Wajir East constituencies in Wajir County, except for Wajir Town",
+     "areas of Wajir County within 60km of Kenya’s border with Somalia"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/kenya/safety-and-security"
-     },
      {
       "heading": "Terrorism in Kenya",
       "text": "Terrorists are very likely to try to carry out attacks in Kenya. There is a heightened threat of terrorism across Kenya. Attacks could target westerners, including British nationals. These could occur at any time including at religious events, public holidays or celebrations. Attacks are indiscriminate and could occur in places visited by foreigners, including tourists, such as, but not limited to:",
@@ -663,7 +650,7 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual activity is illegal and same-sex relationships are not tolerated in Kenya’s conservative society. Showing affection in public could lead to arrest and imprisonment. See the ‘Social media and dating apps’ subheading for more advice.",
+      "text": "Same-sex sexual activity is illegal and same-sex relationships are not tolerated in Kenya’s conservative society. Showing affection in public could lead to arrest and imprisonment. See the ‘Social media and dating apps’ subheading for more advice. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/kenya/safety-and-security"
      },
      {
@@ -730,17 +717,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Sudan because of the ongoing military conflict in Khartoum and other parts of the country. This does not include the Hala’ib Triangle and the Bir Tawil Trapezoid where FCDO advises against all but essential travel.",
      "There have been several ceasefires, but these have been regularly broken.",
-     "Monitor travel advice and other media reports for the latest information."
+     "Monitor travel advice and other media reports for the latest information.",
+     "Find out more about safety and security in Sudan."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/sudan/safety-and-security"
-     },
      {
       "heading": "Terrorism in Sudan",
       "text": "Terrorists are likely to try to carry out attacks in Sudan Terrorism attacks could be indiscriminate, including in places frequented by foreigners, such as:",
@@ -795,17 +777,17 @@
      },
      {
       "heading": "Alcohol and drug laws",
-      "text": "Non-Muslims are allowed to drink alcohol in Sudan, but not in the presence of Muslims. However, you may still be arrested for drinking alcohol regardless of the circumstances.",
+      "text": "Non-Muslims are allowed to drink alcohol in Sudan, but not in the presence of Muslims. However, you may still be arrested for drinking alcohol regardless of the circumstances. There are severe penalties for drug trafficking.",
       "url": "https://www.gov.uk/foreign-travel-advice/sudan/safety-and-security"
      },
      {
       "heading": "Using cameras in secure areas",
-      "text": "Due to the conflict, it is not advisable to take photographs in secure areas in Sudan. Do not take photographs or use a mobile phone camera close to:",
+      "text": "Due to the conflict, it is not advisable to take photographs in secure areas in Sudan. Do not take photographs or use a mobile phone camera close to: government buildings military installations public utilities, including petrol stations",
       "url": "https://www.gov.uk/foreign-travel-advice/sudan/safety-and-security"
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual activity is illegal in Sudan and not tolerated in Sudanese society. This includes inviting guests into hotel rooms.",
+      "text": "Same-sex sexual activity is illegal in Sudan and not tolerated in Sudanese society. This includes inviting guests into hotel rooms. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/sudan/safety-and-security"
      },
      {
@@ -885,17 +867,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to South Sudan due to the risk of armed violence and criminality.",
      "See more about safety and security in South Sudan.",
-     "The political and security situation remains unpredictable. Political tensions are high and the security situation across the country could deteriorate rapidly and unpredictably."
+     "The political and security situation remains unpredictable. Political tensions are high and the security situation across the country could deteriorate rapidly and unpredictably.",
+     "If the unstable security situation deteriorates, routes into and out of South Sudan may be blocked. Juba airport may close or be inaccessible. Flights may be cancelled at short notice."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/south-sudan/safety-and-security"
-     },
      {
       "heading": "Terrorism in South Sudan",
       "text": "Although there’s no recent history of terrorism in South Sudan, attacks cannot be ruled out. Attacks could be indiscriminate including in places visited by foreigners. Stay aware of your surroundings, keep up to date with local media reports and follow the advice of local authorities.",
@@ -940,12 +917,12 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex relationships are not culturally accepted. Same-sex sexual activity between men is illegal and punishable by a prison sentence of up to 14 years. LGBT+ travellers are at risk of discrimination and violence.",
+      "text": "Same-sex relationships are not culturally accepted. Same-sex sexual activity between men is illegal and punishable by a prison sentence of up to 14 years. LGBT+ travellers are at risk of discrimination and violence. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/south-sudan/safety-and-security"
      },
      {
       "heading": "Money",
-      "text": "International credit and debit cards are not widely accepted, although some of the newer hotels and supermarkets are starting to.",
+      "text": "International credit and debit cards are not widely accepted, although some of the newer hotels and supermarkets are starting to. ATMs are hard to find, and it is often not possible to use international cards. You can use your credit or debit card to withdraw money in some supermarkets. Bring large denomination US…",
       "url": "https://www.gov.uk/foreign-travel-advice/south-sudan/safety-and-security"
      }
     ],
@@ -1022,11 +999,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Uganda",
       "text": "Terrorists are very likely to try to carry out attacks in Uganda. Attacks could be indiscriminate, including in major cities and places frequented by foreign nationals and tourists, such as:",
       "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
@@ -1055,7 +1027,7 @@
     "laws": [
      {
       "heading": "National cleaning day",
-      "text": "The final Saturday of each month, between 7 and 10 am, is a mandatory and nationwide cleaning day.",
+      "text": "The final Saturday of each month, between 7 and 10 am, is a mandatory and nationwide cleaning day. According to Government of Uganda guidance, Ugandans are expected to clean homes, neighbourhoods, markets, schools, health facilities, places of worship, roads, drainage channels and other public spaces. Foreigners are…",
       "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
      },
      {
@@ -1075,7 +1047,7 @@
      },
      {
       "heading": "Smoking and e-cigarette bans",
-      "text": "It is illegal to smoke in:",
+      "text": "It is illegal to smoke in: public places workplaces transport",
       "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
      },
      {
@@ -1085,12 +1057,12 @@
      },
      {
       "heading": "Using cameras in secure areas",
-      "text": "It is forbidden to take photos of military, official or diplomatic sites. This includes Owen Falls Dam at the source of the Nile near Jinja.",
+      "text": "It is forbidden to take photos of military, official or diplomatic sites. This includes Owen Falls Dam at the source of the Nile near Jinja. If you are taking photographs of people, ask their permission first.",
       "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual activity is illegal in Uganda.",
+      "text": "Same-sex sexual activity is illegal in Uganda. In May 2023, Uganda introduced the Anti-Homosexuality Act 2023. This act introduces long prison sentences, and the death penalty in some cases, for same-sex sexual activity. There are also severe penalties for promoting LGBT+ rights. Sexual activity with someone of the…",
       "url": "https://www.gov.uk/foreign-travel-advice/uganda/safety-and-security"
      }
     ],
@@ -1163,11 +1135,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Morocco",
       "text": "Terrorists are likely to try to carry out attacks in Morocco. Terrorism attacks could be indiscriminate, including in places visited by foreign nationals, such as:",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
@@ -1186,22 +1153,22 @@
     "laws": [
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, eating or drinking, swearing, smoking or chewing gum in public in the daytime may cause offence.",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, eating or drinking, swearing, smoking or chewing gum in public in the daytime may cause offence. Get more advice when you arrive from your tour guide, hotel or business contacts, where applicable.…",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
      },
      {
       "heading": "Laws against religious conversion",
-      "text": "It is illegal to attempt to convert a Muslim to another faith and to distribute evangelical literature (such as Arabic-language bibles). Attempting to convert a Muslim to another faith can result in fines or up to 3 years’ imprisonment.",
+      "text": "It is illegal to attempt to convert a Muslim to another faith and to distribute evangelical literature (such as Arabic-language bibles). Attempting to convert a Muslim to another faith can result in fines or up to 3 years’ imprisonment. Public criticism of Islam, including in speeches, print or online media, can…",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
      },
      {
       "heading": "Sexual relations outside of marriage",
-      "text": "Sexual activity between unmarried people and adultery are illegal for Moroccan nationals – this includes sharing a hotel room, particularly with foreign nationals.",
+      "text": "Sexual activity between unmarried people and adultery are illegal for Moroccan nationals – this includes sharing a hotel room, particularly with foreign nationals. The law regarding unmarried people sharing a hotel room does not generally apply to visiting foreign nationals, particularly in popular tourist areas.…",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Same-sex sexual relations are illegal in Morocco. Showing affection in public can lead to prosecution. Meeting people through online applications, can carry legal, personal safety and privacy risks.",
+      "text": "Same-sex sexual relations are illegal in Morocco. Showing affection in public can lead to prosecution. Meeting people through online applications, can carry legal, personal safety and privacy risks. See more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
      },
      {
@@ -1211,7 +1178,7 @@
      },
      {
       "heading": "Illegal drugs",
-      "text": "Morocco has a zero-tolerance approach towards drugs. Possessing, using or trafficking illegal drugs, including cannabis, are serious offences and carry severe penalties.",
+      "text": "Morocco has a zero-tolerance approach towards drugs. Possessing, using or trafficking illegal drugs, including cannabis, are serious offences and carry severe penalties. You should expect a long jail sentence and heavy fines for these actions, including when transiting through the country. Airports in Morocco are…",
       "url": "https://www.gov.uk/foreign-travel-advice/morocco/safety-and-security"
      },
      {
@@ -1283,17 +1250,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to within 30km of Algeria’s borders with:",
      "Libya",
-     "Mauritania"
+     "Mauritania",
+     "Mali"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/algeria/safety-and-security"
-     },
      {
       "heading": "Terrorism in Algeria",
       "text": "Terrorists are likely to try to carry out attacks in Algeria. Terrorist attacks could be indiscriminate, including in places visited by foreign nationals, such as:",
@@ -1323,7 +1285,7 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/algeria/safety-and-security"
      },
      {
@@ -1348,12 +1310,12 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Sexual acts between people of the same sex are illegal in Algeria.",
+      "text": "Sexual acts between people of the same sex are illegal in Algeria. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/algeria/safety-and-security"
      },
      {
       "heading": "Family law and child custody",
-      "text": "Algerian family law is different from UK law. Mothers cannot renew their children’s passports without written consent from the father. Fathers can renew their children’s passports without needing the mother’s consent.",
+      "text": "Algerian family law is different from UK law. Mothers cannot renew their children’s passports without written consent from the father. Fathers can renew their children’s passports without needing the mother’s consent. Algerian nationals, including dual-nationals, who enter the country on an Algerian passport, must…",
       "url": "https://www.gov.uk/foreign-travel-advice/algeria/safety-and-security"
      }
     ],
@@ -1419,17 +1381,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to:",
      "the Chaambi Mountains National Park",
-     "the designated military operations zones:"
+     "the designated military operations zones:",
+     "Mount Salloum"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/tunisia/safety-and-security"
-     },
      {
       "heading": "Terrorism in Tunisia",
       "text": "Terrorists are likely to try to carry out attacks in Tunisia. Security forces remain on a high state of alert in Tunis and other places. You may be at higher risk in and around:",
@@ -1464,7 +1421,7 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, eating or drinking, smoking or chewing gum in public in the daytime may cause offence.",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country, next starting in February 2027. During this time, eating or drinking, smoking or chewing gum in public in the daytime may cause offence. Get more advice when you arrive from your tour guide, hotel or business contacts. You should also: check…",
       "url": "https://www.gov.uk/foreign-travel-advice/tunisia/safety-and-security"
      },
      {
@@ -1559,17 +1516,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Libya except for the cities of:",
      "Tripoli",
-     "Benghazi, Al-Bayda and Derna, and the surrounding area known as Jebel Akhdar, either side of the coastal and desert roads between and including the towns of Al-Maqrun and Al-Tamimi"
+     "Benghazi, Al-Bayda and Derna, and the surrounding area known as Jebel Akhdar, either side of the coastal and desert roads between and including the towns of Al-Maqrun and Al-Tamimi",
+     "Misrata"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/libya/safety-and-security"
-     },
      {
       "heading": "Terrorism in Libya",
       "text": "Terrorist attacks in Libya cannot be ruled out. Attacks could be indiscriminate, including in places visited by foreigners. British people and nationals of other western countries are considered high-value hostages. Government buildings and security checkpoints have also been targeted in recent years, leading to deaths.",
@@ -1599,7 +1551,7 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Libya is an Islamic country. Respect local traditions, laws and religious customs, especially during the holy month of Ramadan.",
+      "text": "Libya is an Islamic country. Respect local traditions, laws and religious customs, especially during the holy month of Ramadan. Ramadan dates vary by year and country. During this time do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance",
       "url": "https://www.gov.uk/foreign-travel-advice/libya/safety-and-security"
      },
      {
@@ -1614,7 +1566,7 @@
      },
      {
       "heading": "Methanol poisoning",
-      "text": "There has been an increase in cases of serious illness caused by alcoholic drinks containing methanol around the world.",
+      "text": "There has been an increase in cases of serious illness caused by alcoholic drinks containing methanol around the world. Even small amounts of methanol can kill. It is not possible to identify methanol in alcoholic drinks by taste or smell. See Travel Aware Drink Spiking and Methanol Poisoning for information about how…",
       "url": "https://www.gov.uk/foreign-travel-advice/libya/safety-and-security"
      },
      {
@@ -1691,17 +1643,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to within 20km of the Egypt-Libya border, except for the town of El Salloum, where we advise against all but essential travel.",
      "FCDO advises against all travel to the North Sinai Governorate.",
-     "FCDO advises against all but essential travel to the northern part of the South Sinai Governorate, beyond the St Catherine-Nuweibaa road, except for the coastal areas along the west and east of the peninsula."
+     "FCDO advises against all but essential travel to the northern part of the South Sinai Governorate, beyond the St Catherine-Nuweibaa road, except for the coastal areas along the west and east of the peninsula.",
+     "FCDO advises against all but essential travel to the Ismailiyah Governorate east of the Suez Canal."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security"
-     },
      {
       "heading": "Terrorism in Egypt",
       "text": "Terrorists are likely to try to carry out attacks in Egypt. Terrorist attacks could be indiscriminate including in places visited by foreign nationals. Stay aware of your surroundings, keep up to date with local media reports and follow the advice of local authorities. Be vigilant in crowds and large gatherings.",
@@ -1731,7 +1678,7 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country and you should check this before you travel. During this time, it is culturally insensitive to eat, drink or smoke in public during daylight hours. It is advisable not to play loud music, dance or swear in public.",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country and you should check this before you travel. During this time, it is culturally insensitive to eat, drink or smoke in public during daylight hours. It is advisable not to play loud music, dance or swear in public. Get more advice when you arrive…",
       "url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security"
      },
      {
@@ -1756,12 +1703,12 @@
      },
      {
       "heading": "Illegal drugs penalties",
-      "text": "Possession, use or trafficking of illegal drugs is a serious offence and can, even for small amounts, lead to life imprisonment or the death penalty. People who get a life sentence on drugs charges normally spend the rest of their lives in prison with no chance of parole or a pardon.",
+      "text": "Possession, use or trafficking of illegal drugs is a serious offence and can, even for small amounts, lead to life imprisonment or the death penalty. People who get a life sentence on drugs charges normally spend the rest of their lives in prison with no chance of parole or a pardon. Khat is illegal in Egypt.",
       "url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security"
      },
      {
       "heading": "Photography and filming restrictions",
-      "text": "You must get a permit to enter Egypt with professional photography or film equipment. This includes photography umbrellas, artificial outdoor lighting gear and any equipment that occupies or blocks public roads.",
+      "text": "You must get a permit to enter Egypt with professional photography or film equipment. This includes photography umbrellas, artificial outdoor lighting gear and any equipment that occupies or blocks public roads. It is illegal to take or share photos that could be considered damaging to the country’s image. Ministry of…",
       "url": "https://www.gov.uk/foreign-travel-advice/egypt/safety-and-security"
      }
     ],
@@ -1835,10 +1782,10 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Gaza",
      "FCDO advises against all travel within 500m of the border with Gaza",
-     "FCDO advises against all travel to:"
+     "FCDO advises against all travel to:",
+     "Tulkarm Governorate, Jenin Governorate, and Tubas Governorate except Route 90"
     ],
     "security": [
      {
@@ -1862,11 +1809,6 @@
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
      },
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Israel and Palestine",
       "text": "Terrorists are very likely to try to carry out attacks in Israel and Palestine. There was a large-scale terrorist attack by Hamas into southern Israel on 7 October 2023 where over 1,200 people were killed. Hamas continue to launch rockets into Israel and the Israeli Defence Forces are conducting significant military activity in Gaza.",
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
@@ -1880,6 +1822,11 @@
       "heading": "Political situation",
       "text": "There was an ongoing conflict between Israel and Hamas following the October 7 2023 Hamas terrorist attack which saw 251 people kidnapped into Gaza. On 10 October, Hamas and Israel agreed to a ceasefire. There remains a risk that hostilities could reignite, and with little warning. You should check Home Front Command for the latest guidance. Restrictions may be put in place at short notice. If travelling near…",
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
+     },
+     {
+      "heading": "Demonstrations and armed clashes",
+      "text": "Large political demonstrations can: happen across Israel and Palestine",
+      "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
      }
     ],
     "laws": [
@@ -1890,12 +1837,12 @@
      },
      {
       "heading": "Dress code",
-      "text": "In Jerusalem, the West Bank and Gaza, clothing should cover your shoulders, upper arms, and legs above the knee.",
+      "text": "In Jerusalem, the West Bank and Gaza, clothing should cover your shoulders, upper arms, and legs above the knee. Locals in ultra-Orthodox Jewish neighbourhoods such as Bnei Brak, Modi’in Illit, Beitar Illit, Beit Shemesh and Safed can react strongly to anyone, particularly women, dressed less conservatively. Check…",
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. If you are in Palestine during this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. If you are in Palestine during this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
      },
      {
@@ -1915,7 +1862,7 @@
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Israeli law does not criminalise same-sex sexual relations between consenting adults. In Palestine, same-sex sexual activity is legal in the West Bank but illegal in Gaza, where it carries a 10-year prison sentence.",
+      "text": "Israeli law does not criminalise same-sex sexual relations between consenting adults. In Palestine, same-sex sexual activity is legal in the West Bank but illegal in Gaza, where it carries a 10-year prison sentence. Attitudes towards LGBT+ issues in some parts of Palestinian and Israeli society can be hostile. In more…",
       "url": "https://www.gov.uk/foreign-travel-advice/israel/safety-and-security"
      },
      {
@@ -1937,7 +1884,7 @@
   },
   {
    "iso2": "PS",
-   "name": "Palestine (OPTs)",
+   "name": "Palestine",
    "region": "Middle East",
    "place": "Ramallah",
    "lat": 31.9038,
@@ -1949,17 +1896,130 @@
     "Ask before photographing people, and never photograph checkpoints or security forces."
    ],
    "fcdo": {
-    "url": "https://www.gov.uk/foreign-travel-advice/the-occupied-palestinian-territories",
-    "level": 1,
-    "alert": "FCDO does not advise against travel",
-    "updated": "2025-09-21",
-    "reviewed": "",
-    "changes": [],
-    "warnings": [],
-    "security": [],
-    "laws": [],
-    "visa": [],
-    "visa_url": "https://www.gov.uk/foreign-travel-advice/the-occupied-palestinian-territories/entry-requirements"
+    "url": "https://www.gov.uk/foreign-travel-advice/palestine",
+    "level": 3,
+    "alert": "FCDO advises against all travel to parts of the country",
+    "updated": "2026-10-27",
+    "reviewed": "2026-10-27",
+    "changes": [
+     {
+      "date": "2026-10-27",
+      "note": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
+     },
+     {
+      "date": "2026-07-22",
+      "note": "Updated information about regional tensions, including information about recent strikes and retaliatory attacks by Iran ('Warnings insurance') page."
+     },
+     {
+      "date": "2026-06-18",
+      "note": "Updated information about regional tensions and conflict affecting Palestine (‘Warnings and insurance’ page)."
+     },
+     {
+      "date": "2026-06-08",
+      "note": "Updated information about regional escalation following Iranian missile strikes ('Warnings and insurance’ page)."
+     },
+     {
+      "date": "2026-06-03",
+      "note": "FCDO no longer advises against all travel to Israel and Palestine but continues to advise against all travel to Gaza, parts of the West Bank and parts of northern Israel and the occupied Golan Heights. FCDO advises against all but essential travel to other parts of the West Bank (‘Warnings and…"
+     }
+    ],
+    "warnings": [
+     "FCDO advises against all travel to Gaza",
+     "FCDO advises against all travel within 500m of the border with Gaza",
+     "FCDO advises against all travel to:",
+     "Tulkarm Governorate, Jenin Governorate, and Tubas Governorate except Route 90"
+    ],
+    "security": [
+     {
+      "heading": "Conflict between Lebanese Hizballah and Israel",
+      "text": "Following the conflict between Israel and Lebanese Hizballah (LH), a cessation of hostilities was announced on 16 April 2026. However, fighting continues and the dynamic nature of the conflict means the situation may change quickly. There remains a risk that hostilities could reignite, and with little warning. Check Home Front Command for the latest guidance. Restrictions may be put in place at short notice.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Conflict between Iran and Israel",
+      "text": "Following the conflict between Israel and Iran a ceasefire was agreed on 8 April 2026. There remains a risk that hostilities could reignite, and with little warning. Check Home Front Command for the latest guidance. Restrictions may be put in place at short notice.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Conflict between the Houthis (in Yemen) and Israel",
+      "text": "Following the conflict between Israel and the Houthis (in Yemen), there continues to be a risk of missile and drone attacks throughout Israel. There is a risk of shrapnel from intercepted missiles falling across Israel and Palestine and possible disruption at Ben Gurion airport. On 22 and 24 September 2025, two drones fired by the Houthis fell in Eilat, injuring at least 20 people. Check Home Front Command for the…",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Conflict in Israel and Palestine",
+      "text": "On 7 October 2023 there was a large-scale terrorist attack by Hamas in southern Israel. The frequency of attacks has significantly decreased but there is still a risk of rocket attacks throughout Israel. There is an increased risk of political tension which can cause demonstrations and clashes around anniversaries and significant events.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Terrorism in Israel and Palestine",
+      "text": "Terrorists are very likely to try to carry out attacks in Israel and Palestine. There was a large-scale terrorist attack by Hamas into southern Israel on 7 October 2023 where over 1,200 people were killed. Hamas continue to launch rockets into Israel and the Israeli Defence Forces are conducting significant military activity in Gaza.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Terrorist kidnap",
+      "text": "Terrorist kidnap is a risk in Gaza and along the border with Egypt. On 7 October 2023, 251 people were kidnapped by Hamas into Gaza. British nationals are seen as legitimate targets, including tourists, humanitarian aid workers, journalists and business travellers. If you are kidnapped, the reason for your presence is unlikely to protect you or secure your safe release.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Political situation",
+      "text": "There was an ongoing conflict between Israel and Hamas following the October 7 2023 Hamas terrorist attack which saw 251 people kidnapped into Gaza. On 10 October, Hamas and Israel agreed to a ceasefire. There remains a risk that hostilities could reignite, and with little warning. You should check Home Front Command for the latest guidance. Restrictions may be put in place at short notice. If travelling near…",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Demonstrations and armed clashes",
+      "text": "Large political demonstrations can: happen across Israel and Palestine",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     }
+    ],
+    "laws": [
+     {
+      "heading": "Personal ID",
+      "text": "Always carry ID, for example, a copy of the personal details and entry stamp pages of your passport.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Dress code",
+      "text": "In Jerusalem, the West Bank and Gaza, clothing should cover your shoulders, upper arms, and legs above the knee. Locals in ultra-Orthodox Jewish neighbourhoods such as Bnei Brak, Modi’in Illit, Beitar Illit, Beit Shemesh and Safed can react strongly to anyone, particularly women, dressed less conservatively. Check…",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Ramadan",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. If you are in Palestine during this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Buying property",
+      "text": "There are risks in buying property in Israeli settlements on land considered to be occupied under international law in East Jerusalem, the rest of the West Bank and the Golan. A future peace deal between Israel and the Palestinians, or between Israel and Syria, could have consequences for property you buy in these…",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Illegal drugs and prison sentences",
+      "text": "If you’re caught with drugs, you can expect a prison sentence.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Using cameras",
+      "text": "Be sensitive about taking pictures of people in Muslim and Orthodox Jewish areas. Do not take photographs of military or police officers or installations.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "LGBT+ travellers",
+      "text": "Israeli law does not criminalise same-sex sexual relations between consenting adults. In Palestine, same-sex sexual activity is legal in the West Bank but illegal in Gaza, where it carries a 10-year prison sentence. Attitudes towards LGBT+ issues in some parts of Palestinian and Israeli society can be hostile. In more…",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     },
+     {
+      "heading": "Wildlife, animal products and souvenirs",
+      "text": "If you’re caught breaking local laws on import and export of wild animals, expect to receive a substantial fine and up to 2 years in prison. For more information on the regulations and laws in Israel see the Israeli Nature and Park Authority website.",
+      "url": "https://www.gov.uk/foreign-travel-advice/palestine/safety-and-security"
+     }
+    ],
+    "visa": [
+     {
+      "heading": "Visa requirements",
+      "text": "You can visit Israel without a visa as a tourist. On entry, visitors get permission to stay for up to 3 months. However, if you are a dual national, read the dual nationals guidance for more information. If you work in Israel without the proper permissions, you can be detained and deported. This process could take several months."
+     }
+    ],
+    "visa_url": "https://www.gov.uk/foreign-travel-advice/palestine/entry-requirements"
    },
    "us": null,
    "reports": []
@@ -2006,17 +2066,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO). Consular support is also severely limited where FCDO advises against travel.",
      "FCDO advises against all travel to the following areas of Beirut and its southern suburbs, excluding Route 51 from central Beirut to Rafic Hariri International Airport:",
      "Tariq el Jdideh and the area east of Tariq el Jdideh, south of Jalloul Street, west of Hourch and the war cemetery (not including the war cemetery), and south of the Soulieman Bastani",
-     "Ghobeiry and the area north of Ghobeiry but south of Yarmouk street, the war cemetery and Horsh park (not including Horsh park and the cemetery and Yarmouk street)"
+     "Ghobeiry and the area north of Ghobeiry but south of Yarmouk street, the war cemetery and Horsh park (not including Horsh park and the cemetery and Yarmouk street)",
+     "Chiyah (south and west of the Rizkallah Semaan road)"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/lebanon/safety-and-security"
-     },
      {
       "heading": "Terrorism in Lebanon",
       "text": "Terrorists are likely to try to carry out attacks in Lebanon. Islamist terrorist groups seek to target the Lebanese state, security services, and civilians, and intend to target foreigners in Lebanon. Groups within Lebanon, including Lebanese Hizballah, are proscribed under the Terrorism Act 2000 and the Counter Terrorism (Sanctions) (EU Exit) Regulations 2019. Offences committed under the act – including funding…",
@@ -2046,12 +2101,12 @@
     "laws": [
      {
       "heading": "Using cameras and drones in secure areas",
-      "text": "Avoid photography in Lebanese Hizballah areas, including the southern suburbs of Beirut, the Beqaa Valley and areas in southern Lebanon. You may be detained if you are observed taking photographs.",
+      "text": "Avoid photography in Lebanese Hizballah areas, including the southern suburbs of Beirut, the Beqaa Valley and areas in southern Lebanon. You may be detained if you are observed taking photographs. Only take photographs in tourist sites. You could be arrested for photographing military sites. Flying drone cameras…",
       "url": "https://www.gov.uk/foreign-travel-advice/lebanon/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, be aware of:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, be aware of: eating, drinking, smoking or chewing gum in public in the daytime, including in your car playing loud music or dance swearing in public",
       "url": "https://www.gov.uk/foreign-travel-advice/lebanon/safety-and-security"
      },
      {
@@ -2076,7 +2131,7 @@
      },
      {
       "heading": "Child abduction and travel bans",
-      "text": "If you have concerns about child custody, get legal advice before travelling to Lebanon about ‘travel bans’ that can be imposed by male heads of family. Even if you or your child holds a British passport you may be subject to Lebanese laws and regulations.",
+      "text": "If you have concerns about child custody, get legal advice before travelling to Lebanon about ‘travel bans’ that can be imposed by male heads of family. Even if you or your child holds a British passport you may be subject to Lebanese laws and regulations. In Lebanon a father or husband can legally arrange for a…",
       "url": "https://www.gov.uk/foreign-travel-advice/lebanon/safety-and-security"
      }
     ],
@@ -2142,17 +2197,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Syria due to unpredictable security conditions and the threat of terrorist attacks.",
      "Consular support is not available from the British government from within Syria. The FCDO may become aware of support provided by other organisations which can be shared with British nationals. If you need help, call the FCDO in London on +44 (0)20 7008 5000.",
-     "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…"
+     "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…",
+     "British nationals in, or planning to travel through, the Middle East should be prepared for possible flight cancellations, airspace closures, and travel disruptions. You should:"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/syria/safety-and-security"
-     },
      {
       "heading": "Terrorism in Syria",
       "text": "Terrorists are very likely to try to carry out attacks in Syria. There are multiple terrorist groups operating in Syria. There have been several terrorist attacks across Syria, including in major cities, resulting in large numbers of casualties. Daesh, also known as ISIL/ISIS, continues to carry out regular attacks all across Syria, including in Damascus. Terrorist groups continue to post a significant threat to…",
@@ -2207,7 +2257,7 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, you should:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, you should: check opening hours of shops and restaurants be aware that if hotels and restaurants are providing food or drink in fasting hours, they may separate you from Muslim guests, for example with screens follow local dress…",
       "url": "https://www.gov.uk/foreign-travel-advice/syria/safety-and-security"
      }
     ],
@@ -2277,17 +2327,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to within 3km of the border with Syria.",
      "A shooting took place at a Church in Karak Governorate causing several casualties on 23 October 2026. Follow the advice of the local authorities and monitor local media.",
-     "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…"
+     "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…",
+     "British nationals in, or planning to travel through, the Middle East should be prepared for possible flight cancellations, airspace closures, and travel disruptions. You should:"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/jordan/safety-and-security"
-     },
      {
       "heading": "Terrorism in Jordan",
       "text": "In the context of regional escalation, Iran-aligned militia groups have threatened to target US interests across the region, have claimed attacks in Jordan and are likely to continue to carry out these attacks in Jordan. As was the case before the recent regional escalation, terrorists are likely to try to carry out attacks in Jordan, including in places visited by foreign nationals, such as:",
@@ -2321,6 +2366,11 @@
      {
       "heading": "Jordan-Iraq border",
       "text": "FCDO advises against all travel to the provinces in Iraq bordering Jordan. See Iraq travel advice.",
+      "url": "https://www.gov.uk/foreign-travel-advice/jordan/regional-risks"
+     },
+     {
+      "heading": "Jordan-Israel border",
+      "text": "Due to the conflict in Israel and Palestine, there have been instances of protests near the border on Fridays. Be particularly cautious in areas close to the border.",
       "url": "https://www.gov.uk/foreign-travel-advice/jordan/regional-risks"
      }
     ],
@@ -2357,7 +2407,7 @@
      },
      {
       "heading": "Visiting Petra",
-      "text": "The Petra Archaeological Park has strict visitor opening and closing hours. You risk arrest and prosecution if you are in the park outside of these hours. Tourists have been locked in Petra overnight.",
+      "text": "The Petra Archaeological Park has strict visitor opening and closing hours. You risk arrest and prosecution if you are in the park outside of these hours. Tourists have been locked in Petra overnight. Ask the tourist office staff if you’re unclear about ticket prices and before agreeing to additional charges.",
       "url": "https://www.gov.uk/foreign-travel-advice/jordan/safety-and-security"
      },
      {
@@ -2436,17 +2486,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to:",
      "The parts of Anbar province which are west of, but not including Ramadi City",
-     "Diyala province except for Baqubah City"
+     "Diyala province except for Baqubah City",
+     "Kirkuk province"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
-     },
      {
       "heading": "Terrorism in Iraq",
       "text": "Terrorists are very likely to try to carry out attacks in Iraq. Attacks can occur throughout the country, including the Kurdistan region of Iraq, but are more frequent in areas where Daesh had a strong presence and capability. This includes parts of the provinces of:",
@@ -2481,6 +2526,11 @@
       "heading": "Crime",
       "text": "The proliferation of guns throughout Iraq mean they are readily available to many Iraqi citizens. Guns are frequently used to settle personal grievances, criminal acts and tribal disputes.",
       "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
+     },
+     {
+      "heading": "Land borders",
+      "text": "Border crossing points with countries neighbouring Iraq may close with little or no notice. If crossing the border, stick to main roads and ensure you use official designated border crossings.",
+      "url": "https://www.gov.uk/foreign-travel-advice/iraq/regional-risks"
      }
     ],
     "laws": [
@@ -2496,17 +2546,17 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
      },
      {
       "heading": "The Arba’-een",
-      "text": "The Arba’-een, an annual pilgrimage that attracts millions of pilgrims to Iraq, usually occurs between August and September.",
+      "text": "The Arba’-een, an annual pilgrimage that attracts millions of pilgrims to Iraq, usually occurs between August and September. If you travel to Iraq during the pilgrimage, ensure that your belongings are secure at all times. Keep copies of your passports, visas and other important documents.",
       "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
      },
      {
       "heading": "Child custody",
-      "text": "Iraqi family law is very different from UK law. Male heads of household can impose ‘travel bans’ on family members. Even if you, or your child, hold a British passport, you may be subject to Iraqi laws.",
+      "text": "Iraqi family law is very different from UK law. Male heads of household can impose ‘travel bans’ on family members. Even if you, or your child, hold a British passport, you may be subject to Iraqi laws. If you are leaving Iraq with a child that has an Iraqi or dual-national Iraqi father you may need to show proof of…",
       "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
      },
      {
@@ -2521,7 +2571,7 @@
      },
      {
       "heading": "Illegal drugs and prison sentences",
-      "text": "Iraq continues to practise the death penalty for a range of crimes including:",
+      "text": "Iraq continues to practise the death penalty for a range of crimes including: drug trafficking espionage kidnapping",
       "url": "https://www.gov.uk/foreign-travel-advice/iraq/safety-and-security"
      }
     ],
@@ -2587,17 +2637,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to Iran. If you are a British national already in Iran, either resident or visitor, carefully consider your presence there and the risks you take by staying.",
      "British and British-Iranian dual nationals are at significant risk of arrest, questioning or detention. Having a British passport or connections to the UK can be reason enough for the Iranian authorities to detain you.",
-     "Find out more about why FCDO advises against travel."
+     "Find out more about why FCDO advises against travel.",
+     "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…"
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/iran/safety-and-security"
-     },
      {
       "heading": "Terrorism in Iran",
       "text": "Terrorists are likely to try to carry out attacks in Iran. Terrorist attacks could be indiscriminate, including in places frequented by foreign nationals. Stay aware of your surroundings, keep up to date with local media reports and follow the advice of local authorities.",
@@ -2622,22 +2667,22 @@
     "laws": [
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not eat, drink, smoke or chew gum in public in the daytime, including in your car.",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not eat, drink, smoke or chew gum in public in the daytime, including in your car. You should also: check opening hours of shops and restaurants be aware that if hotels and restaurants are providing food or drink in fasting…",
       "url": "https://www.gov.uk/foreign-travel-advice/iran/safety-and-security"
      },
      {
       "heading": "Dress codes",
-      "text": "Islamic codes of behaviour and dress are strictly enforced. In public places women must cover their heads with a headscarf, wear trousers or a floor-length skirt, and a long-sleeved tunic or coat that reaches to mid-thigh or knee. Men should wear long trousers and long-sleeved shirts in public.",
+      "text": "Islamic codes of behaviour and dress are strictly enforced. In public places women must cover their heads with a headscarf, wear trousers or a floor-length skirt, and a long-sleeved tunic or coat that reaches to mid-thigh or knee. Men should wear long trousers and long-sleeved shirts in public. There are extra dress…",
       "url": "https://www.gov.uk/foreign-travel-advice/iran/safety-and-security"
      },
      {
       "heading": "Relationships between men and women",
-      "text": "Adultery and sex outside marriage are illegal under Iranian law and carry the death penalty.",
+      "text": "Adultery and sex outside marriage are illegal under Iranian law and carry the death penalty. Relationships between non-Muslim men and Muslim women are illegal, although few westerners have been prosecuted. If a Muslim woman is found in a relationship with a non-Muslim man, she may be sentenced to be whipped. Unmarried…",
       "url": "https://www.gov.uk/foreign-travel-advice/iran/safety-and-security"
      },
      {
       "heading": "LGBT+ relationships",
-      "text": "Same-sex relationships are illegal under Iranian law and can carry the death penalty.",
+      "text": "Same-sex relationships are illegal under Iranian law and can carry the death penalty. Read more advice for LGBT+ travellers.",
       "url": "https://www.gov.uk/foreign-travel-advice/iran/safety-and-security"
      },
      {
@@ -2723,17 +2768,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against:",
      "all travel to within 10km of the border with Yemen",
-     "all but essential travel to the rest of Saudi Arabia"
+     "all but essential travel to the rest of Saudi Arabia",
+     "Find out more about why FCDO advises against travel."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
-     },
      {
       "heading": "Terrorism in Saudi Arabia",
       "text": "Terrorists are likely to try to carry out attacks in Saudi Arabia. In addition to missile and drone strikes conducted by the Houthis, attacks from terrorist groups could be indiscriminate, including in places visited by foreign nationals. Stay aware of your surroundings, keep up to date with local media reports and follow the advice of local authorities.",
@@ -2763,27 +2803,27 @@
     "laws": [
      {
       "heading": "Personal ID",
-      "text": "You must always carry ID. You can get a fine or prison sentence if you do not have any.",
+      "text": "You must always carry ID. You can get a fine or prison sentence if you do not have any. If you’re a tourist, carry a copy of your passport and visa. If you live in Saudi Arabia, carry your residency card (‘Iqama’). Police also accept an electronic version of the Iqama on the Tawakkalna app and Absher.",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. Ramadan in Saudi Arabia started on 18 February in 2026 and will last for 30 days. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. Ramadan in Saudi Arabia started on 18 February in 2026 and will last for 30 days. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      },
      {
       "heading": "Dress code",
-      "text": "Men and women must wear loose-fitting clothing that covers the elbow and below the knees.",
+      "text": "Men and women must wear loose-fitting clothing that covers the elbow and below the knees. Avoid clothing that: is tight-fitting has profane slogans or images",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      },
      {
       "heading": "Religion",
-      "text": "It is illegal to practise any religion other than Islam. However, the Saudi authorities accept private practice of other religions.",
+      "text": "It is illegal to practise any religion other than Islam. However, the Saudi authorities accept private practice of other religions. It is illegal to try to convert people to another religion. You can bring other religious books for personal use. However, you may be prosecuted if you try to import large numbers of…",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      },
      {
       "heading": "Alcohol laws and bans",
-      "text": "Do not bring alcohol into Saudi Arabia or arrive under the influence of alcohol.",
+      "text": "Do not bring alcohol into Saudi Arabia or arrive under the influence of alcohol. It is illegal to drink alcohol or be drunk in public. Police have arrested British nationals for disorderly or offensive behaviour when drinking. You can face severe penalties, including prison, for brewing, possessing or selling alcohol.",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      },
      {
@@ -2798,7 +2838,7 @@
      },
      {
       "heading": "Pregnancy outside of marriage",
-      "text": "If you or your partner becomes pregnant outside marriage in Saudi Arabia, you could both face penalties including imprisonment and deportation. However, in practice, legal action is uncommon.",
+      "text": "If you or your partner becomes pregnant outside marriage in Saudi Arabia, you could both face penalties including imprisonment and deportation. However, in practice, legal action is uncommon. Doctors may ask for proof of marriage during antenatal checks. To get a birth certificate from the Saudi authorities, you must…",
       "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia/safety-and-security"
      }
     ],
@@ -2872,17 +2912,12 @@
      }
     ],
     "warnings": [
-     "Your travel insurance could be invalidated if you travel against advice from the Foreign, Commonwealth & Development Office (FCDO).",
      "FCDO advises against all travel to the whole of the Yemen due to the unpredictable security conditions.",
      "If you’re in Yemen, you should leave immediately.",
-     "See Safety and security for more information."
+     "See Safety and security for more information.",
+     "Support for British people is severely limited in Yemen. British Embassy services in Sana’a are suspended, and all diplomatic and consular staff have been withdrawn."
     ],
     "security": [
-     {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/yemen/safety-and-security"
-     },
      {
       "heading": "Terrorism in Yemen",
       "text": "Terrorists are very likely to try to carry out attacks in Yemen. The threat is heightened where Al-Qaida in the Arabian Peninsula (AQAP) and Islamic State-Yemen have tribal connections and in the governorates of Abyan, Marib, Hadramawt and Shabwah.",
@@ -2912,12 +2947,12 @@
     "laws": [
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country and you should check this before you travel. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country and you should check this before you travel. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/yemen/safety-and-security"
      },
      {
       "heading": "Dress code",
-      "text": "Men and women must wear loose-fitting clothing that covers down to the elbow and reaches below the knees. You should also:",
+      "text": "Men and women must wear loose-fitting clothing that covers down to the elbow and reaches below the knees. You should also: avoid tight-fitting clothing avoid clothes with profane slogans or images not wear clothing with symbols or slogans that could be viewed as political as this could lead to arrest",
       "url": "https://www.gov.uk/foreign-travel-advice/yemen/safety-and-security"
      },
      {
@@ -2927,12 +2962,12 @@
      },
      {
       "heading": "Using cameras in secure areas",
-      "text": "Taking pictures in or around military sites is likely to result in arrest and arbitrary detention. British consular services will not be able to offer support in this situation.",
+      "text": "Taking pictures in or around military sites is likely to result in arrest and arbitrary detention. British consular services will not be able to offer support in this situation. Do not take pictures of people without their consent.",
       "url": "https://www.gov.uk/foreign-travel-advice/yemen/safety-and-security"
      },
      {
       "heading": "LGBT+ travellers",
-      "text": "Consensual same-sex relations are illegal in Yemen, with penalties including fines, corporal punishment, imprisonment and the death penalty.",
+      "text": "Consensual same-sex relations are illegal in Yemen, with penalties including fines, corporal punishment, imprisonment and the death penalty. In January and February 2024, criminal courts in northern Yemen reportedly sentenced 20 individuals to death for homosexuality. A further 26 were sentenced to flogging and prison…",
       "url": "https://www.gov.uk/foreign-travel-advice/yemen/safety-and-security"
      },
      {
@@ -3010,11 +3045,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Oman",
       "text": "Terrorist attacks in Oman cannot be ruled out. Attacks could be indiscriminate including in places visited by foreigners.",
       "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
@@ -3033,12 +3063,12 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
      },
      {
       "heading": "Alcohol laws",
-      "text": "Tourists and visitors can buy and drink alcohol in licensed venues, such as hotels, restaurants and clubs. The legal drinking age is 21.",
+      "text": "Tourists and visitors can buy and drink alcohol in licensed venues, such as hotels, restaurants and clubs. The legal drinking age is 21. Non-Muslim residents can get a licence to drink alcohol at home from the Royal Oman Police. Liquor licences are not available to non-residents. It is illegal to drink alcohol in…",
       "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
      },
      {
@@ -3053,12 +3083,12 @@
      },
      {
       "heading": "Dress codes",
-      "text": "You should dress modestly in public areas including in shopping malls. Your clothing should cover the tops of your arms and legs (below the knee), and underwear should not be visible.",
+      "text": "You should dress modestly in public areas including in shopping malls. Your clothing should cover the tops of your arms and legs (below the knee), and underwear should not be visible. Wearing tight-fitting clothes is likely to attract attention. Do not wear swimming costumes or beachwear in public areas, except on…",
       "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
      },
      {
       "heading": "Unmarried couples",
-      "text": "It is illegal to live with or share a hotel room with someone of the opposite sex if you are not married or closely related.",
+      "text": "It is illegal to live with or share a hotel room with someone of the opposite sex if you are not married or closely related. You may have difficulty registering the birth of a baby born in Oman if you are unmarried or in a relationship the Omani authorities do not recognise as marriage.",
       "url": "https://www.gov.uk/foreign-travel-advice/oman/safety-and-security"
      },
      {
@@ -3136,11 +3166,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates/safety-and-security"
-     },
-     {
       "heading": "Terrorism in the UAE",
       "text": "Terrorists are likely to try to carry out attacks in the United Arab Emirates (UAE). Attacks could be indiscriminate, including in places visited by foreign nationals.",
       "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates/safety-and-security"
@@ -3149,7 +3174,7 @@
     "laws": [
      {
       "heading": "Your passport",
-      "text": "UAE employers may ask foreign employees to deposit their passports with the company as part of their terms and conditions of employment. This is illegal under UAE labour law.",
+      "text": "UAE employers may ask foreign employees to deposit their passports with the company as part of their terms and conditions of employment. This is illegal under UAE labour law. It is normal practice for hotels to take a photocopy of your passport or Emirates ID.",
       "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates/safety-and-security"
      },
      {
@@ -3164,12 +3189,12 @@
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, it may cause offence if you:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, it may cause offence if you: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates/safety-and-security"
      },
      {
       "heading": "Dress code",
-      "text": "Dress modestly in public areas like shopping malls:",
+      "text": "Dress modestly in public areas like shopping malls: women should cover shoulders and knees, and underwear should not be visible avoid transparent clothing or any attire that features imagery or phrases that could potentially offend others swimming attire should only be worn on beaches or at swimming pools",
       "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates/safety-and-security"
      },
      {
@@ -3265,11 +3290,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Qatar",
       "text": "Terrorist attacks in Qatar cannot be ruled out. Attacks could be indiscriminate, including in places visited by foreign nationals. Stay aware of your surroundings, keep up to date with local media reports and follow the advice of local authorities.",
       "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
@@ -3293,17 +3313,17 @@
      },
      {
       "heading": "Personal ID",
-      "text": "You must always carry your passport as an official form of identification. A copy is usually acceptable, but in some situations you may have to produce the original at a police station within a specified time limit.",
+      "text": "You must always carry your passport as an official form of identification. A copy is usually acceptable, but in some situations you may have to produce the original at a police station within a specified time limit. If you live in Qatar, your residence card is acceptable.",
       "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
      },
      {
       "heading": "Dress code",
-      "text": "Dress modestly in public, including while driving:",
+      "text": "Dress modestly in public, including while driving: *men and women should cover their shoulders and knees * the dress code is strictly enforced in government buildings, healthcare facilities and banks - you may be asked to leave or be denied entry",
       "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates change every year. Ramadan in Qatar in 2026 will likely start on 17 February and will last approximately 30 days. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates change every year. Ramadan in Qatar in 2026 will likely start on 17 February and will last approximately 30 days. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
      },
      {
@@ -3313,7 +3333,7 @@
      },
      {
       "heading": "Relationships outside marriage",
-      "text": "Any intimacy in public, between any couples (including between teenagers), can lead to arrest.",
+      "text": "Any intimacy in public, between any couples (including between teenagers), can lead to arrest. Couples living together while unmarried is illegal in Qatar. Sex outside marriage is illegal for both same-sex and opposite-sex couples. You can be arrested and punishments can include a fine, a custodial sentence and…",
       "url": "https://www.gov.uk/foreign-travel-advice/qatar/safety-and-security"
      },
      {
@@ -3400,11 +3420,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Bahrain",
       "text": "Terrorists are likely to try to carry out attacks in Bahrain. Attacks could be indiscriminate, including in places visited by foreigners.",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
@@ -3428,7 +3443,7 @@
      },
      {
       "heading": "Social media",
-      "text": "Respect the local culture and public security rules when using social media. It could amount to a crime if you post online any message, video or photograph, that:",
+      "text": "Respect the local culture and public security rules when using social media. It could amount to a crime if you post online any message, video or photograph, that: is critical of the Bahrain government or monarchy appears to abuse, ridicule or criticise the country is culturally insensitive",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
      },
      {
@@ -3438,17 +3453,17 @@
      },
      {
       "heading": "Dress code",
-      "text": "Dress conservatively in public places, particularly religious sites.",
+      "text": "Dress conservatively in public places, particularly religious sites. Bahrainis often dress conservatively in traditional dress. You could cause offence if you dress inappropriately or not in accordance with Islamic values. Dress appropriately and modestly in public places, such as malls, restaurants, and parks.…",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
      },
      {
       "heading": "Respect for religion",
-      "text": "Islamic religious values are respected in Bahrain. Any disrespect towards religious beliefs or practices is considered deeply offensive and may lead to a heavy fine or a prison sentence.",
+      "text": "Islamic religious values are respected in Bahrain. Any disrespect towards religious beliefs or practices is considered deeply offensive and may lead to a heavy fine or a prison sentence. Muslims pray 5 times a day. Drivers may stop in lay-bys to pray. Other religions are respected in Bahrain and can be followed with…",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
      },
      {
@@ -3458,7 +3473,7 @@
      },
      {
       "heading": "Illegal drugs and prison sentences",
-      "text": "Illegal drugs are strictly forbidden, even a residual amount. Consuming or carrying illegal drugs, even if you are travelling through the airport, can lead to a prison sentence and deportation. Buying or selling illegal drugs and narcotics is illegal and can lead to a life sentence.",
+      "text": "Illegal drugs are strictly forbidden, even a residual amount. Consuming or carrying illegal drugs, even if you are travelling through the airport, can lead to a prison sentence and deportation. Buying or selling illegal drugs and narcotics is illegal and can lead to a life sentence. Some skincare products and…",
       "url": "https://www.gov.uk/foreign-travel-advice/bahrain/safety-and-security"
      }
     ],
@@ -3539,11 +3554,6 @@
     ],
     "security": [
      {
-      "heading": "Terrorism",
-      "text": "There is a high threat of terrorist attack globally affecting UK interests and British nationals, including from groups and individuals who view the UK and British nationals as targets. Stay aware of your surroundings at all times. UK Counter Terrorism Policing has information and advice on staying safe and what to do in the event of a terrorist attack. Find out how to reduce your risk from terrorism while abroad.",
-      "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
-     },
-     {
       "heading": "Terrorism in Kuwait",
       "text": "In the context of regional escalation, Iran-aligned militia groups have threatened to target US interests across the region and have claimed attacks in Jordan and Iraq. US bases in Kuwait have also been hit by missile and drone fire. These groups are likely to continue to carry out these attacks in Kuwait. As was the case before the recent regional escalation, terrorist attacks in Kuwait cannot be ruled out.…",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
@@ -3582,17 +3592,17 @@
     "laws": [
      {
       "heading": "Personal ID",
-      "text": "As a visiting foreign national, you must always carry your passport. If you are resident in Kuwait, you must always carry your Kuwaiti civil identification card.",
+      "text": "As a visiting foreign national, you must always carry your passport. If you are resident in Kuwait, you must always carry your Kuwaiti civil identification card. Keep copies of your passport photo page and your visa or entry stamp in a separate place.",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      },
      {
       "heading": "Ramadan",
-      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not:",
+      "text": "Ramadan is a holy month for Muslims. The dates vary by year and country. During this time, do not: eat, drink, smoke or chew gum in public in the daytime, including in your car play loud music or dance swear in public",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      },
      {
       "heading": "Dress code",
-      "text": "Dress and behave modestly in public, particularly in downtown or conservative areas. Women should avoid wearing shorts or tight-fitting or revealing clothing.",
+      "text": "Dress and behave modestly in public, particularly in downtown or conservative areas. Women should avoid wearing shorts or tight-fitting or revealing clothing. Do not expose body piercings or tattoos that may be perceived as extreme or offensive – for example, you could be accused of violating religious sanctity for a…",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      },
      {
@@ -3602,7 +3612,7 @@
      },
      {
       "heading": "Public behaviour",
-      "text": "It’s illegal to insult or humiliate any person verbally or through obscene gestures in a public place, including a police officer, public official or private individual. Police may arrest you and conviction may lead to prosecution, imprisonment, or immediate deportation.",
+      "text": "It’s illegal to insult or humiliate any person verbally or through obscene gestures in a public place, including a police officer, public official or private individual. Police may arrest you and conviction may lead to prosecution, imprisonment, or immediate deportation. It is frowned on for men and women to show…",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      },
      {
@@ -3612,12 +3622,12 @@
      },
      {
       "heading": "Illegal drugs penalties",
-      "text": "Kuwait has zero tolerance for drug-related offences. Penalties for drug smuggling or trafficking include the death sentence. Offences involving minors or committed in schools, hospitals, prisons or other protected locations can result in life imprisonment or the death penalty.",
+      "text": "Kuwait has zero tolerance for drug-related offences. Penalties for drug smuggling or trafficking include the death sentence. Offences involving minors or committed in schools, hospitals, prisons or other protected locations can result in life imprisonment or the death penalty. Possession or use of illegal drugs,…",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      },
      {
       "heading": "Using cameras in secure areas",
-      "text": "It is illegal to photograph or take videos of:",
+      "text": "It is illegal to photograph or take videos of: government buildings military buildings industrial buildings or oil-related infrastructure",
       "url": "https://www.gov.uk/foreign-travel-advice/kuwait/safety-and-security"
      }
     ],
