@@ -162,6 +162,9 @@ form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
+#sitrep { scroll-margin-top: 130px; }
+.sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
 .agenda h2 { margin-top: 28px; }
 .agenda .when { font: 500 13px var(--mono); color: var(--sand); }
@@ -229,6 +232,12 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <p class="empty" id="empty" hidden>No open jobs match. Try another type or region, or join the Facebook group for new posts.</p>
   </div>
   <div class="fb-band"><div class="wrap"><p>New jobs land in the Facebook group first</p><a class="btn primary fb-join" href="#" target="_blank" rel="noopener">Join 4.4K members</a></div></div>
+  <div class="wrap"><div class="subscribe" id="sitrep">
+    <p class="eyebrow">The Sitrep</p><h2>New jobs and course dates, every Monday</h2>
+    <p>One short email a week. Free, no spam, unsubscribe any time. <a href="/sitrep/">Past issues</a></p>
+    <form id="sitrep-form" class="sitrep-form" novalidate><input type="email" name="email_address" required placeholder="Your email" aria-label="Your email" autocomplete="email"><button class="btn primary" type="submit">Subscribe</button></form>
+    <p id="sitrep-note" aria-live="polite"></p>
+  </div></div>
   <div class="wrap employers">
     <div><p class="eyebrow">For employers and training providers</p><h2>Reach people who've <span class="amp">done the job</span></h2>
       <p>Post a vacancy or course for free. We check it, list it here and share it with the group.</p>
@@ -390,7 +399,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -403,6 +412,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="#post" data-view="post">Post a job</a>
   <a href="#list-course" data-view="courses">List a course</a>
   <a href="#calendar" data-view="calendar">Calendar</a>
+  <a href="/#sitrep">Sitrep newsletter</a>
   <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
   <a href="https://www.facebook.com/hostileenvironmentjobs" target="_blank" rel="noopener">Facebook</a>
   <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
@@ -412,6 +422,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 // Settings to fill in before launch.
 const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
 const FACEBOOK_GROUP = "https://www.facebook.com/groups/2015055248777805/";
+const SITREP_FORM = ""; // Kit form ID for the Sitrep signup box. Until it's set, signups are emailed to CONTACT.
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 
 
@@ -458,7 +469,7 @@ function show(hash) {
   views.forEach(n => document.getElementById(n).hidden = n !== v);
   document.querySelectorAll("nav a").forEach(a => a.dataset.view === (v === "job" ? "jobs" : v) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   if (v === "job") renderDetail(decodeURIComponent(id || ""));
-  if (view === "list-course") document.getElementById("list-course").scrollIntoView();
+  if (view === "list-course" || view === "sitrep") document.getElementById(view).scrollIntoView();
   else window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1) || "jobs"));
@@ -653,6 +664,28 @@ wireForm(document.getElementById("post-form"), document.getElementById("post-not
 wireForm(document.getElementById("course-form"), document.getElementById("course-note"),
   "Fill in the course name, provider, location, booking link and your email, then send again.",
   "Thanks, we've got it. We'll check the course and list it, usually within a day.");
+
+// Sitrep signup: straight into Kit (which emails a confirm link), or by FormSubmit to the contact address until Kit is set up.
+document.getElementById("sitrep-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target, note = document.getElementById("sitrep-note"), btn = form.querySelector("button");
+  if (!form.checkValidity()) { note.className = "note"; note.textContent = "Enter your email address, then subscribe."; return; }
+  btn.disabled = true;
+  try {
+    const data = new FormData(form);
+    if (SITREP_FORM) {
+      // Kit doesn't allow reading the reply from another site, so a sent request counts as done.
+      await fetch(`https://app.kit.com/forms/${SITREP_FORM}/subscriptions`, { method: "POST", mode: "no-cors", body: data });
+    } else {
+      data.append("_subject", "Sitrep signup");
+      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: data });
+      if (!res.ok) throw new Error(res.status);
+    }
+    form.reset(); note.className = "sent";
+    note.textContent = SITREP_FORM ? "Nearly done: check your inbox and click the link to confirm." : "You're on the list. The next Sitrep comes on Monday.";
+  } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+  finally { btn.disabled = false; }
+});
 
 document.querySelectorAll("a.em").forEach(a => { a.textContent = CONTACT; a.href = "mailto:" + CONTACT; });
 document.getElementById("fb-link").href = FACEBOOK_GROUP;
