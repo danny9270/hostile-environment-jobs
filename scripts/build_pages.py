@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /app/ job alerts page, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /app/ job alerts page, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -282,7 +282,15 @@ def main():
         "Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up.",
         "/app/", app[len(app_style):], app_style).replace('<a href="/app/">', '<a href="/app/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # Deployment guide: reads deploy.json (refreshed daily by scripts/build_deploy.py) in the browser.
+    dep = (ROOT / "scripts" / "deploy.html").read_text().replace("<!--MAP-->", (ROOT / "scripts" / "deploy-map.svg").read_text())
+    dep_style = re.match(r"\s*<style>.*?</style>\n", dep, re.S).group(0)
+    (ROOT / "deploy").mkdir(exist_ok=True)
+    (ROOT / "deploy" / "index.html").write_text(page("Deployment guide: Horn of Africa and MENA | Hostile Environment Jobs",
+        "Travel advice levels, recent security updates, live weather, visas and cultural pointers for the Horn of Africa, Middle East and North Africa.",
+        "/deploy/", dep[len(dep_style):], dep_style).replace('<a href="/deploy/">', '<a href="/deploy/" aria-current="page">', 1))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
