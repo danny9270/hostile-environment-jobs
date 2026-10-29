@@ -219,7 +219,8 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   <div class="grid two">
     <div class="card">
       <h2>Visitor stats (GoatCounter)</h2>
-      <p class="small">In GoatCounter go to Settings, API, make a key with "Read statistics" ticked, and paste it here. It is kept only in this browser.</p>
+      <p class="small">In GoatCounter go to Settings, API, make a key with "Read statistics" ticked, and paste it here. It is kept only in this browser, so other browsers and devices need it too.</p>
+      <p class="small">To set it once for every browser instead, add it to the alerts Worker in Cloudflare (Worker, Settings, Variables and Secrets) as a secret called <b>GOATCOUNTER_KEY</b>, and leave the box below empty.</p>
       <form id="gc-form">
         <label>Site code <span class="hint">(the part before .goatcounter.com)</span><input id="gc-code" placeholder="hostileenvironmentjobs" autocomplete="off"></label>
         <label>API key <span class="hint">(GoatCounter: Settings, API, "Read statistics")</span><input id="gc-key" type="password" autocomplete="off"></label>
@@ -450,11 +451,25 @@ let visitsRun = 0;
 async function renderVisits() {
   const run = ++visitsRun;
   const el = $("visits"), code = store.get("gc-code") || GC_CODE, key = store.get("gc-key");
+  el.innerHTML = `<h2>Visitors</h2><p class="muted small">Loading...</p>`;
+  const show = data => { if (run === visitsRun) drawVisits(el, code, data); };
+  const fail = e => {
+    if (run !== visitsRun) return;
+    el.innerHTML = `<h2>Visitors</h2><p class="err small">${esc(e.message)}.</p><p class="small"><button class="btn sm" id="gc-retry">Try again</button> or check the site code and key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
+    $("gc-retry").onclick = renderVisits;
+  };
+  // No key saved in this browser: ask the alerts Worker, which keeps the key once for every browser.
   if (!key) {
-    el.innerHTML = `<h2>Visitors</h2><p class="small">Visitor stats come from GoatCounter. Once your account is set up, add your API key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
+    try {
+      const r = await fetch(`${ALERTS_API}/api/admin/visits`, { headers: { Authorization: "Bearer " + TOKEN }, signal: AbortSignal.timeout(30000) });
+      const body = await r.json().catch(() => ({}));
+      if (r.ok) return show(body);
+      if (r.status !== 501) return fail(new Error("Couldn't load visitor stats (" + (body.error || "error " + r.status) + ")"));
+    } catch {}
+    if (run !== visitsRun) return;
+    el.innerHTML = `<h2>Visitors</h2><p class="small">This browser doesn't have the GoatCounter key yet. Paste it in <button class="btn sm" data-go="settings">Settings</button>, or add it to the alerts Worker once (see Settings) so every browser shows the stats.</p>`;
     return;
   }
-  el.innerHTML = `<h2>Visitors</h2><p class="muted small">Loading...</p>`;
   const base = `https://${encodeURIComponent(code)}.goatcounter.com/api/v0`;
   const start = new Date(today); start.setDate(start.getDate() - 29);
   const range = `start=${start.toISOString().slice(0, 19)}Z&end=${new Date().toISOString().slice(0, 19)}Z`;
@@ -464,28 +479,36 @@ async function renderVisits() {
   async function get(p) {
     for (let attempt = 0; ; attempt++) {
       if (run !== visitsRun) throw new Error("superseded");
-      const r = await fetch(`${base}${p}`, { headers: { Authorization: "Bearer " + key } });
+      let r;
+      try { r = await fetch(`${base}${p}`, { headers: { Authorization: "Bearer " + key }, signal: AbortSignal.timeout(20000) }); }
+      catch (e) {
+        throw new Error(e.name === "TimeoutError" ? "GoatCounter didn't answer within 20 seconds"
+          : "This browser couldn't reach GoatCounter. An ad blocker or privacy setting may be blocking goatcounter.com on this page, or the site code is wrong");
+      }
       if (r.ok) { await wait(1100); return r.json(); }
       if (r.status === 429 && attempt < 3) { await wait(2000 * (attempt + 1)); continue; }
-      throw new Error(r.status === 401 || r.status === 403 ? "GoatCounter didn't accept the API key" : r.status === 429 ? "GoatCounter is busy, try again in a minute" : "GoatCounter error " + r.status);
+      // GoatCounter explains most failures in an "error" or "errors" field; show it so the fault can be pinned down.
+      const body = await r.json().catch(() => ({}));
+      const why = body.error || (body.errors && Object.entries(body.errors).map(([k, v]) => `${k}: ${[].concat(v).join(", ")}`).join("; ")) || "";
+      throw new Error((r.status === 401 || r.status === 403 ? "GoatCounter didn't accept the API key" : r.status === 429 ? "GoatCounter is busy, try again in a minute" : r.status === 404 ? `GoatCounter has no site called "${code}"` : "GoatCounter error " + r.status) + (why ? ` (${why})` : ""));
     }
   }
   try {
-    const total = await get(`/stats/total?${range}`), pages = await get(`/stats/hits?${range}&limit=6`), refs = await get(`/stats/toprefs?${range}&limit=6`);
-    const days = total.stats || [];
-    const week = days.slice(-7).reduce((n, d) => n + (d.daily || 0), 0);
-    const max = Math.max(1, ...days.map(d => d.daily || 0));
-    const list = (arr, name) => arr.length ? `<div class="bars">${arr.map(x => `<div class="bar"><span title="${esc(x[name])}">${esc(x[name] || "(direct)")}</span><i style="width:${(x.count / Math.max(1, arr[0].count)) * 100}%"></i><em>${x.count}</em></div>`).join("")}</div>` : `<p class="muted small">Nothing yet.</p>`;
-    el.innerHTML = `<h2>Visitors</h2>
-      <div class="grid" style="grid-template-columns:1fr 1fr"><div><b style="font:800 28px var(--display)">${week}</b><div class="muted small">last 7 days</div></div><div><b style="font:800 28px var(--display)">${total.total ?? 0}</b><div class="muted small">last 30 days</div></div></div>
-      <div class="spark" title="Visitors per day, last 30 days">${days.map(d => `<i style="height:${((d.daily || 0) / max) * 100}%" title="${esc(d.day)}: ${d.daily || 0}"></i>`).join("")}</div>
-      <h3 style="margin-top:14px">Top pages</h3>${list(pages.hits || [], "path")}
-      <h3 style="margin-top:14px">Where visitors came from</h3>${list(refs.stats || [], "name")}
-      <p class="small"><a href="https://${esc(code)}.goatcounter.com" target="_blank" rel="noopener">Full stats on GoatCounter</a></p>`;
-  } catch (e) {
-    if (run !== visitsRun) return;
-    el.innerHTML = `<h2>Visitors</h2><p class="err small">${esc(e.message)}.</p><p class="small">Check the site code and key in <button class="btn sm" data-go="settings">Settings</button>.</p>`;
-  }
+    show({ total: await get(`/stats/total?${range}`), pages: await get(`/stats/hits?${range}&limit=6`), refs: await get(`/stats/toprefs?${range}&limit=6`) });
+  } catch (e) { fail(e); }
+}
+
+function drawVisits(el, code, { total, pages, refs }) {
+  const days = total.stats || [];
+  const week = days.slice(-7).reduce((n, d) => n + (d.daily || 0), 0);
+  const max = Math.max(1, ...days.map(d => d.daily || 0));
+  const list = (arr, name) => arr.length ? `<div class="bars">${arr.map(x => `<div class="bar"><span title="${esc(x[name])}">${esc(x[name] || "(direct)")}</span><i style="width:${(x.count / Math.max(1, arr[0].count)) * 100}%"></i><em>${x.count}</em></div>`).join("")}</div>` : `<p class="muted small">Nothing yet.</p>`;
+  el.innerHTML = `<h2>Visitors</h2>
+    <div class="grid" style="grid-template-columns:1fr 1fr"><div><b style="font:800 28px var(--display)">${week}</b><div class="muted small">last 7 days</div></div><div><b style="font:800 28px var(--display)">${total.total ?? 0}</b><div class="muted small">last 30 days</div></div></div>
+    <div class="spark" title="Visitors per day, last 30 days">${days.map(d => `<i style="height:${((d.daily || 0) / max) * 100}%" title="${esc(d.day)}: ${d.daily || 0}"></i>`).join("")}</div>
+    <h3 style="margin-top:14px">Top pages</h3>${list(pages.hits || [], "path")}
+    <h3 style="margin-top:14px">Where visitors came from</h3>${list(refs.stats || [], "name")}
+    <p class="small"><a href="https://${esc(code)}.goatcounter.com" target="_blank" rel="noopener">Full stats on GoatCounter</a></p>`;
 }
 
 // ---------- payments ----------
