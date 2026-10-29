@@ -1,0 +1,58 @@
+# Builds the weekly Sitrep newsletter every Monday morning, publishes it at /sitrep/ and hands it to Kit.
+# Needs the repository secret KIT_API_KEY (Kit > Settings > Developer > API key, v4).
+# By default Kit gets a draft to check and send. Set the repository variable SITREP_AUTOSEND to "true"
+# and Kit sends it on its own at 07:00 UTC instead (no subscriber filter, so it goes to everyone).
+name: Weekly Sitrep
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency: sitrep
+jobs:
+  sitrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/build_sitrep.py "$RUNNER_TEMP/sitrep.html"
+      - name: Publish the web copy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add sitrep
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Sitrep $(date -u +%F)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"
+      - name: Send to Kit
+        env:
+          KIT_API_KEY: ${{ secrets.KIT_API_KEY }}
+          AUTOSEND: ${{ vars.SITREP_AUTOSEND }}
+        run: |
+          if [ -z "$KIT_API_KEY" ]; then echo "No KIT_API_KEY secret yet, so the issue is only on the website."; exit 0; fi
+          python3 - <<'EOF'
+          import datetime, json, os, urllib.request
+          tmp = os.environ["RUNNER_TEMP"]
+          meta = json.load(open(f"{tmp}/sitrep.html.json"))
+          now = datetime.datetime.now(datetime.timezone.utc)
+          send_at = now.replace(hour=7, minute=0, second=0, microsecond=0) if os.environ.get("AUTOSEND") == "true" else None
+          if send_at and send_at < now + datetime.timedelta(minutes=10):
+              send_at = now + datetime.timedelta(minutes=10)
+          body = {
+              "subject": meta["subject"], "preview_text": meta["preview"], "description": f"Sitrep #{meta['issue']}",
+              "content": open(f"{tmp}/sitrep.html").read(), "public": False, "published_at": now.isoformat(),
+              "send_at": send_at.isoformat() if send_at else None,
+          }
+          req = urllib.request.Request("https://api.kit.com/v4/broadcasts", json.dumps(body).encode(), method="POST",
+                                       headers={"X-Kit-Api-Key": os.environ["KIT_API_KEY"], "Content-Type": "application/json", "Accept": "application/json"})
+          try:
+              res = json.load(urllib.request.urlopen(req))
+          except urllib.error.HTTPError as err:
+              raise SystemExit(f"Kit said {err.code}: {err.read().decode()[:500]}")
+          print("Kit broadcast", res["broadcast"]["id"], "scheduled for " + body["send_at"] if send_at else "saved as a draft")
+          EOF

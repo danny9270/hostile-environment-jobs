@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -241,7 +241,15 @@ def main():
         '<h1 style="margin-top:32px">Not found</h1>\n<p>This job may have closed, or the link is wrong.</p>\n'
         '<div class="actions"><a class="btn primary" href="/#jobs">See open jobs</a></div>').replace('<meta name="description"', '<meta name="robots" content="noindex">\n<meta name="description"'))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # Pay guide: the page reads pay.json and jobs.json in the browser, so it only needs rebuilding when the header changes.
+    pay = (ROOT / "scripts" / "pay.html").read_text()
+    pay_style = re.match(r"\s*<style>.*?</style>\n", pay, re.S).group(0)
+    (ROOT / "pay").mkdir(exist_ok=True)
+    (ROOT / "pay" / "index.html").write_text(page("Pay guide: day rates and salaries | Hostile Environment Jobs",
+        "Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.",
+        "/pay/", pay[len(pay_style):], pay_style))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
     print(f"Built {len(jobs)} job pages and {n_events} calendar events")
