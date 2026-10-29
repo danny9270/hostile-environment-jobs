@@ -37,9 +37,9 @@
 #map .c.l1 { fill: #3f6b48; } #map .c.l2 { fill: #8a7a45; } #map .c.l3 { fill: #b56a22; } #map .c.l4 { fill: #a8392a; }
 #map .c:hover, #map .c:focus { fill: var(--accent); outline: none; }
 #map .c.on { fill: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 12px var(--mono); color: var(--muted); margin: 8px 4px 2px; }
-.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-.map-box select { width: 100%; margin-top: 8px; }
+.dep-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 12px var(--mono); color: var(--muted); margin: 8px 4px 2px; }
+.dep-legend .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.map-box select { width: 100%; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; min-height: 300px; }
 .panel h2 { margin: 0 0 2px; font-size: 34px; }
 .panel h3 { font-size: 20px; margin: 22px 0 6px; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -380,8 +380,8 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <path class="n" d="M1030.8,66.9L1037.4,67.0L1040.5,68.7L1045.1,68.4L1049.6,72.0L1059.9,67.0L1064.7,69.9L1066.0,68.7L1067.0,64.2L1075.5,63.8L1075.8,59.4L1080.7,54.1L1083.9,52.5L1088.5,54.4L1089.4,56.2L1088.8,59.5L1092.5,59.6L1090.6,69.7L1093.5,75.3L1105.6,71.0L1108.5,67.9L1114.4,65.4L1118.5,65.9L1117.7,68.3L1126.2,65.9L1130.0,66.3L1132.8,68.4L1130.8,67.6L1126.5,69.3L1128.6,71.1L1122.4,73.6L1119.1,72.8L1105.2,73.6L1099.5,75.3L1094.8,78.8L1092.0,79.5L1087.6,83.8L1090.6,86.5L1092.9,95.0L1084.9,103.4L1086.5,105.5L1086.0,109.7L1081.1,110.9L1071.8,110.2L1071.6,111.6L1074.8,115.2L1076.4,119.5L1072.2,121.8L1067.9,122.5L1065.9,126.3L1063.9,130.6L1064.4,137.1L1060.7,140.6L1058.3,140.9L1056.1,138.8L1050.7,138.8L1043.6,142.7L1045.6,144.8L1040.1,146.4L1035.7,145.3L1029.2,150.4L1027.3,160.8L1028.2,162.6L1026.5,164.4L1013.4,167.9L1004.8,168.1L1001.2,170.1L994.7,168.7L981.4,169.9L961.5,164.1L973.3,150.4L972.6,145.5L971.5,144.3L961.2,142.8L961.3,133.0L958.1,122.5L962.4,116.7L957.4,115.0L957.1,109.1L959.1,106.3L962.1,106.2L960.1,103.6L962.8,101.8L964.4,99.2L965.2,96.1L964.6,93.8L965.7,93.3L966.6,89.3L971.0,91.7L975.4,91.6L979.4,95.1L984.0,94.0L988.5,91.5L989.9,88.5L989.4,86.4L1000.1,84.2L1006.2,79.9L1010.0,69.7L1013.3,68.3L1019.0,68.1L1021.5,64.0L1030.8,66.9Z"><title>Afghanistan (not covered yet)</title></path>
 </svg>
 
-    <div class="legend" aria-hidden="true"><span><i style="background:#a8392a"></i>FCDO: no travel</span><span><i style="background:#b56a22"></i>No travel to parts / essential only</span><span><i style="background:#8a7a45"></i>Essential only to parts</span><span><i style="background:#3f6b48"></i>No FCDO warning</span><span><i style="background:#2a2e27"></i>Not covered yet</span></div>
-    <select id="dep-pick" aria-label="Choose a country"><option value="">Choose a country…</option></select>
+    <div class="dep-legend" aria-hidden="true"><span><span class="sw" style="background:#a8392a"></span>FCDO: no travel</span><span><span class="sw" style="background:#b56a22"></span>No travel to parts / essential only</span><span><span class="sw" style="background:#8a7a45"></span>Essential only to parts</span><span><span class="sw" style="background:#3f6b48"></span>No FCDO warning</span><span><span class="sw" style="background:#2a2e27"></span>Not covered yet</span></div>
+    <div class="tools" style="margin:8px 0 0;grid-template-columns:1fr"><select id="dep-pick" aria-label="Choose a country"><option value="">Choose a country…</option></select></div>
   </div>
   <div class="panel" id="panel" aria-live="polite">
     <p class="region">No country chosen</p>
@@ -427,6 +427,8 @@ function show(iso, push) {
   h += f ? `<a class="lvl l${f.level}" href="${esc(f.url)}" rel="noopener">UK: ${esc(f.alert)}<small>FCDO travel advice, updated ${day(f.updated)}</small></a>` : "";
   h += us ? `<a class="lvl l${us.level}" href="${esc(us.url)}" rel="noopener">US: Level ${us.level}, ${esc(us.title || US_LEVEL[us.level])}<small>State Department advisory${us.date ? ", issued " + day(us.date) : ""}</small></a>` : "";
 
+  h += `<h3>Weather now</h3><div id="wx"><p class="empty">Loading…</p></div>`;
+
   h += `<h3>Recent updates</h3>`;
   const changes = (f?.changes || []).map(x => `<li><span class="d">${day(x.date)}</span> FCDO: ${esc(x.note)}</li>`);
   const reports = (c.reports || []).map(r => `<li><span class="d">${day(r.date)}</span> <a href="${esc(r.url)}" rel="noopener">${esc(r.title)}</a> <span class="src">${esc(r.source)}${r.type ? " · " + esc(r.type) : ""}</span></li>`);
@@ -440,8 +442,6 @@ function show(iso, push) {
   h += f ? src(f.url + "/safety-and-security", "FCDO safety and security", f.updated) : `<p class="empty">Couldn't load FCDO advice. See <a href="https://www.gov.uk/foreign-travel-advice">gov.uk</a>.</p>`;
   h += `<h4>Incident data</h4><ul>${INSO.includes(iso) ? `<li><a href="https://ngosafety.org/conflict-data-dashboard" rel="noopener">INSO conflict data dashboard</a>: every recorded incident affecting NGOs, updated monthly (choose ${esc(c.name)}). <span class="src">Source: International NGO Safety Organisation (INSO), NGOsafety.org</span></li>` : ""}
     <li><a href="https://acleddata.com/" rel="noopener">ACLED</a>: conflict events, monthly regional overviews and the Conflict Index (free account). <span class="src">Armed Conflict Location &amp; Event Data (ACLED)</span></li></ul>`;
-
-  h += `<h3>Weather now</h3><div id="wx"><p class="empty">Loading…</p></div>`;
 
   h += `<h3>Visas and entry</h3><p class="src">For <b>British passport holders</b>, from the FCDO. Other nationalities: check with the embassy.</p>`;
   h += f?.visa?.length ? f.visa.map(v => `<h4>${esc(v.heading)}</h4><p>${esc(v.text)}</p>`).join("") : "";

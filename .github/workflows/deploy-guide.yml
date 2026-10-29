@@ -2,7 +2,7 @@
 name: Refresh deployment guide
 on:
   push:
-    branches: [main, claude/project-thread-9l1p20]
+    branches: [main]
     paths: [deploy-countries.json, scripts/build_deploy.py, .github/workflows/deploy-guide.yml]
   schedule:
     - cron: "40 4 * * *"

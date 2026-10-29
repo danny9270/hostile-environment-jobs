@@ -14,9 +14,9 @@
 #map .c.l1 { fill: #3f6b48; } #map .c.l2 { fill: #8a7a45; } #map .c.l3 { fill: #b56a22; } #map .c.l4 { fill: #a8392a; }
 #map .c:hover, #map .c:focus { fill: var(--accent); outline: none; }
 #map .c.on { fill: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 12px var(--mono); color: var(--muted); margin: 8px 4px 2px; }
-.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-.map-box select { width: 100%; margin-top: 8px; }
+.dep-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 500 12px var(--mono); color: var(--muted); margin: 8px 4px 2px; }
+.dep-legend .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.map-box select { width: 100%; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; min-height: 300px; }
 .panel h2 { margin: 0 0 2px; font-size: 34px; }
 .panel h3 { font-size: 20px; margin: 22px 0 6px; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -52,8 +52,8 @@
 <div class="dep">
   <div class="map-box">
 <!--MAP-->
-    <div class="legend" aria-hidden="true"><span><i style="background:#a8392a"></i>FCDO: no travel</span><span><i style="background:#b56a22"></i>No travel to parts / essential only</span><span><i style="background:#8a7a45"></i>Essential only to parts</span><span><i style="background:#3f6b48"></i>No FCDO warning</span><span><i style="background:#2a2e27"></i>Not covered yet</span></div>
-    <select id="dep-pick" aria-label="Choose a country"><option value="">Choose a country…</option></select>
+    <div class="dep-legend" aria-hidden="true"><span><span class="sw" style="background:#a8392a"></span>FCDO: no travel</span><span><span class="sw" style="background:#b56a22"></span>No travel to parts / essential only</span><span><span class="sw" style="background:#8a7a45"></span>Essential only to parts</span><span><span class="sw" style="background:#3f6b48"></span>No FCDO warning</span><span><span class="sw" style="background:#2a2e27"></span>Not covered yet</span></div>
+    <div class="tools" style="margin:8px 0 0;grid-template-columns:1fr"><select id="dep-pick" aria-label="Choose a country"><option value="">Choose a country…</option></select></div>
   </div>
   <div class="panel" id="panel" aria-live="polite">
     <p class="region">No country chosen</p>
@@ -99,6 +99,8 @@ function show(iso, push) {
   h += f ? `<a class="lvl l${f.level}" href="${esc(f.url)}" rel="noopener">UK: ${esc(f.alert)}<small>FCDO travel advice, updated ${day(f.updated)}</small></a>` : "";
   h += us ? `<a class="lvl l${us.level}" href="${esc(us.url)}" rel="noopener">US: Level ${us.level}, ${esc(us.title || US_LEVEL[us.level])}<small>State Department advisory${us.date ? ", issued " + day(us.date) : ""}</small></a>` : "";
 
+  h += `<h3>Weather now</h3><div id="wx"><p class="empty">Loading…</p></div>`;
+
   h += `<h3>Recent updates</h3>`;
   const changes = (f?.changes || []).map(x => `<li><span class="d">${day(x.date)}</span> FCDO: ${esc(x.note)}</li>`);
   const reports = (c.reports || []).map(r => `<li><span class="d">${day(r.date)}</span> <a href="${esc(r.url)}" rel="noopener">${esc(r.title)}</a> <span class="src">${esc(r.source)}${r.type ? " · " + esc(r.type) : ""}</span></li>`);
@@ -112,8 +114,6 @@ function show(iso, push) {
   h += f ? src(f.url + "/safety-and-security", "FCDO safety and security", f.updated) : `<p class="empty">Couldn't load FCDO advice. See <a href="https://www.gov.uk/foreign-travel-advice">gov.uk</a>.</p>`;
   h += `<h4>Incident data</h4><ul>${INSO.includes(iso) ? `<li><a href="https://ngosafety.org/conflict-data-dashboard" rel="noopener">INSO conflict data dashboard</a>: every recorded incident affecting NGOs, updated monthly (choose ${esc(c.name)}). <span class="src">Source: International NGO Safety Organisation (INSO), NGOsafety.org</span></li>` : ""}
     <li><a href="https://acleddata.com/" rel="noopener">ACLED</a>: conflict events, monthly regional overviews and the Conflict Index (free account). <span class="src">Armed Conflict Location &amp; Event Data (ACLED)</span></li></ul>`;
-
-  h += `<h3>Weather now</h3><div id="wx"><p class="empty">Loading…</p></div>`;
 
   h += `<h3>Visas and entry</h3><p class="src">For <b>British passport holders</b>, from the FCDO. Other nationalities: check with the embassy.</p>`;
   h += f?.visa?.length ? f.visa.map(v => `<h4>${esc(v.heading)}</h4><p>${esc(v.text)}</p>`).join("") : "";
