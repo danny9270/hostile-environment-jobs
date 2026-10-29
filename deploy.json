@@ -1,9 +1,7 @@
 {
- "updated": "2026-10-29T15:40:05Z",
+ "updated": "2026-10-29T15:40:50Z",
  "errors": [
-  "ReliefWeb: HTTP Error 403: Forbidden",
-  "US advisory not found for Israel; names starting 'Isr': ['israel']",
-  "US advisory not found for Palestine; names starting 'Pal': ['palau']"
+  "ReliefWeb: HTTP Error 403: Forbidden"
  ],
  "countries": [
   {
@@ -1879,7 +1877,12 @@
     ],
     "visa_url": "https://www.gov.uk/foreign-travel-advice/israel/entry-requirements"
    },
-   "us": null,
+   "us": {
+    "level": 3,
+    "title": "Reconsider Travel",
+    "date": "2026-10-23",
+    "url": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.isr.html"
+   },
    "reports": []
   },
   {
@@ -2021,7 +2024,12 @@
     ],
     "visa_url": "https://www.gov.uk/foreign-travel-advice/palestine/entry-requirements"
    },
-   "us": null,
+   "us": {
+    "level": 4,
+    "title": "Do Not Travel",
+    "date": "2026-08-26",
+    "url": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.xgz.html"
+   },
    "reports": []
   },
   {
