@@ -154,6 +154,22 @@ form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .note { color: var(--warn); } .sent { color: var(--ok); }
+/* Course reviews: star summary on each course card, plus the moderated review form. */
+.stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.rev summary { cursor: pointer; color: var(--ink); }
+.rev blockquote { margin: 10px 0 0; padding: 10px 12px; background: var(--raised); border-left: 3px solid var(--sand); border-radius: 4px; color: var(--ink); }
+.rev blockquote p { margin: 4px 0; }
+.rev cite { font: 500 12.5px var(--mono); color: var(--muted); font-style: normal; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.rate { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; border: 0; padding: 0; margin: 0; }
+.rate legend { font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 4px; }
+.rate input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+form .rate label { display: inline; font-size: 32px; line-height: 1; color: #4a5045; cursor: pointer; }
+.rate input:checked ~ label, .rate label:hover, .rate label:hover ~ label { color: var(--accent); }
+.rate input:focus-visible + label { outline: 2px solid var(--sand); outline-offset: 2px; }
+form label.check { display: flex; gap: 8px; align-items: baseline; font-weight: 400; }
+form label.check input { width: auto; flex: none; }
 .guide { border-top: 1px solid var(--line); padding: 14px 0; }
 .guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .guide summary::-webkit-details-marker { display: none; }
