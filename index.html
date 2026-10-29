@@ -790,8 +790,10 @@ function wireForm(form, note, missing, thanks) {
       bad?.focus(); return;
     }
     const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    let res;
+    try { res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) }); }
+    catch { return postDirect(form); } // some browsers and blockers stop the background request ("Load failed"), so send the form as a normal page instead
     try {
-      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
       // FormSubmit can answer 200 with success "false" (for example before the address is activated), so check the body too.
       const reply = await res.json().catch(() => ({}));
       if (!res.ok || String(reply.success) === "false") throw new Error(reply.message || "error " + res.status);
@@ -799,6 +801,18 @@ function wireForm(form, note, missing, thanks) {
     } catch (err) { note.className = "note"; note.textContent = `That didn't send (${err.message}). Please try again, or email ${CONTACT}.`; }
     finally { btn.disabled = false; }
   });
+  // Back from a normal-page send: FormSubmit returns here with ?sent=<form id>.
+  if (new URLSearchParams(location.search).get("sent") === form.id) {
+    note.className = "sent"; note.textContent = thanks;
+    history.replaceState(null, "", location.pathname + location.hash);
+  }
+}
+function postDirect(form) {
+  const add = (name, value) => { const i = document.createElement("input"); i.type = "hidden"; i.name = name; i.value = value; form.append(i); };
+  add("_next", `${location.origin}/?sent=${form.id}#${form.parentElement.closest("[id]").id}`);
+  add("_captcha", "false");
+  form.action = "https://formsubmit.co/" + CONTACT; form.method = "POST";
+  HTMLFormElement.prototype.submit.call(form);
 }
 wireForm(document.getElementById("post-form"), document.getElementById("post-note"),
   "Fill in the title, employer, location, link and your email, then send again.",
