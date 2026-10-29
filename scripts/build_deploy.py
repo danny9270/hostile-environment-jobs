@@ -28,8 +28,9 @@ ISO3 = {"SO": "SOM", "ET": "ETH", "ER": "ERI", "DJ": "DJI", "KE": "KEN", "SD": "
         "MA": "MAR", "DZ": "DZA", "TN": "TUN", "LY": "LBY", "EG": "EGY", "IL": "ISR", "PS": "PSE", "LB": "LBN",
         "SY": "SYR", "JO": "JOR", "IQ": "IRQ", "IR": "IRN", "SA": "SAU", "YE": "YEM", "OM": "OMN", "AE": "ARE",
         "QA": "QAT", "BH": "BHR", "KW": "KWT"}
-# Names the State Dept uses in its advisory titles, where they differ from ours.
-US_NAMES = {"IL": "Israel, the West Bank and Gaza", "PS": "Israel, the West Bank and Gaza", "AE": "United Arab Emirates"}
+# Names the State Dept uses in its advisory titles, where they differ from ours, first match wins.
+# It has covered the West Bank and Gaza in its Israel advisory.
+US_NAMES = {"PS": ["West Bank and Gaza", "West Bank", "Gaza", "Israel, the West Bank and Gaza", "Israel"]}
 ALERTS = {
     "avoid_all_travel_to_whole_country": (4, "FCDO advises against all travel to the whole country"),
     "avoid_all_travel_to_parts": (3, "FCDO advises against all travel to parts of the country"),
@@ -180,7 +181,7 @@ def main():
         except Exception as err:
             errors.append(f"FCDO {c['fcdo']}: {err}")
             row["fcdo"] = prev.get("fcdo")
-        adv = us.get(US_NAMES.get(c["iso2"], c["name"]).lower())
+        adv = next((us[n.lower()] for n in US_NAMES.get(c["iso2"], [c["name"]]) if n.lower() in us), None)
         if us and not adv:
             errors.append(f"US advisory not found for {c['name']}; names starting {c['name'][:3]!r}: {[k for k in us if k.startswith(c['name'][:3].lower())]}")
         row["us"] = adv or prev.get("us")
