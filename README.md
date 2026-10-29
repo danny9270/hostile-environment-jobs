@@ -8,6 +8,12 @@ Static jobs and training board for EOD, IEDD, search, mine action, security, hos
 - Dates use `YYYY-MM-DD`. Jobs with a past `closing` date and courses with a past `start` date are hidden automatically. Use `"Rolling"` for open-ended ones.
 - Entries with `"sample": true` are placeholders and show a sample notice; delete them before launch.
 
+## Course reviews
+
+- Approved reviews go in `reviews.json`. Each has `id`, `provider`, `course`, `rating` (1 to 5), `text`, and optionally `headline`, `name` (blank shows "Anonymous"), `background`, `attended` (`YYYY-MM`) and `posted`.
+- A review attaches to every listing whose provider and title match `provider` and `course` (ignoring case and spacing), so it carries over to later dates of the same course. Reviews for a course that isn't listed are kept and show again when it is.
+- Nothing goes up automatically. The "Review a course" form emails the review, with a `review_code` line, to `CONTACT`; paste that code into Reviews, Add review on `/admin/` to publish it.
+
 ## Settings
 
 At the top of the script in `index.html`: `CONTACT` (email for the job and course forms), `FACEBOOK_GROUP` (group link) and the job/course categories.

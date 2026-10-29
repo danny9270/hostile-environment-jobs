@@ -134,6 +134,22 @@ form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .note { color: var(--warn); } .sent { color: var(--ok); }
+/* Course reviews: star summary on each course card, plus the moderated review form. */
+.stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.rev summary { cursor: pointer; color: var(--ink); }
+.rev blockquote { margin: 10px 0 0; padding: 10px 12px; background: var(--raised); border-left: 3px solid var(--sand); border-radius: 4px; color: var(--ink); }
+.rev blockquote p { margin: 4px 0; }
+.rev cite { font: 500 12.5px var(--mono); color: var(--muted); font-style: normal; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.rate { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; border: 0; padding: 0; margin: 0; }
+.rate legend { font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 4px; }
+.rate input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+form .rate label { display: inline; font-size: 32px; line-height: 1; color: #4a5045; cursor: pointer; }
+.rate input:checked ~ label, .rate label:hover, .rate label:hover ~ label { color: var(--accent); }
+.rate input:focus-visible + label { outline: 2px solid var(--sand); outline-offset: 2px; }
+form label.check { display: flex; gap: 8px; align-items: baseline; font-weight: 400; }
+form label.check input { width: auto; flex: none; }
 .guide { border-top: 1px solid var(--line); padding: 14px 0; }
 .guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .guide summary::-webkit-details-marker { display: none; }
@@ -255,12 +271,46 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="page-hero"><div style="padding-block: 40px 20px">
     <p class="eyebrow">HEAT · EOD &amp; IEDD · Close protection · Medical</p>
     <h1>Courses <span class="amp">&amp;</span> training</h1>
-    <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically.</p>
+    <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically. Done one? <a href="#review-course">Rate it</a> so others know what they're booking.</p>
     <p class="sample-note" id="course-sample-note" hidden>These are sample courses.</p>
   </div></div>
   <div class="chips" id="course-types" role="group" aria-label="Course type"></div>
   <div class="jobs" id="course-list"></div>
   <p class="empty" id="course-empty" hidden>No courses listed yet. Training providers can list one free below.</p>
+  <div class="page" id="review-course">
+    <h2>Review a course</h2>
+    <p>Done one of these courses? Tell others what it was really like. We read every review before it goes up, and we don't publish personal attacks, instructors' names or anything that shouldn't be public.</p>
+    <form id="review-form" novalidate>
+      <input type="hidden" name="_subject" value="New course review for Hostile Environment Jobs">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="review_code" id="r-code">
+      <label>Course <select name="course" id="r-course" required><option value="">Choose a course...</option></select></label>
+      <div class="row" id="r-other" hidden>
+        <label>Course name <input id="r-title" name="course_name"></label>
+        <label>Provider <input id="r-provider" name="provider"></label>
+      </div>
+      <fieldset class="rate"><legend>Your rating</legend>
+        <input type="radio" name="rating" value="5" id="rv5" aria-label="5 out of 5" required><label for="rv5" title="5 out of 5">★</label>
+        <input type="radio" name="rating" value="4" id="rv4" aria-label="4 out of 5"><label for="rv4" title="4 out of 5">★</label>
+        <input type="radio" name="rating" value="3" id="rv3" aria-label="3 out of 5"><label for="rv3" title="3 out of 5">★</label>
+        <input type="radio" name="rating" value="2" id="rv2" aria-label="2 out of 5"><label for="rv2" title="2 out of 5">★</label>
+        <input type="radio" name="rating" value="1" id="rv1" aria-label="1 out of 5"><label for="rv1" title="1 out of 5">★</label>
+      </fieldset>
+      <div class="row">
+        <label>Headline <input id="r-headline" name="headline" maxlength="80" placeholder="e.g. Realistic scenarios, good medics"></label>
+        <label>When did you do it? <input id="r-attended" name="attended" type="month" placeholder="e.g. 2025-06"></label>
+      </div>
+      <label>Your review <textarea id="r-text" name="review" rows="5" minlength="40" maxlength="2000" required placeholder="What was good, what wasn't, and who you'd recommend it to."></textarea></label>
+      <div class="row">
+        <label>Name to show <input id="r-name" name="name" maxlength="40" placeholder="Leave blank to post anonymously"></label>
+        <label>Your background <input id="r-bg" name="background" maxlength="60" placeholder="e.g. Ex-RE, now NGO team leader"></label>
+      </div>
+      <label>Your email <input id="r-email" name="email" type="email" required></label>
+      <label class="check"><input type="checkbox" name="confirm" value="yes" required> I did this course myself and this is my honest view. My email won't be shown.</label>
+      <button class="btn primary" type="submit">Send review</button>
+      <p id="review-note" aria-live="polite"></p>
+    </form>
+  </div>
   <div class="page" id="list-course">
     <h2>List a course</h2>
     <p>Training providers can list courses for free. We check each one before it goes live.</p>
@@ -399,7 +449,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -463,13 +513,14 @@ function due(j) {
   return "Closes " + fmtDate(j.closing) + (days <= 7 ? ` <span class="soon">(${days === 0 ? "today" : days + " days left"})</span>` : "");
 }
 
+const COURSE_ANCHORS = ["list-course", "review-course"];
 function show(hash) {
   const [view, id] = hash.split("/");
-  const v = view === "list-course" ? "courses" : views.includes(view) ? view : "jobs";
+  const v = COURSE_ANCHORS.includes(view) ? "courses" : views.includes(view) ? view : "jobs";
   views.forEach(n => document.getElementById(n).hidden = n !== v);
   document.querySelectorAll("nav a").forEach(a => a.dataset.view === (v === "job" ? "jobs" : v) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   if (v === "job") renderDetail(decodeURIComponent(id || ""));
-  if (view === "list-course" || view === "sitrep") document.getElementById(view).scrollIntoView();
+  if (COURSE_ANCHORS.includes(view) || view === "sitrep") document.getElementById(view).scrollIntoView();
   else window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1) || "jobs"));
@@ -560,7 +611,7 @@ function renderCourses() {
     <div><span class="tag">${esc(c.type)}</span>
       <h3><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
       <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
-      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p></div>
+      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p>${reviewBlock(c)}</div>
     <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
   </article>`).join("");
 }
@@ -576,6 +627,61 @@ const coursesLoaded = fetch("courses.json", { cache: "no-cache" }).then(r => r.o
   document.getElementById("stat-courses").textContent = COURSES.filter(courseOpen).length;
   renderCourses();
 });
+
+// Course reviews: approved reviews live in reviews.json and attach to a course by provider + title,
+// so they carry over to every run of the same course. New reviews come in by email and are added in /admin/.
+let REVIEWS = {};
+const ckey = (provider, title) => [provider, title].map(t => String(t ?? "").toLowerCase().replace(/\s+/g, " ").trim()).join("|");
+const stars = r => `<span class="stars" style="--p:${(r / 5) * 100}%" role="img" aria-label="${r.toFixed(1)} out of 5">★★★★★</span>`;
+const fmtMonth = m => /^\d{4}-\d\d$/.test(m || "") ? new Date(m + "-01T00:00:00").toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "";
+function reviewBlock(c) {
+  const key = ckey(c.provider, c.title), rs = REVIEWS[key] || [];
+  const write = `<button type="button" class="linkish" data-review="${esc(key)}">Review this course</button>`;
+  if (!rs.length) return `<div class="rev">No reviews yet. ${write}</div>`;
+  const avg = rs.reduce((n, r) => n + r.rating, 0) / rs.length;
+  return `<div class="rev"><details><summary>${stars(avg)} <b>${avg.toFixed(1)}</b> from ${rs.length} review${rs.length > 1 ? "s" : ""}</summary>
+    ${rs.map(r => `<blockquote>${stars(r.rating)}${r.headline ? ` <b>${esc(r.headline)}</b>` : ""}<p>${esc(r.text)}</p>
+      <cite>${esc(r.name || "Anonymous")}${r.background ? ", " + esc(r.background) : ""}${fmtMonth(r.attended) ? " · did it " + fmtMonth(r.attended) : ""}</cite></blockquote>`).join("")}
+  </details> ${write}</div>`;
+}
+const reviewsLoaded = fetch("reviews.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+  REVIEWS = {};
+  (Array.isArray(data) ? data : []).filter(r => r.rating >= 1 && r.rating <= 5 && r.text)
+    .sort((a, b) => String(b.posted).localeCompare(String(a.posted)))
+    .forEach(r => (REVIEWS[ckey(r.provider, r.course)] ||= []).push({ ...r, rating: Number(r.rating) }));
+});
+Promise.all([coursesLoaded, reviewsLoaded]).then(() => {
+  renderCourses();
+  const sel = document.getElementById("r-course"), seen = new Set();
+  [...COURSES].filter(c => !c.sample).sort((a, b) => `${a.provider} ${a.title}`.localeCompare(`${b.provider} ${b.title}`)).forEach(c => {
+    const key = ckey(c.provider, c.title);
+    if (!seen.has(key)) { seen.add(key); sel.append(new Option(`${c.title} (${c.provider})`, key)); }
+  });
+  sel.append(new Option("A course that isn't listed here", "other"));
+});
+{
+  const form = document.getElementById("review-form"), sel = document.getElementById("r-course"), other = document.getElementById("r-other");
+  const toggleOther = () => { other.hidden = sel.value !== "other"; other.querySelectorAll("input").forEach(i => i.required = !other.hidden); };
+  sel.addEventListener("change", toggleOther);
+  form.addEventListener("reset", () => setTimeout(toggleOther));
+  document.getElementById("course-list").addEventListener("click", e => {
+    const b = e.target.closest("[data-review]");
+    if (!b) return;
+    sel.value = b.dataset.review; toggleOther();
+    document.getElementById("review-course").scrollIntoView({ behavior: "smooth" });
+  });
+  // The email includes a ready-made line to paste into /admin/ (Reviews, Add review) once it's approved.
+  form.addEventListener("submit", () => {
+    const f = form.elements, c = COURSES.find(c => ckey(c.provider, c.title) === sel.value);
+    document.getElementById("r-code").value = JSON.stringify({
+      provider: c ? c.provider : f.provider.value.trim(), course: c ? c.title : f.course_name.value.trim(),
+      rating: Number(f.rating.value), headline: f.headline.value.trim(), text: f.review.value.trim(),
+      name: f.name.value.trim(), background: f.background.value.trim(), attended: f.attended.value, posted: new Date().toISOString().slice(0, 10) });
+  });
+  wireForm(form, document.getElementById("review-note"),
+    "Pick the course and a star rating, write at least a few lines, add your email and tick the box, then send again.",
+    "Thanks for the review. We'll check it and put it up, usually within a day.");
+}
 
 // Calendar: course starts and job closing dates, drawn once both lists have loaded.
 // The same dates are published as calendar.ics by scripts/build_pages.py for people to subscribe to.
