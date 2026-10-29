@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /app/ job alerts page, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /app/ job alerts page, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -13,6 +13,7 @@ import re
 import shutil
 
 import employers as paid
+import landing
 
 SITE = "https://hostileenvironmentjobs.com"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -151,7 +152,7 @@ def job_page(j, employers=()):
     return page(title, desc, path, body, f'<script type="application/ld+json">{ld}</script>\n')
 
 
-def jobs_index(jobs):
+def jobs_index(jobs, browse=""):
     cards = "\n".join(f"""<article class="detail{' featured' if j.get('_featured') else ''}">
   <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
   <h2><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h2>
@@ -161,6 +162,7 @@ def jobs_index(jobs):
     body = f"""<a class="back" href="/#jobs">&larr; Search and filter jobs</a>
 <h1 style="margin-top:24px">Open jobs</h1>
 <p>EOD, search, mine action, security, medic and support jobs in hostile environments. Every listing links to the employer's own advert.</p>
+{browse}
 {cards}"""
     return page("Open jobs | Hostile Environment Jobs", "All open EOD, security, medic and mine action jobs on Hostile Environment Jobs.", "/jobs/", body)
 
@@ -241,7 +243,8 @@ def main():
         (out / j["id"]).mkdir(parents=True)
         (out / j["id"] / "index.html").write_text(job_page(j, employers))
     out.mkdir(exist_ok=True)
-    (out / "index.html").write_text(jobs_index(jobs))
+    landing_urls, browse = landing.build(ROOT, jobs, courses, page, e, closing_text, SITE, COUNTRIES, country, TODAY)
+    (out / "index.html").write_text(jobs_index(jobs, browse))
 
     # Employer profiles last only while paid for, so the folder is rebuilt each time.
     emp_out = ROOT / "employers"
@@ -280,7 +283,7 @@ def main():
         "/app/", app[len(app_style):], app_style).replace('<a href="/app/">', '<a href="/app/" aria-current="page">', 1))
 
     urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
-    urls += ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
+    urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
     print(f"Built {len(jobs)} job pages, {len(employers)} employer profiles and {n_events} calendar events")

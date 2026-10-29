@@ -25,6 +25,10 @@
 .restore input { flex: 1; min-width: 0; font: 500 16px var(--mono); text-transform: uppercase; }
 #matches .job { grid-template-columns: minmax(0, 1fr) auto; }
 details summary { cursor: pointer; font-weight: 600; }
+.refer-link { font: 500 15px var(--mono); word-break: break-all; }
+.dots { display: flex; gap: 8px; margin: 10px 0; }
+.dots span { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--accent); }
+.dots span.on { background: var(--accent); }
 </style>
 <div class="app">
   <p class="eyebrow" style="margin-top:32px">Job alerts app</p>
@@ -79,6 +83,7 @@ details summary { cursor: pointer; font-weight: 600; }
   </form>
 
   <div class="panel" id="buy" hidden>
+    <p class="sub" id="referred" hidden>A mate sent you here. When you sign up, it counts towards their free year.</p>
     <div class="price" id="price">$6<small>a year</small></div>
     <ul class="perks">
       <li>Alerts for new jobs and courses that match what you picked</li>
@@ -108,6 +113,20 @@ details summary { cursor: pointer; font-weight: 600; }
     <p class="msg" id="acct-msg"></p>
   </div>
 
+  <div class="panel" id="refer" hidden>
+    <h2>Refer 3 mates, get a year free</h2>
+    <p>Share your link. For every 3 people who sign up through it, you get another year of alerts free.</p>
+    <p class="refer-link" id="refer-link"></p>
+    <div class="dots" id="refer-dots" aria-hidden="true"></div>
+    <p class="status" id="refer-status"></p>
+    <div class="row-btns">
+      <button class="btn primary" type="button" id="refer-share">Share my link</button>
+      <a class="btn" id="refer-wa" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn" id="refer-fb" target="_blank" rel="noopener">Facebook</a>
+    </div>
+    <p class="msg" id="refer-msg"></p>
+  </div>
+
   <section id="matches" hidden>
     <h2 style="margin-top:28px">Open jobs that match</h2>
     <p class="sub" id="match-count"></p>
@@ -133,6 +152,7 @@ const pushable = "serviceWorker" in navigator && "PushManager" in window && "Not
 
 let config = null, acct = null, prefs = JSON.parse(store.get("hej-prefs") || "{}"), JOBS = [];
 if (params.get("code")) store.set("hej-code", params.get("code"));
+if (/^[0-9A-Za-z]{6}$/.test(params.get("ref") || "")) store.set("hej-ref", params.get("ref").toUpperCase());
 
 async function api(path, opts = {}) {
   const res = await fetch(API + path, { ...opts, headers: { "Content-Type": "application/json" }, body: opts.body && JSON.stringify(opts.body) });
@@ -220,6 +240,8 @@ async function draw() {
   $("pay").disabled = needsHome;
   $("pay-msg").textContent = needsHome ? "Add the app to your home screen first (see above), then open it from there." : (!pushable ? "This browser can't show notifications. Try Chrome on Android or Safari on iPhone." : "");
   $("buy").hidden = Boolean(acct?.active);
+  $("referred").hidden = Boolean(acct) || !store.get("hej-ref");
+  drawRefer();
   $("save-row").hidden = !acct;
   $("account").hidden = !acct;
   $("notify").hidden = true;
@@ -237,6 +259,25 @@ async function draw() {
     $("buy").hidden = false;
   }
 }
+
+const referUrl = () => `${location.origin}/app/?ref=${acct.ref}`;
+const REFER_TEXT = "Job alerts for EOD, mine action, security and HE medic work, straight to your phone:";
+function drawRefer() {
+  $("refer").hidden = !acct?.ref || acct.free;
+  if ($("refer").hidden) return;
+  const per = acct.referrals_per_year || 3, toward = acct.referrals % per;
+  $("refer-link").textContent = referUrl();
+  $("refer-dots").innerHTML = Array.from({ length: per }, (_, i) => `<span class="${i < toward ? "on" : ""}"></span>`).join("");
+  $("refer-status").textContent = `${acct.referrals} signed up through your link` + (acct.free_years ? ` · ${acct.free_years} free year${acct.free_years === 1 ? "" : "s"} earned` : "") + ` · ${per - toward} more for your next free year`;
+  $("refer-wa").href = "https://wa.me/?text=" + encodeURIComponent(REFER_TEXT + " " + referUrl());
+  $("refer-fb").href = "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(referUrl());
+}
+$("refer-share").onclick = async () => {
+  try {
+    if (navigator.share) await navigator.share({ title: "HE Jobs alerts", text: REFER_TEXT, url: referUrl() });
+    else { await navigator.clipboard.writeText(referUrl()); $("refer-msg").textContent = "Link copied. Paste it to your mates."; }
+  } catch {}
+};
 
 async function load() {
   const code = store.get("hej-code");
@@ -256,7 +297,7 @@ async function load() {
 $("pay").onclick = $("renew").onclick = async () => {
   $("pay-msg").textContent = "One moment…";
   try {
-    const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs } });
+    const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs, ref: store.get("hej-ref") } });
     store.set("hej-code", r.code);
     if (r.url) location.href = r.url;
     else { await load(); $("pay-msg").textContent = ""; }
