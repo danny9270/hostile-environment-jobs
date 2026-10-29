@@ -90,7 +90,11 @@ def page(title, description, path, body, head_extra=""):
 <meta property="og:image" content="{SITE}/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#111310">
+<link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 {FONTS}
 {head_extra}{STYLE}
 </head>
