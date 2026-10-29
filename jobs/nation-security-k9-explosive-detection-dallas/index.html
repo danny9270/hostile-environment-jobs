@@ -168,6 +168,21 @@ form label.check input { width: auto; flex: none; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
 .legend .lj::before { background: var(--accent); }
+/* Paid extras: featured jobs, employer profiles, Advertise page */
+.job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
+.tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
+.detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.who a { color: inherit; }
+.profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0 10px; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; align-content: start; gap: 6px; }
+.plan.best { border-color: var(--accent); }
+.plan h2 { margin: 0; font-size: 22px; }
+.plan .price { font: 900 40px/1 var(--display); margin: 6px 0; }
+.plan .price span { font: 500 13px var(--mono); color: var(--muted); }
+.plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
+.plan .btn { justify-self: start; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
@@ -237,6 +252,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="/pay/">Pay guide</a>
   <a href="/#post" data-view="post">Post a job</a>
+  <a href="/advertise/">Advertise</a>
   <a href="/#list-course" data-view="courses">List a course</a>
   <a href="/#calendar" data-view="calendar">Calendar</a>
   <a href="/#sitrep">Sitrep newsletter</a>
