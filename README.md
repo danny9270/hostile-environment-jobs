@@ -8,6 +8,12 @@ Static jobs and training board for EOD, IEDD, search, mine action, security, hos
 - Dates use `YYYY-MM-DD`. Jobs with a past `closing` date and courses with a past `start` date are hidden automatically. Use `"Rolling"` for open-ended ones.
 - Entries with `"sample": true` are placeholders and show a sample notice; delete them before launch.
 
+## Course reviews
+
+- Approved reviews go in `reviews.json`. Each has `id`, `provider`, `course`, `rating` (1 to 5), `text`, and optionally `headline`, `name` (blank shows "Anonymous"), `background`, `attended` (`YYYY-MM`) and `posted`.
+- A review attaches to every listing whose provider and title match `provider` and `course` (ignoring case and spacing), so it carries over to later dates of the same course. Reviews for a course that isn't listed are kept and show again when it is.
+- Nothing goes up automatically. The "Review a course" form emails the review, with a `review_code` line, to `CONTACT`; paste that code into Reviews, Add review on `/admin/` to publish it.
+
 ## Settings
 
 At the top of the script in `index.html`: `CONTACT` (email for the job and course forms), `FACEBOOK_GROUP` (group link) and the job/course categories.
@@ -23,3 +29,23 @@ Visitor stats on the dashboard come from GoatCounter: the site code (`hostileenv
 ## Job pages for Google
 
 `scripts/build_pages.py` builds a page for each open job at `/jobs/<id>/` (with Google for Jobs data), a `/jobs/` list, `404.html` and `sitemap.xml`. The "Build job pages" GitHub Action runs it whenever `jobs.json` changes and every morning, so closed jobs drop off. Don't edit those generated files by hand.
+
+## Featured jobs and employer profiles (paid)
+
+- **Featured job:** add `"featured_until": "YYYY-MM-DD"` to a job in `jobs.json` (or set "Featured until" in the admin page). Until that date it's pinned to the top of the list with a Featured badge; after it, it goes back to a normal listing on its own.
+- **Featured employer:** add an entry to `employers.json`. While its `featured_until` date hasn't passed, the employer gets a profile page at `/employers/<id>/` and all their jobs are featured. Jobs are matched by `employer` name (or any of `aliases`). Fields: `id`, `name`, `featured_until`, and optionally `tagline`, `about` (blank line between paragraphs), `based`, `works_in`, `sectors` (list), `website`, `careers_url`, `logo` (e.g. `/img/logos/name.png`), `aliases` (list).
+- **Prices and payment:** the plans on `/advertise/` live in `PLANS` at the top of `scripts/employers.py`. Paste a Stripe Payment Link into a plan's `payment_link` to show a "Pay and book" button; left empty, the button goes to the enquiry form instead.
+
+Example `employers.json` entry:
+
+```json
+[{"id": "acme-demining", "name": "Acme Demining", "featured_until": "2027-01-31", "tagline": "Humanitarian mine action across Africa",
+  "website": "https://example.com", "careers_url": "https://example.com/careers", "sectors": ["EOD", "Survey & Clearance"]}]
+```
+
+## Pay guide
+
+`/pay/` shows indicative day rates and salaries from `pay.json`, community pay reports, and the stated pay on open jobs (read live from `jobs.json`). The page body lives in `scripts/pay.html`; `scripts/build_pages.py` wraps it in the site header and footer, so don't edit `pay/index.html` by hand.
+
+- `ranges`: each has `role`, `category`, `region`, `where`, `low` and/or `high`, `currency`, `per` (`day`, `month`, `year` or `hour`) and `basis` (`estimate`, `advert` or `published`, with `source` and `source_url` for the last two). Update `updated` when you review them.
+- `reports`: anonymous reports arrive by email (FormSubmit, subject "Pay report"). Nothing is published until it's added here. Before adding one, drop anything identifying and round the pay. Fields: `role`, `category`, `region`, `country`, `employer_type`, `amount`, `currency`, `per`, `year`, and optional `rotation`, `experience` and `extras`.

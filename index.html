@@ -134,6 +134,22 @@ form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .note { color: var(--warn); } .sent { color: var(--ok); }
+/* Course reviews: star summary on each course card, plus the moderated review form. */
+.stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.rev summary { cursor: pointer; color: var(--ink); }
+.rev blockquote { margin: 10px 0 0; padding: 10px 12px; background: var(--raised); border-left: 3px solid var(--sand); border-radius: 4px; color: var(--ink); }
+.rev blockquote p { margin: 4px 0; }
+.rev cite { font: 500 12.5px var(--mono); color: var(--muted); font-style: normal; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.rate { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; border: 0; padding: 0; margin: 0; }
+.rate legend { font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 4px; }
+.rate input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+form .rate label { display: inline; font-size: 32px; line-height: 1; color: #4a5045; cursor: pointer; }
+.rate input:checked ~ label, .rate label:hover, .rate label:hover ~ label { color: var(--accent); }
+.rate input:focus-visible + label { outline: 2px solid var(--sand); outline-offset: 2px; }
+form label.check { display: flex; gap: 8px; align-items: baseline; font-weight: 400; }
+form label.check input { width: auto; flex: none; }
 .guide { border-top: 1px solid var(--line); padding: 14px 0; }
 .guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .guide summary::-webkit-details-marker { display: none; }
@@ -159,9 +175,27 @@ form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
 .legend .lj::before { background: var(--accent); }
+/* Paid extras: featured jobs, employer profiles, Advertise page */
+.job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
+.tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
+.detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.who a { color: inherit; }
+.profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0 10px; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; align-content: start; gap: 6px; }
+.plan.best { border-color: var(--accent); }
+.plan h2 { margin: 0; font-size: 22px; }
+.plan .price { font: 900 40px/1 var(--display); margin: 6px 0; }
+.plan .price span { font: 500 13px var(--mono); color: var(--muted); }
+.plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
+.plan .btn { justify-self: start; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
+#sitrep { scroll-margin-top: 130px; }
+.sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
 .agenda h2 { margin-top: 28px; }
 .agenda .when { font: 500 13px var(--mono); color: var(--sand); }
@@ -199,6 +233,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="#courses" data-view="courses">Courses</a>
     <a href="#calendar" data-view="calendar">Calendar</a>
     <a href="#careers" data-view="careers">Getting in</a>
+    <a href="/pay/">Pay guide</a>
     <a href="/cv/">CV builder</a>
     <a href="#post" data-view="post">Post a job</a>
     <a href="#about" data-view="about">About</a>
@@ -229,10 +264,16 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <p class="empty" id="empty" hidden>No open jobs match. Try another type or region, or join the Facebook group for new posts.</p>
   </div>
   <div class="fb-band"><div class="wrap"><p>New jobs land in the Facebook group first</p><a class="btn primary fb-join" href="#" target="_blank" rel="noopener">Join 4.4K members</a></div></div>
+  <div class="wrap"><div class="subscribe" id="sitrep">
+    <p class="eyebrow">The Sitrep</p><h2>New jobs and course dates, every Monday</h2>
+    <p>One short email a week. Free, no spam, unsubscribe any time. <a href="/sitrep/">Past issues</a></p>
+    <form id="sitrep-form" class="sitrep-form" novalidate><input type="email" name="email_address" required placeholder="Your email" aria-label="Your email" autocomplete="email"><button class="btn primary" type="submit">Subscribe</button></form>
+    <p id="sitrep-note" aria-live="polite"></p>
+  </div></div>
   <div class="wrap employers">
     <div><p class="eyebrow">For employers and training providers</p><h2>Reach people who've <span class="amp">done the job</span></h2>
       <p>Post a vacancy or course for free. We check it, list it here and share it with the group.</p>
-      <div class="actions"><a class="btn primary" href="#post" data-view="post">Post a job</a><a class="btn" href="#list-course">List a course</a></div></div>
+      <div class="actions"><a class="btn primary" href="#post" data-view="post">Post a job</a><a class="btn" href="#list-course">List a course</a><a class="btn" href="/advertise/">Feature a job</a></div></div>
     <ul><li>EOD, IEDD and search operators at every IMAS level</li><li>Close protection, maritime and NGO security staff</li><li>Remote and hostile environment medics</li><li>Managers, trainers, logisticians and analysts</li></ul>
   </div>
 </section>
@@ -246,12 +287,46 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="page-hero"><div style="padding-block: 40px 20px">
     <p class="eyebrow">HEAT · EOD &amp; IEDD · Close protection · Medical</p>
     <h1>Courses <span class="amp">&amp;</span> training</h1>
-    <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically.</p>
+    <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically. Done one? <a href="#review-course">Rate it</a> so others know what they're booking.</p>
     <p class="sample-note" id="course-sample-note" hidden>These are sample courses.</p>
   </div></div>
   <div class="chips" id="course-types" role="group" aria-label="Course type"></div>
   <div class="jobs" id="course-list"></div>
   <p class="empty" id="course-empty" hidden>No courses listed yet. Training providers can list one free below.</p>
+  <div class="page" id="review-course">
+    <h2>Review a course</h2>
+    <p>Done one of these courses? Tell others what it was really like. We read every review before it goes up, and we don't publish personal attacks, instructors' names or anything that shouldn't be public.</p>
+    <form id="review-form" novalidate>
+      <input type="hidden" name="_subject" value="New course review for Hostile Environment Jobs">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="review_code" id="r-code">
+      <label>Course <select name="course" id="r-course" required><option value="">Choose a course...</option></select></label>
+      <div class="row" id="r-other" hidden>
+        <label>Course name <input id="r-title" name="course_name"></label>
+        <label>Provider <input id="r-provider" name="provider"></label>
+      </div>
+      <fieldset class="rate"><legend>Your rating</legend>
+        <input type="radio" name="rating" value="5" id="rv5" aria-label="5 out of 5" required><label for="rv5" title="5 out of 5">★</label>
+        <input type="radio" name="rating" value="4" id="rv4" aria-label="4 out of 5"><label for="rv4" title="4 out of 5">★</label>
+        <input type="radio" name="rating" value="3" id="rv3" aria-label="3 out of 5"><label for="rv3" title="3 out of 5">★</label>
+        <input type="radio" name="rating" value="2" id="rv2" aria-label="2 out of 5"><label for="rv2" title="2 out of 5">★</label>
+        <input type="radio" name="rating" value="1" id="rv1" aria-label="1 out of 5"><label for="rv1" title="1 out of 5">★</label>
+      </fieldset>
+      <div class="row">
+        <label>Headline <input id="r-headline" name="headline" maxlength="80" placeholder="e.g. Realistic scenarios, good medics"></label>
+        <label>When did you do it? <input id="r-attended" name="attended" type="month" placeholder="e.g. 2025-06"></label>
+      </div>
+      <label>Your review <textarea id="r-text" name="review" rows="5" minlength="40" maxlength="2000" required placeholder="What was good, what wasn't, and who you'd recommend it to."></textarea></label>
+      <div class="row">
+        <label>Name to show <input id="r-name" name="name" maxlength="40" placeholder="Leave blank to post anonymously"></label>
+        <label>Your background <input id="r-bg" name="background" maxlength="60" placeholder="e.g. Ex-RE, now NGO team leader"></label>
+      </div>
+      <label>Your email <input id="r-email" name="email" type="email" required></label>
+      <label class="check"><input type="checkbox" name="confirm" value="yes" required> I did this course myself and this is my honest view. My email won't be shown.</label>
+      <button class="btn primary" type="submit">Send review</button>
+      <p id="review-note" aria-live="polite"></p>
+    </form>
+  </div>
   <div class="page" id="list-course">
     <h2>List a course</h2>
     <p>Training providers can list courses for free. We check each one before it goes live.</p>
@@ -352,7 +427,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="post" class="wrap" hidden>
   <div class="page">
     <h1>Post a job</h1>
-    <p>Send us the vacancy and we'll check it and post it here and in the Facebook group, usually within a day. Posting is free.</p>
+    <p>Send us the vacancy and we'll check it and post it here and in the Facebook group, usually within a day. Posting is free. Want it pinned to the top? <a href="/advertise/">Feature it</a>.</p>
     <form id="post-form" novalidate>
       <input type="hidden" name="_subject" value="New job for Hostile Environment Jobs">
       <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
@@ -391,7 +466,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. Job forms are delivered by FormSubmit. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -400,9 +475,12 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <span>&copy; <span id="yr"></span> Hostile Environment Jobs</span>
   <a href="#privacy" data-view="privacy">Privacy</a>
   <a href="/jobs/">All open jobs</a>
+  <a href="/pay/">Pay guide</a>
   <a href="#post" data-view="post">Post a job</a>
+  <a href="/advertise/">Advertise</a>
   <a href="#list-course" data-view="courses">List a course</a>
   <a href="#calendar" data-view="calendar">Calendar</a>
+  <a href="/#sitrep">Sitrep newsletter</a>
   <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
   <a href="https://www.facebook.com/hostileenvironmentjobs" target="_blank" rel="noopener">Facebook</a>
   <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
@@ -412,6 +490,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 // Settings to fill in before launch.
 const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
 const FACEBOOK_GROUP = "https://www.facebook.com/groups/2015055248777805/";
+const SITREP_FORM = ""; // Kit form ID for the Sitrep signup box. Until it's set, signups are emailed to CONTACT.
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 
 
@@ -452,13 +531,14 @@ function due(j) {
   return "Closes " + fmtDate(j.closing) + (days <= 7 ? ` <span class="soon">(${days === 0 ? "today" : days + " days left"})</span>` : "");
 }
 
+const COURSE_ANCHORS = ["list-course", "review-course"];
 function show(hash) {
   const [view, id] = hash.split("/");
-  const v = view === "list-course" ? "courses" : views.includes(view) ? view : "jobs";
+  const v = COURSE_ANCHORS.includes(view) ? "courses" : views.includes(view) ? view : "jobs";
   views.forEach(n => document.getElementById(n).hidden = n !== v);
   document.querySelectorAll("nav a").forEach(a => a.dataset.view === (v === "job" ? "jobs" : v) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
   if (v === "job") renderDetail(decodeURIComponent(id || ""));
-  if (view === "list-course") document.getElementById("list-course").scrollIntoView();
+  if (COURSE_ANCHORS.includes(view) || view === "sitrep") document.getElementById(view).scrollIntoView();
   else window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", () => show(location.hash.slice(1) || "jobs"));
@@ -474,13 +554,14 @@ function renderList() {
     .filter(j => !term || [j.title, j.employer, j.location, j.category, ...(j.requirements || [])].join(" ").toLowerCase().includes(term))
     .sort(sortSel.value === "closing"
       ? (a, b) => (a.closing === "Rolling") - (b.closing === "Rolling") || String(a.closing).localeCompare(String(b.closing))
-      : (a, b) => String(b.posted).localeCompare(String(a.posted)));
+      : (a, b) => String(b.posted).localeCompare(String(a.posted)))
+    .sort((a, b) => featured(b) - featured(a)); // paid featured jobs pinned to the top
   document.getElementById("empty").hidden = open.length > 0;
   const total = JOBS.filter(isOpen).length;
   document.getElementById("count").textContent = `${open.length} of ${total} open jobs` + (lastChecked ? ` · updated ${fmtDate(lastChecked)}` : "");
-  document.getElementById("list").innerHTML = open.map(j => `<article class="job${soonish(j) ? " soon-card" : ""}">
+  document.getElementById("list").innerHTML = open.map(j => `<article class="job${featured(j) ? " featured" : soonish(j) ? " soon-card" : ""}">
     <span class="ico">${icon(j.category)}</span>
-    <div><span class="tag">${esc(j.category)}</span>
+    <div><span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
       <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
       <div class="who">${esc(j.employer)}</div>
       <ul class="meta"><li>${esc(j.location)}</li>${j.contract && j.contract !== "See advert" ? `<li>${esc(j.contract)}</li>` : ""}${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
@@ -512,9 +593,10 @@ function renderDetail(id) {
   if (!j) { el.innerHTML = "<h2>Job not found</h2><p>It may have closed. See the current jobs instead.</p>"; return; }
   const closed = !isOpen(j);
   const link = location.origin + "/jobs/" + encodeURIComponent(j.id) + "/"; // its own page, built by scripts/build_pages.py
-  el.innerHTML = `<span class="tag">${esc(j.category)}</span>
+  const prof = profileFor(j);
+  el.innerHTML = `<span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
     <h1>${esc(j.title)}</h1>
-    <div class="who">${esc(j.employer)} · ${esc(j.location)}</div>
+    <div class="who">${prof ? `<a href="/employers/${encodeURIComponent(prof.id)}/">${esc(j.employer)}</a>` : esc(j.employer)} · ${esc(j.location)}</div>
     ${closed ? `<p class="note"><strong>This job has closed.</strong></p>` : ""}
     <p>${esc(j.summary)}</p>
     <dl><dt>Closing</dt><dd>${due(j)}</dd><dt>Contract</dt><dd>${esc(j.contract)}</dd><dt>Salary</dt><dd>${esc(j.salary || "Not stated")}</dd>
@@ -528,7 +610,14 @@ function renderDetail(id) {
   document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
 }
 
-const jobsLoaded = fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+// Featured: a job's own "featured_until" date, or any job from an employer with a live profile in employers.json.
+let EMPLOYERS = [];
+const liveDate = d => /^\d{4}-\d\d-\d\d$/.test(d || "") && new Date(d + "T23:59:59") >= today;
+const profileFor = j => EMPLOYERS.find(x => [x.name, ...(x.aliases || [])].includes(j.employer));
+const featured = j => liveDate(j.featured_until) || !!profileFor(j);
+const employersLoaded = fetch("employers.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => [])
+  .then(data => EMPLOYERS = (Array.isArray(data) ? data : []).filter(x => x.id && x.name && (!x.featured_until || liveDate(x.featured_until))));
+const jobsLoaded = Promise.all([fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []), employersLoaded]).then(([data]) => {
   JOBS = Array.isArray(data) ? data : (data.jobs || []);
   lastChecked = JOBS.map(j => j.posted).filter(Boolean).sort().pop() || "";
   document.getElementById("sample-note").hidden = !JOBS.some(j => j.sample);
@@ -549,7 +638,7 @@ function renderCourses() {
     <div><span class="tag">${esc(c.type)}</span>
       <h3><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
       <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
-      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p></div>
+      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p>${reviewBlock(c)}</div>
     <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
   </article>`).join("");
 }
@@ -565,6 +654,61 @@ const coursesLoaded = fetch("courses.json", { cache: "no-cache" }).then(r => r.o
   document.getElementById("stat-courses").textContent = COURSES.filter(courseOpen).length;
   renderCourses();
 });
+
+// Course reviews: approved reviews live in reviews.json and attach to a course by provider + title,
+// so they carry over to every run of the same course. New reviews come in by email and are added in /admin/.
+let REVIEWS = {};
+const ckey = (provider, title) => [provider, title].map(t => String(t ?? "").toLowerCase().replace(/\s+/g, " ").trim()).join("|");
+const stars = r => `<span class="stars" style="--p:${(r / 5) * 100}%" role="img" aria-label="${r.toFixed(1)} out of 5">★★★★★</span>`;
+const fmtMonth = m => /^\d{4}-\d\d$/.test(m || "") ? new Date(m + "-01T00:00:00").toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "";
+function reviewBlock(c) {
+  const key = ckey(c.provider, c.title), rs = REVIEWS[key] || [];
+  const write = `<button type="button" class="linkish" data-review="${esc(key)}">Review this course</button>`;
+  if (!rs.length) return `<div class="rev">No reviews yet. ${write}</div>`;
+  const avg = rs.reduce((n, r) => n + r.rating, 0) / rs.length;
+  return `<div class="rev"><details><summary>${stars(avg)} <b>${avg.toFixed(1)}</b> from ${rs.length} review${rs.length > 1 ? "s" : ""}</summary>
+    ${rs.map(r => `<blockquote>${stars(r.rating)}${r.headline ? ` <b>${esc(r.headline)}</b>` : ""}<p>${esc(r.text)}</p>
+      <cite>${esc(r.name || "Anonymous")}${r.background ? ", " + esc(r.background) : ""}${fmtMonth(r.attended) ? " · did it " + fmtMonth(r.attended) : ""}</cite></blockquote>`).join("")}
+  </details> ${write}</div>`;
+}
+const reviewsLoaded = fetch("reviews.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+  REVIEWS = {};
+  (Array.isArray(data) ? data : []).filter(r => r.rating >= 1 && r.rating <= 5 && r.text)
+    .sort((a, b) => String(b.posted).localeCompare(String(a.posted)))
+    .forEach(r => (REVIEWS[ckey(r.provider, r.course)] ||= []).push({ ...r, rating: Number(r.rating) }));
+});
+Promise.all([coursesLoaded, reviewsLoaded]).then(() => {
+  renderCourses();
+  const sel = document.getElementById("r-course"), seen = new Set();
+  [...COURSES].filter(c => !c.sample).sort((a, b) => `${a.provider} ${a.title}`.localeCompare(`${b.provider} ${b.title}`)).forEach(c => {
+    const key = ckey(c.provider, c.title);
+    if (!seen.has(key)) { seen.add(key); sel.append(new Option(`${c.title} (${c.provider})`, key)); }
+  });
+  sel.append(new Option("A course that isn't listed here", "other"));
+});
+{
+  const form = document.getElementById("review-form"), sel = document.getElementById("r-course"), other = document.getElementById("r-other");
+  const toggleOther = () => { other.hidden = sel.value !== "other"; other.querySelectorAll("input").forEach(i => i.required = !other.hidden); };
+  sel.addEventListener("change", toggleOther);
+  form.addEventListener("reset", () => setTimeout(toggleOther));
+  document.getElementById("course-list").addEventListener("click", e => {
+    const b = e.target.closest("[data-review]");
+    if (!b) return;
+    sel.value = b.dataset.review; toggleOther();
+    document.getElementById("review-course").scrollIntoView({ behavior: "smooth" });
+  });
+  // The email includes a ready-made line to paste into /admin/ (Reviews, Add review) once it's approved.
+  form.addEventListener("submit", () => {
+    const f = form.elements, c = COURSES.find(c => ckey(c.provider, c.title) === sel.value);
+    document.getElementById("r-code").value = JSON.stringify({
+      provider: c ? c.provider : f.provider.value.trim(), course: c ? c.title : f.course_name.value.trim(),
+      rating: Number(f.rating.value), headline: f.headline.value.trim(), text: f.review.value.trim(),
+      name: f.name.value.trim(), background: f.background.value.trim(), attended: f.attended.value, posted: new Date().toISOString().slice(0, 10) });
+  });
+  wireForm(form, document.getElementById("review-note"),
+    "Pick the course and a star rating, write at least a few lines, add your email and tick the box, then send again.",
+    "Thanks for the review. We'll check it and put it up, usually within a day.");
+}
 
 // Calendar: course starts and job closing dates, drawn once both lists have loaded.
 // The same dates are published as calendar.ics by scripts/build_pages.py for people to subscribe to.
@@ -653,6 +797,28 @@ wireForm(document.getElementById("post-form"), document.getElementById("post-not
 wireForm(document.getElementById("course-form"), document.getElementById("course-note"),
   "Fill in the course name, provider, location, booking link and your email, then send again.",
   "Thanks, we've got it. We'll check the course and list it, usually within a day.");
+
+// Sitrep signup: straight into Kit (which emails a confirm link), or by FormSubmit to the contact address until Kit is set up.
+document.getElementById("sitrep-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target, note = document.getElementById("sitrep-note"), btn = form.querySelector("button");
+  if (!form.checkValidity()) { note.className = "note"; note.textContent = "Enter your email address, then subscribe."; return; }
+  btn.disabled = true;
+  try {
+    const data = new FormData(form);
+    if (SITREP_FORM) {
+      // Kit doesn't allow reading the reply from another site, so a sent request counts as done.
+      await fetch(`https://app.kit.com/forms/${SITREP_FORM}/subscriptions`, { method: "POST", mode: "no-cors", body: data });
+    } else {
+      data.append("_subject", "Sitrep signup");
+      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: data });
+      if (!res.ok) throw new Error(res.status);
+    }
+    form.reset(); note.className = "sent";
+    note.textContent = SITREP_FORM ? "Nearly done: check your inbox and click the link to confirm." : "You're on the list. The next Sitrep comes on Monday.";
+  } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+  finally { btn.disabled = false; }
+});
 
 document.querySelectorAll("a.em").forEach(a => { a.textContent = CONTACT; a.href = "mailto:" + CONTACT; });
 document.getElementById("fb-link").href = FACEBOOK_GROUP;

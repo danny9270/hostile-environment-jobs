@@ -126,6 +126,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button data-tab="dash" aria-current="page">Dashboard</button>
     <button data-tab="jobs">Jobs</button>
     <button data-tab="courses">Courses</button>
+    <button data-tab="reviews">Reviews</button>
     <button data-tab="settings">Settings</button>
   </nav>
   <div class="top-right"><span class="who" id="who"></span><a href="../" target="_blank" rel="noopener">View site</a><button class="btn sm" id="signout" hidden>Sign out</button></div>
@@ -164,7 +165,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   </div>
   <div class="card" style="margin-top:14px">
     <h2>Submissions</h2>
-    <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>.</p>
+    <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>. Course reviews arrive as "New course review"; read it, then paste its review code into <b>Reviews</b>, <b>Add review</b>.</p>
     <p class="small"><a href="https://www.icloud.com/mail" target="_blank" rel="noopener">Open iCloud Mail</a> · <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a> · <a href="https://github.com/danny9270/hostile-environment-jobs/commits/main" target="_blank" rel="noopener">Change history</a></p>
   </div>
 </section>
@@ -187,6 +188,16 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button class="btn primary" id="add-course">Add course</button>
   </div>
   <div class="list" id="course-list"></div>
+</section>
+
+<section id="reviews" hidden>
+  <h1>Reviews</h1>
+  <p class="small">Reviews sent from the site arrive by email and only go up once you add them here. Copy the "review_code" line from the email, press <b>Add review</b> and paste it in. Leave out anything abusive, names of instructors, or details that shouldn't be public.</p>
+  <div class="toolbar">
+    <input id="review-q" type="search" placeholder="Search course, provider, reviewer">
+    <button class="btn primary" id="add-review">Add review</button>
+  </div>
+  <div class="list" id="review-list"></div>
 </section>
 
 <section id="settings" hidden>
@@ -246,7 +257,10 @@ const fmtDate = s => new Date(s + "T00:00:00").toLocaleDateString("en-GB", { day
 const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
 
 let TOKEN = null;
-const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null } };
+const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null } };
+const NOUN = { jobs: "job", courses: "course", reviews: "review" };
+const TABS = ["dash", "jobs", "courses", "reviews", "settings"];
+const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : x.title;
 
 function toast(msg, ms = 4000) {
   const t = $("toast"); t.textContent = msg; t.hidden = false;
@@ -273,6 +287,7 @@ function b64encode(str) {
 const serialise = {
   jobs: arr => JSON.stringify(arr, null, 1),
   courses: arr => "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n",
+  reviews: arr => arr.length ? "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n" : "[]\n",
 };
 
 async function load(kind) {
@@ -381,7 +396,7 @@ function renderList(kind) {
   $(isJobs ? "job-list" : "course-list").innerHTML = rows.length ? rows.map(({ x }) => `
     <div class="item">
       <div>
-        <div class="t">${esc(x.title)} ${isJobs ? jobBadge(x) : courseBadge(x)}${x.sample ? ' <span class="badge">sample</span>' : ""}</div>
+        <div class="t">${esc(x.title)} ${isJobs ? jobBadge(x) : courseBadge(x)}${isJobs && isDate(x.featured_until) && daysFromToday(x.featured_until) >= 0 ? ' <span class="badge live">featured</span>' : ""}${x.sample ? ' <span class="badge">sample</span>' : ""}</div>
         <div class="m">${esc(isJobs ? x.employer : x.provider)} · ${esc(x.location)} · ${esc(isJobs ? x.category : x.type)}${isDate(x.posted) ? " · added " + fmtDate(x.posted) : ""}</div>
       </div>
       <div class="acts">
@@ -393,7 +408,27 @@ function renderList(kind) {
     </div>`).join("") : `<div class="empty">No ${isJobs ? "jobs" : "courses"} match.</div>`;
 }
 
-function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); }
+// Reviews show on every listing of the same provider + course title, matched the same way as ../index.html.
+const ckey = (provider, title) => [provider, title].map(t => String(t ?? "").toLowerCase().replace(/\s+/g, " ").trim()).join("|");
+function renderReviews() {
+  const q = $("review-q").value.trim().toLowerCase();
+  const listed = new Set(files.courses.data.filter(courseLive).map(c => ckey(c.provider, c.title)));
+  const rows = files.reviews.data.filter(r => !q || [r.course, r.provider, r.name, r.headline, r.text].join(" ").toLowerCase().includes(q));
+  $("review-list").innerHTML = rows.length ? rows.map(r => `
+    <div class="item">
+      <div>
+        <div class="t">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)} ${esc(r.course)}${listed.has(ckey(r.provider, r.course)) ? "" : ' <span class="badge">course not listed now</span>'}</div>
+        <div class="m">${esc(r.provider)} · ${esc(r.name || "Anonymous")}${isDate(r.posted) ? " · added " + fmtDate(r.posted) : ""}</div>
+        <div class="m">${r.headline ? `<b>${esc(r.headline)}</b> ` : ""}${esc(String(r.text).slice(0, 160))}${String(r.text).length > 160 ? "..." : ""}</div>
+      </div>
+      <div class="acts">
+        <button class="btn sm" data-edit="reviews" data-id="${esc(r.id)}">Edit</button>
+        <button class="btn sm danger" data-del="reviews" data-id="${esc(r.id)}">Delete</button>
+      </div>
+    </div>`).join("") : `<div class="empty">${files.reviews.data.length ? "No reviews match." : "No reviews yet."}</div>`;
+}
+
+function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); }
 
 // ---------- visitor stats ----------
 let visitsRun = 0;
@@ -446,6 +481,7 @@ const JOB_FIELDS = [
   ["salary", "Salary", "text"], ["closing", "Closing date", "closing"],
   ["apply_url", "Link to the advert", "url", true], ["summary", "Summary", "area", true],
   ["requirements", "Key requirements", "lines"], ["posted", "Date added", "date"],
+  ["featured_until", "Featured until (paid)", "date"],
 ];
 const COURSE_FIELDS = [
   ["title", "Course title", "text", true], ["provider", "Provider", "text", true],
@@ -455,6 +491,14 @@ const COURSE_FIELDS = [
   ["url", "Link to the course page", "url", true], ["summary", "Summary", "area", true],
   ["posted", "Date added", "date"],
 ];
+const REVIEW_FIELDS = [
+  ["course", "Course title (as listed)", "text", true], ["provider", "Provider (as listed)", "text", true],
+  ["rating", "Stars", ["5", "4", "3", "2", "1"], true], ["attended", "Month they did it (YYYY-MM)", "text"],
+  ["headline", "Headline", "text"], ["text", "Review", "area", true],
+  ["name", "Name to show (blank = Anonymous)", "text"], ["background", "Background", "text"],
+  ["posted", "Date added", "date"],
+];
+const FIELDS = { jobs: JOB_FIELDS, courses: COURSE_FIELDS, reviews: REVIEW_FIELDS };
 let editing = null;
 
 function field([name, label, type, req], val) {
@@ -473,11 +517,13 @@ function field([name, label, type, req], val) {
 }
 
 function openEditor(kind, id) {
-  const fields = kind === "jobs" ? JOB_FIELDS : COURSE_FIELDS;
-  const item = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "" };
+  const fields = FIELDS[kind];
+  const found = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "" };
+  const item = kind === "reviews" ? { ...found, rating: found.rating ? String(found.rating) : "" } : found;
   editing = { kind, id };
-  $("edit-title").textContent = (id ? "Edit " : "Add ") + (kind === "jobs" ? "job" : "course");
+  $("edit-title").textContent = (id ? "Edit " : "Add ") + NOUN[kind];
   const html = [];
+  if (kind === "reviews" && !id) html.push(`<label>Review code from the email <span class="hint">(paste it to fill in the boxes below)</span><textarea id="paste-code" rows="3"></textarea></label>`);
   for (let i = 0; i < fields.length; i++) {
     const f = fields[i], next = fields[i + 1];
     const short = ["text", "url", "date", "closing"].includes(f[2]) || Array.isArray(f[2]);
@@ -491,6 +537,17 @@ function openEditor(kind, id) {
   $("editor").showModal();
 }
 
+// Pasting a review code from the email fills in the review form.
+$("edit-fields").addEventListener("input", e => {
+  if (e.target.id !== "paste-code") return;
+  let r;
+  try { r = JSON.parse(e.target.value.trim().replace(/^review_code:?\s*/i, "")); } catch { $("edit-err").textContent = "That doesn't look like a whole review code. Copy everything from { to }."; return; }
+  $("edit-err").textContent = "";
+  const els = $("edit-form").elements;
+  for (const [name] of REVIEW_FIELDS) if (r[name] != null && els[name]) els[name].value = String(r[name]);
+  if (!r.posted) els.posted.value = TODAY;
+});
+
 $("edit-fields").addEventListener("change", e => {
   if (e.target.name?.endsWith("_rolling")) {
     const d = $("edit-form").elements[e.target.name.replace("_rolling", "")];
@@ -503,7 +560,7 @@ const slug = s => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").tri
 $("edit-form").addEventListener("submit", async e => {
   if (e.submitter?.value !== "save") return;
   e.preventDefault();
-  const { kind, id } = editing, form = e.target, fields = kind === "jobs" ? JOB_FIELDS : COURSE_FIELDS;
+  const { kind, id } = editing, form = e.target, fields = FIELDS[kind];
   const old = id ? files[kind].data.find(x => x.id === id) : {};
   const out = {};
   for (const [name, label, type, req] of fields) {
@@ -518,12 +575,14 @@ $("edit-form").addEventListener("submit", async e => {
     if (type === "url" && v && !/^https?:\/\//.test(v)) { $("edit-err").textContent = `${label} should start with https://`; el.focus(); return; }
     out[name] = v;
   }
+  if (kind === "reviews") out.rating = Number(out.rating);
   const item = { id: old.id, ...old, ...out };
   if (form.elements.sample && !form.elements.sample.checked) delete item.sample;
+  if (!item.featured_until) delete item.featured_until;
   if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));
-    let base = slug(`${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
+    let base = slug(kind === "reviews" ? `review ${item.provider} ${item.course}` : `${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
     while (taken.has(n)) n = `${base}-${k++}`;
     item.id = n;
   }
@@ -531,7 +590,7 @@ $("edit-form").addEventListener("submit", async e => {
   const ok = await commit(kind, arr => {
     if (id) { const i = arr.findIndex(x => x.id === id); if (i >= 0) arr[i] = item; else arr.unshift(item); }
     else arr.unshift(item);
-  }, `${id ? "Update" : "Add"} ${kind === "jobs" ? "job" : "course"}: ${item.title}`);
+  }, `${id ? "Update" : "Add"} ${NOUN[kind]}: ${itemName(kind, item)}`);
   $("edit-save").disabled = false;
   if (ok) $("editor").close();
 });
@@ -556,8 +615,8 @@ document.addEventListener("click", async e => {
   }
   if (d.del) {
     const x = files[d.del].data.find(x => x.id === d.id);
-    if (!confirm(`Delete "${x.title}" for good?`)) return;
-    return commit(d.del, arr => { const i = arr.findIndex(y => y.id === d.id); if (i >= 0) arr.splice(i, 1); }, `Remove ${d.del === "jobs" ? "job" : "course"}: ${x.title}`);
+    if (!confirm(`Delete "${itemName(d.del, x)}" for good?`)) return;
+    return commit(d.del, arr => { const i = arr.findIndex(y => y.id === d.id); if (i >= 0) arr.splice(i, 1); }, `Remove ${NOUN[d.del]}: ${itemName(d.del, x)}`);
   }
   if (d.tidy) {
     const live = d.tidy === "jobs" ? jobLive : courseLive;
@@ -568,11 +627,13 @@ document.addEventListener("click", async e => {
 });
 $("add-job").onclick = () => openEditor("jobs");
 $("add-course").onclick = () => openEditor("courses");
+$("add-review").onclick = () => openEditor("reviews");
+$("review-q").addEventListener("input", renderReviews);
 ["job-q", "job-f"].forEach(id => $(id).addEventListener("input", () => renderList("jobs")));
 ["course-q", "course-f"].forEach(id => $(id).addEventListener("input", () => renderList("courses")));
 
 function showTab(tab) {
-  ["dash", "jobs", "courses", "settings"].forEach(t => $(t).hidden = t !== tab);
+  TABS.forEach(t => $(t).hidden = t !== tab);
   document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
   if (tab === "settings") { $("gc-code").value = store.get("gc-code") || GC_CODE; $("gc-key").value = store.get("gc-key") || ""; }
   history.replaceState(null, "", "#" + tab);
@@ -592,7 +653,7 @@ async function signIn(token, remember) {
   TOKEN = token;
   const repo = await gh(`/repos/${REPO}`);
   if (!repo.permissions?.push) { const e = new Error("This key can see the repository but can't edit it. Set Contents to Read and write."); e.status = 403; throw e; }
-  await Promise.all([load("jobs"), load("courses")]);
+  await Promise.all([load("jobs"), load("courses"), load("reviews")]);
   store.set("gh-token", token, remember);
   const user = await gh("/user").catch(() => null);
   $("who").textContent = user ? "Signed in as " + user.login : "";
@@ -600,7 +661,7 @@ async function signIn(token, remember) {
   $("login").hidden = true; $("nav").hidden = false; $("signout").hidden = false;
   renderAll(); renderVisits();
   const tab = location.hash.slice(1);
-  showTab(["dash", "jobs", "courses", "settings"].includes(tab) ? tab : "dash");
+  showTab(TABS.includes(tab) ? tab : "dash");
 }
 
 $("login-form").addEventListener("submit", async e => {

@@ -1,0 +1,179 @@
+<style>
+/* Pay guide: one card per role with the range on the right, then community reports and the report form. */
+.pay-intro { max-width: 720px; }
+.pay-intro p { color: var(--muted); }
+.caveat { background: var(--surface); border: 1px solid #5a3a1a; border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 16px; margin: 18px 0; font-size: 15px; }
+.caveat p { margin: 0; color: var(--ink); }
+.pay-list { display: grid; gap: 8px; margin: 8px 0 32px; }
+.pay-row { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; }
+.pay-row h3 { margin: 0; font-size: 21px; }
+.pay-row .where { color: var(--muted); font-size: 15px; margin: 2px 0 0; }
+.pay-row .note { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
+.pay-row .amt { text-align: right; font: 900 26px/1.05 var(--display); color: var(--accent); white-space: nowrap; }
+.pay-row .amt .said { display: block; font-size: 20px; white-space: normal; max-width: 320px; }
+.pay-row .amt small { display: block; font: 500 13px var(--mono); color: var(--muted); }
+.basis { display: inline-block; font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; border-radius: 4px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; border: 1px solid var(--line); color: var(--sand); }
+.basis.advert, .basis.published { color: var(--ok); border-color: #2f4a35; }
+.basis.report { color: var(--accent); border-color: #5a3a1a; }
+.pay-section { padding-top: 12px; }
+.pay-section > p { color: var(--muted); max-width: 720px; }
+form .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+form .check input { width: auto; margin-top: 5px; }
+form .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) {
+  .pay-row { grid-template-columns: 1fr; }
+  .pay-row .amt { text-align: left; font-size: 24px; }
+  form .row3 { grid-template-columns: 1fr; }
+}
+</style>
+<div class="pay-intro">
+  <p class="eyebrow" style="margin-top:32px">Pay guide</p>
+  <h1>What the <span class="amp">circuit</span> pays</h1>
+  <p>Day rates and salaries for EOD, mine action, security, medic and support roles, by role and region. Ranges come from public adverts and industry write-ups, and get better as people send in what they're actually paid.</p>
+  <div class="caveat"><p><b>Indicative only.</b> Pay moves with the contract, the client, rotation, tax and insurance. Ranges marked <span class="basis">Estimate</span> are our best reading of the market and need checking by people on the ground. <span class="basis advert">Advert</span> and <span class="basis published">Published</span> figures link to their source. <span id="pay-updated"></span></p></div>
+  <div class="actions"><a class="btn primary" href="#report">Report your pay anonymously</a></div>
+</div>
+
+<div class="tools" style="margin-top:28px">
+  <select id="pay-cat" aria-label="Job type"><option value="">All job types</option></select>
+  <select id="pay-region" aria-label="Region"><option value="">All regions</option></select>
+  <select id="pay-per" aria-label="Paid per"><option value="">Any pay period</option><option value="day">Day rates</option><option value="month">Monthly</option><option value="year">Yearly</option><option value="hour">Hourly</option></select>
+</div>
+
+<section class="pay-section" aria-labelledby="h-ranges">
+  <h2 id="h-ranges">Typical ranges</h2>
+  <div class="pay-list" id="ranges"></div>
+  <p class="empty" id="ranges-empty" hidden>Nothing for that filter yet. If you've done that job, <a href="#report">tell us what it paid</a>.</p>
+</section>
+
+<section class="pay-section" aria-labelledby="h-reports">
+  <h2 id="h-reports">Reported by people in the job</h2>
+  <p>Sent in anonymously and checked before they go up. We never publish names, emails or anything that could identify you.</p>
+  <div class="pay-list" id="reports"></div>
+  <p class="empty" id="reports-empty">No reports here yet. Be the first: it takes a minute and helps everyone negotiate.</p>
+</section>
+
+<section class="pay-section" aria-labelledby="h-adverts">
+  <h2 id="h-adverts">Pay on jobs listed now</h2>
+  <p>Open jobs on this site where the employer states the pay.</p>
+  <div class="pay-list" id="adverts"></div>
+  <p class="empty" id="adverts-empty" hidden>None of the open jobs state pay right now.</p>
+</section>
+
+<section class="pay-section page" id="report" aria-labelledby="h-report">
+  <h2 id="h-report">Report your pay</h2>
+  <p>Anonymous. Tell us about a job you've done in the last few years. We check every report and publish only the role, country, pay and terms, rounded so it can't be traced back to you.</p>
+  <form id="pay-form" novalidate>
+    <input type="hidden" name="_subject" value="Pay report for Hostile Environment Jobs">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="row">
+      <label>Role <input name="role" placeholder="e.g. IEDD Technical Advisor" required></label>
+      <label>Job type <select name="category" id="rep-cat" required></select></label>
+    </div>
+    <div class="row">
+      <label>Country <input name="country" placeholder="e.g. Iraq" required></label>
+      <label>Type of employer
+        <select name="employer_type" required>
+          <option value="">Choose one</option>
+          <option>Private security company</option><option>Commercial UXO or survey company</option><option>NGO or charity</option>
+          <option>UN agency</option><option>Government or defence contractor</option><option>Oil, gas or mining</option><option>Media or corporate</option><option>Other</option>
+        </select></label>
+    </div>
+    <div class="row3">
+      <label>Pay <input name="amount" type="number" min="1" step="any" inputmode="decimal" placeholder="e.g. 450" required></label>
+      <label>Currency <select name="currency" required><option>USD</option><option>GBP</option><option>EUR</option><option>AUD</option><option>Other</option></select></label>
+      <label>Per <select name="per" required><option value="day">Day</option><option value="month">Month</option><option value="year">Year</option><option value="hour">Hour</option></select></label>
+    </div>
+    <div class="row3">
+      <label>Year <select name="year" required><option>2026</option><option>2025</option><option>2024</option><option>2023 or earlier</option></select></label>
+      <label>Rotation <input name="rotation" placeholder="e.g. 8 on / 4 off"></label>
+      <label>Your experience <select name="experience"><option value="">Choose one</option><option>Under 2 years</option><option>2 to 5 years</option><option>5 to 10 years</option><option>Over 10 years</option></select></label>
+    </div>
+    <label>Extras <input name="extras" placeholder="e.g. tax-free, flights, insurance, paid R&amp;R, paid only on days worked"></label>
+    <label>Anything else (optional, not published word for word) <textarea name="notes" rows="3"></textarea></label>
+    <label>Your email (optional, only if you're happy for us to ask a follow-up question) <input name="email" type="email"></label>
+    <label class="check"><input type="checkbox" name="consent" value="yes" required> I'm happy for this to be published anonymously after it's checked.</label>
+    <button class="btn primary" type="submit">Send report</button>
+    <p id="pay-note" aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+(function () {
+  const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
+  const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+  const SYMBOL = { USD: "US$", GBP: "£", EUR: "€", AUD: "A$" };
+  const LABEL = { estimate: "Estimate", advert: "Advert", published: "Published", report: "Reported" };
+  const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const num = n => Number(n).toLocaleString("en-GB");
+  const money = (cur, n) => (SYMBOL[cur] || (cur + " ")) + num(n);
+  function amount(r) {
+    const cur = r.currency;
+    let a = r.low != null && r.high != null ? money(cur, r.low) + "–" + num(r.high)
+      : r.low != null ? "From " + money(cur, r.low) : "Up to " + money(cur, r.high);
+    return `${a}<small>per ${esc(r.per)}</small>`;
+  }
+  const isOpen = j => j.closing === "Rolling" || !j.closing || new Date(j.closing + "T23:59:59") >= new Date();
+
+  document.querySelectorAll('nav a[href="/pay/"]').forEach(a => a.setAttribute("aria-current", "page"));
+  const catSel = document.getElementById("pay-cat"), regSel = document.getElementById("pay-region"), perSel = document.getElementById("pay-per");
+  CATEGORIES.forEach(c => { catSel.append(new Option(c, c)); document.getElementById("rep-cat").append(new Option(c, c)); });
+  document.getElementById("rep-cat").prepend(new Option("Choose one", "", true, true));
+
+  let RANGES = [], REPORTS = [], ADVERTS = [];
+  // Adverts state pay in their own words (no "per"), so a "paid per" filter hides them.
+  const match = r => (!catSel.value || r.category === catSel.value) && (!regSel.value || r.region === regSel.value) && (!perSel.value || r.per === perSel.value);
+  function card(r) {
+    const src = r.source ? (r.source_url ? `<a href="${esc(r.source_url)}"${/^https?:/.test(r.source_url) ? ' target="_blank" rel="noopener"' : ""}>${esc(r.source)}</a>` : esc(r.source)) : "";
+    const extra = [r.note && esc(r.note), src && "Source: " + src].filter(Boolean);
+    return `<article class="pay-row"><div><span class="tag">${esc(r.category)} · ${esc(r.region)}</span>
+      <h3>${esc(r.role)}<span class="basis ${esc(r.basis)}">${LABEL[r.basis] || ""}</span></h3>
+      <p class="where">${esc(r.where)}</p>${extra.length ? `<p class="note">${extra.join(" · ")}</p>` : ""}</div>
+      <div class="amt">${r.amountHtml || amount(r)}</div></article>`;
+  }
+  function render() {
+    const out = (id, rows) => {
+      const shown = rows.filter(match);
+      document.getElementById(id).innerHTML = shown.map(card).join("");
+      document.getElementById(id + "-empty").hidden = shown.length > 0;
+    };
+    out("ranges", RANGES); out("reports", REPORTS); out("adverts", ADVERTS);
+  }
+  [catSel, regSel, perSel].forEach(s => s.addEventListener("change", render));
+
+  Promise.all([
+    fetch("/pay.json", { cache: "no-cache" }).then(r => r.json()).catch(() => ({})),
+    fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).catch(() => [])
+  ]).then(([pay, jobs]) => {
+    RANGES = pay.ranges || [];
+    REPORTS = (pay.reports || []).map(r => ({
+      role: r.role, category: r.category, region: r.region, per: r.per, basis: "report",
+      where: [r.country, r.employer_type, r.year].filter(Boolean).join(" · "),
+      note: [r.rotation && "Rotation " + r.rotation, r.experience && r.experience + " experience", r.extras].filter(Boolean).join(" · "),
+      amountHtml: `${money(r.currency, r.amount)}<small>per ${esc(r.per)}</small>`
+    }));
+    ADVERTS = jobs.filter(j => isOpen(j) && !j.sample && j.salary && !/not stated/i.test(j.salary)).map(j => ({
+      role: j.title, category: j.category, region: j.region, per: "", basis: "advert",
+      where: j.employer + " · " + j.location, source: "See the job", source_url: "/jobs/" + j.id + "/",
+      amountHtml: `<span class="said">${esc(j.salary)}</span>`
+    }));
+    const regions = [...new Set([...RANGES, ...REPORTS, ...ADVERTS].map(r => r.region).filter(Boolean))].sort();
+    regions.forEach(r => regSel.append(new Option(r, r)));
+    if (pay.updated) document.getElementById("pay-updated").textContent = "Last reviewed " + new Date(pay.updated + "T00:00:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + ".";
+    render();
+  });
+  const form = document.getElementById("pay-form"), note = document.getElementById("pay-note");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { note.className = "note"; note.textContent = "Fill in the role, job type, country, employer type and pay, tick the box, then send again."; return; }
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
+      if (!res.ok) throw new Error(res.status);
+      form.reset(); note.className = "sent"; note.textContent = "Thanks. We'll check it and add it to the guide, usually within a few days.";
+    } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+    finally { btn.disabled = false; }
+  });
+})();
+</script>
