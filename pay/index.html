@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pay guide: day rates and salaries | Hostile Environment Jobs</title>
+<meta name="description" content="Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.">
+<link rel="canonical" href="https://hostileenvironmentjobs.com/pay/">
+<meta property="og:title" content="Pay guide: day rates and salaries | Hostile Environment Jobs">
+<meta property="og:description" content="Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hostileenvironmentjobs.com/pay/">
+<meta property="og:site_name" content="Hostile Environment Jobs">
+<meta property="og:image" content="https://hostileenvironmentjobs.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#111310">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Pay guide: one card per role with the range on the right, then community reports and the report form. */
+.pay-intro { max-width: 720px; }
+.pay-intro p { color: var(--muted); }
+.caveat { background: var(--surface); border: 1px solid #5a3a1a; border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 16px; margin: 18px 0; font-size: 15px; }
+.caveat p { margin: 0; color: var(--ink); }
+.pay-list { display: grid; gap: 8px; margin: 8px 0 32px; }
+.pay-row { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; }
+.pay-row h3 { margin: 0; font-size: 21px; }
+.pay-row .where { color: var(--muted); font-size: 15px; margin: 2px 0 0; }
+.pay-row .note { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
+.pay-row .amt { text-align: right; font: 900 26px/1.05 var(--display); color: var(--accent); white-space: nowrap; }
+.pay-row .amt .said { display: block; font-size: 20px; white-space: normal; max-width: 320px; }
+.pay-row .amt small { display: block; font: 500 13px var(--mono); color: var(--muted); }
+.basis { display: inline-block; font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; border-radius: 4px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; border: 1px solid var(--line); color: var(--sand); }
+.basis.advert, .basis.published { color: var(--ok); border-color: #2f4a35; }
+.basis.report { color: var(--accent); border-color: #5a3a1a; }
+.pay-section { padding-top: 12px; }
+.pay-section > p { color: var(--muted); max-width: 720px; }
+form .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+form .check input { width: auto; margin-top: 5px; }
+form .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) {
+  .pay-row { grid-template-columns: 1fr; }
+  .pay-row .amt { text-align: left; font-size: 24px; }
+  form .row3 { grid-template-columns: 1fr; }
+}
+</style>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Layout: one committed dark "field kit" look like the Facebook group banner. A full-bleed hero with a
+   drawn topographic map, category tiles with icons, then a single column of job cards. */
+:root {
+  --bg: #111310; --surface: #1a1d19; --raised: #222620; --ink: #ecebe4; --muted: #a3a79c; --line: #30352d;
+  --accent: #f29a2e; --accent-ink: #1b1204; --sand: #c9b48a; --soft: #3a2a14; --ok: #8fd19e; --warn: #ff7a59;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: clamp(40px, 7vw, 76px); font-weight: 900; text-transform: uppercase; letter-spacing: .01em; }
+h2 { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+h3 { font-size: 22px; font-weight: 800; }
+.amp { color: var(--accent); }
+
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+header.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; flex-wrap: wrap; }
+.brand { font: 900 21px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; color: var(--accent); }
+nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 15px; }
+nav a:hover { color: var(--ink); }
+nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); }
+
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, #2b2416 0%, var(--bg) 60%); }
+.hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
+.hero .wrap { position: relative; padding-block: 56px 40px; }
+.eyebrow { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sand); margin: 0 0 14px; }
+.hero p.lede { color: var(--ink); opacity: .85; max-width: 600px; margin: 0; font-size: 19px; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 26px 0 0; padding: 0; list-style: none; }
+.stats li { font: 500 14px var(--mono); color: var(--muted); }
+.stats b { display: block; font: 900 38px/1 var(--display); color: var(--ink); }
+.hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.page-hero .wrap { padding-block: 44px 30px; }
+.page-hero h1 { font-size: clamp(36px, 6vw, 60px); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 28px 0 8px; }
+.tile { display: grid; gap: 6px; align-content: start; text-align: left; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; cursor: pointer; }
+.tile:hover { border-color: var(--sand); }
+.tile svg { color: var(--accent); }
+.tile .n { font: 500 13px var(--mono); color: var(--muted); }
+.tile .t { font: 800 19px/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; }
+.tile[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tile[aria-pressed="true"] svg, .tile[aria-pressed="true"] .n { color: var(--accent-ink); }
+
+.tools { display: grid; grid-template-columns: minmax(0, 1fr) 180px 180px; gap: 10px; margin: 14px 0 10px; }
+.tools input, .tools select, form input, form select, form textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
+.chips button { font: 600 14px var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.meta-line { color: var(--muted); font-size: 14px; margin: 8px 0 14px; font-family: var(--mono); }
+
+.jobs { display: grid; gap: 10px; padding-bottom: 40px; }
+.job { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; }
+.job:hover { border-color: #4a5045; }
+.job .ico { width: 48px; height: 48px; border-radius: 10px; display: grid; place-items: center; background: var(--soft); color: var(--accent); }
+.job h3 { margin: 0; font-size: 22px; }
+.job h3 a { color: var(--ink); text-decoration: none; }
+.job h3 a::after { content: ""; position: absolute; inset: 0; }
+.job h3 a:hover { color: var(--accent); }
+.job .who { color: var(--muted); font-size: 15px; }
+.job .side { text-align: right; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space: nowrap; }
+.job.soon-card { border-color: #5a3a1a; }
+.job.soon-card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 10px 10px 0 0;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, #111310 10px 20px); }
+.job p.who { margin: 6px 0 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; padding: 0; list-style: none; }
+.meta li { font: 500 12.5px var(--mono); color: var(--ink); background: var(--raised); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
+.meta li.pay { color: var(--accent); border-color: #5a3a1a; }
+.employers { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: center; padding-block: 40px; }
+.employers h2 { font-size: clamp(30px, 4vw, 44px); margin: 0 0 10px; }
+.employers p { margin: 0; color: var(--muted); }
+.employers ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.employers li { display: flex; gap: 10px; align-items: baseline; }
+.employers li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); }
+.tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); margin-bottom: 2px; }
+.soon { color: var(--warn); font-weight: 600; }
+.empty { color: var(--muted); padding: 24px 0; }
+
+.detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
+.detail h1 { font-size: clamp(32px, 5vw, 52px); }
+.detail dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 18px; margin: 16px 0; }
+.detail dt { color: var(--sand); font: 500 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding-top: 3px; }
+.detail dd { margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; align-items: center; }
+.btn { display: inline-block; font: 800 16px var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 11px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--sand); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.back { display: inline-block; margin-top: 20px; }
+
+.page { padding: 32px 0 48px; max-width: 720px; }
+form { display: grid; gap: 14px; margin-top: 18px; }
+form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
+form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.note { color: var(--warn); } .sent { color: var(--ok); }
+.guide { border-top: 1px solid var(--line); padding: 14px 0; }
+.guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.guide summary::-webkit-details-marker { display: none; }
+.guide summary::after { content: "+"; font: 900 26px var(--display); color: var(--accent); }
+.guide[open] summary::after { content: "\2212"; }
+.guide summary h2 { margin: 0; font-size: 24px; }
+.guide li { margin-bottom: 6px; }
+/* Calendar: month grid of course starts (sand) and job closing dates (orange), with a "coming up" list. */
+.cal-head { display: flex; align-items: center; gap: 10px; margin: 8px 0 12px; }
+.cal-head h2 { margin: 0 auto 0 0; font-size: 26px; }
+.cal-head button { font: 800 18px var(--display); width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.cal-head button:disabled { opacity: .35; cursor: default; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal .dow { font: 500 12px var(--mono); text-transform: uppercase; color: var(--muted); padding: 2px 4px; }
+.cal .day { min-height: 92px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px; display: grid; align-content: start; gap: 3px; }
+.cal .day.out { background: transparent; border-color: transparent; }
+.cal .day.today { border-color: var(--accent); }
+.cal .num { font: 500 12px var(--mono); color: var(--muted); }
+.cal .today .num { color: var(--accent); font-weight: 700; }
+.ev { display: block; font: 600 12px/1.25 var(--body); padding: 2px 5px; border-radius: 4px; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ev.course { background: #2e2a1f; color: var(--sand); border-left: 3px solid var(--sand); }
+.ev.job { background: var(--soft); color: var(--accent); border-left: 3px solid var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
+.legend .lj::before { background: var(--accent); }
+.subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
+.subscribe h2 { font-size: 24px; margin: 0 0 4px; }
+.subscribe p { margin: 0; color: var(--muted); }
+.agenda { display: grid; gap: 8px; padding-bottom: 40px; }
+.agenda h2 { margin-top: 28px; }
+.agenda .when { font: 500 13px var(--mono); color: var(--sand); }
+.fb-band { background: var(--raised); border-block: 1px solid var(--line); }
+.fb-band .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding-block: 22px; }
+.fb-band p { margin: 0; font: 800 22px/1.2 var(--display); text-transform: uppercase; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+footer { color: var(--muted); font-size: 14px; padding: 20px 0 32px; }
+footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
+@media (prefers-reduced-motion: no-preference) { .tile, .job, .btn { transition: border-color .15s, background .15s; } }
+
+@media (max-width: 640px) {
+  .tools, form .row, .employers { grid-template-columns: 1fr; }
+  .job { grid-template-columns: 40px minmax(0, 1fr); }
+  .job .ico { width: 40px; height: 40px; grid-row: span 1; }
+  .job .side { text-align: left; grid-row: auto; grid-column: 2; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  nav { margin-left: 0; }
+  .detail dl { grid-template-columns: 1fr; gap: 2px; }
+  .detail dd { margin-bottom: 8px; }
+  .cal { gap: 2px; }
+  .cal .day { min-height: 48px; padding: 3px; }
+  .cal .ev { font-size: 0; padding: 0; height: 6px; border-left-width: 0; }
+  .cal .ev.course { background: var(--sand); } .cal .ev.job { background: var(--accent); }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/#jobs" data-view="jobs">
+    <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="14" r="3" fill="currentColor"/></svg>
+    Hostile Environment <span class="amp">Jobs</span></a>
+  <nav>
+    <a href="/#jobs" data-view="jobs">Jobs</a>
+    <a href="/#courses" data-view="courses">Courses</a>
+    <a href="/#calendar" data-view="calendar">Calendar</a>
+    <a href="/#careers" data-view="careers">Getting in</a>
+    <a href="/pay/">Pay guide</a>
+    <a href="/#post" data-view="post">Post a job</a>
+    <a href="/#about" data-view="about">About</a>
+  </nav>
+</div></header>
+<main class="wrap">
+<div class="pay-intro">
+  <p class="eyebrow" style="margin-top:32px">Pay guide</p>
+  <h1>What the <span class="amp">circuit</span> pays</h1>
+  <p>Day rates and salaries for EOD, mine action, security, medic and support roles, by role and region. Ranges come from public adverts and industry write-ups, and get better as people send in what they're actually paid.</p>
+  <div class="caveat"><p><b>Indicative only.</b> Pay moves with the contract, the client, rotation, tax and insurance. Ranges marked <span class="basis">Estimate</span> are our best reading of the market and need checking by people on the ground. <span class="basis advert">Advert</span> and <span class="basis published">Published</span> figures link to their source. <span id="pay-updated"></span></p></div>
+  <div class="actions"><a class="btn primary" href="#report">Report your pay anonymously</a></div>
+</div>
+
+<div class="tools" style="margin-top:28px">
+  <select id="pay-cat" aria-label="Job type"><option value="">All job types</option></select>
+  <select id="pay-region" aria-label="Region"><option value="">All regions</option></select>
+  <select id="pay-per" aria-label="Paid per"><option value="">Any pay period</option><option value="day">Day rates</option><option value="month">Monthly</option><option value="year">Yearly</option><option value="hour">Hourly</option></select>
+</div>
+
+<section class="pay-section" aria-labelledby="h-ranges">
+  <h2 id="h-ranges">Typical ranges</h2>
+  <div class="pay-list" id="ranges"></div>
+  <p class="empty" id="ranges-empty" hidden>Nothing for that filter yet. If you've done that job, <a href="#report">tell us what it paid</a>.</p>
+</section>
+
+<section class="pay-section" aria-labelledby="h-reports">
+  <h2 id="h-reports">Reported by people in the job</h2>
+  <p>Sent in anonymously and checked before they go up. We never publish names, emails or anything that could identify you.</p>
+  <div class="pay-list" id="reports"></div>
+  <p class="empty" id="reports-empty">No reports here yet. Be the first: it takes a minute and helps everyone negotiate.</p>
+</section>
+
+<section class="pay-section" aria-labelledby="h-adverts">
+  <h2 id="h-adverts">Pay on jobs listed now</h2>
+  <p>Open jobs on this site where the employer states the pay.</p>
+  <div class="pay-list" id="adverts"></div>
+  <p class="empty" id="adverts-empty" hidden>None of the open jobs state pay right now.</p>
+</section>
+
+<section class="pay-section page" id="report" aria-labelledby="h-report">
+  <h2 id="h-report">Report your pay</h2>
+  <p>Anonymous. Tell us about a job you've done in the last few years. We check every report and publish only the role, country, pay and terms, rounded so it can't be traced back to you.</p>
+  <form id="pay-form" novalidate>
+    <input type="hidden" name="_subject" value="Pay report for Hostile Environment Jobs">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="row">
+      <label>Role <input name="role" placeholder="e.g. IEDD Technical Advisor" required></label>
+      <label>Job type <select name="category" id="rep-cat" required></select></label>
+    </div>
+    <div class="row">
+      <label>Country <input name="country" placeholder="e.g. Iraq" required></label>
+      <label>Type of employer
+        <select name="employer_type" required>
+          <option value="">Choose one</option>
+          <option>Private security company</option><option>Commercial UXO or survey company</option><option>NGO or charity</option>
+          <option>UN agency</option><option>Government or defence contractor</option><option>Oil, gas or mining</option><option>Media or corporate</option><option>Other</option>
+        </select></label>
+    </div>
+    <div class="row3">
+      <label>Pay <input name="amount" type="number" min="1" step="any" inputmode="decimal" placeholder="e.g. 450" required></label>
+      <label>Currency <select name="currency" required><option>USD</option><option>GBP</option><option>EUR</option><option>AUD</option><option>Other</option></select></label>
+      <label>Per <select name="per" required><option value="day">Day</option><option value="month">Month</option><option value="year">Year</option><option value="hour">Hour</option></select></label>
+    </div>
+    <div class="row3">
+      <label>Year <select name="year" required><option>2026</option><option>2025</option><option>2024</option><option>2023 or earlier</option></select></label>
+      <label>Rotation <input name="rotation" placeholder="e.g. 8 on / 4 off"></label>
+      <label>Your experience <select name="experience"><option value="">Choose one</option><option>Under 2 years</option><option>2 to 5 years</option><option>5 to 10 years</option><option>Over 10 years</option></select></label>
+    </div>
+    <label>Extras <input name="extras" placeholder="e.g. tax-free, flights, insurance, paid R&amp;R, paid only on days worked"></label>
+    <label>Anything else (optional, not published word for word) <textarea name="notes" rows="3"></textarea></label>
+    <label>Your email (optional, only if you're happy for us to ask a follow-up question) <input name="email" type="email"></label>
+    <label class="check"><input type="checkbox" name="consent" value="yes" required> I'm happy for this to be published anonymously after it's checked.</label>
+    <button class="btn primary" type="submit">Send report</button>
+    <p id="pay-note" aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+(function () {
+  const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
+  const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+  const SYMBOL = { USD: "US$", GBP: "£", EUR: "€", AUD: "A$" };
+  const LABEL = { estimate: "Estimate", advert: "Advert", published: "Published", report: "Reported" };
+  const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const num = n => Number(n).toLocaleString("en-GB");
+  const money = (cur, n) => (SYMBOL[cur] || (cur + " ")) + num(n);
+  function amount(r) {
+    const cur = r.currency;
+    let a = r.low != null && r.high != null ? money(cur, r.low) + "–" + num(r.high)
+      : r.low != null ? "From " + money(cur, r.low) : "Up to " + money(cur, r.high);
+    return `${a}<small>per ${esc(r.per)}</small>`;
+  }
+  const isOpen = j => j.closing === "Rolling" || !j.closing || new Date(j.closing + "T23:59:59") >= new Date();
+
+  document.querySelectorAll('nav a[href="/pay/"]').forEach(a => a.setAttribute("aria-current", "page"));
+  const catSel = document.getElementById("pay-cat"), regSel = document.getElementById("pay-region"), perSel = document.getElementById("pay-per");
+  CATEGORIES.forEach(c => { catSel.append(new Option(c, c)); document.getElementById("rep-cat").append(new Option(c, c)); });
+  document.getElementById("rep-cat").prepend(new Option("Choose one", "", true, true));
+
+  let RANGES = [], REPORTS = [], ADVERTS = [];
+  // Adverts state pay in their own words (no "per"), so a "paid per" filter hides them.
+  const match = r => (!catSel.value || r.category === catSel.value) && (!regSel.value || r.region === regSel.value) && (!perSel.value || r.per === perSel.value);
+  function card(r) {
+    const src = r.source ? (r.source_url ? `<a href="${esc(r.source_url)}"${/^https?:/.test(r.source_url) ? ' target="_blank" rel="noopener"' : ""}>${esc(r.source)}</a>` : esc(r.source)) : "";
+    const extra = [r.note && esc(r.note), src && "Source: " + src].filter(Boolean);
+    return `<article class="pay-row"><div><span class="tag">${esc(r.category)} · ${esc(r.region)}</span>
+      <h3>${esc(r.role)}<span class="basis ${esc(r.basis)}">${LABEL[r.basis] || ""}</span></h3>
+      <p class="where">${esc(r.where)}</p>${extra.length ? `<p class="note">${extra.join(" · ")}</p>` : ""}</div>
+      <div class="amt">${r.amountHtml || amount(r)}</div></article>`;
+  }
+  function render() {
+    const out = (id, rows) => {
+      const shown = rows.filter(match);
+      document.getElementById(id).innerHTML = shown.map(card).join("");
+      document.getElementById(id + "-empty").hidden = shown.length > 0;
+    };
+    out("ranges", RANGES); out("reports", REPORTS); out("adverts", ADVERTS);
+  }
+  [catSel, regSel, perSel].forEach(s => s.addEventListener("change", render));
+
+  Promise.all([
+    fetch("/pay.json", { cache: "no-cache" }).then(r => r.json()).catch(() => ({})),
+    fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).catch(() => [])
+  ]).then(([pay, jobs]) => {
+    RANGES = pay.ranges || [];
+    REPORTS = (pay.reports || []).map(r => ({
+      role: r.role, category: r.category, region: r.region, per: r.per, basis: "report",
+      where: [r.country, r.employer_type, r.year].filter(Boolean).join(" · "),
+      note: [r.rotation && "Rotation " + r.rotation, r.experience && r.experience + " experience", r.extras].filter(Boolean).join(" · "),
+      amountHtml: `${money(r.currency, r.amount)}<small>per ${esc(r.per)}</small>`
+    }));
+    ADVERTS = jobs.filter(j => isOpen(j) && !j.sample && j.salary && !/not stated/i.test(j.salary)).map(j => ({
+      role: j.title, category: j.category, region: j.region, per: "", basis: "advert",
+      where: j.employer + " · " + j.location, source: "See the job", source_url: "/jobs/" + j.id + "/",
+      amountHtml: `<span class="said">${esc(j.salary)}</span>`
+    }));
+    const regions = [...new Set([...RANGES, ...REPORTS, ...ADVERTS].map(r => r.region).filter(Boolean))].sort();
+    regions.forEach(r => regSel.append(new Option(r, r)));
+    if (pay.updated) document.getElementById("pay-updated").textContent = "Last reviewed " + new Date(pay.updated + "T00:00:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" }) + ".";
+    render();
+  });
+  const form = document.getElementById("pay-form"), note = document.getElementById("pay-note");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { note.className = "note"; note.textContent = "Fill in the role, job type, country, employer type and pay, tick the box, then send again."; return; }
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/" + CONTACT, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
+      if (!res.ok) throw new Error(res.status);
+      form.reset(); note.className = "sent"; note.textContent = "Thanks. We'll check it and add it to the guide, usually within a few days.";
+    } catch { note.className = "note"; note.textContent = "That didn't send. Please try again, or email " + CONTACT + "."; }
+    finally { btn.disabled = false; }
+  });
+})();
+</script>
+
+</main>
+<footer><div class="wrap">
+  <span>&copy; 2026 Hostile Environment Jobs</span>
+  <a href="/#privacy" data-view="privacy">Privacy</a>
+  <a href="/jobs/">All open jobs</a>
+  <a href="/pay/">Pay guide</a>
+  <a href="/#post" data-view="post">Post a job</a>
+  <a href="/#list-course" data-view="courses">List a course</a>
+  <a href="/#calendar" data-view="calendar">Calendar</a>
+  <a href="https://www.facebook.com/groups/2015055248777805/" target="_blank" rel="noopener">Facebook group</a>
+  <a href="https://www.facebook.com/hostileenvironmentjobs" target="_blank" rel="noopener">Facebook</a>
+  <a href="https://www.linkedin.com/company/hostileenvironmentjobs/" target="_blank" rel="noopener">LinkedIn</a>
+</div></footer>
+<script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
+</html>
