@@ -1,12 +1,20 @@
 {
+  "id": "/app/",
   "name": "Hostile Environment Jobs",
   "short_name": "HE Jobs",
+  "description": "Job alerts for EOD, mine action, security, medic and support work in hostile environments.",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "theme_color": "#111310",
   "background_color": "#121412",
   "display": "standalone",
-  "start_url": "/"
+  "start_url": "/app/",
+  "scope": "/",
+  "shortcuts": [
+    { "name": "All jobs", "url": "/#jobs" },
+    { "name": "Courses", "url": "/#courses" }
+  ]
 }
