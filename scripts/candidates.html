@@ -146,6 +146,7 @@
     <div class="panel hot" id="h-intro">
       <h2>Find operators who are free now</h2>
       <p>Search EOD, search, mine action, security, HE medic and support people by trade, region and the date they're available. When you find someone, ask to get in touch. If they accept, you get their name, email, phone and CV.</p>
+      <p class="status" id="h-pool" hidden></p>
       <div class="stat">£99<small>for 30 days of search</small></div>
       <ul class="perks">
         <li>Included free for 90 days with our <a href="/advertise/">£149 Featured employer plan</a></li>
@@ -214,6 +215,7 @@
 const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev";
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 const REGIONS = ["Africa", "Middle East", "Europe", "Asia", "Americas", "Oceania"];
+const POOL_MIN = 10; // keep in step with the advertise page in scripts/employers.py
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -512,8 +514,12 @@ $("f-from").min = todayIso();
 if (!API) { $("off").hidden = false; $("work").hidden = $("hire").hidden = true; }
 else {
   api("/api/talent/stats").then(s => {
+    // Numbers only go up once there are enough to impress an employer and too many to point at anyone.
+    if (s.available < POOL_MIN) return;
     const top = Object.entries(s.by_category).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([c, n]) => `${n} ${c}`).join(", ");
-    $("stats").textContent = s.available ? `${s.available} operator${s.available === 1 ? "" : "s"} available now${top ? " (" + top + ")" : ""}.` : "";
+    $("stats").textContent = `${s.available} operators available now${top ? " (" + top + ")" : ""}.`;
+    $("h-pool").innerHTML = `<b>${s.available}</b> operators in the pool now${top ? ": " + esc(top) : ""}.`;
+    $("h-pool").hidden = false;
   }).catch(() => {});
   loadWork();
   showTab(location.hash === "#hiring");
