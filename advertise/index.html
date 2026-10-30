@@ -266,6 +266,17 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a class="btn primary" href="/candidates/#hiring">Sign up to search</a>
 </div>
 </div>
+<p class="meta-line" id="pool-count" hidden></p>
+<script>
+// The talent pool's size, once it's big enough to be worth showing (POOL_MIN in scripts/candidates.html).
+fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.json()).then(s => {
+  if (!(s.available >= 10)) return;
+  const top = Object.entries(s.by_category).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c, n]) => n + " " + c).join(", ");
+  const el = document.getElementById("pool-count");
+  el.textContent = s.available + " operators in the talent pool now" + (top ? " (" + top + ")" : "") + ".";
+  el.hidden = false;
+}).catch(() => {});
+</script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
