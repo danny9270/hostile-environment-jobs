@@ -14,6 +14,7 @@ import shutil
 
 import employers as paid
 import landing
+from referral import booking_url, promo_text
 
 SITE = "https://hostileenvironmentjobs.com"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -197,9 +198,10 @@ def calendar(jobs, courses):
         if start < keep_from:
             continue
         facts = ". ".join(x for x in (f"{c['provider']}, {c['location']}", c.get("duration"), c.get("price")) if x)
-        text = f"{facts}\n{c.get('summary', '')}\n\nBook: {c['url']}"
+        link, code = booking_url(c, "calendar"), promo_text(c)
+        text = f"{facts}\n{c.get('summary', '')}\n\nBook: {link}" + (f" ({code})" if code else "")
         events.append((start, f"course-{c['id']}", f"Course starts: {c['title']} ({c['location']})", c["location"],
-                       start + datetime.timedelta(days=1), text, c["url"], c.get("posted")))
+                       start + datetime.timedelta(days=1), text, link, c.get("posted")))
     for j in jobs:
         if j.get("sample") or not is_date(j.get("closing")):
             continue
