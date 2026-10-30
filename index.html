@@ -290,6 +290,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <p class="eyebrow">HEAT · EOD &amp; IEDD · Close protection · Medical</p>
     <h1>Courses <span class="amp">&amp;</span> training</h1>
     <p>HEAT, EOD and IEDD qualifications, medic courses and security training from providers in our community. Past start dates drop off automatically. Done one? <a href="#review-course">Rate it</a> so others know what they're booking.</p>
+    <p style="color: var(--muted); font-size: 14px">Some providers pay us a small commission when you book through our links. It never changes the price you pay or the order courses appear in.</p>
     <p class="sample-note" id="course-sample-note" hidden>These are sample courses.</p>
   </div></div>
   <div class="chips" id="course-types" role="group" aria-label="Course type"></div>
@@ -466,7 +467,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we keep it on our own server until we've checked it, show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. Ask us any time to delete what you've sent.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we keep it on our own server until we've checked it, show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. When you click through to book a course, the link tells the provider you came from us so they can credit us; it carries no personal data. Ask us any time to delete what you've sent.</p>
   </div>
 </section>
 </main>
@@ -631,6 +632,18 @@ const jobsLoaded = Promise.all([fetch("jobs.json", { cache: "no-cache" }).then(r
 // Courses: loaded from courses.json, past start dates hidden automatically.
 let COURSES = [], ctype = "";
 const courseOpen = c => !/^\d{4}-\d\d-\d\d$/.test(c.start) || new Date(c.start + "T23:59:59") >= today;
+// Booking links tell the provider the booking came from us (same rules as scripts/referral.py):
+// the provider's own tracked link if they gave one, otherwise the course page with UTM tags.
+function bookingUrl(c, where = "site") {
+  if (c.referral_url) return c.referral_url;
+  try {
+    const u = new URL(c.url);
+    [...u.searchParams.keys()].filter(k => k.startsWith("utm_")).forEach(k => u.searchParams.delete(k));
+    Object.entries({ utm_source: "hostileenvironmentjobs", utm_medium: "referral", utm_campaign: "course-" + where, utm_content: c.id || "" })
+      .forEach(([k, v]) => u.searchParams.set(k, v));
+    return u.href;
+  } catch { return c.url; }
+}
 function renderCourses() {
   const list = COURSES.filter(courseOpen).filter(c => !ctype || c.type === ctype)
     .sort((a, b) => String(a.start).localeCompare(String(b.start)));
@@ -638,9 +651,9 @@ function renderCourses() {
   document.getElementById("course-list").innerHTML = list.map(c => `<article class="job">
     <span class="ico">${icon(c.type === "Security" ? "Security" : c.type)}</span>
     <div><span class="tag">${esc(c.type)}</span>
-      <h3><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
+      <h3><a href="${esc(bookingUrl(c))}" target="_blank" rel="noopener" data-book="${esc(c.id)}">${esc(c.title)}</a></h3>
       <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
-      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}</p>${reviewBlock(c)}</div>
+      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}${c.promo_code ? `<br><strong>Quote ${esc(c.promo_code)} when you book</strong>` : ""}</p>${reviewBlock(c)}</div>
     <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
   </article>`).join("");
 }
@@ -735,11 +748,11 @@ const isoDay = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "
 function calEvents() {
   const dated = d => /^\d{4}-\d\d-\d\d$/.test(d || "");
   return [
-    ...COURSES.filter(c => !c.sample && dated(c.start)).map(c => ({ date: c.start, kind: "course", label: c.title, sub: `${c.provider} · ${c.location}`, href: c.url, ext: true, verb: "Course starts" })),
+    ...COURSES.filter(c => !c.sample && dated(c.start)).map(c => ({ date: c.start, kind: "course", label: c.title, sub: `${c.provider} · ${c.location}`, href: bookingUrl(c), book: c.id, ext: true, verb: "Course starts" })),
     ...JOBS.filter(j => !j.sample && dated(j.closing)).map(j => ({ date: j.closing, kind: "job", label: j.title, sub: `${j.employer} · ${j.location}`, href: "#job/" + encodeURIComponent(j.id), verb: "Job closes" }))
   ].sort((a, b) => a.date.localeCompare(b.date));
 }
-const evLink = e => `<a class="ev ${e.kind}" href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""} title="${esc(e.verb + ": " + e.label)}">${esc(e.label)}</a>`;
+const evLink = e => `<a class="ev ${e.kind}" href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""}${e.book ? ` data-book="${esc(e.book)}"` : ""} title="${esc(e.verb + ": " + e.label)}">${esc(e.label)}</a>`;
 function renderCalendar() {
   const events = calEvents(), byDay = {};
   events.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
@@ -758,7 +771,7 @@ function renderCalendar() {
   document.getElementById("agenda").innerHTML = "<h2>Coming up</h2>" + (upcoming.length ? upcoming.map(e => `<article class="job">
     <span class="ico">${icon(e.kind === "course" ? "Training" : "Other")}</span>
     <div><span class="when">${esc(e.verb)} · ${fmtDate(e.date)}</span>
-      <h3><a href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""}>${esc(e.label)}</a></h3>
+      <h3><a href="${esc(e.href)}"${e.ext ? ' target="_blank" rel="noopener"' : ""}${e.book ? ` data-book="${esc(e.book)}"` : ""}>${esc(e.label)}</a></h3>
       <div class="who">${esc(e.sub)}</div></div>
   </article>`).join("") : '<p class="empty">Nothing dated coming up. Jobs that are open until filled don\'t appear here.</p>');
 }
@@ -910,6 +923,12 @@ function countView(tries = 0) {
 }
 window.addEventListener("load", () => countView());
 window.addEventListener("hashchange", () => countView());
+// Course booking clicks count as GoatCounter events (book/<course id>), so referrals can be checked against providers' reports.
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[data-book]");
+  const c = a && COURSES.find(x => x.id === a.dataset.book);
+  if (c && window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: "book/" + c.id, title: c.provider, event: true });
+});
 </script>
 <script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" data-goatcounter-settings='{"no_onload": true}' async src="https://gc.zgo.at/count.js"></script>
 </body>
