@@ -29,11 +29,31 @@ details summary { cursor: pointer; font-weight: 600; }
 .dots { display: flex; gap: 8px; margin: 10px 0; }
 .dots span { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--accent); }
 .dots span.on { background: var(--accent); }
+/* Rotation tracker: free for everyone, kept only on this phone (localStorage "hej-rota"), no account needed. */
+.rota .count { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 4px 0; }
+.rota .count b { font: 900 56px/1 var(--display); color: var(--accent); }
+.rota .count span { font: 800 20px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+.rota .bar { height: 10px; border-radius: 999px; background: var(--raised); overflow: hidden; margin: 10px 0 4px; }
+.rota .bar i { display: block; height: 100%; background: var(--accent); }
+.rota .bar.home i { background: var(--ok); }
+.rota h3 { margin: 18px 0 6px; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.rota form { margin-top: 10px; gap: 10px; }
+.rota form .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.totals { width: 100%; border-collapse: collapse; font-size: 15px; }
+.totals th, .totals td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+.totals th { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.totals td:not(:first-child), .totals th:not(:first-child) { text-align: right; }
+.totals td.pay { color: var(--accent); font-weight: 700; }
+.logs { list-style: none; padding: 0; margin: 8px 0; }
+.logs li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.logs li small { display: block; color: var(--muted); font: 500 13px var(--mono); }
+.logs button { font: 600 13px var(--body); background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 9px; cursor: pointer; flex: none; }
+@media (max-width: 640px) { .rota form .row3 { grid-template-columns: 1fr 1fr; } .rota .count b { font-size: 46px; } }
 </style>
 <div class="app">
   <p class="eyebrow" style="margin-top:32px">Job alerts app</p>
   <h1>New jobs, straight to your <span class="amp">phone</span></h1>
-  <p>Pick the work and regions you want. When a matching job or course goes up on the site, your phone gets a notification within a few hours, wherever you are. No laptop needed and no app store: it installs from this page.</p>
+  <p>Pick the work and regions you want. When a matching job or course goes up on the site, your phone gets a notification within a few hours, wherever you are. No laptop needed and no app store: it installs from this page. There's a free rotation tracker in it too, counting down to your next leave.</p>
 
   <div class="panel hot" id="install" hidden>
     <h2>First, add it to your home screen</h2>
@@ -125,6 +145,65 @@ details summary { cursor: pointer; font-weight: 600; }
       <a class="btn" id="refer-fb" target="_blank" rel="noopener">Facebook</a>
     </div>
     <p class="msg" id="refer-msg"></p>
+  </div>
+
+  <div class="panel rota" id="rota">
+    <p class="eyebrow">Rotation tracker · free</p>
+    <div id="rota-live" hidden>
+      <div class="count"><b id="rota-num"></b><span id="rota-what"></span></div>
+      <p class="sub" id="rota-when"></p>
+      <div class="bar" id="rota-bar"><i></i></div>
+      <p class="status" id="rota-day"></p>
+      <div class="row-btns">
+        <button class="btn primary" type="button" id="rota-today"></button>
+        <button class="btn" type="button" id="rota-fill" hidden>Log the rest of this hitch</button>
+      </div>
+      <p class="msg" id="rota-msg"></p>
+
+      <h3>Days and pay</h3>
+      <table class="totals"><thead><tr><th></th><th>Days worked</th><th>Pay</th></tr></thead><tbody id="rota-totals"></tbody></table>
+
+      <h3>Your log</h3>
+      <ul class="logs" id="rota-log"></ul>
+      <details><summary>Add days</summary>
+        <form id="rota-add" onsubmit="return false">
+          <div class="row"><label>From<input type="date" id="add-from" required></label><label>To<input type="date" id="add-to"></label></div>
+          <div class="row"><label>Type<select id="add-type"><option value="w">Worked</option><option value="t">Travel</option><option value="s">Standby</option><option value="u">Unpaid</option></select></label>
+            <label>Day rate<input id="add-rate" inputmode="decimal" placeholder="Your usual rate"></label></div>
+          <div class="row-btns" style="margin:0"><button class="btn" type="button" id="add-go">Add to log</button></div>
+        </form>
+      </details>
+    </div>
+    <div id="rota-intro">
+      <h2>Count down to your next leave</h2>
+      <p>Put in your rotation and this counts the days to leave, logs the days you've worked and adds up what you're owed. It works without an alerts subscription.</p>
+    </div>
+    <details id="rota-setup">
+      <summary id="rota-setup-sum">Set up my rotation</summary>
+      <form id="rota-form" onsubmit="return false">
+        <div class="row3">
+          <label>Days on<input id="r-on" type="number" inputmode="numeric" min="1" max="365" ></label>
+          <label>Days off<input id="r-off" type="number" inputmode="numeric" min="0" max="365"></label>
+          <label>First day of a hitch<input id="r-start" type="date"></label>
+        </div>
+        <p class="sub" style="margin:0">Pick the first day of any hitch, past or future, and it works out the rest.</p>
+        <div class="row">
+          <label>Day rate<input id="r-rate" inputmode="decimal" placeholder="Optional, e.g. 450"></label>
+          <label>Currency<select id="r-cur"><option>GBP</option><option>USD</option><option>EUR</option><option>AUD</option><option>ZAR</option><option>NZD</option><option>CAD</option></select></label>
+        </div>
+        <div class="row-btns" style="margin:0"><button class="btn primary" type="button" id="r-save">Save rotation</button></div>
+      </form>
+    </details>
+    <details id="rota-data" style="margin-top:10px"><summary>Your data</summary>
+      <p class="sub">Everything here stays on this phone. Nothing is sent to us. On iPhone, the home screen app and Safari keep separate copies, so use one or the other. Download a copy now and then so you don't lose it with your phone.</p>
+      <div class="row-btns">
+        <button class="btn" type="button" id="rota-csv">Download log (CSV)</button>
+        <button class="btn" type="button" id="rota-ics">Add rotation to calendar</button>
+        <label class="btn" style="margin:0">Load a log<input type="file" id="rota-import" accept=".csv,text/csv" hidden></label>
+        <button class="btn" type="button" id="rota-clear">Clear everything</button>
+      </div>
+      <p class="msg" id="rota-data-msg"></p>
+    </details>
   </div>
 
   <section id="matches" hidden>
@@ -357,6 +436,188 @@ $("install-btn").onclick = () => installPrompt ? installPrompt.prompt() : $("ins
 addEventListener("appinstalled", () => $("install").hidden = true);
 // Coming back from the payment page (or from Settings) picks up the new state.
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && store.get("hej-code")) load(); });
+
+// Rotation tracker. Dates are local "YYYY-MM-DD" strings; the log is keyed by date so a day can only be logged once.
+// rota = { on, off, start, rate, cur, log: { "2026-10-30": { t: "w"|"t"|"s"|"u", r: dayRate } } }
+const TYPES = { w: "Worked", t: "Travel", s: "Standby", u: "Unpaid" };
+let rota = (() => { try { return JSON.parse(store.get("hej-rota")) || {}; } catch { return {}; } })();
+rota.log ||= {};
+const saveRota = () => store.set("hej-rota", JSON.stringify(rota));
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const day = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = day(s); d.setDate(d.getDate() + n); return iso(d); };
+const utc = s => { const [y, m, d] = s.split("-").map(Number); return Date.UTC(y, m - 1, d); };
+const between = (a, b) => Math.round((utc(b) - utc(a)) / 864e5);
+const today = () => iso(new Date());
+const nice = (s, year) => { const d = day(s); return `${"Sun Mon Tue Wed Thu Fri Sat".split(" ")[d.getDay()]} ${d.getDate()} ${"Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ")[d.getMonth()]}` + (year ? " " + d.getFullYear() : ""); };
+const money = n => new Intl.NumberFormat("en-GB", { style: "currency", currency: rota.cur || "GBP", maximumFractionDigits: 0 }).format(n);
+const num = v => { const n = parseFloat(String(v ?? "").replace(/[^0-9.]/g, "")); return isFinite(n) && n >= 0 ? n : null; };
+const setUp = () => rota.on > 0 && rota.off >= 0 && /^\d{4}-\d\d-\d\d$/.test(rota.start || "");
+const pays = t => t !== "u";
+
+// Where today sits in the rotation: on site (day n of on) or home (day n of off), and when that ends.
+function phase(t = today()) {
+  const cycle = rota.on + rota.off, d = between(rota.start, t);
+  if (d < 0) return { before: true, ends: rota.start, left: -d };
+  const p = d % cycle, hitch = addDays(t, -p);
+  return p < rota.on
+    ? { onsite: true, n: p + 1, of: rota.on, hitch, ends: addDays(hitch, rota.on), left: rota.on - p }
+    : { onsite: false, n: p - rota.on + 1, of: rota.off, hitch, ends: addDays(hitch, cycle), left: cycle - p };
+}
+
+function sum(from, to) {
+  let days = 0, pay = 0;
+  // Travel and standby days add to pay but not to days worked.
+  for (const [d, e] of Object.entries(rota.log)) if (d >= from && d <= to) { days += e.t === "w"; pay += pays(e.t) ? e.r || 0 : 0; }
+  return { days, pay };
+}
+// Consecutive days of the same type and rate show as one line, newest first.
+function runs() {
+  const out = [];
+  Object.keys(rota.log).sort().forEach(d => {
+    const e = rota.log[d], last = out[out.length - 1];
+    if (last && last.t === e.t && last.r === e.r && addDays(last.to, 1) === d) { last.to = d; last.n++; }
+    else out.push({ from: d, to: d, t: e.t, r: e.r, n: 1 });
+  });
+  return out.reverse();
+}
+
+function drawRota() {
+  const ok = setUp();
+  $("rota-live").hidden = !ok;
+  $("rota-intro").hidden = ok;
+  $("rota-setup-sum").textContent = ok ? "Change my rotation" : "Set up my rotation";
+  $("r-on").value = rota.on || 28; $("r-off").value = rota.off ?? 28; $("r-start").value = rota.start || "";
+  $("r-rate").value = rota.rate || ""; $("r-cur").value = rota.cur || "GBP";
+  if (!ok) { $("rota-setup").open = true; return; }
+  const t = today(), ph = phase(t);
+  $("rota-num").textContent = ph.left;
+  if (ph.before) {
+    $("rota-what").textContent = ph.left === 1 ? "day until you fly out" : "days until you fly out";
+    $("rota-when").textContent = "First hitch starts " + nice(ph.ends, true);
+    $("rota-bar").hidden = true; $("rota-day").textContent = "";
+  } else {
+    $("rota-what").textContent = (ph.left === 1 ? "day" : "days") + (!ph.onsite ? " until you fly back" : rota.off ? " to leave" : " left in this hitch");
+    $("rota-when").textContent = (ph.onsite && rota.off ? "Leave starts " : "Next hitch starts ") + nice(ph.ends, true);
+    $("rota-bar").hidden = false;
+    $("rota-bar").className = "bar" + (ph.onsite ? "" : " home");
+    $("rota-bar").firstElementChild.style.width = (100 * ph.n / ph.of) + "%";
+    $("rota-day").textContent = `${ph.onsite ? "On site" : "Home"}: day ${ph.n} of ${ph.of}`;
+  }
+  const logged = rota.log[t];
+  $("rota-today").textContent = logged ? `Today logged: ${TYPES[logged.t].toLowerCase()} (undo)` : "Log today as worked";
+  const gap = ph.onsite ? Array.from({ length: ph.n }, (_, i) => addDays(ph.hitch, i)).filter(d => !rota.log[d]).length : 0;
+  $("rota-fill").hidden = !gap;
+  $("rota-fill").textContent = `Log ${gap} day${gap === 1 ? "" : "s"} of this hitch as worked`;
+
+  const y = t.slice(0, 4), taxStart = t.slice(5) >= "04-06" ? `${y}-04-06` : `${y - 1}-04-06`;
+  const rows = [
+    !ph.before ? ["Last hitch", ph.hitch, addDays(ph.hitch, rota.on - 1)] : null,
+    ["This month", t.slice(0, 8) + "01", t.slice(0, 8) + "31"],
+    ["This year", y + "-01-01", y + "-12-31"],
+    ["UK tax year", taxStart, `${+taxStart.slice(0, 4) + 1}-04-05`],
+    ["Everything", "0000", "9999"],
+  ].filter(Boolean);
+  if (ph.onsite) rows[0][0] = "This hitch";
+  $("rota-totals").innerHTML = rows.map(([label, a, b]) => { const s = sum(a, b); return `<tr><td>${label}</td><td>${s.days}</td><td class="pay">${s.pay ? esc(money(s.pay)) : "–"}</td></tr>`; }).join("");
+
+  const list = runs();
+  $("rota-log").innerHTML = list.length ? list.slice(0, 30).map((r, i) => `<li><div>${r.n} ${TYPES[r.t].toLowerCase()} day${r.n === 1 ? "" : "s"}${r.r && pays(r.t) ? " · " + esc(money(r.r * r.n)) : ""}
+    <small>${r.from === r.to ? nice(r.from, true) : nice(r.from) + " to " + nice(r.to, true)}${r.r && pays(r.t) ? " · " + esc(money(r.r)) + " a day" : ""}</small></div>
+    <button type="button" data-run="${i}" aria-label="Remove these days">Remove</button></li>`).join("")
+    : `<li><span class="sub">Nothing logged yet. Tap the button above at the end of each day, or log a whole hitch at once.</span></li>`;
+  $("rota-log").querySelectorAll("[data-run]").forEach(b => b.onclick = () => {
+    const r = list[b.dataset.run];
+    if (r.n > 1 && !confirm(`Remove these ${r.n} days from your log?`)) return;
+    for (let d = r.from; d <= r.to; d = addDays(d, 1)) delete rota.log[d];
+    saveRota(); drawRota();
+  });
+  if (!$("add-from").value) $("add-from").value = t;
+}
+
+function logDays(from, to, t, r) {
+  let n = 0;
+  for (let d = from; d <= to && n < 400; d = addDays(d, 1), n++) rota.log[d] = { t, r: pays(t) ? r : 0 };
+  saveRota(); drawRota();
+  return n;
+}
+
+$("r-save").onclick = () => {
+  const on = parseInt($("r-on").value, 10), off = parseInt($("r-off").value, 10), start = $("r-start").value;
+  if (!(on > 0) || !(off >= 0) || !start) return alert("Put in your days on, days off and the first day of a hitch.");
+  Object.assign(rota, { on, off, start, rate: num($("r-rate").value), cur: $("r-cur").value });
+  saveRota(); $("rota-setup").open = false; drawRota();
+  $("rota-msg").textContent = "Saved on this phone.";
+};
+$("rota-today").onclick = () => {
+  const t = today();
+  if (rota.log[t]) delete rota.log[t]; else rota.log[t] = { t: "w", r: rota.rate || 0 };
+  saveRota(); drawRota();
+  $("rota-msg").textContent = rota.log[t] ? "Logged. Another one down." : "";
+};
+$("rota-fill").onclick = () => {
+  const ph = phase(), t = today();
+  let n = 0;
+  for (let d = ph.hitch; d <= t; d = addDays(d, 1)) if (!rota.log[d]) { rota.log[d] = { t: "w", r: rota.rate || 0 }; n++; }
+  saveRota(); drawRota();
+  $("rota-msg").textContent = `Logged ${n} day${n === 1 ? "" : "s"}.`;
+};
+$("add-go").onclick = () => {
+  const from = $("add-from").value, to = $("add-to").value || from, r = num($("add-rate").value) ?? rota.rate ?? 0;
+  if (!from || to < from) return $("rota-msg").textContent = "Check the dates: 'To' can't be before 'From'.";
+  const n = logDays(from, to, $("add-type").value, r);
+  $("add-to").value = ""; $("add-rate").value = "";
+  $("rota-msg").textContent = `Added ${n} day${n === 1 ? "" : "s"}.`;
+};
+
+function download(name, type, text) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+$("rota-csv").onclick = () => {
+  const lines = ["date,type,day_rate,currency"].concat(Object.keys(rota.log).sort().map(d => `${d},${TYPES[rota.log[d].t]},${rota.log[d].r || 0},${rota.cur || "GBP"}`));
+  if (lines.length === 1) return $("rota-data-msg").textContent = "Nothing logged yet.";
+  download(`rotation-log-${today()}.csv`, "text/csv", lines.join("\n") + "\n");
+};
+$("rota-import").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  const byName = Object.fromEntries(Object.entries(TYPES).map(([k, v]) => [v.toLowerCase(), k]));
+  let n = 0;
+  (await f.text()).split(/\r?\n/).forEach(line => {
+    const [d, t, r] = line.split(",").map(x => x.trim());
+    if (/^\d{4}-\d\d-\d\d$/.test(d) && byName[(t || "").toLowerCase()]) { rota.log[d] = { t: byName[t.toLowerCase()], r: num(r) || 0 }; n++; }
+  });
+  saveRota(); drawRota();
+  $("rota-data-msg").textContent = n ? `Loaded ${n} day${n === 1 ? "" : "s"}.` : "That file didn't have any days in it. Use a log downloaded from here.";
+};
+$("rota-ics").onclick = () => {
+  if (!setUp()) return $("rota-data-msg").textContent = "Set up your rotation first.";
+  const ph = phase(), stamp = new Date().toISOString().replace(/[-:]|\.\d+/g, ""), cycle = rota.on + rota.off;
+  let s = ph.before ? rota.start : ph.hitch;
+  const ev = [];
+  for (let i = 0; i < 12; i++, s = addDays(s, cycle)) {
+    const leave = addDays(s, rota.on), back = addDays(s, cycle);
+    ev.push(["On site", s, leave], ...(rota.off ? [["Leave", leave, back]] : []));
+  }
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Hostile Environment Jobs//Rotation tracker//EN", "CALSCALE:GREGORIAN"]
+    .concat(...ev.map(([what, a, b]) => ["BEGIN:VEVENT", `UID:rota-${a}-${what === "Leave" ? "l" : "o"}@hostileenvironmentjobs.com`, `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${a.replace(/-/g, "")}`, `DTEND;VALUE=DATE:${b.replace(/-/g, "")}`, `SUMMARY:${what} (${rota.on}/${rota.off})`, "TRANSP:TRANSPARENT", "END:VEVENT"]), "END:VCALENDAR");
+  download("rotation.ics", "text/calendar", ics.join("\r\n") + "\r\n");
+  $("rota-data-msg").textContent = "Your next 12 rotations are in the file. Open it to add them to your calendar.";
+};
+$("rota-clear").onclick = () => {
+  if (!confirm("Clear your rotation and every logged day from this phone? This can't be undone.")) return;
+  rota = { log: {} }; saveRota(); drawRota();
+  $("rota-data-msg").textContent = "Cleared.";
+};
+// Opened from the home screen, or once a rotation is set up, the countdown goes first: it's what people open the app for day to day.
+if (standalone || setUp()) $("install").before($("rota"));
+drawRota();
+// Roll the countdown over at midnight if the app is left open.
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") drawRota(); });
 
 drawPrefs();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
