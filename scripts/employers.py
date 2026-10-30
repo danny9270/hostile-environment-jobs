@@ -18,10 +18,17 @@ PLANS = [
      "payment_link": ""},
     {"name": "Featured employer", "price": "£149", "per": "90 days",
      "points": ["Company profile page with your logo, story and every open job", "All your jobs featured for 90 days",
-                "Your name links to your profile on every listing", "A spotlight post on our Facebook and LinkedIn pages"],
-     "payment_link": ""},
+                "Your name links to your profile on every listing", "A spotlight post on our Facebook and LinkedIn pages",
+                "90 days of talent pool search included"],
+     "payment_link": "", "best": True},
+    {"name": "Candidate search", "price": "£99", "per": "30 days",
+     "points": ["Search operators who are available now, by trade, region and start date",
+                "Ask to get in touch; their name, contact details and CV come through when they accept",
+                "Every employer checked before they can search"],
+     "payment_link": "/candidates/#hiring"},
 ]
-# Each "payment_link" is a Stripe Payment Link (https://buy.stripe.com/...). Left empty, the button asks people to email us instead.
+# Each "payment_link" is a Stripe Payment Link (https://buy.stripe.com/...) or a page on this site. Left empty, the button asks people to email us instead.
+# Candidate search is paid for on the talent pool page itself, once we've approved the employer.
 
 def is_date(d):
     return bool(re.fullmatch(r"\d{4}-\d\d-\d\d", d or ""))
@@ -96,22 +103,35 @@ def advertise_page(page, e):
     def button(p):
         if p["payment_link"] is None:
             return '<a class="btn" href="/#post">Post a job free</a>'
+        if p["payment_link"].startswith("/"):
+            return f'<a class="btn primary" href="{e(p["payment_link"])}">Sign up to search</a>'
         if p["payment_link"]:
             return f'<a class="btn primary" href="{e(p["payment_link"])}" target="_blank" rel="noopener">Pay and book</a>'
         return f'<a class="btn primary" href="#enquire" data-plan="{e(p["name"])}">Book this</a>'
-    plans = "\n".join(f"""<div class="plan{' best' if i == len(PLANS) - 1 else ''}">
+    plans = "\n".join(f"""<div class="plan{' best' if p.get('best') else ''}">
   <h2>{e(p['name'])}</h2>
   <p class="price">{e(p['price'])} <span>{e(p['per'])}</span></p>
   <ul>{''.join(f'<li>{e(t)}</li>' for t in p['points'])}</ul>
   {button(p)}
-</div>""" for i, p in enumerate(PLANS))
+</div>""" for p in PLANS)
     body = f"""<div class="page" style="max-width:none">
 <p class="eyebrow" style="margin-top:32px">For employers and training providers</p>
 <h1>Advertise with us</h1>
-<p>Hostile Environment Jobs reaches people who've done the job: EOD and search operators, security staff, hostile environment medics, managers and support crews. Every job goes on the site and to our 4.4K-member Facebook group. Posting stays free. If you need a role filled faster, put it in front of everyone first.</p>
+<p>Hostile Environment Jobs reaches people who've done the job: EOD and search operators, security staff, hostile environment medics, managers and support crews. Every job goes on the site and to our 4.4K-member Facebook group. Posting a job and searching the jobs list are free, and always will be. If you need a role filled faster, put it in front of everyone first, or search our <a href="/candidates/">talent pool</a> for people who are free now.</p>
 <div class="plans">
 {plans}
 </div>
+<p class="meta-line" id="pool-count" hidden></p>
+<script>
+// The talent pool's size, once it's big enough to be worth showing (POOL_MIN in scripts/candidates.html).
+fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.json()).then(s => {{
+  if (!(s.available >= 10)) return;
+  const top = Object.entries(s.by_category).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c, n]) => n + " " + c).join(", ");
+  const el = document.getElementById("pool-count");
+  el.textContent = s.available + " operators in the talent pool now" + (top ? " (" + top + ")" : "") + ".";
+  el.hidden = false;
+}}).catch(() => {{}});
+</script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>

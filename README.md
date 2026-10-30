@@ -50,6 +50,12 @@ Example `employers.json` entry:
 - `ranges`: each has `role`, `category`, `region`, `where`, `low` and/or `high`, `currency`, `per` (`day`, `month`, `year` or `hour`) and `basis` (`estimate`, `advert` or `published`, with `source` and `source_url` for the last two). Update `updated` when you review them.
 - `reports`: anonymous reports arrive by email (FormSubmit, subject "Pay report"). Nothing is published until it's added here. Before adding one, drop anything identifying and round the pay. Fields: `role`, `category`, `region`, `country`, `employer_type`, `amount`, `currency`, `per`, `year`, and optional `rotation`, `experience` and `extras`.
 
+## Service leaver hub
+
+`/leavers/` covers UK resettlement funding (ELC, IRTC, SLC, GRT), which courses usually count for ELCAS, what each military trade fits on the circuit, a first contract checklist (ticks kept in the visitor's browser only) and who can help. The page body lives in `scripts/leavers.html`; `scripts/build_pages.py` wraps it in the site header and footer, so don't edit `leavers/index.html` by hand. Check the funding figures against the CTP and ELCAS sites now and then.
+
+It also lists the open courses from `courses.json`. Add `"elcas": "1234"` to a course once the provider has given you their ELCAS number, and it shows a green ELCAS tag there.
+
 ## Job alerts app
 
 `/app/` is an installable phone app (a web app: Android installs it from Chrome, iPhone from Safari's Share > Add to Home Screen, iOS 16.4 or newer). People pick job types, regions, keywords and course types, pay $6 a year, and get a push notification when a matching job or course goes up. It also lists the open jobs that match.
@@ -60,3 +66,14 @@ Example `employers.json` entry:
 - **Lost code:** in the Cloudflare dashboard, D1 > hej-alerts > Console: `SELECT code, paid_until FROM accounts WHERE email = 'their@email'`.
 - **Give someone free alerts:** after they've tapped "Get job alerts" once, run `UPDATE accounts SET paid_until = strftime('%s','2027-12-31') WHERE code = 'HEJ-...'` in the same console.
 - **Rotation tracker:** free for everyone, no account. People enter days on, days off and the first day of any hitch; it counts down to leave, logs worked, travel, standby and unpaid days with a day rate, and totals pay for the hitch, month, year and UK tax year. It's kept only in that phone's browser (`localStorage` key `hej-rota`), never sent to the Worker. They can download the log as CSV and load it back, and download the next 12 rotations as an `.ics` calendar file.
+
+## Talent pool
+
+Operators say when they're free and what they do; checked employers who've paid for search find them. Posting jobs and browsing the jobs list stay free.
+
+- **Page:** `scripts/candidates.html`, wrapped by `scripts/build_pages.py` into `candidates/index.html` (don't edit that by hand). "I'm looking for work" makes or edits a profile and uploads a PDF CV; "I'm hiring" (`/candidates/#hiring`) signs an employer up and, once approved with search time, searches.
+- **Privacy:** employers see profiles without name, contact details or CV. They send a request (role + message); the operator accepts or declines. Only on accept do the name, email, phone, LinkedIn and CV go to that employer. Profiles leave search 90 days after the operator last confirms they're available and are deleted, with the CV and requests, after 12 months. Operators can hide or delete their profile any time.
+- **Backend:** the same alerts Worker and D1 database (tables `candidates`, `cvs`, `recruiters`, `contact_requests`). Operators and employers each sign in with a `HEJ-` code kept on their device.
+- **Approving employers:** `/admin/` > Talent pool. Approve (with free days, e.g. 90 for the £149 Featured employer plan), add 30 or 90 days, stop, reject, delete. Remove an operator's profile there on a deletion request.
+- **Payment:** £99 for 30 days via Stripe Checkout once the Worker has `STRIPE_SEARCH_PRICE` (a one-off £99 price). Without it, give days by hand from the admin page.
+- **Emails:** optional. With a `RESEND_API_KEY` secret on the Worker, operators are emailed about requests, employers about approval and acceptance, and contact@ about new employer sign-ups.

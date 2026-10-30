@@ -225,10 +225,12 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/#courses" data-view="courses">Courses</a>
     <a href="/#calendar" data-view="calendar">Calendar</a>
     <a href="/#careers" data-view="careers">Getting in</a>
+    <a href="/leavers/">Service leavers</a>
     <a href="/pay/">Pay guide</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
     <a href="/app/">Job alerts</a>
+    <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
     <a href="/#about" data-view="about">About</a>
   </nav>
@@ -237,7 +239,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <div class="page" style="max-width:none">
 <p class="eyebrow" style="margin-top:32px">For employers and training providers</p>
 <h1>Advertise with us</h1>
-<p>Hostile Environment Jobs reaches people who've done the job: EOD and search operators, security staff, hostile environment medics, managers and support crews. Every job goes on the site and to our 4.4K-member Facebook group. Posting stays free. If you need a role filled faster, put it in front of everyone first.</p>
+<p>Hostile Environment Jobs reaches people who've done the job: EOD and search operators, security staff, hostile environment medics, managers and support crews. Every job goes on the site and to our 4.4K-member Facebook group. Posting a job and searching the jobs list are free, and always will be. If you need a role filled faster, put it in front of everyone first, or search our <a href="/candidates/">talent pool</a> for people who are free now.</p>
 <div class="plans">
 <div class="plan">
   <h2>Standard listing</h2>
@@ -254,10 +256,27 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <div class="plan best">
   <h2>Featured employer</h2>
   <p class="price">£149 <span>90 days</span></p>
-  <ul><li>Company profile page with your logo, story and every open job</li><li>All your jobs featured for 90 days</li><li>Your name links to your profile on every listing</li><li>A spotlight post on our Facebook and LinkedIn pages</li></ul>
+  <ul><li>Company profile page with your logo, story and every open job</li><li>All your jobs featured for 90 days</li><li>Your name links to your profile on every listing</li><li>A spotlight post on our Facebook and LinkedIn pages</li><li>90 days of talent pool search included</li></ul>
   <a class="btn primary" href="#enquire" data-plan="Featured employer">Book this</a>
 </div>
+<div class="plan">
+  <h2>Candidate search</h2>
+  <p class="price">£99 <span>30 days</span></p>
+  <ul><li>Search operators who are available now, by trade, region and start date</li><li>Ask to get in touch; their name, contact details and CV come through when they accept</li><li>Every employer checked before they can search</li></ul>
+  <a class="btn primary" href="/candidates/#hiring">Sign up to search</a>
 </div>
+</div>
+<p class="meta-line" id="pool-count" hidden></p>
+<script>
+// The talent pool's size, once it's big enough to be worth showing (POOL_MIN in scripts/candidates.html).
+fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.json()).then(s => {
+  if (!(s.available >= 10)) return;
+  const top = Object.entries(s.by_category).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c, n]) => n + " " + c).join(", ");
+  const el = document.getElementById("pool-count");
+  el.textContent = s.available + " operators in the talent pool now" + (top ? " (" + top + ")" : "") + ".";
+  el.hidden = false;
+}).catch(() => {});
+</script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
@@ -271,7 +290,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   </div>
   <div class="row">
     <label>Email <input name="email" type="email" required></label>
-    <label>Plan <select name="plan" id="ad-plan"><option>Featured job</option><option>Featured employer</option><option>Not sure yet</option></select></label>
+    <label>Plan <select name="plan" id="ad-plan"><option>Featured job</option><option>Featured employer</option><option>Candidate search</option><option>Not sure yet</option></select></label>
   </div>
   <label>Job link or anything else we should know <textarea name="details" rows="4"></textarea></label>
   <button class="btn primary" type="submit">Send</button>

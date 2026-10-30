@@ -7,6 +7,8 @@ build_pages.py calls build() and adds the pages to the sitemap.
 import re
 import shutil
 
+from referral import booking_url, promo_text
+
 TOPICS = [
     {"slug": "eod-jobs", "name": "EOD jobs", "title": "EOD jobs: bomb disposal and UXO work",
      "categories": ["EOD", "IEDD", "Survey & Clearance"], "keywords": ["eod", "uxo", "explosive ordnance", "iedd", "bomb disposal", "ammunition technician"],
@@ -106,9 +108,9 @@ def job_cards(jobs, e, closing_text):
 def course_cards(courses, e):
     return "\n".join(f"""<article class="detail">
   <span class="tag">{e(c['type'])}</span>
-  <h3><a href="{e(c['url'])}" target="_blank" rel="noopener">{e(c['title'])}</a></h3>
+  <h3><a href="{e(booking_url(c, 'work'))}" target="_blank" rel="noopener" data-goatcounter-click="book/{e(c['id'])}" data-goatcounter-title="{e(c['provider'])}">{e(c['title'])}</a></h3>
   <div class="who">{e(c['provider'])} · {e(c['location'])}{' · Starts ' + e(c['start']) if c.get('start') else ''}</div>
-  <p>{e(c.get('summary'))}</p>
+  <p>{e(c.get('summary'))}{'<br><strong>' + e(promo_text(c)) + '</strong>' if c.get('promo_code') else ''}</p>
 </article>""" for c in courses)
 
 
@@ -124,7 +126,8 @@ ALERTS = """<div class="actions"><a class="btn primary" href="/app/">Get alerts 
 def landing(slug, h1, intro, jobs, courses, courses_first, page, e, closing_text, related, title, description):
     jobs_html = f"<h2>Open jobs ({len(jobs)})</h2>\n" + (job_cards(jobs, e, closing_text) if jobs else
         '<p>No open jobs match right now. New jobs go up every couple of days: get an alert on your phone the moment one does.</p>')
-    courses_html = (f"<h2>Upcoming courses ({len(courses)})</h2>\n" + course_cards(courses, e)) if courses or courses_first else ""
+    courses_html = (f"<h2>Upcoming courses ({len(courses)})</h2>\n" + course_cards(courses, e)
+                    + '\n<p class="meta-line">Some providers pay us a small commission when you book through our links. It never changes your price or the order courses appear in.</p>') if courses or courses_first else ""
     if courses_first and not courses:
         courses_html += '<p>No upcoming courses listed right now. <a href="/#courses">See all courses</a> or <a href="/#post">list a course free</a>.</p>'
     sections = [courses_html, jobs_html] if courses_first else [jobs_html, courses_html]

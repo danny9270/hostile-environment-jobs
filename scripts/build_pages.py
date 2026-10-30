@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /app/ job alerts page, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /leavers/ hub, the /app/ job alerts page, the /candidates/ talent pool, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -14,6 +14,7 @@ import shutil
 
 import employers as paid
 import landing
+from referral import booking_url, promo_text
 
 SITE = "https://hostileenvironmentjobs.com"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -197,9 +198,10 @@ def calendar(jobs, courses):
         if start < keep_from:
             continue
         facts = ". ".join(x for x in (f"{c['provider']}, {c['location']}", c.get("duration"), c.get("price")) if x)
-        text = f"{facts}\n{c.get('summary', '')}\n\nBook: {c['url']}"
+        link, code = booking_url(c, "calendar"), promo_text(c)
+        text = f"{facts}\n{c.get('summary', '')}\n\nBook: {link}" + (f" ({code})" if code else "")
         events.append((start, f"course-{c['id']}", f"Course starts: {c['title']} ({c['location']})", c["location"],
-                       start + datetime.timedelta(days=1), text, c["url"], c.get("posted")))
+                       start + datetime.timedelta(days=1), text, link, c.get("posted")))
     for j in jobs:
         if j.get("sample") or not is_date(j.get("closing")):
             continue
@@ -282,6 +284,14 @@ def main():
         "Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.",
         "/app/", app[len(app_style):], app_style).replace('<a href="/app/">', '<a href="/app/" aria-current="page">', 1))
 
+    # Talent pool: operators' profiles and employers' search, kept by the alerts Worker and drawn in the browser.
+    tp = (ROOT / "scripts" / "candidates.html").read_text()
+    tp_style = re.match(r"\s*<style>.*?</style>\n", tp, re.S).group(0)
+    (ROOT / "candidates").mkdir(exist_ok=True)
+    (ROOT / "candidates" / "index.html").write_text(page("Talent pool: get found by hostile environment employers | Hostile Environment Jobs",
+        "Free for EOD, search, mine action, security, HE medic and support operators: say when you're available and let checked employers find you. Your details stay hidden until you accept.",
+        "/candidates/", tp[len(tp_style):], tp_style).replace('<a href="/candidates/">', '<a href="/candidates/" aria-current="page">', 1))
+
     # Deployment guide: reads deploy.json (refreshed daily by scripts/build_deploy.py) in the browser.
     dep = (ROOT / "scripts" / "deploy.html").read_text().replace("<!--MAP-->", (ROOT / "scripts" / "deploy-map.svg").read_text())
     dep_style = re.match(r"\s*<style>.*?</style>\n", dep, re.S).group(0)
@@ -290,7 +300,15 @@ def main():
         "Travel advice levels, recent security updates, live weather, visas and cultural pointers for the Horn of Africa, Middle East and North Africa.",
         "/deploy/", dep[len(dep_style):], dep_style).replace('<a href="/deploy/">', '<a href="/deploy/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # Service leaver hub: static advice plus the open courses, read from courses.json in the browser.
+    lv = (ROOT / "scripts" / "leavers.html").read_text()
+    lv_style = re.match(r"\s*<style>.*?</style>\n", lv, re.S).group(0)
+    (ROOT / "leavers").mkdir(exist_ok=True)
+    (ROOT / "leavers" / "index.html").write_text(page("Service leaver hub: resettlement, ELCAS and your first contract | Hostile Environment Jobs",
+        "Leaving the forces for EOD, security, medic or mine action work? Resettlement funding (ELC, IRTC, SLC), which courses count, what your trade fits and a first contract checklist.",
+        "/leavers/", lv[len(lv_style):], lv_style).replace('<a href="/leavers/">', '<a href="/leavers/" aria-current="page">', 1))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
