@@ -59,3 +59,14 @@ Example `employers.json` entry:
 - **Sending:** the "Job alerts" Action runs `alerts/send_alerts.py` after each job page build and every 3 hours. It asks the Worker who wants what (signing in with GitHub's own token, no secret), sends each new listing to the matching phones, and tells the Worker what it sent. The Worker lives at https://hej-alerts.danieldobb.workers.dev (Dobbo's Cloudflare account); the repository variable `ALERTS_API` overrides it. The first run only records the listings already up.
 - **Lost code:** in the Cloudflare dashboard, D1 > hej-alerts > Console: `SELECT code, paid_until FROM accounts WHERE email = 'their@email'`.
 - **Give someone free alerts:** after they've tapped "Get job alerts" once, run `UPDATE accounts SET paid_until = strftime('%s','2027-12-31') WHERE code = 'HEJ-...'` in the same console.
+
+## Talent pool
+
+Operators say when they're free and what they do; checked employers who've paid for search find them. Posting jobs and browsing the jobs list stay free.
+
+- **Page:** `scripts/candidates.html`, wrapped by `scripts/build_pages.py` into `candidates/index.html` (don't edit that by hand). "I'm looking for work" makes or edits a profile and uploads a PDF CV; "I'm hiring" (`/candidates/#hiring`) signs an employer up and, once approved with search time, searches.
+- **Privacy:** employers see profiles without name, contact details or CV. They send a request (role + message); the operator accepts or declines. Only on accept do the name, email, phone, LinkedIn and CV go to that employer. Profiles leave search 90 days after the operator last confirms they're available and are deleted, with the CV and requests, after 12 months. Operators can hide or delete their profile any time.
+- **Backend:** the same alerts Worker and D1 database (tables `candidates`, `cvs`, `recruiters`, `contact_requests`). Operators and employers each sign in with a `HEJ-` code kept on their device.
+- **Approving employers:** `/admin/` > Talent pool. Approve (with free days, e.g. 90 for the £149 Featured employer plan), add 30 or 90 days, stop, reject, delete. Remove an operator's profile there on a deletion request.
+- **Payment:** £99 for 30 days via Stripe Checkout once the Worker has `STRIPE_SEARCH_PRICE` (a one-off £99 price). Without it, give days by hand from the admin page.
+- **Emails:** optional. With a `RESEND_API_KEY` secret on the Worker, operators are emailed about requests, employers about approval and acceptance, and contact@ about new employer sign-ups.

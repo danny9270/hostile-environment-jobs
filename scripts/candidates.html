@@ -1,0 +1,521 @@
+<style>
+/* Talent pool: operators post when they're free, approved employers who've paid for search find them.
+   Employers never see a name, contact details or CV until the operator accepts their request.
+   The page talks to the alerts Worker (ALERTS_API), which keeps the profiles in its database. */
+.tp { max-width: 860px; padding-bottom: 48px; }
+.tp > p, .tp .sub { color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0; }
+.panel h2 { margin-bottom: 8px; }
+.panel.hot { border-left: 4px solid var(--accent); }
+.panel p { margin: 6px 0; }
+.who-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0 4px; }
+.who-tabs button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.perks { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 6px; }
+.perks li::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); margin-right: 10px; }
+.stat { font: 900 40px/1 var(--display); color: var(--accent); }
+.stat small { font: 500 14px var(--mono); color: var(--muted); margin-left: 6px; }
+.code { font: 500 18px var(--mono); letter-spacing: .06em; background: var(--raised); border: 1px dashed var(--sand); border-radius: 8px; padding: 6px 10px; display: inline-block; user-select: all; }
+.status { font: 500 14px var(--mono); color: var(--muted); }
+.status b { color: var(--ok); font-weight: 500; }
+.status b.off { color: var(--warn); }
+.msg { min-height: 1.4em; font-size: 15px; color: var(--sand); }
+.row-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.restore { display: flex; gap: 8px; margin-top: 8px; }
+.restore input { flex: 1; min-width: 0; font: 500 16px var(--mono); text-transform: uppercase; }
+.tp form { display: grid; gap: 14px; }
+.tp form h3 { margin: 10px 0 0; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.hint { color: var(--muted); font-size: 14px; font-weight: 400; }
+.cand { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 12px 0; }
+.cand h3 { margin: 2px 0 4px; font-size: 21px; }
+.cand .avail { font: 500 14px var(--mono); color: var(--ok); }
+.cand .avail.later { color: var(--sand); }
+.cand dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 10px 0 0; font-size: 15px; }
+.cand dt { color: var(--muted); }
+.cand dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cand .ask { margin-top: 12px; }
+.req { border-top: 1px solid var(--line); padding: 12px 0; }
+.req:first-of-type { border-top: 0; }
+.req .t { font-weight: 600; }
+.tag.ok { color: var(--ok); } .tag.no { color: var(--warn); }
+.filters { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .filters { grid-template-columns: 1fr; } .cand dl { grid-template-columns: 1fr; } .cand dt { margin-top: 6px; } }
+</style>
+<div class="tp">
+  <p class="eyebrow" style="margin-top:32px">Talent pool</p>
+  <h1>Get found for your next <span class="amp">contract</span></h1>
+  <p>Between contracts or coming out of the forces? Tell employers when you're free and what you do. It's free, and your name, contact details and CV stay hidden until <b>you</b> say yes to an employer.</p>
+  <p class="status" id="stats"></p>
+
+  <div class="who-tabs" role="group" aria-label="Who are you?">
+    <button class="btn" type="button" id="tab-work" aria-pressed="true">I'm looking for work</button>
+    <button class="btn" type="button" id="tab-hire" aria-pressed="false">I'm hiring</button>
+  </div>
+  <div class="panel" id="off" hidden><p>The talent pool is being switched on. Check back soon.</p></div>
+
+  <!-- ===== Operators ===== -->
+  <section id="work">
+    <div class="panel hot" id="w-intro">
+      <h2>How it works</h2>
+      <ul class="perks">
+        <li>Fill in your trade, quals and the date you're free. Free, always.</li>
+        <li>Approved employers search profiles without names or contact details.</li>
+        <li>When one wants to talk, you get their company and the role. Accept, and they get your details and CV. Decline, and they get nothing.</li>
+        <li>Your profile leaves search after 90 days unless you tap "I'm still available". Delete it any time.</li>
+      </ul>
+      <details><summary>Already have a profile? Use your code</summary>
+        <div class="restore"><input id="w-restore-code" placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your code"><button class="btn" type="button" id="w-restore">Use code</button></div>
+        <p class="msg" id="w-restore-msg"></p>
+      </details>
+    </div>
+
+    <div class="panel" id="w-account" hidden>
+      <h2>Your profile</h2>
+      <p class="status" id="w-status"></p>
+      <p>Your code: <span class="code" id="w-code"></span></p>
+      <p class="sub">This code opens your profile. Keep it safe: you'll need it on another phone or computer. Lost it? Email <a href="mailto:contact@hostileenvironmentjobs.com">contact@hostileenvironmentjobs.com</a> from the address on your profile.</p>
+      <div class="row-btns">
+        <button class="btn primary" type="button" id="w-avail">I'm still available</button>
+        <button class="btn" type="button" id="w-hide">Hide from search</button>
+        <button class="btn" type="button" id="w-copy">Copy code</button>
+      </div>
+      <p class="msg" id="w-acct-msg"></p>
+    </div>
+
+    <div class="panel" id="w-requests" hidden>
+      <h2>Employers who want to talk</h2>
+      <div id="w-req-list"></div>
+    </div>
+
+    <div class="panel" id="w-cv" hidden>
+      <h2>Your CV</h2>
+      <p id="w-cv-state" class="sub"></p>
+      <p class="sub">PDF, under 1.4 MB. Only employers you accept can download it. No CV yet? Make one with the free <a href="/cv/">CV builder</a>.</p>
+      <div class="row-btns">
+        <label class="btn" for="w-cv-file" style="cursor:pointer">Upload CV</label>
+        <input type="file" id="w-cv-file" accept="application/pdf,.pdf" hidden>
+        <button class="btn" type="button" id="w-cv-get" hidden>Download</button>
+        <button class="btn" type="button" id="w-cv-del" hidden>Remove</button>
+      </div>
+      <p class="msg" id="w-cv-msg"></p>
+    </div>
+
+    <form class="panel" id="w-form" novalidate onsubmit="return false">
+      <h2 id="w-form-title">Make your profile</h2>
+      <h3>What employers see</h3>
+      <p class="hint">No names here. Leave out anything that identifies you, like your unit or exact dates of service.</p>
+      <label>Headline <span class="hint">e.g. "Ex-RE High Threat IEDD operator, 12 years, HEAT and FREC 4"</span><input id="f-headline" maxlength="120" required></label>
+      <div><b>Job types</b> <span class="hint">(up to 6)</span><div class="chips" id="f-cats"></div></div>
+      <div class="row">
+        <label>Available from<input id="f-from" type="date" required></label>
+        <label>Years of experience<input id="f-years" type="number" min="0" max="50" inputmode="numeric"></label>
+      </div>
+      <div><b>Where you'll work</b> <span class="hint">(leave all off for anywhere)</span><div class="chips" id="f-regions"></div></div>
+      <div class="row">
+        <label>Rotation you want <span class="hint">(optional)</span><input id="f-rotation" maxlength="40" list="rotations" placeholder="e.g. 8/4, 6/3, any"></label>
+        <label>Day rate or salary <span class="hint">(optional)</span><input id="f-rate" maxlength="40" placeholder="e.g. £350/day"></label>
+      </div>
+      <datalist id="rotations"><option>Any</option><option>4/4</option><option>6/3</option><option>8/4</option><option>10/5</option><option>12/4</option><option>Residential</option><option>Short term only</option></datalist>
+      <div class="row">
+        <label>Based in <span class="hint">(country)</span><input id="f-based" maxlength="60"></label>
+        <label>Languages <span class="hint">(optional)</span><input id="f-langs" maxlength="120" placeholder="e.g. English, French, basic Arabic"></label>
+      </div>
+      <label>Clearance or vetting <span class="hint">(optional, e.g. SC, DV, NATO Secret)</span><input id="f-clear" maxlength="60"></label>
+      <label>Qualifications and courses <span class="hint">e.g. EOD Level 3, IEDD, IMAS, HEAT, SIA CP, FREC 4, driving licence</span><textarea id="f-quals" rows="3" maxlength="800"></textarea></label>
+      <label>About your experience <span class="hint">Where you've worked (by country), roles, kit, what you're after</span><textarea id="f-summary" rows="5" maxlength="1500"></textarea></label>
+
+      <h3>Only for employers you accept</h3>
+      <div class="row">
+        <label>Full name<input id="f-name" maxlength="80" autocomplete="name" required></label>
+        <label>Email <span class="hint">(we tell you here when an employer asks)</span><input id="f-email" type="email" maxlength="200" autocomplete="email" required></label>
+      </div>
+      <div class="row">
+        <label>Phone or WhatsApp <span class="hint">(optional)</span><input id="f-phone" maxlength="40" autocomplete="tel"></label>
+        <label>LinkedIn <span class="hint">(optional)</span><input id="f-linkedin" maxlength="200" placeholder="linkedin.com/in/..."></label>
+      </div>
+      <input type="text" id="f-honey" style="display:none" tabindex="-1" autocomplete="off">
+      <label class="check"><input type="checkbox" id="f-consent"> <span>I agree that approved employers can see the top part of this profile without my name or contact details, and that my name, contact details and CV go to an employer only if I accept their request. I can hide or delete my profile at any time. See our <a href="/#privacy">privacy notice</a>.</span></label>
+      <div class="row-btns"><button class="btn primary" type="button" id="w-save">Save profile</button><button class="btn" type="button" id="w-preview-btn">Preview what employers see</button></div>
+      <p class="msg" id="w-save-msg"></p>
+      <div id="w-preview" hidden></div>
+      <p class="sub" id="w-delete-row" hidden><button class="btn" type="button" id="w-delete">Delete my profile</button> Removes your profile, CV and every request for good.</p>
+    </form>
+  </section>
+
+  <!-- ===== Employers ===== -->
+  <section id="hire" hidden>
+    <div class="panel hot" id="h-intro">
+      <h2>Find operators who are free now</h2>
+      <p>Search EOD, search, mine action, security, HE medic and support people by trade, region and the date they're available. When you find someone, ask to get in touch. If they accept, you get their name, email, phone and CV.</p>
+      <div class="stat">£99<small>for 30 days of search</small></div>
+      <ul class="perks">
+        <li>Included free for 90 days with our <a href="/advertise/">£149 Featured employer plan</a></li>
+        <li>We check every employer before they can search, to keep people's details safe</li>
+        <li>Posting jobs and browsing the jobs list stay free, always</li>
+      </ul>
+      <details><summary>Already signed up? Use your code</summary>
+        <div class="restore"><input id="h-restore-code" placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your employer code"><button class="btn" type="button" id="h-restore">Use code</button></div>
+        <p class="msg" id="h-restore-msg"></p>
+      </details>
+    </div>
+
+    <form class="panel" id="h-form" novalidate onsubmit="return false">
+      <h2>Sign up to search</h2>
+      <p class="sub">We'll check your company, usually within a day, and email you when you're approved.</p>
+      <div class="row">
+        <label>Company or organisation<input id="h-company" maxlength="120" required></label>
+        <label>Company website<input id="h-website" maxlength="200" placeholder="e.g. example.com"></label>
+      </div>
+      <div class="row">
+        <label>Your name<input id="h-name" maxlength="80" autocomplete="name" required></label>
+        <label>Work email<input id="h-email" type="email" maxlength="200" autocomplete="email" required></label>
+      </div>
+      <label>Who are you hiring? <span class="hint">(optional)</span><textarea id="h-about" rows="3" maxlength="600"></textarea></label>
+      <input type="text" id="h-honey" style="display:none" tabindex="-1" autocomplete="off">
+      <p class="hint">By signing up you agree to use people's details only to talk to them about work, and not to share or keep them once you're done.</p>
+      <div class="row-btns"><button class="btn primary" type="button" id="h-register">Sign up</button></div>
+      <p class="msg" id="h-reg-msg"></p>
+    </form>
+
+    <div class="panel" id="h-account" hidden>
+      <h2 id="h-company-name"></h2>
+      <p class="status" id="h-status"></p>
+      <p>Your code: <span class="code" id="h-code"></span></p>
+      <p class="sub">Use this code to sign in on another computer. Anyone with it can search as your company, so keep it within your team.</p>
+      <div class="row-btns">
+        <button class="btn primary" type="button" id="h-pay" hidden>Pay £99 for 30 days</button>
+        <button class="btn" type="button" id="h-copy">Copy code</button>
+        <button class="btn" type="button" id="h-signout">Sign out</button>
+      </div>
+      <p class="msg" id="h-acct-msg"></p>
+    </div>
+
+    <div class="panel" id="h-sent" hidden>
+      <h2>Your requests</h2>
+      <div id="h-sent-list"></div>
+    </div>
+
+    <section id="h-search" hidden>
+      <form class="panel" onsubmit="return false">
+        <h2>Search</h2>
+        <div><b>Job types</b><div class="chips" id="s-cats"></div></div>
+        <div><b>Will work in</b><div class="chips" id="s-regions"></div></div>
+        <div class="filters">
+          <label>Available by<input id="s-by" type="date"></label>
+          <label>Keywords<input id="s-q" placeholder="e.g. IEDD, French, FREC 4" autocomplete="off"></label>
+        </div>
+      </form>
+      <p class="status" id="s-count"></p>
+      <div id="s-list"></div>
+    </section>
+  </section>
+</div>
+<script>
+// The Worker that keeps the profiles: the same one as the job alerts app.
+const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev";
+const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+const REGIONS = ["Africa", "Middle East", "Europe", "Asia", "Americas", "Oceania"];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} } };
+const params = new URLSearchParams(location.search);
+const API = (params.get("api") && /^http:\/\/(localhost|127\.0\.0\.1)/.test(params.get("api")) ? params.get("api") : ALERTS_API).replace(/\/$/, "");
+const fmtDate = t => new Date(typeof t === "number" ? t * 1000 : t + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const todayIso = () => new Date().toISOString().slice(0, 10);
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, { ...opts, headers: { "Content-Type": "application/json", ...(opts.code ? { Authorization: "Code " + opts.code } : {}) },
+                                        body: opts.body && JSON.stringify(opts.body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error || "Something went wrong (" + res.status + ")"), { status: res.status });
+  return data;
+}
+async function download(path, code, fallback) {
+  const res = await fetch(API + path, { headers: { Authorization: "Code " + code } });
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Couldn't download it.");
+  const name = (/filename="([^"]+)"/.exec(res.headers.get("Content-Disposition") || "") || [])[1] || fallback;
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(await res.blob()), download: name });
+  document.body.append(a); a.click(); a.remove();
+}
+
+function chips(el, values, state, max, onchange) {
+  el.innerHTML = "";
+  values.forEach(v => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = v; b.setAttribute("aria-pressed", state.includes(v));
+    b.onclick = () => {
+      const i = state.indexOf(v);
+      if (i >= 0) state.splice(i, 1); else if (state.length < max) state.push(v);
+      b.setAttribute("aria-pressed", state.includes(v));
+      onchange?.();
+    };
+    el.append(b);
+  });
+}
+
+// One profile card, as employers see it. Used for the search results and the operator's own preview.
+function card(p, extra = "") {
+  const from = p.available_from, now = !from || from <= todayIso();
+  const rows = [["Job types", p.categories.join(", ")], ["Experience", p.years ? p.years + " year" + (p.years === 1 ? "" : "s") : ""],
+    ["Will work in", p.regions.length ? p.regions.join(", ") : "Anywhere"], ["Rotation", p.rotation], ["Rate", p.rate], ["Based in", p.based],
+    ["Languages", p.languages], ["Clearance", p.clearance], ["Quals", p.quals], ["Experience notes", p.summary], ["CV", p.has_cv ? "Yes, shared if they accept" : ""]]
+    .filter(([, v]) => v);
+  return `<article class="cand"><span class="avail${now ? "" : " later"}">${now ? "Available now" : "Available from " + esc(fmtDate(from))}</span>
+    <h3>${esc(p.headline)}</h3>
+    <dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>${extra}</article>`;
+}
+
+// ---------- tabs ----------
+function showTab(hire) {
+  $("tab-work").setAttribute("aria-pressed", !hire); $("tab-hire").setAttribute("aria-pressed", hire);
+  $("work").hidden = hire; $("hire").hidden = !hire;
+  history.replaceState(null, "", hire ? "#hiring" : location.pathname + location.search);
+  if (hire) loadHire();
+}
+$("tab-work").onclick = () => showTab(false);
+$("tab-hire").onclick = () => showTab(true);
+
+// ---------- operators ----------
+let me = null;
+const form = { categories: [], regions: [] };
+const F = { headline: "f-headline", available_from: "f-from", years: "f-years", rotation: "f-rotation", rate: "f-rate", based: "f-based", languages: "f-langs", clearance: "f-clear", quals: "f-quals", summary: "f-summary" };
+const P = { name: "f-name", email: "f-email", phone: "f-phone", linkedin: "f-linkedin" };
+function readForm() {
+  const profile = { categories: [...form.categories], regions: [...form.regions] };
+  for (const [k, id] of Object.entries(F)) profile[k] = $(id).value.trim();
+  profile.years = parseInt(profile.years, 10) || 0;
+  const priv = {};
+  for (const [k, id] of Object.entries(P)) priv[k] = $(id).value.trim();
+  return { profile, private: priv };
+}
+function fillForm(p, priv) {
+  for (const [k, id] of Object.entries(F)) $(id).value = p[k] || "";
+  if (!p.years) $("f-years").value = "";
+  for (const [k, id] of Object.entries(P)) $(id).value = priv[k] || "";
+  form.categories = [...p.categories]; form.regions = [...p.regions];
+  drawChips();
+}
+function drawChips() {
+  chips($("f-cats"), CATEGORIES, form.categories, 6, preview);
+  chips($("f-regions"), REGIONS, form.regions, 6, preview);
+}
+function preview() {
+  if ($("w-preview").hidden) return;
+  const { profile } = readForm();
+  $("w-preview").innerHTML = `<p class="hint" style="margin-top:12px">This is all an employer sees until you accept them:</p>` + card({ ...profile, has_cv: Boolean(me?.cv) });
+}
+$("w-preview-btn").onclick = () => { $("w-preview").hidden = !$("w-preview").hidden; preview(); };
+$("w-form").addEventListener("input", preview);
+
+function drawWork() {
+  $("w-intro").hidden = Boolean(me);
+  ["w-account", "w-cv", "w-delete-row"].forEach(id => $(id).hidden = !me);
+  $("w-form-title").textContent = me ? "Edit your profile" : "Make your profile";
+  $("w-save").textContent = me ? "Save changes" : "Put me in the talent pool";
+  if (!me) { $("w-requests").hidden = true; return; }
+  $("w-code").textContent = me.code;
+  $("w-status").innerHTML = me.live ? `In search: <b>yes</b> · until ${esc(fmtDate(me.hides_on))} unless you tap "I'm still available"`
+    : `In search: <b class="off">no</b> · ${me.visible ? "it's been over 90 days, tap \"I'm still available\" to go back in" : "you've hidden it"}`;
+  $("w-hide").hidden = !me.visible;
+  $("w-avail").textContent = me.live ? "I'm still available" : "Put me back in search";
+  $("w-cv-state").textContent = me.cv ? `Uploaded: ${me.cv.name}, ${fmtDate(me.cv.added)}.` : "No CV uploaded.";
+  $("w-cv-get").hidden = $("w-cv-del").hidden = !me.cv;
+  const reqs = me.requests;
+  $("w-requests").hidden = !reqs.length;
+  $("w-req-list").innerHTML = reqs.map(q => `<div class="req">
+    <span class="tag ${q.status === "accepted" ? "ok" : q.status === "declined" ? "no" : ""}">${q.status === "pending" ? "New" : esc(q.status)}</span>
+    <div class="t">${esc(q.company)}${q.website ? ` · <a href="${esc(q.website)}" target="_blank" rel="noopener nofollow">website</a>` : ""}</div>
+    <div class="sub">About: ${esc(q.role)} · from ${esc(q.contact.name)} · ${esc(fmtDate(q.created))}</div>
+    ${q.message ? `<p>${esc(q.message)}</p>` : ""}
+    ${q.status === "accepted" ? `<p class="sub">You shared your details. Contact them at <a href="mailto:${esc(q.contact.email)}">${esc(q.contact.email)}</a>.</p>` : ""}
+    ${q.status === "pending" ? `<div class="row-btns"><button class="btn primary" type="button" data-accept="${esc(q.id)}">Accept and share my details</button><button class="btn" type="button" data-decline="${esc(q.id)}">Decline</button></div>` : ""}
+  </div>`).join("");
+}
+
+async function loadWork() {
+  const code = store.get("hej-talent-code");
+  if (!code) return drawWork();
+  try {
+    me = await api("/api/talent/me", { code });
+    fillForm(me.profile, me.private);
+    $("f-consent").checked = true;
+  } catch (err) {
+    if (err.status === 404) store.set("hej-talent-code", null);
+    $("w-restore-msg").textContent = err.message;
+  }
+  drawWork();
+}
+
+$("w-save").onclick = async () => {
+  const body = { ...readForm(), consent: $("f-consent").checked, _honey: $("f-honey").value };
+  $("w-save-msg").textContent = "Saving…";
+  try {
+    me = await api("/api/talent/profile", { method: "POST", body, code: me?.code });
+    const first = !store.get("hej-talent-code");
+    store.set("hej-talent-code", me.code);
+    drawWork();
+    $("w-save-msg").textContent = first ? "You're in. Your code is at the top: keep it safe. Add your CV next." : "Saved. You're back in search for 90 days.";
+    if (first) $("w-account").scrollIntoView({ behavior: "smooth" });
+  } catch (err) { $("w-save-msg").textContent = err.message; }
+};
+$("w-avail").onclick = async () => {
+  try { me = await api("/api/talent/me", { method: "POST", body: { action: "available" }, code: me.code }); drawWork(); $("w-acct-msg").textContent = "Thanks. You're in search for another 90 days."; }
+  catch (err) { $("w-acct-msg").textContent = err.message; }
+};
+$("w-hide").onclick = async () => {
+  try { me = await api("/api/talent/me", { method: "POST", body: { action: "hide" }, code: me.code }); drawWork(); $("w-acct-msg").textContent = "Hidden. Employers won't find you until you put yourself back in."; }
+  catch (err) { $("w-acct-msg").textContent = err.message; }
+};
+$("w-copy").onclick = () => navigator.clipboard?.writeText(me.code).then(() => $("w-acct-msg").textContent = "Code copied.", () => {});
+$("w-delete").onclick = async () => {
+  if (!confirm("Delete your profile, CV and every request for good?")) return;
+  try { await api("/api/talent/me", { method: "DELETE", code: me.code }); store.set("hej-talent-code", null); me = null; location.reload(); }
+  catch (err) { $("w-save-msg").textContent = err.message; }
+};
+$("w-restore").onclick = async () => {
+  const code = $("w-restore-code").value.trim();
+  $("w-restore-msg").textContent = "Checking…";
+  try { await api("/api/talent/me", { code }); store.set("hej-talent-code", code); $("w-restore-msg").textContent = ""; await loadWork(); }
+  catch (err) { $("w-restore-msg").textContent = err.message; }
+};
+$("w-cv-file").onchange = () => {
+  const f = $("w-cv-file").files[0];
+  $("w-cv-file").value = "";
+  if (!f) return;
+  if (f.size > 1400000) return $("w-cv-msg").textContent = "That file is too big. Keep your CV under 1.4 MB.";
+  $("w-cv-msg").textContent = "Uploading…";
+  const r = new FileReader();
+  r.onload = async () => {
+    try { me = await api("/api/talent/cv", { method: "PUT", body: { name: f.name, data: r.result }, code: me.code }); drawWork(); $("w-cv-msg").textContent = "CV uploaded."; }
+    catch (err) { $("w-cv-msg").textContent = err.message; }
+  };
+  r.readAsDataURL(f);
+};
+$("w-cv-get").onclick = () => download("/api/talent/cv", me.code, "CV.pdf").catch(err => $("w-cv-msg").textContent = err.message);
+$("w-cv-del").onclick = async () => {
+  try { me = await api("/api/talent/cv", { method: "DELETE", code: me.code }); drawWork(); $("w-cv-msg").textContent = "CV removed."; }
+  catch (err) { $("w-cv-msg").textContent = err.message; }
+};
+$("w-req-list").addEventListener("click", async e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  const decision = b.dataset.accept ? "accept" : "decline", id = b.dataset.accept || b.dataset.decline;
+  if (decision === "accept" && !confirm("Share your name, email, phone, LinkedIn and CV with this employer?")) return;
+  try { me = await api("/api/talent/requests", { method: "POST", body: { id, decision }, code: me.code }); drawWork(); }
+  catch (err) { alert(err.message); }
+});
+
+// ---------- employers ----------
+let hirer = null, PROFILES = [], hireLoaded = false;
+const search = { categories: [], regions: [] };
+
+function drawHire() {
+  $("h-intro").hidden = $("h-form").hidden = Boolean(hirer);
+  $("h-account").hidden = !hirer;
+  $("h-search").hidden = !hirer?.can_search;
+  if (!hirer) { $("h-sent").hidden = true; return; }
+  $("h-company-name").textContent = hirer.company;
+  $("h-code").textContent = hirer.code;
+  const left = hirer.access_until > Date.now() / 1000;
+  $("h-status").innerHTML = hirer.status === "pending" ? `Account: <b class="off">waiting for approval</b> · we'll email ${esc(hirer.email)}`
+    : hirer.status === "rejected" ? `Account: <b class="off">not approved</b> · email us if you think that's wrong`
+    : left ? `Search: <b>on</b> until ${esc(fmtDate(hirer.access_until))}` : `Search: <b class="off">off</b> · £99 for ${hirer.days} days`;
+  $("h-pay").hidden = hirer.status !== "approved" || (left && hirer.access_until - Date.now() / 1000 > 7 * 86400);
+  $("h-pay").textContent = left ? `Add ${hirer.days} days for £99` : `Pay £99 for ${hirer.days} days`;
+  if (hirer.status === "approved" && !hirer.card && !left) $("h-acct-msg").innerHTML = `To pay by invoice, or if you've bought the Featured employer plan, email <a href="mailto:contact@hostileenvironmentjobs.com">contact@hostileenvironmentjobs.com</a> and we'll switch search on.`;
+  if (hirer.checkout_pending) $("h-acct-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Pay again.";
+  $("h-sent").hidden = !hirer.requests.length;
+  $("h-sent-list").innerHTML = hirer.requests.map(q => {
+    const c = q.contact;
+    return `<div class="req"><span class="tag ${q.status === "accepted" ? "ok" : q.status === "declined" || q.status === "gone" ? "no" : ""}">${q.status === "pending" ? "Waiting" : esc(q.status)}</span>
+      <div class="t">${esc(q.headline)}</div><div class="sub">About: ${esc(q.role)} · asked ${esc(fmtDate(q.created))}</div>
+      ${c ? `<p><b>${esc(c.name)}</b> · <a href="mailto:${esc(c.email)}">${esc(c.email)}</a>${c.phone ? " · " + esc(c.phone) : ""}${c.linkedin ? ` · <a href="${esc(c.linkedin)}" target="_blank" rel="noopener nofollow">LinkedIn</a>` : ""}</p>
+        ${q.cv ? `<button class="btn" type="button" data-cv="${esc(q.pid)}">Download CV</button>` : ""}` : ""}</div>`;
+  }).join("");
+}
+
+function drawResults() {
+  const by = $("s-by").value, words = $("s-q").value.toLowerCase().split(/[,;]/).map(w => w.trim()).filter(Boolean);
+  const list = PROFILES.filter(p => (!search.categories.length || p.categories.some(c => search.categories.includes(c)))
+    && (!search.regions.length || !p.regions.length || p.regions.some(r => search.regions.includes(r)))
+    && (!by || p.available_from <= by)
+    && (!words.length || words.every(w => [p.headline, p.quals, p.summary, p.languages, p.clearance, p.based, p.rotation, ...p.categories].join(" ").toLowerCase().includes(w))))
+    .sort((a, b) => a.available_from.localeCompare(b.available_from));
+  $("s-count").textContent = `${list.length} of ${PROFILES.length} available operator${PROFILES.length === 1 ? "" : "s"} match${list.length === 1 ? "es" : ""}.`;
+  $("s-list").innerHTML = list.map(p => card(p, p.request ? `<p class="status" style="margin-top:10px">Request ${p.request === "pending" ? "sent, waiting for them" : esc(p.request)}</p>`
+    : `<div class="ask"><button class="btn primary" type="button" data-ask="${esc(p.pid)}">Ask to get in touch</button>
+       <form hidden data-form="${esc(p.pid)}" onsubmit="return false" style="margin-top:12px">
+         <label>Role <span class="hint">(they'll see this and your company name)</span><input maxlength="120" name="role" placeholder="e.g. Team Leader, Ukraine, 8/4"></label>
+         <label>Message <span class="hint">(optional)</span><textarea rows="3" maxlength="1000" name="message"></textarea></label>
+         <div class="row-btns"><button class="btn primary" type="button" data-send="${esc(p.pid)}">Send request</button></div><p class="msg"></p></form></div>`)).join("")
+    || `<p class="sub">No one matches yet. Try fewer filters.</p>`;
+}
+["s-by", "s-q"].forEach(id => $(id).addEventListener("input", drawResults));
+
+async function loadHire() {
+  const code = store.get("hej-hire-code");
+  if (!code) return drawHire();
+  if (hireLoaded) return;
+  hireLoaded = true;
+  try {
+    hirer = await api("/api/hire/me", { code });
+    if (hirer.can_search) PROFILES = (await api("/api/hire/search", { code })).profiles;
+  } catch (err) {
+    if (err.status === 404) store.set("hej-hire-code", null);
+    $("h-restore-msg").textContent = err.message;
+  }
+  hireLoaded = false;
+  drawHire(); drawResults();
+}
+
+$("h-register").onclick = async () => {
+  const body = { company: $("h-company").value, website: $("h-website").value, name: $("h-name").value, email: $("h-email").value, about: $("h-about").value, _honey: $("h-honey").value };
+  $("h-reg-msg").textContent = "Sending…";
+  try { hirer = await api("/api/hire/register", { method: "POST", body }); store.set("hej-hire-code", hirer.code); drawHire(); $("h-acct-msg").textContent = "Thanks. We'll check your company and email you, usually within a day."; }
+  catch (err) { $("h-reg-msg").textContent = err.message; }
+};
+$("h-restore").onclick = async () => {
+  const code = $("h-restore-code").value.trim();
+  $("h-restore-msg").textContent = "Checking…";
+  try { await api("/api/hire/me", { code }); store.set("hej-hire-code", code); $("h-restore-msg").textContent = ""; await loadHire(); }
+  catch (err) { $("h-restore-msg").textContent = err.message; }
+};
+$("h-pay").onclick = async () => {
+  $("h-acct-msg").textContent = "One moment…";
+  try { location.href = (await api("/api/hire/checkout", { method: "POST", code: hirer.code })).url; }
+  catch (err) { $("h-acct-msg").textContent = err.message; }
+};
+$("h-copy").onclick = () => navigator.clipboard?.writeText(hirer.code).then(() => $("h-acct-msg").textContent = "Code copied.", () => {});
+$("h-signout").onclick = () => { if (confirm("Sign out on this device? You'll need your code to sign back in.")) { store.set("hej-hire-code", null); hirer = null; PROFILES = []; drawHire(); } };
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button[data-ask], button[data-send], button[data-cv]");
+  if (!b) return;
+  if (b.dataset.ask) { b.hidden = true; const f = document.querySelector(`[data-form="${CSS.escape(b.dataset.ask)}"]`); f.hidden = false; f.elements.role.focus(); return; }
+  if (b.dataset.cv) return download("/api/talent/cv?pid=" + encodeURIComponent(b.dataset.cv), hirer.code, "CV.pdf").catch(err => alert(err.message));
+  const f = b.closest("form"), msg = f.querySelector(".msg");
+  msg.textContent = "Sending…";
+  try {
+    hirer = await api("/api/hire/request", { method: "POST", body: { pid: b.dataset.send, role: f.elements.role.value, message: f.elements.message.value }, code: hirer.code });
+    const p = PROFILES.find(x => x.pid === b.dataset.send); if (p) p.request = "pending";
+    drawHire(); drawResults();
+  } catch (err) { msg.textContent = err.message; }
+});
+chips($("s-cats"), CATEGORIES, search.categories, 99, drawResults);
+chips($("s-regions"), REGIONS, search.regions, 99, drawResults);
+// Coming back from the payment page picks up the new search time.
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !$("hire").hidden && store.get("hej-hire-code")) loadHire(); });
+
+// ---------- start ----------
+drawChips();
+$("f-from").min = todayIso();
+if (!API) { $("off").hidden = false; $("work").hidden = $("hire").hidden = true; }
+else {
+  api("/api/talent/stats").then(s => {
+    const top = Object.entries(s.by_category).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([c, n]) => `${n} ${c}`).join(", ");
+    $("stats").textContent = s.available ? `${s.available} operator${s.available === 1 ? "" : "s"} available now${top ? " (" + top + ")" : ""}.` : "";
+  }).catch(() => {});
+  loadWork();
+  showTab(location.hash === "#hiring");
+}
+</script>
