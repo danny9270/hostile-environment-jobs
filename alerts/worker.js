@@ -20,6 +20,16 @@
 //   GOATCOUNTER_SITE   optional, the GoatCounter site code if it isn't "hostileenvironmentjobs".
 // Course reviews: the "Review a course" form on the site posts here. Reviews wait in the database until the admin page
 // publishes them (into reviews.json) or rejects them; nothing a visitor sends goes on the site by itself.
+// Talent pool (/candidates/): operators post a profile and an "available from" date, free. Employers see the profiles
+// without names, contact details or CVs, and only once the admin page has approved them and they've paid for search.
+// An employer asks to get in touch; the operator's name, email, phone and CV are released only if they accept.
+//   STRIPE_SEARCH_PRICE  the price id of the one-off "Candidate search, 30 days" product (£99). Without it employers
+//                        can't pay by card, and the admin page gives them search days by hand (for invoices and the
+//                        £149 Featured employer plan, which includes 90 days of search).
+//   RESEND_API_KEY       optional secret, a Resend sending key for hostileenvironmentjobs.com. With it, operators get an
+//                        email when an employer asks to get in touch, employers when they're accepted or approved,
+//                        and contact@ when a new employer signs up. Without it everything still works on the page.
+//   MAIL_FROM            optional, the sender, default "H.E. Jobs <jobs@hostileenvironmentjobs.com>".
 
 const SITE = "https://hostileenvironmentjobs.com";
 const REPO = "danny9270/hostile-environment-jobs";
@@ -38,6 +48,15 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS seen (id TEXT PRIMARY KEY, at INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS config (k TEXT PRIMARY KEY, v TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY, data TEXT NOT NULL, email TEXT, sender TEXT, created INTEGER NOT NULL)`,
+  // Talent pool. profile is what approved employers see; private (name, email, phone, LinkedIn) only goes to employers
+  // the operator accepts. pid is the id employers see, so the sign-in code never leaves the operator's own page.
+  `CREATE TABLE IF NOT EXISTS candidates (code TEXT PRIMARY KEY, pid TEXT NOT NULL UNIQUE, profile TEXT NOT NULL, private TEXT NOT NULL,
+     visible INTEGER NOT NULL DEFAULT 1, consent INTEGER NOT NULL, refreshed INTEGER NOT NULL, sender TEXT, created INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS cvs (code TEXT PRIMARY KEY, name TEXT NOT NULL, data TEXT NOT NULL, created INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS recruiters (code TEXT PRIMARY KEY, company TEXT NOT NULL, name TEXT NOT NULL, email TEXT NOT NULL, website TEXT,
+     about TEXT, status TEXT NOT NULL DEFAULT 'pending', access_until INTEGER NOT NULL DEFAULT 0, pending_session TEXT, sender TEXT, created INTEGER NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS contact_requests (id TEXT PRIMARY KEY, recruiter TEXT NOT NULL, pid TEXT NOT NULL, role TEXT, message TEXT,
+     status TEXT NOT NULL DEFAULT 'pending', created INTEGER NOT NULL, decided INTEGER, UNIQUE (recruiter, pid))`,
 ];
 // Columns added after launch. SQLite has no ADD COLUMN IF NOT EXISTS, so each runs on its own and "duplicate column" is ignored.
 const COLUMNS = ["ALTER TABLE accounts ADD COLUMN ref TEXT", "ALTER TABLE accounts ADD COLUMN referred_by TEXT",
@@ -216,11 +235,13 @@ async function visits(env) {
 
 // What a finished checkout was for: the alerts app tags its own; Payment Links are named by their product, or guessed from the price.
 function paymentLabel(s) {
+  if (s.metadata?.kind === "search") return "Candidate search, " + SEARCH_DAYS + " days";
   if (/^HEJ-/.test(s.client_reference_id || s.metadata?.code || "")) return "Job alerts, 1 year";
   const item = s.line_items?.data?.[0]?.description;
   if (item) return item;
   if (s.currency === "gbp" && s.amount_total === 4900) return "Featured job";
   if (s.currency === "gbp" && s.amount_total === 14900) return "Featured employer";
+  if (s.currency === "gbp" && s.amount_total === 9900) return "Candidate search, " + SEARCH_DAYS + " days";
   return s.payment_link ? "Payment link" : "Other";
 }
 
@@ -275,6 +296,94 @@ async function checkActionToken(req) {
   const ok = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, unb64url(s), new TextEncoder().encode(h + "." + p));
   return ok && claims.iss === "https://token.actions.githubusercontent.com" && claims.aud === AUDIENCE
     && claims.repository === REPO && claims.ref === "refs/heads/main" && claims.exp > now();
+}
+
+// ---------- Talent pool ----------
+const SEARCH_DAYS = 30;
+const FRESH_DAYS = 90;    // a profile drops out of search this long after the operator last said they're available
+const KEEP_DAYS = 365;    // and is deleted, with its CV and requests, this long after
+const CV_MAX = 1400000;   // D1 keeps up to 2MB a row, and the CV is stored as base64 text
+const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
+const REGIONS = ["Africa", "Middle East", "Europe", "Asia", "Americas", "Oceania"];
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const txt = (v, n) => String(v ?? "").trim().slice(0, n);
+const pick = (v, from, n) => [...new Set((Array.isArray(v) ? v : []).map(String).filter(x => from.includes(x)))].slice(0, n);
+const isDay = d => /^\d{4}-\d\d-\d\d$/.test(d || "") && !isNaN(new Date(d + "T00:00:00Z"));
+const today = () => new Date().toISOString().slice(0, 10);
+const newId = () => b64url(crypto.getRandomValues(new Uint8Array(9)));
+const bearerCode = req => (req.headers.get("Authorization") || "").replace(/^Code\s+/i, "");
+const senderOf = async (req, salt) => b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + (req.headers.get("CF-Connecting-IP") || "")))).slice(0, 22);
+const httpUrl = u => { const s = txt(u, 200); return !s ? "" : /^https?:\/\//i.test(s) ? s : "https://" + s; };
+
+function cleanProfile(p) {
+  p ||= {};
+  return {
+    headline: txt(p.headline, 120), categories: pick(p.categories, CATEGORIES, 6), years: Math.max(0, Math.min(50, parseInt(p.years, 10) || 0)),
+    available_from: isDay(p.available_from) ? p.available_from : "", regions: pick(p.regions, REGIONS, 6), rotation: txt(p.rotation, 40),
+    rate: txt(p.rate, 40), based: txt(p.based, 60), languages: txt(p.languages, 120), clearance: txt(p.clearance, 60),
+    quals: txt(p.quals, 800), summary: txt(p.summary, 1500),
+  };
+}
+const cleanPrivate = p => ({ name: txt(p?.name, 80), email: txt(p?.email, 200), phone: txt(p?.phone, 40), linkedin: httpUrl(p?.linkedin) });
+const fresh = c => c.visible && c.refreshed > now() - FRESH_DAYS * DAY;
+
+async function mail(env, to, subject, text) {
+  if (!env.RESEND_API_KEY || !to) return false;
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST", headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: env.MAIL_FROM || "H.E. Jobs <jobs@hostileenvironmentjobs.com>", to: [to], reply_to: "contact@hostileenvironmentjobs.com",
+                           subject, text: text + "\n\nH.E. Jobs Team\n" + SITE }),
+  }).catch(() => null);
+  return Boolean(res?.ok);
+}
+
+// Old profiles, CVs and requests go once a day or so; there's no timer on the free plan, so it runs on normal traffic.
+let tidied = 0;
+async function tidyTalent(db) {
+  if (Date.now() - tidied < 3600 * 1000) return;
+  tidied = Date.now();
+  const old = now() - KEEP_DAYS * DAY;
+  await db.batch([
+    db.prepare("DELETE FROM cvs WHERE code IN (SELECT code FROM candidates WHERE refreshed < ?)").bind(old),
+    db.prepare("DELETE FROM contact_requests WHERE pid IN (SELECT pid FROM candidates WHERE refreshed < ?)").bind(old),
+    db.prepare("DELETE FROM candidates WHERE refreshed < ?").bind(old),
+    db.prepare("DELETE FROM contact_requests WHERE created < ?").bind(old),
+    db.prepare("DELETE FROM recruiters WHERE status = 'rejected' AND created < ?").bind(now() - 30 * DAY),
+  ]);
+}
+
+// A recruiter's search time: a finished checkout adds SEARCH_DAYS, like refresh() does for alerts.
+async function refreshRecruiter(env, r) {
+  if (!r.pending_session || !env.STRIPE_SECRET_KEY) return r;
+  const s = await stripe(env, "GET", "checkout/sessions/" + r.pending_session);
+  if (s.status === "complete" && s.payment_status !== "unpaid") { r.access_until = Math.max(r.access_until, now()) + SEARCH_DAYS * DAY; r.pending_session = null; }
+  else if (s.status === "expired") r.pending_session = null;
+  else return r;
+  await env.DB.prepare("UPDATE recruiters SET access_until = ?, pending_session = ? WHERE code = ?").bind(r.access_until, r.pending_session, r.code).run();
+  return r;
+}
+const canSearch = r => r.status === "approved" && r.access_until > now();
+
+async function candidateView(db, c) {
+  const cv = await db.prepare("SELECT name, created FROM cvs WHERE code = ?").bind(c.code).first();
+  const reqs = (await db.prepare(`SELECT q.id, q.role, q.message, q.status, q.created, r.company, r.name, r.email, r.website, r.about
+      FROM contact_requests q JOIN recruiters r ON r.code = q.recruiter WHERE q.pid = ? ORDER BY q.created DESC`).bind(c.pid).all()).results;
+  return { code: c.code, profile: JSON.parse(c.profile), private: JSON.parse(c.private), visible: Boolean(c.visible), live: Boolean(fresh(c)),
+           refreshed: c.refreshed, hides_on: c.refreshed + FRESH_DAYS * DAY, cv: cv ? { name: cv.name, added: cv.created } : null,
+           requests: reqs.map(q => ({ id: q.id, role: q.role, message: q.message, status: q.status, created: q.created, company: q.company,
+             website: q.website, about: q.about, contact: q.status === "accepted" ? { name: q.name, email: q.email } : { name: q.name } })) };
+}
+
+async function recruiterView(env, r) {
+  const reqs = (await env.DB.prepare(`SELECT q.id, q.pid, q.role, q.status, q.created, q.decided, c.profile, c.private, (SELECT 1 FROM cvs WHERE cvs.code = c.code) AS has_cv
+      FROM contact_requests q LEFT JOIN candidates c ON c.pid = q.pid WHERE q.recruiter = ? ORDER BY q.created DESC`).bind(r.code).all()).results;
+  return { code: r.code, company: r.company, name: r.name, email: r.email, website: r.website, status: r.status, access_until: r.access_until,
+           can_search: canSearch(r), card: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SEARCH_PRICE), checkout_pending: Boolean(r.pending_session), days: SEARCH_DAYS,
+           requests: reqs.map(q => {
+             const p = q.profile ? JSON.parse(q.profile) : null, accepted = q.status === "accepted" && p;
+             return { id: q.id, pid: q.pid, role: q.role, status: p ? q.status : "gone", created: q.created, decided: q.decided,
+                      headline: p?.headline || "Profile removed", contact: accepted ? JSON.parse(q.private) : null, cv: Boolean(accepted && q.has_cv) };
+           }) };
 }
 
 async function handle(req, env) {
@@ -413,6 +522,204 @@ async function handle(req, env) {
   if (path === "/api/admin/payments" && req.method === "GET") {
     if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
     return json(req, await payments(env));
+  }
+
+  // ---------- Talent pool: operators ----------
+  if (path.startsWith("/api/talent")) await tidyTalent(db).catch(() => {});
+  const candidate = async () => { const code = fmtCode(bearerCode(req)); return code && db.prepare("SELECT * FROM candidates WHERE code = ?").bind(code).first(); };
+  const recruiter = async () => { const code = fmtCode(bearerCode(req)); return code && db.prepare("SELECT * FROM recruiters WHERE code = ?").bind(code).first(); };
+
+  // Public numbers for the page: how many operators are available, by job type. Nothing about any one person.
+  if (path === "/api/talent/stats" && req.method === "GET") {
+    const rows = (await db.prepare("SELECT profile FROM candidates WHERE visible = 1 AND refreshed > ?").bind(now() - FRESH_DAYS * DAY).all()).results;
+    const by = {};
+    for (const r of rows) for (const c of JSON.parse(r.profile).categories) by[c] = (by[c] || 0) + 1;
+    return json(req, { available: rows.length, by_category: by, search_days: SEARCH_DAYS, card: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SEARCH_PRICE) });
+  }
+
+  // Make or update your profile. Saving it also counts as "still available" and puts it back in search.
+  if (path === "/api/talent/profile" && req.method === "POST") {
+    if (body._honey) return json(req, { ok: true });
+    const profile = cleanProfile(body.profile), priv = cleanPrivate(body.private);
+    if (!profile.headline || !profile.categories.length || !profile.available_from)
+      return json(req, { error: "Add a headline, at least one job type and the date you're available from." }, 400);
+    if (!priv.name || !EMAIL.test(priv.email)) return json(req, { error: "Add your name and a working email. Employers only see them if you accept their request." }, 400);
+    if (body.consent !== true) return json(req, { error: "Tick the box to agree to how your profile is shared." }, 400);
+    const visible = body.visible === false ? 0 : 1;
+    let c = await candidate();
+    if (c) {
+      await db.prepare("UPDATE candidates SET profile = ?, private = ?, visible = ?, consent = ?, refreshed = ? WHERE code = ?")
+        .bind(JSON.stringify(profile), JSON.stringify(priv), visible, now(), now(), c.code).run();
+    } else {
+      const sender = await senderOf(req, "hej-talent:");
+      if ((await db.prepare("SELECT COUNT(*) AS n FROM candidates WHERE sender = ? AND created > ?").bind(sender, now() - DAY).first()).n >= 5)
+        return json(req, { error: "We've had a lot of new profiles from here today. Please try again tomorrow." }, 429);
+      const code = newCode();
+      await db.prepare("INSERT INTO candidates (code, pid, profile, private, visible, consent, refreshed, sender, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .bind(code, newId(), JSON.stringify(profile), JSON.stringify(priv), visible, now(), now(), sender, now()).run();
+      c = { code };
+    }
+    return json(req, await candidateView(db, await db.prepare("SELECT * FROM candidates WHERE code = ?").bind(c.code).first()));
+  }
+
+  if (path === "/api/talent/me") {
+    const c = await candidate();
+    if (!c) return json(req, { error: "No profile with that code. Check it and try again." }, 404);
+    if (req.method === "DELETE") {
+      // Everything goes: the profile, the CV and every request to or about it.
+      await db.batch([db.prepare("DELETE FROM cvs WHERE code = ?").bind(c.code), db.prepare("DELETE FROM contact_requests WHERE pid = ?").bind(c.pid),
+                      db.prepare("DELETE FROM candidates WHERE code = ?").bind(c.code)]);
+      return json(req, { ok: true });
+    }
+    if (req.method === "POST" && ["available", "hide"].includes(body.action)) {
+      await db.prepare("UPDATE candidates SET visible = ?, refreshed = CASE WHEN ? THEN ? ELSE refreshed END WHERE code = ?")
+        .bind(body.action === "hide" ? 0 : 1, body.action === "available" ? 1 : 0, now(), c.code).run();
+    }
+    return json(req, await candidateView(db, await db.prepare("SELECT * FROM candidates WHERE code = ?").bind(c.code).first()));
+  }
+
+  // Your CV: a PDF, sent as base64. Only you, and employers whose request you accepted, can download it.
+  if (path === "/api/talent/cv") {
+    if (req.method === "GET") {
+      let c = await candidate();
+      if (!c) {
+        const r = await recruiter(), pid = url.searchParams.get("pid") || "";
+        const ok = r && r.status === "approved" && await db.prepare("SELECT 1 FROM contact_requests WHERE recruiter = ? AND pid = ? AND status = 'accepted'").bind(r.code, pid).first();
+        c = ok && await db.prepare("SELECT * FROM candidates WHERE pid = ?").bind(pid).first();
+      }
+      const cv = c && await db.prepare("SELECT name, data FROM cvs WHERE code = ?").bind(c.code).first();
+      if (!cv) return json(req, { error: "No CV to download." }, 404);
+      return new Response(unb64url(cv.data.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "")), { headers: { "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${cv.name.replace(/[^\w .-]/g, "_")}"`, "Cache-Control": "no-store", "Access-Control-Expose-Headers": "Content-Disposition", ...cors(req) } });
+    }
+    const c = await candidate();
+    if (!c) return json(req, { error: "No profile with that code." }, 404);
+    if (req.method === "DELETE") await db.prepare("DELETE FROM cvs WHERE code = ?").bind(c.code).run();
+    else {
+      const data = String(body.data || "").replace(/^data:[^,]*,/, "").replace(/\s/g, "");
+      if (data.length > Math.ceil(CV_MAX / 3) * 4) return json(req, { error: "That file is too big. Keep your CV under 1.4 MB." }, 400);
+      if (!data.startsWith("JVBER")) return json(req, { error: "Your CV needs to be a PDF. The CV builder can make one." }, 400); // "%PDF" in base64
+      const name = (txt(body.name, 80).replace(/\.pdf$/i, "") || "CV") + ".pdf";
+      await db.prepare("INSERT INTO cvs (code, name, data, created) VALUES (?, ?, ?, ?) ON CONFLICT (code) DO UPDATE SET name = excluded.name, data = excluded.data, created = excluded.created")
+        .bind(c.code, name, data, now()).run();
+    }
+    return json(req, await candidateView(db, c));
+  }
+
+  // Accept or decline an employer's request. Accepting releases your name, email, phone, LinkedIn and CV to them.
+  if (path === "/api/talent/requests" && req.method === "POST") {
+    const c = await candidate();
+    if (!c) return json(req, { error: "No profile with that code." }, 404);
+    const decision = body.decision === "accept" ? "accepted" : body.decision === "decline" ? "declined" : null;
+    const q = decision && await db.prepare("SELECT q.*, r.email, r.company FROM contact_requests q JOIN recruiters r ON r.code = q.recruiter WHERE q.id = ? AND q.pid = ?").bind(String(body.id || ""), c.pid).first();
+    if (!q) return json(req, { error: "That request has gone." }, 404);
+    await db.prepare("UPDATE contact_requests SET status = ?, decided = ? WHERE id = ?").bind(decision, now(), q.id).run();
+    if (decision === "accepted" && q.status !== "accepted") {
+      const p = JSON.parse(c.profile), priv = JSON.parse(c.private);
+      await mail(env, q.email, `${priv.name} accepted your request`, `${priv.name} (${p.headline}) is happy to hear from you${q.role ? " about " + q.role : ""}.\n\n`
+        + `Their contact details${(await db.prepare("SELECT 1 FROM cvs WHERE code = ?").bind(c.code).first()) ? " and CV are" : " are"} on your talent pool page: ${SITE}/candidates/#hiring`);
+    }
+    return json(req, await candidateView(db, c));
+  }
+
+  // ---------- Talent pool: employers ----------
+  if (path === "/api/hire/register" && req.method === "POST") {
+    if (body._honey) return json(req, { ok: true });
+    const r = { company: txt(body.company, 120), name: txt(body.name, 80), email: txt(body.email, 200), website: httpUrl(body.website), about: txt(body.about, 600) };
+    if (!r.company || !r.name || !EMAIL.test(r.email)) return json(req, { error: "Add your company, your name and a work email." }, 400);
+    const sender = await senderOf(req, "hej-hire:");
+    if ((await db.prepare("SELECT COUNT(*) AS n FROM recruiters WHERE sender = ? AND created > ?").bind(sender, now() - DAY).first()).n >= 3)
+      return json(req, { error: "We've had a lot of sign-ups from here today. Please email us instead." }, 429);
+    const code = newCode();
+    await db.prepare("INSERT INTO recruiters (code, company, name, email, website, about, sender, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .bind(code, r.company, r.name, r.email, r.website, r.about, sender, now()).run();
+    await mail(env, "contact@hostileenvironmentjobs.com", `Talent pool sign-up: ${r.company}`,
+      `${r.name} <${r.email}> from ${r.company}${r.website ? " (" + r.website + ")" : ""} wants to search the talent pool.\n\n${r.about}\n\nApprove or reject them in the admin page: ${SITE}/admin/#talent`);
+    return json(req, await recruiterView(env, await db.prepare("SELECT * FROM recruiters WHERE code = ?").bind(code).first()));
+  }
+
+  if (path === "/api/hire/me" && req.method === "GET") {
+    let r = await recruiter();
+    if (!r) return json(req, { error: "No employer account with that code. Check it and try again." }, 404);
+    r = await refreshRecruiter(env, r);
+    return json(req, await recruiterView(env, r));
+  }
+
+  if (path === "/api/hire/checkout" && req.method === "POST") {
+    const r = await recruiter();
+    if (!r) return json(req, { error: "No employer account with that code." }, 404);
+    if (r.status !== "approved") return json(req, { error: "We need to approve your account before you can pay. We'll email you, usually within a day." }, 400);
+    if (!env.STRIPE_SECRET_KEY || !env.STRIPE_SEARCH_PRICE) return json(req, { error: "Card payments aren't switched on yet. Email contact@hostileenvironmentjobs.com and we'll invoice you." }, 501);
+    const back = `${SITE}/candidates/#hiring`;
+    const s = await stripe(env, "POST", "checkout/sessions", { mode: "payment", "line_items[0][price]": env.STRIPE_SEARCH_PRICE, "line_items[0][quantity]": "1",
+      client_reference_id: "search-" + r.code.slice(4), customer_email: r.email, success_url: back, cancel_url: back, allow_promotion_codes: "true",
+      "metadata[kind]": "search", "metadata[company]": r.company, "invoice_creation[enabled]": "true" });
+    await db.prepare("UPDATE recruiters SET pending_session = ? WHERE code = ?").bind(s.id, r.code).run();
+    return json(req, { url: s.url });
+  }
+
+  // Search: every available profile, without names or contact details. Filtering happens on the page.
+  if (path === "/api/hire/search" && req.method === "GET") {
+    await tidyTalent(db).catch(() => {});
+    let r = await recruiter();
+    if (!r) return json(req, { error: "No employer account with that code." }, 404);
+    r = await refreshRecruiter(env, r);
+    if (!canSearch(r)) return json(req, { error: r.status === "approved" ? "Your search time has run out." : "Your account is waiting for approval." }, 402);
+    const rows = (await db.prepare("SELECT pid, profile, refreshed, (SELECT 1 FROM cvs WHERE cvs.code = candidates.code) AS has_cv FROM candidates WHERE visible = 1 AND refreshed > ? ORDER BY refreshed DESC LIMIT 1000")
+      .bind(now() - FRESH_DAYS * DAY).all()).results;
+    const asked = new Map((await db.prepare("SELECT pid, status FROM contact_requests WHERE recruiter = ?").bind(r.code).all()).results.map(x => [x.pid, x.status]));
+    return json(req, { profiles: rows.map(x => ({ pid: x.pid, ...JSON.parse(x.profile), has_cv: Boolean(x.has_cv), updated: x.refreshed, request: asked.get(x.pid) || null })) });
+  }
+
+  if (path === "/api/hire/request" && req.method === "POST") {
+    const r = await recruiter();
+    if (!r || !canSearch(r)) return json(req, { error: "You need an approved account with search time to send requests." }, 403);
+    const c = await db.prepare("SELECT * FROM candidates WHERE pid = ?").bind(String(body.pid || "")).first();
+    if (!c || !fresh(c)) return json(req, { error: "That profile isn't available any more." }, 404);
+    if ((await db.prepare("SELECT COUNT(*) AS n FROM contact_requests WHERE recruiter = ? AND created > ?").bind(r.code, now() - DAY).first()).n >= 30)
+      return json(req, { error: "That's 30 requests today. You can send more tomorrow." }, 429);
+    const role = txt(body.role, 120), message = txt(body.message, 1000);
+    if (!role) return json(req, { error: "Say which role it's about." }, 400);
+    const res = await db.prepare("INSERT OR IGNORE INTO contact_requests (id, recruiter, pid, role, message, created) VALUES (?, ?, ?, ?, ?, ?)")
+      .bind(newId(), r.code, c.pid, role, message, now()).run();
+    if (!res.meta?.changes) return json(req, { error: "You've already asked this person." }, 400);
+    await mail(env, JSON.parse(c.private).email, `${r.company} would like to get in touch`,
+      `${r.company} saw your profile on the Hostile Environment Jobs talent pool and would like to contact you about: ${role}.\n\n${message ? message + "\n\n" : ""}`
+      + `They can't see your name, contact details or CV unless you accept. Accept or decline on your profile page: ${SITE}/candidates/\n\n`
+      + "Not looking any more? You can hide or delete your profile there too.");
+    return json(req, await recruiterView(env, r));
+  }
+
+  // ---------- Talent pool: admin ----------
+  if (path === "/api/admin/talent") {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    await tidyTalent(db).catch(() => {});
+    if (req.method === "POST") {
+      const r = await db.prepare("SELECT * FROM recruiters WHERE code = ?").bind(String(body.code || "")).first();
+      if (!r) return json(req, { error: "No such employer." }, 404);
+      const days = Math.max(0, Math.min(365, parseInt(body.days, 10) || 0));
+      if (body.action === "approve") {
+        await db.prepare("UPDATE recruiters SET status = 'approved', access_until = MAX(access_until, ?) WHERE code = ?").bind(days ? now() + days * DAY : 0, r.code).run();
+        if (r.status !== "approved") await mail(env, r.email, "Your talent pool account is approved", `Hi ${r.name},\n\n${r.company} can now use the Hostile Environment Jobs talent pool.`
+          + (days ? ` You have ${days} days of search.` : ` Search costs £99 for ${SEARCH_DAYS} days, or comes with our £149 Featured employer plan.`) + `\n\nSign in with your code at ${SITE}/candidates/#hiring`);
+      } else if (body.action === "days") await db.prepare("UPDATE recruiters SET access_until = MAX(access_until, ?) + ? WHERE code = ?").bind(now(), days * DAY, r.code).run();
+      else if (body.action === "stop") await db.prepare("UPDATE recruiters SET access_until = 0 WHERE code = ?").bind(r.code).run();
+      else if (body.action === "reject") await db.prepare("UPDATE recruiters SET status = 'rejected', access_until = 0 WHERE code = ?").bind(r.code).run();
+      else if (body.action === "delete") await db.batch([db.prepare("DELETE FROM contact_requests WHERE recruiter = ?").bind(r.code), db.prepare("DELETE FROM recruiters WHERE code = ?").bind(r.code)]);
+    }
+    if (req.method === "DELETE") {
+      const c = await db.prepare("SELECT * FROM candidates WHERE pid = ?").bind(String(url.searchParams.get("pid") || "")).first();
+      if (c) await db.batch([db.prepare("DELETE FROM cvs WHERE code = ?").bind(c.code), db.prepare("DELETE FROM contact_requests WHERE pid = ?").bind(c.pid),
+                             db.prepare("DELETE FROM candidates WHERE code = ?").bind(c.code)]);
+    }
+    const recruiters = (await db.prepare(`SELECT r.code, r.company, r.name, r.email, r.website, r.about, r.status, r.access_until, r.created,
+        (SELECT COUNT(*) FROM contact_requests q WHERE q.recruiter = r.code) AS sent, (SELECT COUNT(*) FROM contact_requests q WHERE q.recruiter = r.code AND q.status = 'accepted') AS accepted
+        FROM recruiters r ORDER BY r.status = 'pending' DESC, r.created DESC`).all()).results;
+    const candidates = (await db.prepare(`SELECT c.pid, c.profile, c.private, c.visible, c.refreshed, c.created, (SELECT 1 FROM cvs WHERE cvs.code = c.code) AS has_cv,
+        (SELECT COUNT(*) FROM contact_requests q WHERE q.pid = c.pid) AS requests FROM candidates c ORDER BY c.refreshed DESC`).all()).results;
+    return json(req, { recruiters, mail: Boolean(env.RESEND_API_KEY), card: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SEARCH_PRICE), fresh_days: FRESH_DAYS,
+      candidates: candidates.map(c => ({ pid: c.pid, profile: JSON.parse(c.profile), private: JSON.parse(c.private), live: Boolean(fresh(c)), visible: Boolean(c.visible),
+                                         refreshed: c.refreshed, created: c.created, cv: Boolean(c.has_cv), requests: c.requests })) });
   }
 
   if (path === "" || path === "/") return new Response("Hostile Environment Jobs alerts. The app is at " + SITE + "/app/", { headers: cors(req) });

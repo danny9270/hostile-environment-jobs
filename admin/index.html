@@ -127,6 +127,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button data-tab="jobs">Jobs</button>
     <button data-tab="courses">Courses</button>
     <button data-tab="reviews">Reviews</button>
+    <button data-tab="talent">Talent pool</button>
     <button data-tab="payments">Payments</button>
     <button data-tab="settings">Settings</button>
   </nav>
@@ -205,11 +206,24 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   <div class="list" id="review-list"></div>
 </section>
 
+<section id="talent" hidden>
+  <h1>Talent pool</h1>
+  <p class="small">Operators post profiles on <a href="/candidates/" target="_blank">/candidates/</a> for free. Employers sign up there and wait here until you <b>Approve</b> them; check the company is real and the email is on its own domain, not a webmail address, before you do. Approved employers pay £99 for 30 days by card, or you give them days here: <b>+90 days</b> for anyone on the £149 Featured employer plan, <b>+30 days</b> for an invoice. Employers never see names, contact details or CVs until the operator accepts their request.</p>
+  <div class="grid tiles" id="talent-tiles"></div>
+  <p class="small muted" id="talent-setup"></p>
+  <h2>Employers</h2>
+  <div class="list" id="recruiter-list"><div class="empty">Loading...</div></div>
+  <h2 style="margin-top:22px">Operator profiles</h2>
+  <div class="toolbar"><input id="talent-q" type="search" placeholder="Search name, email, headline, job type"><button class="btn" id="talent-reload">Refresh</button></div>
+  <div class="list" id="candidate-list"></div>
+  <p class="small muted">Profiles leave search 90 days after the operator last confirms they're available, and are deleted with their CV after 12 months. <b>Remove</b> deletes one for good: use it for a deletion request by email, or anything that shouldn't be there.</p>
+</section>
+
 <section id="payments" hidden>
   <h1>Payments</h1>
   <div class="grid tiles" id="pay-tiles"></div>
   <div class="toolbar">
-    <select id="pay-f"><option value="all">All payments</option><option value="alerts">Job alerts</option><option value="featured">Featured listings</option></select>
+    <select id="pay-f"><option value="all">All payments</option><option value="alerts">Job alerts</option><option value="featured">Employer plans</option></select>
     <button class="btn" id="pay-reload">Refresh</button>
     <a class="btn" href="https://dashboard.stripe.com/payments" target="_blank" rel="noopener">Open Stripe</a>
   </div>
@@ -278,7 +292,7 @@ const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
 let TOKEN = null;
 const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null } };
 const NOUN = { jobs: "job", courses: "course", reviews: "review" };
-const TABS = ["dash", "jobs", "courses", "reviews", "payments", "settings"];
+const TABS = ["dash", "jobs", "courses", "reviews", "talent", "payments", "settings"];
 const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : x.title;
 
 function toast(msg, ms = 4000) {
@@ -606,7 +620,7 @@ function renderPayments() {
     tile(esc(moneyList(month)), "Last 30 days"),
     tile(all.length, "Payments"),
     tile(a.active, "Paid job alert subscribers", "alerts"),
-    tile(all.filter(p => !isAlerts(p)).length, "Featured listings sold", "featured"),
+    tile(all.filter(p => !isAlerts(p)).length, "Employer plans sold", "featured"),
   ].join("");
   $("pay-tiles").innerHTML = tiles;
   const recent = all.slice(0, 5);
@@ -629,6 +643,81 @@ function renderPayments() {
 }
 $("pay-f").addEventListener("input", renderPayments);
 $("pay-reload").onclick = loadPayments;
+
+// ---------- talent pool ----------
+// Profiles and employer accounts live in the job alerts Worker, not in the repository.
+let TALENT = null;
+async function talentApi(method = "GET", body, query = "") {
+  const r = await fetch(ALERTS_API + "/api/admin/talent" + query, { method, cache: "no-store",
+    headers: { Authorization: "Bearer " + TOKEN, "Content-Type": "application/json" }, body: body && JSON.stringify(body) });
+  const out = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 404 ? "The job alerts Worker hasn't been updated with the talent pool code yet" : out.error || "Talent pool error " + r.status);
+  return out;
+}
+async function loadTalent(method, body, query) {
+  try { TALENT = await talentApi(method, body, query); }
+  catch (e) {
+    $("recruiter-list").innerHTML = `<div class="empty err">${esc(e.message === "Failed to fetch" ? "Couldn't reach the job alerts Worker" : e.message)}.</div>`;
+    $("candidate-list").innerHTML = ""; return;
+  }
+  renderTalent();
+}
+const tsDate = t => t ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "";
+function renderTalent() {
+  const T = TALENT, t = Date.now() / 1000;
+  const pending = T.recruiters.filter(r => r.status === "pending").length;
+  document.querySelector('nav [data-tab="talent"]').textContent = pending ? `Talent pool (${pending})` : "Talent pool";
+  $("talent-tiles").innerHTML = [
+    [T.candidates.filter(c => c.live).length, "Operators in search"], [T.candidates.length, "Profiles in total"],
+    [pending, "Employers waiting", pending], [T.recruiters.filter(r => r.status === "approved" && r.access_until > t).length, "Employers searching"],
+    [T.recruiters.reduce((n, r) => n + r.accepted, 0), "Requests accepted"],
+  ].map(([n, label, alert]) => `<div class="tile${alert ? " alert" : ""}" style="cursor:default"><b>${n}</b><span>${label}</span></div>`).join("");
+  $("talent-setup").textContent = [T.card ? "" : "Card payments for search are off: add STRIPE_SEARCH_PRICE to the Worker to switch them on. Until then, give days by hand.",
+    T.mail ? "" : "Emails are off: add RESEND_API_KEY to the Worker so operators hear about requests and you hear about sign-ups. Until then, check this tab."].filter(Boolean).join(" ");
+  $("recruiter-list").innerHTML = T.recruiters.length ? T.recruiters.map(r => {
+    const on = r.status === "approved" && r.access_until > t;
+    const badge = r.status === "pending" ? '<span class="badge soon">waiting</span>' : r.status === "rejected" ? '<span class="badge gone">rejected</span>'
+      : on ? `<span class="badge live">searching until ${tsDate(r.access_until)}</span>` : '<span class="badge">approved, no search time</span>';
+    return `<div class="item"><div>
+      <div class="t">${esc(r.company)} ${badge}</div>
+      <div class="m">${esc(r.name)} · <a href="mailto:${esc(r.email)}">${esc(r.email)}</a>${r.website ? ` · <a href="${esc(r.website)}" target="_blank" rel="noopener">${esc(r.website.replace(/^https?:\/\//, ""))}</a>` : ""} · signed up ${tsDate(r.created)}</div>
+      ${r.about ? `<div class="m">${esc(r.about)}</div>` : ""}
+      <div class="m">${r.sent} request${r.sent === 1 ? "" : "s"} sent, ${r.accepted} accepted</div></div>
+      <div class="acts">
+        ${r.status !== "approved" ? `<button class="btn sm primary" data-rec="approve" data-code="${esc(r.code)}">Approve</button>` : ""}
+        ${r.status === "approved" ? `<button class="btn sm" data-rec="days" data-days="30" data-code="${esc(r.code)}">+30 days</button><button class="btn sm" data-rec="days" data-days="90" data-code="${esc(r.code)}">+90 days</button>` : ""}
+        ${on ? `<button class="btn sm" data-rec="stop" data-code="${esc(r.code)}">Stop search</button>` : ""}
+        ${r.status === "pending" ? `<button class="btn sm danger" data-rec="reject" data-code="${esc(r.code)}">Reject</button>` : `<button class="btn sm danger" data-rec="delete" data-code="${esc(r.code)}">Delete</button>`}
+      </div></div>`;
+  }).join("") : `<div class="empty">No employers have signed up yet.</div>`;
+  const q = $("talent-q").value.trim().toLowerCase();
+  const rows = T.candidates.filter(c => !q || [c.private.name, c.private.email, c.profile.headline, ...c.profile.categories].join(" ").toLowerCase().includes(q));
+  $("candidate-list").innerHTML = rows.length ? rows.map(c => `<div class="item"><div>
+      <div class="t">${esc(c.profile.headline)} ${c.live ? '<span class="badge live">in search</span>' : `<span class="badge">${c.visible ? "over 90 days" : "hidden"}</span>`}${c.cv ? '<span class="badge">CV</span>' : ""}</div>
+      <div class="m">${esc(c.private.name)} · <a href="mailto:${esc(c.private.email)}">${esc(c.private.email)}</a> · ${esc(c.profile.categories.join(", "))}</div>
+      <div class="m">Available from ${esc(c.profile.available_from ? fmtDate(c.profile.available_from) : "?")} · last confirmed ${tsDate(c.refreshed)} · ${c.requests} request${c.requests === 1 ? "" : "s"}</div></div>
+      <div class="acts"><button class="btn sm danger" data-cand="${esc(c.pid)}" data-name="${esc(c.private.name)}">Remove</button></div></div>`).join("")
+    : `<div class="empty">${T.candidates.length ? "No profiles match." : "No profiles yet."}</div>`;
+}
+$("talent-q").addEventListener("input", () => TALENT && renderTalent());
+$("talent-reload").onclick = () => loadTalent();
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-rec], button[data-cand]");
+  if (!b) return;
+  if (b.dataset.cand) {
+    if (confirm(`Remove ${b.dataset.name}'s profile, CV and requests for good?`)) loadTalent("DELETE", null, "?pid=" + encodeURIComponent(b.dataset.cand));
+    return;
+  }
+  const r = TALENT.recruiters.find(x => x.code === b.dataset.code), act = b.dataset.rec;
+  let days = Number(b.dataset.days || 0);
+  if (act === "approve") {
+    const v = prompt(`Approve ${r.company}? Give them free search days now (90 if they've bought the Featured employer plan), or 0 to let them pay £99 by card.`, "0");
+    if (v === null) return;
+    days = parseInt(v, 10) || 0;
+  }
+  if (["reject", "delete", "stop"].includes(act) && !confirm(`${act === "stop" ? "Stop search for" : act === "reject" ? "Reject" : "Delete"} ${r.company}?`)) return;
+  loadTalent("POST", { code: r.code, action: act, days }).then(() => toast("Done."));
+});
 
 // ---------- editor ----------
 const JOB_FIELDS = [
@@ -806,6 +895,7 @@ function showTab(tab) {
   TABS.forEach(t => $(t).hidden = t !== tab);
   document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
   if (tab === "reviews" && TOKEN) loadPending();
+  if (tab === "talent" && TOKEN) loadTalent();
   if (tab === "settings") { $("gc-code").value = store.get("gc-code") || GC_CODE; $("gc-key").value = store.get("gc-key") || ""; }
   history.replaceState(null, "", "#" + tab);
   window.scrollTo(0, 0);
