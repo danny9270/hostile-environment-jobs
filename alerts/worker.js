@@ -30,6 +30,7 @@
 //                        email when an employer asks to get in touch, employers when they're accepted or approved,
 //                        and contact@ when a new employer signs up. Without it everything still works on the page.
 //   MAIL_FROM            optional, the sender, default "H.E. Jobs <jobs@hostileenvironmentjobs.com>".
+// The admin page also keeps its dated reminders here (config row "reminders"), so they aren't in the public repository.
 
 const SITE = "https://hostileenvironmentjobs.com";
 const REPO = "danny9270/hostile-environment-jobs";
@@ -278,6 +279,60 @@ async function payments(env) {
   return { stripe: true, alerts, payments: rows };
 }
 
+// For the admin page: who uses the job alerts app, who has referred people, and what work they want alerts for.
+async function alertStats(env) {
+  const db = env.DB, t = now();
+  const accts = (await db.prepare(`SELECT a.code, a.prefs, a.paid_until, a.email, a.subscription, a.source, a.ref, a.ref_rewarded, a.created,
+      (SELECT COUNT(*) FROM devices d WHERE d.code = a.code) AS phones,
+      (SELECT COUNT(*) FROM accounts b WHERE b.referred_by = a.ref AND b.source = 'stripe') AS referred FROM accounts a`).all()).results;
+  const live = accts.filter(a => active(env, a));
+  const wants = { categories: {}, regions: {}, course_types: {}, courses: 0, keywords: 0 };
+  const add = (o, k) => o[k] = (o[k] || 0) + 1;
+  for (const a of live) {
+    const p = JSON.parse(a.prefs || "{}");
+    (p.categories || []).forEach(k => add(wants.categories, k));
+    (p.regions || []).forEach(k => add(wants.regions, k));
+    (p.course_types || []).forEach(k => add(wants.course_types, k));
+    if (p.courses) wants.courses++;
+    if (p.keywords) wants.keywords++;
+  }
+  const kinds = (await db.prepare("SELECT kind, COUNT(*) AS n FROM devices GROUP BY kind").all()).results;
+  return {
+    paying: paying(env), accounts: accts.length, active: live.length, with_phone: live.filter(a => a.phones).length,
+    renewing: accts.filter(a => a.paid_until > t && a.subscription).length,
+    new_30d: accts.filter(a => a.created > t - 30 * DAY).length,
+    // Paid for a single year with no renewal set up, and running out within 30 days.
+    ending: accts.filter(a => !a.subscription && a.paid_until > t && a.paid_until < t + 30 * DAY).map(a => ({ email: a.email, paid_until: a.paid_until })),
+    phones: Object.fromEntries(kinds.map(k => [k.kind, k.n])),
+    referrals: {
+      per_year: REFERRALS_PER_YEAR, paid: accts.filter(a => a.referred).reduce((n, a) => n + a.referred, 0),
+      free_years: accts.reduce((n, a) => n + (a.ref_rewarded || 0), 0),
+      top: accts.filter(a => a.referred).sort((a, b) => b.referred - a.referred).slice(0, 20)
+        .map(a => ({ ref: a.ref, email: a.email, referred: a.referred, free_years: a.ref_rewarded || 0 })),
+    },
+    wants,
+  };
+}
+
+// The admin page's dated to-do list. The first time it's asked for, it starts with the follow-ups already planned.
+const REMINDERS_START = [
+  { date: "2026-11-06", text: "Follow up the 6 Nov outreach emails (see the outreach tracker)" },
+  { date: "2026-11-06", text: "Send the course booking commission emails to the 6 course providers (see the outreach tracker)" },
+  { date: "2026-11-12", text: "Zapier trial ends: check both zaps still run on the free plan" },
+  { date: "2026-11-13", text: "Follow up the 7 kit supplier emails (one follow-up only)" },
+];
+const cleanReminder = r => ({ id: String(r.id || crypto.randomUUID()).slice(0, 40), date: /^\d{4}-\d{2}-\d{2}$/.test(r.date || "") ? r.date : "",
+                              text: String(r.text || "").trim().slice(0, 300) });
+async function reminders(db, list) {
+  if (list) {
+    const clean = list.map(cleanReminder).filter(r => r.text).slice(0, 200);
+    await db.prepare("INSERT INTO config (k, v) VALUES ('reminders', ?) ON CONFLICT (k) DO UPDATE SET v = excluded.v").bind(JSON.stringify(clean)).run();
+    return clean;
+  }
+  const row = await db.prepare("SELECT v FROM config WHERE k = 'reminders'").first();
+  return row ? JSON.parse(row.v) : reminders(db, REMINDERS_START);
+}
+
 // GitHub Actions sign-in: an RS256 token from token.actions.githubusercontent.com, for this repo's main branch.
 let jwks = null;
 async function fromAction(req) {
@@ -524,6 +579,18 @@ async function handle(req, env) {
     return json(req, await payments(env));
   }
 
+  // For the admin page only: job alerts app subscribers, referrals and what they want alerts for.
+  if (path === "/api/admin/alerts" && req.method === "GET") {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    return json(req, await alertStats(env));
+  }
+
+  // For the admin page only: its reminders. PUT replaces the whole list.
+  if (path === "/api/admin/reminders" && ["GET", "PUT"].includes(req.method)) {
+    if (!(await fromAdmin(req))) return json(req, { error: "Not allowed" }, 403);
+    return json(req, { reminders: await reminders(db, req.method === "PUT" && Array.isArray(body.reminders) ? body.reminders : null) });
+  }
+
   // ---------- Talent pool: operators ----------
   if (path.startsWith("/api/talent")) await tidyTalent(db).catch(() => {});
   const candidate = async () => { const code = fmtCode(bearerCode(req)); return code && db.prepare("SELECT * FROM candidates WHERE code = ?").bind(code).first(); };
@@ -717,7 +784,11 @@ async function handle(req, env) {
         FROM recruiters r ORDER BY r.status = 'pending' DESC, r.created DESC`).all()).results;
     const candidates = (await db.prepare(`SELECT c.pid, c.profile, c.private, c.visible, c.refreshed, c.created, (SELECT 1 FROM cvs WHERE cvs.code = c.code) AS has_cv,
         (SELECT COUNT(*) FROM contact_requests q WHERE q.pid = c.pid) AS requests FROM candidates c ORDER BY c.refreshed DESC`).all()).results;
-    return json(req, { recruiters, mail: Boolean(env.RESEND_API_KEY), card: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SEARCH_PRICE), fresh_days: FRESH_DAYS,
+    const requests = (await db.prepare(`SELECT q.id, q.role, q.status, q.created, q.decided, r.company, c.profile, c.private FROM contact_requests q
+        LEFT JOIN recruiters r ON r.code = q.recruiter LEFT JOIN candidates c ON c.pid = q.pid ORDER BY q.created DESC LIMIT 300`).all()).results
+      .map(q => ({ id: q.id, role: q.role, status: q.status, created: q.created, decided: q.decided, company: q.company || "Employer deleted",
+                   headline: q.profile ? JSON.parse(q.profile).headline : "Profile removed", name: q.private ? JSON.parse(q.private).name : "" }));
+    return json(req, { recruiters, requests, mail: Boolean(env.RESEND_API_KEY), card: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_SEARCH_PRICE), fresh_days: FRESH_DAYS,
       candidates: candidates.map(c => ({ pid: c.pid, profile: JSON.parse(c.profile), private: JSON.parse(c.private), live: Boolean(fresh(c)), visible: Boolean(c.visible),
                                          refreshed: c.refreshed, created: c.created, cv: Boolean(c.has_cv), requests: c.requests })) });
   }
