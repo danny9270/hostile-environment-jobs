@@ -128,6 +128,8 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <button data-tab="courses">Courses</button>
     <button data-tab="reviews">Reviews</button>
     <button data-tab="talent">Talent pool</button>
+    <button data-tab="featured">Featured</button>
+    <button data-tab="alertsapp">Alerts app</button>
     <button data-tab="payments">Payments</button>
     <button data-tab="settings">Settings</button>
   </nav>
@@ -157,6 +159,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
 <section id="dash" hidden>
   <h1>Dashboard</h1>
   <div class="grid tiles" id="tiles"></div>
+  <div class="card" id="coming" style="margin-bottom:14px"><h2>Coming up</h2><p class="muted small">Loading...</p></div>
   <div class="grid two">
     <div class="card"><h2>Needs attention</h2><div id="attention"></div></div>
     <div class="card" id="visits"></div>
@@ -166,6 +169,10 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
     <div class="card"><h2>Live jobs by region</h2><div class="bars" id="by-region"></div><h2 style="margin-top:18px">Upcoming courses by type</h2><div class="bars" id="by-type"></div></div>
   </div>
   <div class="card" style="margin-top:14px" id="pay-summary"></div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card" id="sitrep-card"><h2>Sitrep newsletter</h2><p class="muted small">Loading...</p></div>
+    <div class="card" id="leavers-card"><h2>Service leaver hub</h2></div>
+  </div>
   <div class="card" style="margin-top:14px">
     <h2>Submissions</h2>
     <p class="small">Jobs and courses sent through the site's forms arrive by email at <a id="contact-link" href="#"></a>, subject "New job for Hostile Environment Jobs" or "New course". Check the advert, then add it here with <b>Add job</b> or <b>Add course</b>. Course reviews wait in <b>Reviews</b> for you to publish or reject.</p>
@@ -213,10 +220,44 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
   <p class="small muted" id="talent-setup"></p>
   <h2>Employers</h2>
   <div class="list" id="recruiter-list"><div class="empty">Loading...</div></div>
+  <h2 style="margin-top:22px">Contact requests</h2>
+  <div class="toolbar"><select id="req-f"><option value="all">All requests</option><option value="pending">Waiting on the operator</option><option value="accepted">Accepted</option><option value="declined">Declined</option></select></div>
+  <div class="list" id="request-list"></div>
   <h2 style="margin-top:22px">Operator profiles</h2>
   <div class="toolbar"><input id="talent-q" type="search" placeholder="Search name, email, headline, job type"><button class="btn" id="talent-reload">Refresh</button></div>
   <div class="list" id="candidate-list"></div>
   <p class="small muted">Profiles leave search 90 days after the operator last confirms they're available, and are deleted with their CV after 12 months. <b>Remove</b> deletes one for good: use it for a deletion request by email, or anything that shouldn't be there.</p>
+</section>
+
+<section id="featured" hidden>
+  <h1>Featured</h1>
+  <p class="small">Paid extras on top of the free listings. A <b>Featured job</b> (£49) is pinned to the top for 30 days. A <b>Featured employer</b> (£149) gets a profile page at /employers/, all its jobs featured for 90 days, and 90 days of talent pool search: give that in <button class="btn sm" data-go="talent">Talent pool</button> with <b>+90 days</b>. Changes here show on the site in a minute or two.</p>
+  <div class="grid tiles" id="feat-tiles"></div>
+  <h2>Featured jobs</h2>
+  <div class="toolbar"><select id="feat-pick"></select><button class="btn primary" id="feat-add">Feature for 30 days</button></div>
+  <div class="list" id="feat-jobs"></div>
+  <h2 style="margin-top:22px">Employer profiles</h2>
+  <div class="toolbar"><button class="btn primary" id="add-employer">Add employer profile</button></div>
+  <div class="list" id="employer-list"></div>
+  <h2 style="margin-top:22px">Featured payments, last 90 days</h2>
+  <p class="small muted">Match each payment to a job or profile above. Payments come from Stripe; see <button class="btn sm" data-go="payments">Payments</button> for everything.</p>
+  <div class="list" id="feat-pays"></div>
+</section>
+
+<section id="alertsapp" hidden>
+  <h1>Alerts app</h1>
+  <p class="small">The <a href="/app/" target="_blank">job alerts app</a>: $6 a year for push alerts, with a free year for every 3 people someone refers who pay. The rotation tracker in it is free and kept only on each phone, so it isn't counted here.</p>
+  <div class="grid tiles" id="app-tiles"></div>
+  <p class="small muted" id="app-note"></p>
+  <div class="grid two">
+    <div class="card"><h2>Job types people want</h2><div class="bars" id="app-cats"></div></div>
+    <div class="card"><h2>Regions people want</h2><div class="bars" id="app-regions"></div><h2 style="margin-top:18px">Course alerts</h2><div class="bars" id="app-courses"></div></div>
+  </div>
+  <h2 style="margin-top:22px">Top referrers</h2>
+  <div class="list" id="app-refs"></div>
+  <h2 style="margin-top:22px">Running out in 30 days, not renewing</h2>
+  <div class="list" id="app-ending"></div>
+  <p class="small"><button class="btn" id="app-reload">Refresh</button></p>
 </section>
 
 <section id="payments" hidden>
@@ -290,10 +331,11 @@ const fmtDate = s => new Date(s + "T00:00:00").toLocaleDateString("en-GB", { day
 const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
 
 let TOKEN = null;
-const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null } };
-const NOUN = { jobs: "job", courses: "course", reviews: "review" };
-const TABS = ["dash", "jobs", "courses", "reviews", "talent", "payments", "settings"];
-const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : x.title;
+const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null },
+                employers: { path: "employers.json", data: [], sha: null } };
+const NOUN = { jobs: "job", courses: "course", reviews: "review", employers: "employer profile" };
+const TABS = ["dash", "jobs", "courses", "reviews", "talent", "featured", "alertsapp", "payments", "settings"];
+const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : kind === "employers" ? x.name : x.title;
 
 function toast(msg, ms = 4000) {
   const t = $("toast"); t.textContent = msg; t.hidden = false;
@@ -321,6 +363,7 @@ const serialise = {
   jobs: arr => JSON.stringify(arr, null, 1),
   courses: arr => "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n",
   reviews: arr => arr.length ? "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n" : "[]\n",
+  employers: arr => JSON.stringify(arr, null, 1) + "\n",
 };
 
 async function load(kind) {
@@ -496,7 +539,7 @@ async function dropPending(id) {
   await loadPending();
 }
 
-function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); }
+function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); renderFeatured(); renderLeavers(); renderComingUp(); }
 
 // ---------- visitor stats ----------
 let visitsRun = 0;
@@ -607,7 +650,7 @@ async function loadPayments() {
     $("pay-list").innerHTML = `<div class="empty">${esc(msg)}.</div>`;
     return;
   }
-  renderPayments();
+  renderPayments(); afterPayments();
 }
 
 function renderPayments() {
@@ -642,6 +685,7 @@ function renderPayments() {
     </div>`).join("") : `<div class="empty">${all.length ? "No payments match." : "No payments yet."}</div>`;
 }
 $("pay-f").addEventListener("input", renderPayments);
+const afterPayments = () => { renderFeatured(); renderComingUp(); if (TALENT) renderTalent(); };
 $("pay-reload").onclick = loadPayments;
 
 // ---------- talent pool ----------
@@ -655,7 +699,7 @@ async function talentApi(method = "GET", body, query = "") {
   return out;
 }
 async function loadTalent(method, body, query) {
-  try { TALENT = await talentApi(method, body, query); }
+  try { TALENT = await talentApi(method, body, query); renderComingUp(); }
   catch (e) {
     $("recruiter-list").innerHTML = `<div class="empty err">${esc(e.message === "Failed to fetch" ? "Couldn't reach the job alerts Worker" : e.message)}.</div>`;
     $("candidate-list").innerHTML = ""; return;
@@ -671,9 +715,17 @@ function renderTalent() {
     [T.candidates.filter(c => c.live).length, "Operators in search"], [T.candidates.length, "Profiles in total"],
     [pending, "Employers waiting", pending], [T.recruiters.filter(r => r.status === "approved" && r.access_until > t).length, "Employers searching"],
     [T.recruiters.reduce((n, r) => n + r.accepted, 0), "Requests accepted"],
+    [(T.requests || []).filter(q => q.status === "pending").length, "Requests waiting on operators"],
+    ...(PAY ? [[esc(moneyList(PAY.payments.filter(p => !p.test && /^Candidate search/.test(p.what)))), "From £99 searches"]] : []),
   ].map(([n, label, alert]) => `<div class="tile${alert ? " alert" : ""}" style="cursor:default"><b>${n}</b><span>${label}</span></div>`).join("");
   $("talent-setup").textContent = [T.card ? "" : "Card payments for search are off: add STRIPE_SEARCH_PRICE to the Worker to switch them on. Until then, give days by hand.",
     T.mail ? "" : "Emails are off: add RESEND_API_KEY to the Worker so operators hear about requests and you hear about sign-ups. Until then, check this tab."].filter(Boolean).join(" ");
+  const rf = $("req-f").value, reqs = (T.requests || []).filter(q => rf === "all" || q.status === rf);
+  const reqBadge = { pending: '<span class="badge soon">waiting</span>', accepted: '<span class="badge live">accepted</span>', declined: '<span class="badge gone">declined</span>' };
+  $("request-list").innerHTML = reqs.length ? reqs.map(q => `<div class="item"><div>
+      <div class="t">${esc(q.company)} asked ${esc(q.name || "an operator")} ${reqBadge[q.status] || ""}</div>
+      <div class="m">${esc(q.headline)}${q.role ? ` · for: ${esc(q.role)}` : ""} · sent ${tsDate(q.created)}${q.decided ? ` · answered ${tsDate(q.decided)}` : ""}</div></div></div>`).join("")
+    : `<div class="empty">${(T.requests || []).length ? "No requests match." : T.requests ? "No contact requests yet." : "Update the job alerts Worker to see requests here."}</div>`;
   $("recruiter-list").innerHTML = T.recruiters.length ? T.recruiters.map(r => {
     const on = r.status === "approved" && r.access_until > t;
     const badge = r.status === "pending" ? '<span class="badge soon">waiting</span>' : r.status === "rejected" ? '<span class="badge gone">rejected</span>'
@@ -700,6 +752,7 @@ function renderTalent() {
     : `<div class="empty">${T.candidates.length ? "No profiles match." : "No profiles yet."}</div>`;
 }
 $("talent-q").addEventListener("input", () => TALENT && renderTalent());
+$("req-f").addEventListener("input", () => TALENT && renderTalent());
 $("talent-reload").onclick = () => loadTalent();
 document.addEventListener("click", e => {
   const b = e.target.closest("button[data-rec], button[data-cand]");
@@ -719,6 +772,203 @@ document.addEventListener("click", e => {
   loadTalent("POST", { code: r.code, action: act, days }).then(() => toast("Done."));
 });
 
+// ---------- shared: the job alerts Worker ----------
+async function workerApi(path, opts = {}) {
+  const r = await fetch(ALERTS_API + path, { ...opts, cache: "no-store",
+    headers: { Authorization: "Bearer " + TOKEN, ...(opts.body ? { "Content-Type": "application/json" } : {}) } });
+  const out = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(r.status === 404 ? "The job alerts Worker hasn't been updated with this code yet. Press Deploy on it in Cloudflare" : out.error || "Worker error " + r.status);
+  return out;
+}
+const workerErr = e => e.message === "Failed to fetch" ? "Couldn't reach the job alerts Worker" : e.message;
+const addDays = (s, n) => { const d = new Date((isDate(s) && daysFromToday(s) > 0 ? s : TODAY) + "T00:00:00"); d.setDate(d.getDate() + n); return iso(d); };
+const plural = (n, word, many = word + "s") => `${n} ${n === 1 ? word : many}`;
+
+// ---------- featured ----------
+const featLive = j => isDate(j.featured_until) && daysFromToday(j.featured_until) >= 0;
+const profileLive = x => !x.featured_until || (isDate(x.featured_until) && daysFromToday(x.featured_until) >= 0);
+const profileJobs = x => files.jobs.data.filter(j => jobLive(j) && [x.name, ...(x.aliases || [])].includes(j.employer));
+const featPays = days => PAY ? PAY.payments.filter(p => !p.test && /^Featured (job|employer)/.test(p.what) && p.created > Date.now() / 1000 - days * 86400) : [];
+function untilBadge(until, open) {
+  if (!until) return `<span class="badge live">${open ? "no end date" : ""}</span>`;
+  const d = daysFromToday(until);
+  return d < 0 ? `<span class="badge gone">ended ${fmtDate(until)}</span>` : `<span class="badge ${d <= 7 ? "soon" : "live"}">until ${fmtDate(until)}${d <= 7 ? `, ${d}d left` : ""}</span>`;
+}
+function renderFeatured() {
+  const J = files.jobs.data, E = files.employers.data;
+  const jobs = J.filter(j => isDate(j.featured_until)).sort((a, b) => b.featured_until.localeCompare(a.featured_until));
+  const live = jobs.filter(j => featLive(j) && jobLive(j)), profiles = E.filter(profileLive);
+  const ending = [...live.map(j => j.featured_until), ...profiles.map(x => x.featured_until).filter(Boolean)].filter(d => daysFromToday(d) <= 7).length;
+  $("feat-tiles").innerHTML = [[live.length, "Featured jobs running"], [profiles.length, "Employer profiles live"], [ending, "Ending in 7 days", ending],
+    [PAY ? featPays(30).length : "…", "Featured payments, 30 days"]]
+    .map(([n, label, alert]) => `<div class="tile${alert ? " alert" : ""}" style="cursor:default"><b>${n}</b><span>${label}</span></div>`).join("");
+  const pick = J.filter(j => jobLive(j) && !featLive(j));
+  $("feat-pick").innerHTML = pick.length ? `<option value="">Choose a live job to feature...</option>` + pick.map(j => `<option value="${esc(j.id)}">${esc(j.employer)}: ${esc(j.title)}</option>`).join("") : `<option value="">Every live job is featured</option>`;
+  $("feat-jobs").innerHTML = jobs.length ? jobs.map(j => `<div class="item"><div>
+      <div class="t">${esc(j.title)} ${untilBadge(j.featured_until)}${jobLive(j) ? "" : ' <span class="badge gone">job closed</span>'}</div>
+      <div class="m">${esc(j.employer)} · ${esc(j.location)}</div></div>
+      <div class="acts"><button class="btn sm" data-feat="${esc(j.id)}" data-days="30">+30 days</button>${featLive(j) ? `<button class="btn sm" data-feat="${esc(j.id)}" data-days="0">End now</button>` : ""}<button class="btn sm" data-edit="jobs" data-id="${esc(j.id)}">Edit</button></div></div>`).join("")
+    : `<div class="empty">No featured jobs yet. When someone pays £49, pick their job above.</div>`;
+  $("employer-list").innerHTML = E.length ? E.map(x => `<div class="item"><div>
+      <div class="t">${esc(x.name)} ${untilBadge(x.featured_until, true)}</div>
+      <div class="m">${x.tagline ? esc(x.tagline) + " · " : ""}${plural(profileJobs(x).length, "live job")} featured through the profile${x.logo ? "" : " · no logo yet"}</div></div>
+      <div class="acts"><a class="btn sm" href="../employers/${esc(x.id)}/" target="_blank" rel="noopener">Page</a><button class="btn sm" data-emp-days="${esc(x.id)}">+90 days</button><button class="btn sm" data-edit="employers" data-id="${esc(x.id)}">Edit</button><button class="btn sm danger" data-del="employers" data-id="${esc(x.id)}">Delete</button></div></div>`).join("")
+    : `<div class="empty">No employer profiles yet. When someone pays £149, add theirs here.</div>`;
+  const pays = featPays(90);
+  $("feat-pays").innerHTML = !PAY ? `<div class="empty">Payments haven't loaded.</div>` : pays.length ? pays.map(p => `<div class="item"><div>
+      <div class="t">${esc(money(p.amount, p.currency))} ${esc(p.what)}</div><div class="m">${esc([p.name, p.email].filter(Boolean).join(" · ") || "No email given")} · ${payDate(p.created)}</div></div></div>`).join("")
+    : `<div class="empty">No featured payments in the last 90 days.</div>`;
+}
+$("feat-add").onclick = () => {
+  const id = $("feat-pick").value;
+  if (!id) return;
+  const j = files.jobs.data.find(x => x.id === id);
+  commit("jobs", arr => { arr.find(x => x.id === id).featured_until = addDays(TODAY, 30); }, `Feature job for 30 days: ${j.title}`);
+};
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-feat], button[data-emp-days]");
+  if (!b) return;
+  if (b.dataset.feat) {
+    const id = b.dataset.feat, j = files.jobs.data.find(x => x.id === id), n = Number(b.dataset.days);
+    if (!n && !confirm(`Stop featuring "${j.title}" now?`)) return;
+    return commit("jobs", arr => { const x = arr.find(y => y.id === id); if (n) x.featured_until = addDays(x.featured_until, n); else delete x.featured_until; },
+      n ? `Feature job for ${n} more days: ${j.title}` : `Stop featuring job: ${j.title}`);
+  }
+  const id = b.dataset.empDays, x = files.employers.data.find(y => y.id === id);
+  if (!x.featured_until) return toast(`${x.name}'s profile has no end date, so it runs until you remove it. Edit it to set one.`);
+  commit("employers", arr => { const y = arr.find(z => z.id === id); y.featured_until = addDays(y.featured_until, 90); }, `Extend employer profile 90 days: ${x.name}`);
+});
+
+// ---------- alerts app ----------
+let ALERTS = null;
+async function loadAlerts() {
+  try { ALERTS = await workerApi("/api/admin/alerts"); }
+  catch (e) {
+    ALERTS = null;
+    $("app-tiles").innerHTML = ""; $("app-note").innerHTML = `<span class="err">${esc(workerErr(e))}.</span>`;
+    return;
+  }
+  renderAlerts(); renderComingUp();
+}
+function renderAlerts() {
+  const A = ALERTS;
+  if (!A) return;
+  const phones = Object.values(A.phones).reduce((n, x) => n + x, 0);
+  $("app-tiles").innerHTML = [[A.active, A.paying ? "Paid up" : "Accounts (app is free now)"], [A.renewing, "Renewing yearly"], [phones, "Phones getting alerts"],
+    [A.new_30d, "New accounts, 30 days"], [A.referrals.paid, "Paid through a referral"], [A.referrals.free_years, "Free years earned"]]
+    .map(([n, label]) => `<div class="tile" style="cursor:default"><b>${n}</b><span>${label}</span></div>`).join("");
+  $("app-note").textContent = `${plural(A.accounts, "account")} in total, ${A.with_phone} paid up with a phone set up. `
+    + (A.paying ? "" : "Payments are off in the Worker, so everyone gets alerts free.");
+  bars($("app-cats"), A.wants.categories);
+  bars($("app-regions"), A.wants.regions);
+  bars($("app-courses"), { "Want course alerts": A.wants.courses, ...A.wants.course_types, "Use a keyword": A.wants.keywords });
+  $("app-refs").innerHTML = A.referrals.top.length ? A.referrals.top.map(r => `<div class="item"><div>
+      <div class="t">${esc(r.email || "No email")} <span class="badge">${esc(r.ref)}</span></div>
+      <div class="m">${plural(r.referred, "person", "people")} paid through their link · ${plural(r.free_years, "free year")} earned${r.referred % A.referrals.per_year ? ` · ${A.referrals.per_year - r.referred % A.referrals.per_year} more for the next` : ""}</div></div></div>`).join("")
+    : `<div class="empty">Nobody has paid through a referral link yet.</div>`;
+  $("app-ending").innerHTML = A.ending.length ? A.ending.map(x => `<div class="item"><div>
+      <div class="t">${esc(x.email || "No email")}</div><div class="m">Paid up until ${tsDate(x.paid_until)}. The app offers them a renew button.</div></div></div>`).join("")
+    : `<div class="empty">Nobody's subscription runs out in the next 30 days.</div>`;
+}
+$("app-reload").onclick = loadAlerts;
+
+// ---------- coming up ----------
+// Dated reminders are kept in the job alerts Worker (private); the rest is worked out from the site's own data.
+let REMINDERS = null, remindersErr = "";
+async function loadReminders() {
+  try { REMINDERS = (await workerApi("/api/admin/reminders")).reminders; remindersErr = ""; }
+  catch (e) { REMINDERS = null; remindersErr = workerErr(e); }
+  renderComingUp();
+}
+async function saveReminders(next) {
+  try { REMINDERS = (await workerApi("/api/admin/reminders", { method: "PUT", body: JSON.stringify({ reminders: next }) })).reminders; }
+  catch (e) { toast("Couldn't save the reminder: " + workerErr(e), 8000); }
+  renderComingUp();
+}
+function comingItems() {
+  const out = [], t = Date.now() / 1000, day = s => iso(new Date(s * 1000));
+  files.jobs.data.filter(j => featLive(j) && jobLive(j) && daysFromToday(j.featured_until) <= 7)
+    .forEach(j => out.push({ date: j.featured_until, text: `Featured job ends: <b>${esc(j.title)}</b>, ${esc(j.employer)}`, go: "featured" }));
+  files.employers.data.filter(x => x.featured_until && profileLive(x) && daysFromToday(x.featured_until) <= 14)
+    .forEach(x => out.push({ date: x.featured_until, text: `Employer profile ends: <b>${esc(x.name)}</b>`, go: "featured" }));
+  if (TALENT) {
+    const waiting = TALENT.recruiters.filter(r => r.status === "pending").length;
+    if (waiting) out.push({ date: "", text: `${plural(waiting, "employer")} waiting for you to approve them for the talent pool`, go: "talent" });
+    TALENT.recruiters.filter(r => r.status === "approved" && r.access_until > t && r.access_until < t + 7 * 86400)
+      .forEach(r => out.push({ date: day(r.access_until), text: `Talent pool search ends for <b>${esc(r.company)}</b>`, go: "talent" }));
+  }
+  if (PENDING.length) out.push({ date: "", text: `${plural(PENDING.length, "course review")} waiting to be checked`, go: "reviews" });
+  if (PAY) {
+    const jobPays = featPays(30).filter(p => /^Featured job/.test(p.what)).length, empPays = featPays(30).filter(p => /^Featured employer/.test(p.what)).length;
+    const liveJobs = files.jobs.data.filter(j => featLive(j) && jobLive(j)).length, liveProfiles = files.employers.data.filter(profileLive).length;
+    if (jobPays > liveJobs) out.push({ date: "", text: `${plural(jobPays, "featured job payment")} in 30 days but only ${liveJobs} featured job${liveJobs === 1 ? "" : "s"} running. Check each has its job featured`, go: "featured" });
+    if (empPays > liveProfiles) out.push({ date: "", text: `${plural(empPays, "featured employer payment")} in 30 days but only ${plural(liveProfiles, "profile")} live. Add the missing profile`, go: "featured" });
+  }
+  if (ALERTS?.ending.length) out.push({ date: day(Math.min(...ALERTS.ending.map(x => x.paid_until))), text: `${plural(ALERTS.ending.length, "job alerts subscription")} run${ALERTS.ending.length === 1 ? "s" : ""} out within 30 days without renewing`, go: "alertsapp" });
+  return out;
+}
+function whenLabel(date) {
+  if (!date) return `<span class="badge soon">now</span>`;
+  const d = daysFromToday(date), when = new Date(date + "T00:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+  return `<span class="badge ${d < 0 ? "gone" : d <= 2 ? "soon" : ""}">${when}${d < 0 ? ", overdue" : d === 0 ? ", today" : d === 1 ? ", tomorrow" : d <= 14 ? `, in ${d}d` : ""}</span>`;
+}
+function renderComingUp() {
+  const el = $("coming");
+  if (!el || !TOKEN) return;
+  const rows = [...(REMINDERS || []).map(r => ({ ...r, mine: true })), ...comingItems()]
+    .sort((a, b) => (a.date || "0").localeCompare(b.date || "0"));
+  el.innerHTML = `<h2>Coming up</h2>
+    ${remindersErr ? `<p class="err small">Reminders: ${esc(remindersErr)}.</p>` : ""}
+    ${rows.length ? `<div class="list" style="margin-bottom:12px">${rows.map(r => `<div class="item"><div>
+        <div class="t" style="font-weight:400">${whenLabel(r.date)} ${r.mine ? esc(r.text) : r.text}</div></div>
+        <div class="acts">${r.mine ? `<button class="btn sm" data-rem-edit="${esc(r.id)}">Edit</button><button class="btn sm primary" data-rem-done="${esc(r.id)}">Done</button>` : `<button class="btn sm" data-go="${r.go}">Open</button>`}</div></div>`).join("")}</div>`
+      : `<p class="muted">Nothing coming up.</p>`}
+    ${REMINDERS ? `<form id="rem-form" class="toolbar" style="margin:0"><input id="rem-date" type="date" style="flex:0 0 170px" aria-label="Date"><input id="rem-text" placeholder="Add a reminder, e.g. chase Kit form ID" aria-label="Reminder"><button class="btn" type="submit">Add</button></form>` : ""}`;
+  const form = $("rem-form");
+  if (form) form.onsubmit = e => {
+    e.preventDefault();
+    const text = $("rem-text").value.trim();
+    if (text) saveReminders([...REMINDERS, { date: $("rem-date").value, text }]);
+  };
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-rem-done], button[data-rem-edit]");
+  if (!b) return;
+  const id = b.dataset.remDone || b.dataset.remEdit, r = REMINDERS.find(x => x.id === id);
+  if (b.dataset.remDone) return saveReminders(REMINDERS.filter(x => x.id !== id));
+  const text = prompt("Reminder", r.text);
+  if (text === null) return;
+  const date = prompt("Date (YYYY-MM-DD, or blank for no date)", r.date);
+  if (date === null) return;
+  saveReminders(REMINDERS.map(x => x.id === id ? { ...x, text: text.trim() || x.text, date: date.trim() } : x));
+});
+
+// ---------- Sitrep and service leavers ----------
+// Read from the live site: the Sitrep feed, whether the home page has a Kit form ID, and any note waiting for the next issue.
+async function loadSitrep() {
+  const el = $("sitrep-card"), get = p => fetch("../" + p, { cache: "no-store" }).then(r => r.ok ? r.text() : "").catch(() => "");
+  const [feed, home, note] = await Promise.all([get("sitrep/feed.xml"), get("index.html"), get("sitrep/note.txt")]);
+  const items = [...new DOMParser().parseFromString(feed || "<rss/>", "text/xml").querySelectorAll("item")];
+  const last = items[0], form = (home.match(/const SITREP_FORM = "([^"]*)"/) || [])[1];
+  const next = new Date(); next.setDate(next.getDate() + ((8 - next.getDay()) % 7 || 7));
+  el.innerHTML = `<h2>Sitrep newsletter</h2>
+    <p class="small">${items.length ? `${plural(items.length, "issue")} so far. Latest: <a href="${esc(last.querySelector("link")?.textContent)}" target="_blank" rel="noopener">${esc(last.querySelector("title")?.textContent)}</a>.` : "No issues yet."}
+      Next one builds on <b>${next.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" })}</b> at 05:00 UTC.</p>
+    <p class="small">${form ? `<span class="badge live">Kit signup on</span> Signups go to Kit (form ${esc(form)}).`
+      : `<span class="badge soon">Kit not set up</span> Signups are emailed to ${esc(CONTACT)} until the Kit form ID is added, and issues only go out once the KIT_API_KEY secret is in GitHub.`}</p>
+    ${note.trim() ? `<p class="small"><b>Note for the next issue:</b> ${esc(note.trim().slice(0, 160))}${note.trim().length > 160 ? "..." : ""}</p>` : ""}
+    <p class="small"><a class="btn sm" href="../sitrep/" target="_blank">Archive</a> <a class="btn sm" href="https://github.com/${REPO}/edit/${BRANCH}/sitrep/note.txt" target="_blank" rel="noopener">${note.trim() ? "Edit" : "Write"} a note for the next issue</a> <a class="btn sm" href="https://app.kit.com/" target="_blank" rel="noopener">Open Kit</a></p>`;
+}
+function renderLeavers() {
+  const C = files.courses.data.filter(courseLive), tagged = C.filter(c => c.elcas);
+  const missing = [...new Set(C.filter(c => !c.elcas).map(c => c.provider))];
+  $("leavers-card").innerHTML = `<h2>Service leaver hub</h2>
+    <p class="small"><b>${tagged.length}</b> of ${plural(C.length, "upcoming course")} show an ELCAS tag on <a href="../leavers/" target="_blank">/leavers/</a>.
+      Ask providers for their ELCAS number and add it to the course with <b>Edit</b> in Courses.</p>
+    ${missing.length ? `<p class="small muted">No ELCAS number yet: ${missing.slice(0, 8).map(esc).join(", ")}${missing.length > 8 ? ` and ${missing.length - 8} more` : ""}.</p>` : ""}
+    <p class="small"><a class="btn sm" href="../leavers/" target="_blank">Open the hub</a> <button class="btn sm" data-go="courses" data-filter="live">Courses</button></p>`;
+}
+
 // ---------- editor ----------
 const JOB_FIELDS = [
   ["title", "Job title", "text", true], ["employer", "Employer", "text", true],
@@ -737,6 +987,15 @@ const COURSE_FIELDS = [
   ["url", "Link to the course page", "url", true], ["summary", "Summary", "area", true],
   ["posted", "Date added", "date"],
   ["referral_url", "Provider's tracked booking link (if they gave one)", "url"], ["promo_code", "Booking code from the provider", "text"],
+  ["elcas", "Provider's ELCAS number (shows an ELCAS tag on /leavers/)", "text"],
+];
+const EMPLOYER_FIELDS = [
+  ["name", "Company name (exactly as on its job adverts)", "text", true], ["featured_until", "Featured until (blank = until removed)", "date"],
+  ["tagline", "One-line tagline", "text"], ["logo", "Logo image link", "url"],
+  ["website", "Website", "url"], ["careers_url", "Careers page", "url"],
+  ["based", "Based in", "text"], ["works_in", "Works in", "text"],
+  ["sectors", "Sectors", "lines"], ["aliases", "Other names it posts jobs under", "lines"],
+  ["about", "About the company (blank line between paragraphs)", "area"],
 ];
 const REVIEW_FIELDS = [
   ["course", "Course title (as listed)", "text", true], ["provider", "Provider (as listed)", "text", true],
@@ -745,7 +1004,7 @@ const REVIEW_FIELDS = [
   ["name", "Name to show (blank = Anonymous)", "text"], ["background", "Background", "text"],
   ["posted", "Date added", "date"],
 ];
-const FIELDS = { jobs: JOB_FIELDS, courses: COURSE_FIELDS, reviews: REVIEW_FIELDS };
+const FIELDS = { jobs: JOB_FIELDS, courses: COURSE_FIELDS, reviews: REVIEW_FIELDS, employers: EMPLOYER_FIELDS };
 let editing = null;
 
 function field([name, label, type, req], val) {
@@ -828,10 +1087,12 @@ $("edit-form").addEventListener("submit", async e => {
   if (!item.featured_until) delete item.featured_until;
   if (!item.referral_url) delete item.referral_url;
   if (!item.promo_code) delete item.promo_code;
-  if (!item.posted) item.posted = TODAY;
+  if (!item.elcas) delete item.elcas;
+  if (kind === "employers") { for (const [k, v] of Object.entries(item)) if (v === "" || (Array.isArray(v) && !v.length)) delete item[k]; }
+  else if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));
-    let base = slug(kind === "reviews" ? `review ${item.provider} ${item.course}` : `${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
+    let base = slug(kind === "reviews" ? `review ${item.provider} ${item.course}` : kind === "employers" ? item.name : `${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
     while (taken.has(n)) n = `${base}-${k++}`;
     item.id = n;
   }
@@ -887,6 +1148,7 @@ document.addEventListener("click", async e => {
 $("add-job").onclick = () => openEditor("jobs");
 $("add-course").onclick = () => openEditor("courses");
 $("add-review").onclick = () => openEditor("reviews");
+$("add-employer").onclick = () => openEditor("employers");
 $("review-q").addEventListener("input", renderReviews);
 ["job-q", "job-f"].forEach(id => $(id).addEventListener("input", () => renderList("jobs")));
 ["course-q", "course-f"].forEach(id => $(id).addEventListener("input", () => renderList("courses")));
@@ -896,6 +1158,8 @@ function showTab(tab) {
   document.querySelectorAll("nav button").forEach(b => b.toggleAttribute("aria-current", b.dataset.tab === tab));
   if (tab === "reviews" && TOKEN) loadPending();
   if (tab === "talent" && TOKEN) loadTalent();
+  if (tab === "alertsapp" && TOKEN) loadAlerts();
+  if (tab === "featured") renderFeatured();
   if (tab === "settings") { $("gc-code").value = store.get("gc-code") || GC_CODE; $("gc-key").value = store.get("gc-key") || ""; }
   history.replaceState(null, "", "#" + tab);
   window.scrollTo(0, 0);
@@ -914,8 +1178,8 @@ async function signIn(token, remember) {
   TOKEN = token;
   const repo = await gh(`/repos/${REPO}`);
   if (!repo.permissions?.push) { const e = new Error("This key can see the repository but can't edit it. Set Contents to Read and write."); e.status = 403; throw e; }
-  await Promise.all([load("jobs"), load("courses"), load("reviews")]);
-  loadPending();
+  await Promise.all([load("jobs"), load("courses"), load("reviews"), load("employers").catch(() => {})]);
+  loadPending().then(renderComingUp); loadReminders(); loadAlerts(); loadTalent(); loadSitrep();
   store.set("gh-token", token, remember);
   const user = await gh("/user").catch(() => null);
   $("who").textContent = user ? "Signed in as " + user.login : "";
