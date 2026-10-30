@@ -50,6 +50,12 @@ Example `employers.json` entry:
 - `ranges`: each has `role`, `category`, `region`, `where`, `low` and/or `high`, `currency`, `per` (`day`, `month`, `year` or `hour`) and `basis` (`estimate`, `advert` or `published`, with `source` and `source_url` for the last two). Update `updated` when you review them.
 - `reports`: anonymous reports arrive by email (FormSubmit, subject "Pay report"). Nothing is published until it's added here. Before adding one, drop anything identifying and round the pay. Fields: `role`, `category`, `region`, `country`, `employer_type`, `amount`, `currency`, `per`, `year`, and optional `rotation`, `experience` and `extras`.
 
+## Service leaver hub
+
+`/leavers/` covers UK resettlement funding (ELC, IRTC, SLC, GRT), which courses usually count for ELCAS, what each military trade fits on the circuit, a first contract checklist (ticks kept in the visitor's browser only) and who can help. The page body lives in `scripts/leavers.html`; `scripts/build_pages.py` wraps it in the site header and footer, so don't edit `leavers/index.html` by hand. Check the funding figures against the CTP and ELCAS sites now and then.
+
+It also lists the open courses from `courses.json`. Add `"elcas": "1234"` to a course once the provider has given you their ELCAS number, and it shows a green ELCAS tag there.
+
 ## Job alerts app
 
 `/app/` is an installable phone app (a web app: Android installs it from Chrome, iPhone from Safari's Share > Add to Home Screen, iOS 16.4 or newer). People pick job types, regions, keywords and course types, pay $6 a year, and get a push notification when a matching job or course goes up. It also lists the open jobs that match.
