@@ -12,6 +12,7 @@ import re
 import sys
 
 from build_pages import ROOT, SITE, e, fmt, is_open, page
+from referral import booking_url, promo_text
 
 SITREP = ROOT / "sitrep"
 COURSE_WEEKS = 8
@@ -48,8 +49,9 @@ def content(day, issue, previous):
                 f'<span {SMALL}>{e(j["category"])} · {e(j["location"])} · {closing}</span></li>')
 
     def course(c):
-        return (f'<li style="margin-bottom:10px"><a {A} href="{e(c["url"])}"><b>{e(c["title"])}</b></a>, {e(c["provider"])}<br>'
-                f'<span {SMALL}>Starts {fmt(c["start"])} · {e(c["location"])}{" · " + e(c["price"]) if c.get("price") else ""}</span></li>')
+        return (f'<li style="margin-bottom:10px"><a {A} href="{e(booking_url(c, "sitrep"))}"><b>{e(c["title"])}</b></a>, {e(c["provider"])}<br>'
+                f'<span {SMALL}>Starts {fmt(c["start"])} · {e(c["location"])}{" · " + e(c["price"]) if c.get("price") else ""}'
+                f'{" · " + e(promo_text(c)) if c.get("promo_code") else ""}</span></li>')
 
     intro = (f"The first Sitrep: every open job on the site, plus course dates for the next {COURSE_WEEKS} weeks." if not previous else
              f"{len(new)} new job{'s' if len(new) != 1 else ''} since the last Sitrep, {len(jobs)} open in total.")

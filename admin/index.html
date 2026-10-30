@@ -546,11 +546,26 @@ async function renderVisits() {
     }
   }
   try {
-    show({ total: await get(`/stats/total?${range}`), pages: await get(`/stats/hits?${range}&limit=6`), refs: await get(`/stats/toprefs?${range}&limit=6`) });
+    const body = { total: await get(`/stats/total?${range}`), pages: await get(`/stats/hits?${range}&limit=6`), refs: await get(`/stats/toprefs?${range}&limit=6`) };
+    const all = await get(`/stats/hits?${range}&limit=100`);
+    body.bookings = (all.hits || []).filter(h => String(h.path).startsWith("book/")).map(h => ({ path: h.path, title: h.title, count: h.count }));
+    show(body);
   } catch (e) { fail(e); }
 }
 
-function drawVisits(el, code, { total, pages, refs }) {
+// Clicks through to book a course, last 30 days, per provider and course: compare with the provider's referral report.
+function bookingClicks(rows) {
+  if (!rows) return `<p class="muted small">Shows once the alerts Worker is redeployed with the latest worker.js, or with a GoatCounter key saved in this browser.</p>`;
+  if (!rows.length) return `<p class="muted small">No booking clicks yet.</p>`;
+  const course = id => files.courses.data.find(c => c.id === id);
+  const by = {};
+  rows.forEach(r => { const id = r.path.slice(5), c = course(id), who = c ? c.provider : r.title || "(course no longer listed)";
+    (by[who] ||= { n: 0, items: [] }).n += r.count; by[who].items.push(`${c ? esc(c.title) + " · " + esc(c.location) : esc(id)}: ${r.count}`); });
+  return `<div class="bars">${Object.entries(by).sort((a, b) => b[1].n - a[1].n).map(([who, v], i, arr) =>
+    `<div class="bar"><span title="${v.items.join("&#10;")}">${esc(who)}</span><i style="width:${(v.n / arr[0][1].n) * 100}%"></i><em>${v.n}</em></div>`).join("")}</div>
+    <p class="muted small">Hover a provider to see each course. Links carry utm_source=hostileenvironmentjobs and the course id, so providers can match bookings in their own analytics.</p>`;
+}
+function drawVisits(el, code, { total, pages, refs, bookings }) {
   const days = total.stats || [];
   const week = days.slice(-7).reduce((n, d) => n + (d.daily || 0), 0);
   const max = Math.max(1, ...days.map(d => d.daily || 0));
@@ -560,6 +575,7 @@ function drawVisits(el, code, { total, pages, refs }) {
     <div class="spark" title="Visitors per day, last 30 days">${days.map(d => `<i style="height:${((d.daily || 0) / max) * 100}%" title="${esc(d.day)}: ${d.daily || 0}"></i>`).join("")}</div>
     <h3 style="margin-top:14px">Top pages</h3>${list(pages.hits || [], "path")}
     <h3 style="margin-top:14px">Where visitors came from</h3>${list(refs.stats || [], "name")}
+    <h3 style="margin-top:14px">Course booking clicks</h3>${bookingClicks(bookings)}
     <p class="small"><a href="https://${esc(code)}.goatcounter.com" target="_blank" rel="noopener">Full stats on GoatCounter</a></p>`;
 }
 
@@ -720,6 +736,7 @@ const COURSE_FIELDS = [
   ["price", "Price", "text"], ["accreditation", "Accreditation", "text"],
   ["url", "Link to the course page", "url", true], ["summary", "Summary", "area", true],
   ["posted", "Date added", "date"],
+  ["referral_url", "Provider's tracked booking link (if they gave one)", "url"], ["promo_code", "Booking code from the provider", "text"],
 ];
 const REVIEW_FIELDS = [
   ["course", "Course title (as listed)", "text", true], ["provider", "Provider (as listed)", "text", true],
@@ -809,6 +826,8 @@ $("edit-form").addEventListener("submit", async e => {
   const item = { id: old.id, ...old, ...out };
   if (form.elements.sample && !form.elements.sample.checked) delete item.sample;
   if (!item.featured_until) delete item.featured_until;
+  if (!item.referral_url) delete item.referral_url;
+  if (!item.promo_code) delete item.promo_code;
   if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));

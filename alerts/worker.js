@@ -226,6 +226,9 @@ async function visits(env) {
     }
   }
   const body = { total: await get(`/stats/total?${range}`), pages: await get(`/stats/hits?${range}&limit=6`), refs: await get(`/stats/toprefs?${range}&limit=6`) };
+  // Course booking clicks are GoatCounter events named book/<course id>; the admin page totals them per provider.
+  const all = await get(`/stats/hits?${range}&limit=100`);
+  body.bookings = (all.hits || []).filter(h => String(h.path).startsWith("book/")).map(h => ({ path: h.path, title: h.title, count: h.count }));
   visitsCache = { body, until: Date.now() + 5 * 60 * 1000 };
   return body;
 }
