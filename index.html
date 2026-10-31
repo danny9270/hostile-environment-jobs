@@ -70,6 +70,8 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 26px 0 0; padding: 0; list-style: none; }
 .stats li { font: 500 14px var(--mono); color: var(--muted); }
 .stats b { display: block; font: 900 38px/1 var(--display); color: var(--ink); }
+.hero .guide-link { margin: 18px 0 0; font: 500 14px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.hero .guide-link a { color: var(--accent); }
 .hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .page-hero .wrap { padding-block: 44px 30px; }
 .page-hero h1 { font-size: clamp(36px, 6vw, 60px); }
@@ -233,6 +235,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="#courses" data-view="courses">Courses</a>
     <a href="#calendar" data-view="calendar">Calendar</a>
     <a href="#careers" data-view="careers">Getting in</a>
+    <a href="/guide/">How it works</a>
     <a href="/leavers/">Service leavers</a>
     <a href="/pay/">Pay guide</a>
     <a href="/deploy/">Deployment guide</a>
@@ -253,6 +256,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <h1>Work where it's <span class="amp">hard</span> to reach</h1>
       <p class="lede">Current jobs and courses for people who work in hostile and high-risk places. Every listing is checked by hand and links to the employer's own advert. Closed jobs drop off automatically.</p>
       <ul class="stats"><li><b id="stat-jobs">0</b>open jobs</li><li><b id="stat-courses">0</b>upcoming courses</li><li><b>4.4K</b>in the Facebook group</li></ul>
+      <p class="guide-link"><a href="/guide/">New here? Watch the 60-second guide &rarr;</a></p>
       <p class="sample-note" id="sample-note" hidden>This is a preview with sample jobs.</p>
     </div>
   </div>
