@@ -77,6 +77,8 @@ details summary { cursor: pointer; font-weight: 600; }
 .kit-list li small { display: block; color: var(--muted); font-size: 14px; }
 .kit-list .q { font: 900 20px/1.1 var(--display); color: var(--accent); white-space: nowrap; text-align: right; flex: none; }
 .kit-list .q small { font: 500 12px var(--mono); }
+.kit-list .q.locked { color: var(--muted); }
+.kit-lock { border-left: 3px solid var(--accent); padding-left: 10px; }
 @media print {
   body.print-kit header, body.print-kit footer, body.print-kit .app > :not(#kit), body.print-kit #kit .row-btns, body.print-kit #kit .where { display: none !important; }
   body.print-kit, body.print-kit main, body.print-kit #kit { background: #fff !important; color: #000 !important; border: 0; }
@@ -402,14 +404,9 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="panel" id="kit">
     <h2>EOD team kit list</h2>
     <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
-    <div id="kit-locked">
-      <p id="kit-teaser"></p>
-      <p class="sub">The full list, with quantities, notes, supplier links and a printable checklist, comes with job alerts.</p>
-    </div>
-    <div id="kit-full" hidden>
-      <div class="row-btns"><button class="btn" type="button" id="kit-print">Print or save as PDF checklist</button></div>
-      <div id="kit-body"></div>
-    </div>
+    <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with job alerts. <a href="#buy">Get job alerts</a></p>
+    <div class="row-btns"><button class="btn" type="button" id="kit-print" hidden>Print or save as PDF checklist</button></div>
+    <div id="kit-body"></div>
   </div>
 
   <div class="panel rota" id="rota">
@@ -887,20 +884,19 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 
 drawPrefs();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
-// Kit list: subscribers see every item; everyone else sees the section names as a teaser.
+// Kit list: everyone sees the items; quantities, notes, supplier links and the checklist need a paid account.
 let KIT = null;
 function drawKit() {
   if (!KIT) return;
   const open = Boolean(acct?.active);
   $("kit-locked").hidden = open;
-  $("kit-full").hidden = !open;
-  $("kit-teaser").textContent = KIT.sections.map(s => `${s.name} (${s.items.length})`).join(" · ");
-  if (!open) return;
+  $("kit-print").hidden = !open;
   const sup = KIT.suppliers;
   $("kit-body").innerHTML = KIT.sections.map(s => `<div class="kit-sec"><h3>${esc(s.name)}</h3><ul class="kit-list">${s.items.map(it => {
+    if (!open) return `<li><span>${esc(it.item)}</span><span class="q locked" aria-label="Quantity for subscribers">?</span></li>`;
     const links = (it.suppliers || []).map(k => `<a href="${esc(sup[k].url)}" target="_blank" rel="noopener">${esc(sup[k].name)}</a>`).join(", ");
     return `<li><span>${esc(it.item)}${it.note ? `<small>${esc(it.note)}</small>` : ""}${links ? `<small class="where">Where to look: ${links}</small>` : ""}</span><span class="q">${esc(it.qty)}${it.unit ? `<small> ${esc(it.unit)}</small>` : ""}</span></li>`;
-  }).join("")}</ul></div>`).join("") + (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("");
+  }).join("")}</ul></div>`).join("") + (open ? (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("") : "");
 }
 $("kit-print").onclick = () => { document.body.classList.add("print-kit"); window.print(); };
 addEventListener("afterprint", () => document.body.classList.remove("print-kit"));
