@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Job alerts app: new jobs on your phone | Hostile Environment Jobs</title>
-<meta name="description" content="Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.">
+<title>The H.E. Jobs app: job alerts, rotation tracker and EOD kit list | Hostile Environment Jobs</title>
+<meta name="description" content="Job alerts for new EOD, mine action, security, medic and support jobs straight to your phone, an EOD team kit list and a free rotation tracker that counts down to your next leave. $6 a year.">
 <link rel="canonical" href="https://hostileenvironmentjobs.com/app/">
-<meta property="og:title" content="Job alerts app: new jobs on your phone | Hostile Environment Jobs">
-<meta property="og:description" content="Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.">
+<meta property="og:title" content="The H.E. Jobs app: job alerts, rotation tracker and EOD kit list | Hostile Environment Jobs">
+<meta property="og:description" content="Job alerts for new EOD, mine action, security, medic and support jobs straight to your phone, an EOD team kit list and a free rotation tracker that counts down to your next leave. $6 a year.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hostileenvironmentjobs.com/app/">
 <meta property="og:site_name" content="Hostile Environment Jobs">
@@ -296,7 +296,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/pay/">Pay guide</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
-    <a href="/app/" aria-current="page">Job alerts</a>
+    <a href="/app/" aria-current="page">The App</a>
     <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
     <a href="/#about" data-view="about">About</a>
@@ -304,9 +304,9 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 <main class="wrap">
 <div class="app">
-  <p class="eyebrow" style="margin-top:32px">Job alerts app</p>
-  <h1>New jobs, straight to your <span class="amp">phone</span></h1>
-  <p>Pick the work and regions you want. When a matching job or course goes up on the site, your phone gets a notification within a few hours, wherever you are. No laptop needed and no app store: it installs from this page. There's a free rotation tracker in it too, counting down to your next leave.</p>
+  <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
+  <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
+  <p>Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
 
   <div class="panel hot" id="install" hidden>
     <h2>First, add it to your home screen</h2>
@@ -365,7 +365,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <li>The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
       <li id="renew-perk">Renews each year, cancel any time</li>
     </ul>
-    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get job alerts</button></div>
+    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $6 a year</button></div>
     <p class="msg" id="pay-msg"></p>
     <details style="margin-top:10px"><summary>Already paid? Use your code</summary>
       <p class="sub">Your code was shown after you paid and is under "Your account" on your other phone.</p>
@@ -404,7 +404,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="panel" id="kit">
     <h2>EOD team kit list</h2>
     <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
-    <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with job alerts. <a href="#buy">Get job alerts</a></p>
+    <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with the app. <a href="#buy">Get the app</a></p>
     <div class="row-btns"><button class="btn" type="button" id="kit-print" hidden>Print or save as PDF checklist</button></div>
     <div id="kit-body"></div>
   </div>
@@ -593,7 +593,7 @@ async function draw() {
   const until = acct.free ? "free while testing" : acct.active ? (acct.renews ? "renews " : "paid until ") + fmtDate(acct.paid_until) : acct.paid_until ? "ran out " + fmtDate(acct.paid_until) : "not paid yet";
   $("acct-status").innerHTML = `Alerts: <b class="${acct.active && sub ? "" : "off"}">${acct.active ? (sub ? "on for this phone" : "notifications not on yet") : "off"}</b> · ${esc(until)} · ${acct.devices.length} phone${acct.devices.length === 1 ? "" : "s"}`;
   $("renew").hidden = acct.free || acct.renews || (acct.active && acct.paid_until - Date.now() / 1000 > 30 * 86400);
-  if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get job alerts again.";
+  if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get the app again.";
   $("notify").hidden = !acct.active || Boolean(sub) || !pushable;
   if (acct.active && !$("notify").hidden && needsHome) {
     $("enable").disabled = true;

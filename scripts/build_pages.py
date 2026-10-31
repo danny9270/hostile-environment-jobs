@@ -280,8 +280,8 @@ def main():
     app = (ROOT / "scripts" / "app.html").read_text()
     app_style = re.match(r"\s*<style>.*?</style>\n", app, re.S).group(0)
     (ROOT / "app").mkdir(exist_ok=True)
-    (ROOT / "app" / "index.html").write_text(page("Job alerts app: new jobs on your phone | Hostile Environment Jobs",
-        "Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.",
+    (ROOT / "app" / "index.html").write_text(page("The H.E. Jobs app: job alerts, rotation tracker and EOD kit list | Hostile Environment Jobs",
+        "Job alerts for new EOD, mine action, security, medic and support jobs straight to your phone, an EOD team kit list and a free rotation tracker that counts down to your next leave. $6 a year.",
         "/app/", app[len(app_style):], app_style).replace('<a href="/app/">', '<a href="/app/" aria-current="page">', 1))
 
     # Talent pool: operators' profiles and employers' search, kept by the alerts Worker and drawn in the browser.
