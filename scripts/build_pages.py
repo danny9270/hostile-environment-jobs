@@ -308,7 +308,15 @@ def main():
         "Leaving the forces for EOD, security, medic or mine action work? Resettlement funding (ELC, IRTC, SLC), which courses count, what your trade fits and a first contract checklist.",
         "/leavers/", lv[len(lv_style):], lv_style).replace('<a href="/leavers/">', '<a href="/leavers/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # How it works: the guide video page.
+    gd = (ROOT / "scripts" / "guide.html").read_text()
+    gd_style = re.match(r"\s*<style>.*?</style>\n", gd, re.S).group(0)
+    (ROOT / "guide").mkdir(exist_ok=True)
+    (ROOT / "guide" / "index.html").write_text(page("How it works: a quick video guide to the site | Hostile Environment Jobs",
+        "Watch how to search EOD, mine action, security and medic jobs, find courses, post a job free and use the pay guide, CV builder, deployment guide, talent pool and app.",
+        "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
