@@ -222,6 +222,27 @@ URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:course-zif-heat-hammelburg-jan-2027@hostileenvironmentjobs.com
+DTSTAMP:20261031T000000Z
+DTSTART;VALUE=DATE:20270123
+DTEND;VALUE=DATE:20270124
+SUMMARY:Course starts: Hostile Environment Awareness Training (HEAT) (Hamme
+ lburg\, Germany)
+LOCATION:Hammelburg\, Germany
+DESCRIPTION:ZIF Center for International Peace Operations\, Hammelburg\, Ge
+ rmany. 7 days. €1\,700 for external participants incl. board (see provid
+ er)\nWeek-long HEAT for staff heading to peace or humanitarian missions\; 
+ non-German nationals welcome. Apply by 23 Dec with CV and motivation lette
+ r\; BSAFE is a prerequisite. Further runs Feb\, Apr\, Jul and Nov 2027.\n\
+ nBook: https://www.zif-berlin.org/en/details-hostile-environment-awareness
+ -training-heat?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_c
+ ampaign=course-calendar&utm_content=zif-heat-hammelburg-jan-2027
+URL:https://www.zif-berlin.org/en/details-hostile-environment-awareness-tra
+ ining-heat?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campa
+ ign=course-calendar&utm_content=zif-heat-hammelburg-jan-2027
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:course-pcm-imas-eod-3-feb-2027@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20270208
