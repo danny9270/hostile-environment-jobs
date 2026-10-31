@@ -1,79 +1,352 @@
 {
   "updated": "2026-10-31",
   "suppliers": {
-    "issee": {"name": "ISSEE", "url": "https://issee.co.uk/equipment"},
-    "guartel": {"name": "Guartel", "url": "http://www.guartel.com"},
-    "eodgear": {"name": "EOD Gear", "url": "https://www.eod-gear.com/eod-equipment/"},
-    "spservices": {"name": "SP Services", "url": "https://www.spservices.co.uk"},
-    "nar": {"name": "North American Rescue", "url": "https://www.narescue.com"},
-    "amk": {"name": "Adventure Medical Kits", "url": "https://adventuremedicalkits.com"}
+    "issee": {
+      "name": "ISSEE",
+      "url": "https://issee.co.uk/equipment"
+    },
+    "guartel": {
+      "name": "Guartel",
+      "url": "http://www.guartel.com"
+    },
+    "eodgear": {
+      "name": "EOD Gear",
+      "url": "https://www.eod-gear.com/eod-equipment/"
+    },
+    "spservices": {
+      "name": "SP Services",
+      "url": "https://www.spservices.co.uk"
+    },
+    "nar": {
+      "name": "North American Rescue",
+      "url": "https://www.narescue.com"
+    },
+    "amk": {
+      "name": "Adventure Medical Kits",
+      "url": "https://adventuremedicalkits.com"
+    },
+    "vallon": {
+      "name": "Vallon",
+      "url": "https://www.vallon.de/en/metal-detectors"
+    },
+    "ebinger": {
+      "name": "Ebinger",
+      "url": "https://ebingergroup.de/en"
+    },
+    "ceia": {
+      "name": "CEIA",
+      "url": "http://www.ceia.net"
+    },
+    "minelab": {
+      "name": "Minelab",
+      "url": "https://www.minelab.com"
+    },
+    "rofi": {
+      "name": "ROFI",
+      "url": "https://www.rofi.com"
+    }
   },
   "sections": [
-    {"name": "Vehicle", "items": [
-      {"item": "4x4 safety vehicle (troop carrier class)", "qty": "1", "note": "Carries the team and kit. Fitted for CASEVAC: stretcher anchorages, head blocks, oxygen clamps, IV hooks. No non-medical kit carried in it during working hours."}
-    ]},
-    {"name": "Detection", "items": [
-      {"item": "Hand-held metal detector", "qty": "6", "note": "Five searchers plus one spare. Makers include Vallon (VMH3/VMH4)."},
-      {"item": "Large-loop detector", "qty": "1", "note": "For deeper, larger UXO in open ground."}
-    ]},
-    {"name": "Personal protective equipment", "items": [
-      {"item": "PPE visor", "qty": "6", "note": "One per team member."},
-      {"item": "PPE frontal vest", "qty": "6", "note": "One per team member."},
-      {"item": "Work gloves", "qty": "5", "unit": "pairs"}
-    ]},
-    {"name": "Demolition", "items": [
-      {"item": "Exploder", "qty": "1", "note": "Electric initiation."},
-      {"item": "Continuity tester", "qty": "1", "note": "Circuit test before firing."},
-      {"item": "Firing cable, 500 m", "qty": "1", "suppliers": ["issee"]},
-      {"item": "Hook and line kit", "qty": "1", "note": "Remote pull of items before destruction.", "suppliers": ["issee", "guartel", "eodgear"]},
-      {"item": "Detonator transport box (metal, foam-lined)", "qty": "1", "note": "Explosives and detonators are drawn per task and carried separately."}
-    ]},
-    {"name": "Survey, navigation, comms and reporting", "items": [
-      {"item": "Hand-held GPS", "qty": "1", "note": "Task and hazard polygons."},
-      {"item": "Prismatic compass", "qty": "1"},
-      {"item": "Tablet for survey reporting", "qty": "1", "note": "Daily data, checked by the team leader each evening."},
-      {"item": "Smartphone (team leader)", "qty": "1", "note": "Tasking and CASEVAC calls."},
-      {"item": "VHF hand-held radio", "qty": "6", "note": "One each; required for demolitions."},
-      {"item": "Loud hailer", "qty": "1", "note": "Clearing the area before demolitions."},
-      {"item": "Whistle (team leader)", "qty": "2"}
-    ]},
-    {"name": "Medical and CASEVAC", "items": [
-      {"item": "Trauma bag", "qty": "2", "note": "One per ICP medic.", "suppliers": ["spservices"]},
-      {"item": "IFAK (individual first aid kit)", "qty": "6", "note": "One per team member.", "suppliers": ["nar", "amk", "spservices"]},
-      {"item": "Vehicle first aid kit", "qty": "1", "suppliers": ["spservices"]},
-      {"item": "Spine board with spider harness", "qty": "1", "note": "Kept in the safety vehicle.", "suppliers": ["spservices"]},
-      {"item": "Scoop stretcher", "qty": "1", "note": "Locked to the safety vehicle.", "suppliers": ["spservices"]},
-      {"item": "Oxygen cylinder (size F) with regulator", "qty": "1", "note": "At least 1,350 litres on board."}
-    ]},
-    {"name": "Hand tools and marking", "items": [
-      {"item": "Tool bag", "qty": "5", "note": "One per searcher."},
-      {"item": "Prodder", "qty": "5"},
-      {"item": "Shears, large", "qty": "5"},
-      {"item": "Shears, small", "qty": "5"},
-      {"item": "Tripwire feeler", "qty": "5"},
-      {"item": "Entrenching tool", "qty": "5"},
-      {"item": "Heavy-duty magnet", "qty": "5"},
-      {"item": "2 kg hammer", "qty": "5"},
-      {"item": "5 m tape measure", "qty": "5"},
-      {"item": "Base stick", "qty": "5"},
-      {"item": "Heavy-duty plastic bucket", "qty": "5"},
-      {"item": "Shovel", "qty": "4"},
-      {"item": "Paint brush, 1.5 inch", "qty": "10"},
-      {"item": "Marking paint, red and white", "qty": "2", "unit": "boxes of 12"},
-      {"item": "12 mm rope, 300 m", "qty": "1", "note": "Lane and boundary marking."}
-    ]},
-    {"name": "Site and welfare", "items": [
-      {"item": "Collapsible gazebo", "qty": "1", "note": "Control point and rest area."},
-      {"item": "Folding table", "qty": "1"},
-      {"item": "Plastic chairs", "qty": "6"},
-      {"item": "Heavy-duty ground sheet", "qty": "2"},
-      {"item": "Whiteboard, A1", "qty": "2", "note": "Site map and task briefing."},
-      {"item": "Water bottle", "qty": "6"},
-      {"item": "Rechargeable head torch", "qty": "2"}
-    ]},
-    {"name": "Personal issue", "items": [
-      {"item": "Uniform set: hat, two T-shirts, two shirts, winter jacket, two trousers, boots", "qty": "2", "unit": "per person"}
-    ]}
+    {
+      "name": "Vehicle",
+      "items": [
+        {
+          "item": "4x4 safety vehicle (troop carrier class)",
+          "qty": "1",
+          "note": "Carries the team and kit. Fitted for CASEVAC: stretcher anchorages, head blocks, oxygen clamps, IV hooks. No non-medical kit carried in it during working hours."
+        }
+      ]
+    },
+    {
+      "name": "Detection",
+      "items": [
+        {
+          "item": "Hand-held metal detector",
+          "qty": "6",
+          "note": "Five searchers plus one spare.",
+          "suppliers": [
+            "vallon",
+            "ebinger",
+            "ceia",
+            "minelab"
+          ]
+        },
+        {
+          "item": "Large-loop detector",
+          "qty": "1",
+          "note": "For deeper, larger UXO in open ground.",
+          "suppliers": [
+            "ebinger",
+            "vallon"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Personal protective equipment",
+      "items": [
+        {
+          "item": "PPE visor",
+          "qty": "6",
+          "note": "One per team member.",
+          "suppliers": [
+            "rofi"
+          ]
+        },
+        {
+          "item": "PPE frontal vest",
+          "qty": "6",
+          "note": "One per team member.",
+          "suppliers": [
+            "rofi"
+          ]
+        },
+        {
+          "item": "Work gloves",
+          "qty": "5",
+          "unit": "pairs"
+        }
+      ]
+    },
+    {
+      "name": "Demolition",
+      "items": [
+        {
+          "item": "Exploder",
+          "qty": "1",
+          "note": "Electric initiation."
+        },
+        {
+          "item": "Continuity tester",
+          "qty": "1",
+          "note": "Circuit test before firing."
+        },
+        {
+          "item": "Firing cable, 500 m",
+          "qty": "1",
+          "suppliers": [
+            "issee"
+          ]
+        },
+        {
+          "item": "Hook and line kit",
+          "qty": "1",
+          "note": "Remote pull of items before destruction.",
+          "suppliers": [
+            "issee",
+            "guartel",
+            "eodgear"
+          ]
+        },
+        {
+          "item": "Detonator transport box (metal, foam-lined)",
+          "qty": "1",
+          "note": "Explosives and detonators are drawn per task and carried separately."
+        }
+      ]
+    },
+    {
+      "name": "Survey, navigation, comms and reporting",
+      "items": [
+        {
+          "item": "Hand-held GPS",
+          "qty": "1",
+          "note": "Task and hazard polygons."
+        },
+        {
+          "item": "Prismatic compass",
+          "qty": "1"
+        },
+        {
+          "item": "Tablet for survey reporting",
+          "qty": "1",
+          "note": "Daily data, checked by the team leader each evening."
+        },
+        {
+          "item": "Smartphone (team leader)",
+          "qty": "1",
+          "note": "Tasking and CASEVAC calls."
+        },
+        {
+          "item": "VHF hand-held radio",
+          "qty": "6",
+          "note": "One each; required for demolitions."
+        },
+        {
+          "item": "Loud hailer",
+          "qty": "1",
+          "note": "Clearing the area before demolitions."
+        },
+        {
+          "item": "Whistle (team leader)",
+          "qty": "2"
+        }
+      ]
+    },
+    {
+      "name": "Medical and CASEVAC",
+      "items": [
+        {
+          "item": "Trauma bag",
+          "qty": "2",
+          "note": "One per ICP medic.",
+          "suppliers": [
+            "spservices"
+          ]
+        },
+        {
+          "item": "IFAK (individual first aid kit)",
+          "qty": "6",
+          "note": "One per team member.",
+          "suppliers": [
+            "nar",
+            "amk",
+            "spservices"
+          ]
+        },
+        {
+          "item": "Vehicle first aid kit",
+          "qty": "1",
+          "suppliers": [
+            "spservices"
+          ]
+        },
+        {
+          "item": "Spine board with spider harness",
+          "qty": "1",
+          "note": "Kept in the safety vehicle.",
+          "suppliers": [
+            "spservices"
+          ]
+        },
+        {
+          "item": "Scoop stretcher",
+          "qty": "1",
+          "note": "Locked to the safety vehicle.",
+          "suppliers": [
+            "spservices"
+          ]
+        },
+        {
+          "item": "Oxygen cylinder (size F) with regulator",
+          "qty": "1",
+          "note": "At least 1,350 litres on board."
+        }
+      ]
+    },
+    {
+      "name": "Hand tools and marking",
+      "items": [
+        {
+          "item": "Tool bag",
+          "qty": "5",
+          "note": "One per searcher."
+        },
+        {
+          "item": "Prodder",
+          "qty": "5"
+        },
+        {
+          "item": "Shears, large",
+          "qty": "5"
+        },
+        {
+          "item": "Shears, small",
+          "qty": "5"
+        },
+        {
+          "item": "Tripwire feeler",
+          "qty": "5"
+        },
+        {
+          "item": "Entrenching tool",
+          "qty": "5"
+        },
+        {
+          "item": "Heavy-duty magnet",
+          "qty": "5"
+        },
+        {
+          "item": "2 kg hammer",
+          "qty": "5"
+        },
+        {
+          "item": "5 m tape measure",
+          "qty": "5"
+        },
+        {
+          "item": "Base stick",
+          "qty": "5"
+        },
+        {
+          "item": "Heavy-duty plastic bucket",
+          "qty": "5"
+        },
+        {
+          "item": "Shovel",
+          "qty": "4"
+        },
+        {
+          "item": "Paint brush, 1.5 inch",
+          "qty": "10"
+        },
+        {
+          "item": "Marking paint, red and white",
+          "qty": "2",
+          "unit": "boxes of 12"
+        },
+        {
+          "item": "12 mm rope, 300 m",
+          "qty": "1",
+          "note": "Lane and boundary marking."
+        }
+      ]
+    },
+    {
+      "name": "Site and welfare",
+      "items": [
+        {
+          "item": "Collapsible gazebo",
+          "qty": "1",
+          "note": "Control point and rest area."
+        },
+        {
+          "item": "Folding table",
+          "qty": "1"
+        },
+        {
+          "item": "Plastic chairs",
+          "qty": "6"
+        },
+        {
+          "item": "Heavy-duty ground sheet",
+          "qty": "2"
+        },
+        {
+          "item": "Whiteboard, A1",
+          "qty": "2",
+          "note": "Site map and task briefing."
+        },
+        {
+          "item": "Water bottle",
+          "qty": "6"
+        },
+        {
+          "item": "Rechargeable head torch",
+          "qty": "2"
+        }
+      ]
+    },
+    {
+      "name": "Personal issue",
+      "items": [
+        {
+          "item": "Uniform set: hat, two T-shirts, two shirts, winter jacket, two trousers, boots",
+          "qty": "2",
+          "unit": "per person"
+        }
+      ]
+    }
   ],
   "notes": [
     "Consumables (marking paint, batteries, demolition sundries) and medical resupply are usually replenished monthly."
