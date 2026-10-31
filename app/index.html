@@ -71,6 +71,19 @@ details summary { cursor: pointer; font-weight: 600; }
 .logs li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .logs li small { display: block; color: var(--muted); font: 500 13px var(--mono); }
 .logs button { font: 600 13px var(--body); background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 9px; cursor: pointer; flex: none; }
+.kit-sec h3 { margin: 16px 0 6px; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.kit-list { list-style: none; padding: 0; margin: 0; }
+.kit-list li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.kit-list li small { display: block; color: var(--muted); font-size: 14px; }
+.kit-list .q { font: 900 20px/1.1 var(--display); color: var(--accent); white-space: nowrap; text-align: right; flex: none; }
+.kit-list .q small { font: 500 12px var(--mono); }
+@media print {
+  body.print-kit header, body.print-kit footer, body.print-kit .app > :not(#kit), body.print-kit #kit .row-btns, body.print-kit #kit .where { display: none !important; }
+  body.print-kit, body.print-kit main, body.print-kit #kit { background: #fff !important; color: #000 !important; border: 0; }
+  body.print-kit .kit-list li { color: #000; break-inside: avoid; padding-left: 24px; position: relative; }
+  body.print-kit .kit-list li::before { content: ""; position: absolute; left: 0; top: 10px; width: 13px; height: 13px; border: 1.5px solid #000; }
+  body.print-kit .kit-list .q, body.print-kit .kit-list li small { color: #000; }
+}
 @media (max-width: 640px) { .rota form .row3 { grid-template-columns: 1fr 1fr; } .rota .count b { font-size: 46px; } }
 </style>
 <style>
@@ -347,6 +360,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <li>Alerts for new jobs and courses that match what you picked</li>
       <li>Change what you get any time</li>
       <li>Use it on up to 5 phones</li>
+      <li>The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
       <li id="renew-perk">Renews each year, cancel any time</li>
     </ul>
     <div class="row-btns"><button class="btn primary" type="button" id="pay">Get job alerts</button></div>
@@ -383,6 +397,19 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <a class="btn" id="refer-fb" target="_blank" rel="noopener">Facebook</a>
     </div>
     <p class="msg" id="refer-msg"></p>
+  </div>
+
+  <div class="panel" id="kit">
+    <h2>EOD team kit list</h2>
+    <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
+    <div id="kit-locked">
+      <p id="kit-teaser"></p>
+      <p class="sub">The full list, with quantities, notes, supplier links and a printable checklist, comes with job alerts.</p>
+    </div>
+    <div id="kit-full" hidden>
+      <div class="row-btns"><button class="btn" type="button" id="kit-print">Print or save as PDF checklist</button></div>
+      <div id="kit-body"></div>
+    </div>
   </div>
 
   <div class="panel rota" id="rota">
@@ -559,6 +586,7 @@ async function draw() {
   $("buy").hidden = Boolean(acct?.active);
   $("referred").hidden = Boolean(acct) || !store.get("hej-ref");
   drawRefer();
+  drawKit();
   $("save-row").hidden = !acct;
   $("account").hidden = !acct;
   $("notify").hidden = true;
@@ -859,6 +887,24 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 
 drawPrefs();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+// Kit list: subscribers see every item; everyone else sees the section names as a teaser.
+let KIT = null;
+function drawKit() {
+  if (!KIT) return;
+  const open = Boolean(acct?.active);
+  $("kit-locked").hidden = open;
+  $("kit-full").hidden = !open;
+  $("kit-teaser").textContent = KIT.sections.map(s => `${s.name} (${s.items.length})`).join(" · ");
+  if (!open) return;
+  const sup = KIT.suppliers;
+  $("kit-body").innerHTML = KIT.sections.map(s => `<div class="kit-sec"><h3>${esc(s.name)}</h3><ul class="kit-list">${s.items.map(it => {
+    const links = (it.suppliers || []).map(k => `<a href="${esc(sup[k].url)}" target="_blank" rel="noopener">${esc(sup[k].name)}</a>`).join(", ");
+    return `<li><span>${esc(it.item)}${it.note ? `<small>${esc(it.note)}</small>` : ""}${links ? `<small class="where">Where to look: ${links}</small>` : ""}</span><span class="q">${esc(it.qty)}${it.unit ? `<small> ${esc(it.unit)}</small>` : ""}</span></li>`;
+  }).join("")}</ul></div>`).join("") + (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("");
+}
+$("kit-print").onclick = () => { document.body.classList.add("print-kit"); window.print(); };
+addEventListener("afterprint", () => document.body.classList.remove("print-kit"));
+fetch("/kit.json", { cache: "no-cache" }).then(r => r.json()).then(d => { KIT = d; drawKit(); }).catch(() => {});
 fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); }).catch(() => {});
 (API ? api("/api/config").then(c => config = c).catch(err => { $("pay-msg").textContent = "Alerts are unavailable just now: " + err.message; }) : Promise.resolve()).then(load);
 </script>

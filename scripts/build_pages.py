@@ -276,24 +276,6 @@ def main():
         "Indicative day rates and salaries for EOD, mine action, security, medic and support roles, plus anonymous pay reports.",
         "/pay/", pay[len(pay_style):], pay_style))
 
-    # Kit list: static page drawn from kit.json, with supplier links where we know a maker or dealer.
-    kit_data = json.loads((ROOT / "kit.json").read_text())
-    kit = (ROOT / "scripts" / "kit.html").read_text()
-    kit_style = re.match(r"\s*<style>.*?</style>\n", kit, re.S).group(0)
-    sup = kit_data["suppliers"]
-    def kit_row(it):
-        links = ", ".join(f'<a href="{e(sup[s]["url"])}" rel="noopener">{e(sup[s]["name"])}</a>' for s in it.get("suppliers", []))
-        return (f'<li class="kit-row"><div><h3>{e(it["item"])}</h3>'
-                + (f'<p class="note">{e(it["note"])}</p>' if it.get("note") else "")
-                + (f'<p class="where">Where to look: {links}</p>' if links else "")
-                + f'</div><div class="qty">{e(it["qty"])}' + (f'<small>{e(it["unit"])}</small>' if it.get("unit") else "") + "</div></li>")
-    kit_body = "".join(f'<section class="kit-section"><h2>{e(sec["name"])}</h2><ul class="kit-list">{"".join(kit_row(it) for it in sec["items"])}</ul></section>' for sec in kit_data["sections"])
-    kit_body += "".join(f'<p class="kit-foot">{e(n)}</p>' for n in kit_data.get("notes", []))
-    (ROOT / "kit").mkdir(exist_ok=True)
-    (ROOT / "kit" / "index.html").write_text(page("EOD team kit list: what a mine action team carries | Hostile Environment Jobs",
-        "A typical humanitarian EOD and mine action multi-task team kit list: detectors, PPE, demolition, comms, medical and CASEVAC, hand tools and welfare, with quantities and where to buy. Printable checklist.",
-        "/kit/", kit[len(kit_style):].replace("<!--KIT-->", kit_body), kit_style))
-
     # Job alerts app: like the pay guide, the page does its work in the browser.
     app = (ROOT / "scripts" / "app.html").read_text()
     app_style = re.match(r"\s*<style>.*?</style>\n", app, re.S).group(0)
@@ -326,7 +308,7 @@ def main():
         "Leaving the forces for EOD, security, medic or mine action work? Resettlement funding (ELC, IRTC, SLC), which courses count, what your trade fits and a first contract checklist.",
         "/leavers/", lv[len(lv_style):], lv_style).replace('<a href="/leavers/">', '<a href="/leavers/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/kit/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
