@@ -312,7 +312,7 @@ def main():
     gd = (ROOT / "scripts" / "guide.html").read_text()
     gd_style = re.match(r"\s*<style>.*?</style>\n", gd, re.S).group(0)
     (ROOT / "guide").mkdir(exist_ok=True)
-    (ROOT / "guide" / "index.html").write_text(page("How it works: a 60-second guide to the site | Hostile Environment Jobs",
+    (ROOT / "guide" / "index.html").write_text(page("How it works: a quick video guide to the site | Hostile Environment Jobs",
         "Watch how to search EOD, mine action, security and medic jobs, find courses, post a job free and use the pay guide, CV builder, deployment guide, talent pool and app.",
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
