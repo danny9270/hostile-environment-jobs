@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-30T11:01:33Z",
+ "updated": "2026-10-31T10:36:00Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -154,9 +154,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/ethiopia",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-26",
-    "reviewed": "2026-10-26",
+    "updated": "2026-10-30",
+    "reviewed": "2026-10-30",
     "changes": [
+     {
+      "date": "2026-10-30",
+      "note": "Update on areas that the FCDO advise against all travel to within 10km of the border with Kenya (Warnings and Insurance page)"
+     },
      {
       "date": "2026-10-26",
       "note": "Updated information about increased tensions and armed groups ('Regional risks' page)."
@@ -172,10 +176,6 @@
      {
       "date": "2026-10-07",
       "note": "Updated information about conflict and violence (‘Safety and security’ page)."
-     },
-     {
-      "date": "2026-10-01",
-      "note": "Updated information about reported attacks on military installations and large gatherings (See 'Political situation' on the 'Safety and security' page)."
      }
     ],
     "warnings": [
@@ -553,9 +553,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/kenya",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-28",
-    "reviewed": "2026-10-28",
+    "updated": "2026-10-30",
+    "reviewed": "2026-10-30",
     "changes": [
+     {
+      "date": "2026-10-30",
+      "note": "Updated information about the Kenya-Ethiopia border (‘Regional risks’ page)."
+     },
      {
       "date": "2026-10-28",
       "note": "Updated information about Ebola screening, with details of how to access automated health information and guidance from the Kenyan authorities (‘Entry requirements’ page)."
@@ -571,10 +575,6 @@
      {
       "date": "2026-10-09",
       "note": "New information about mandatory travel health insurance requirement for foreign visitors staying in Kenya (‘Entry requirements’ page)."
-     },
-     {
-      "date": "2026-10-07",
-      "note": "New information about the detection of Ebola and measures taken by the Kenyan Government in response to the Ebola outbreak in the Democratic Republic of Congo (‘Health’ page)."
      }
     ],
     "warnings": [
@@ -616,7 +616,7 @@
      },
      {
       "heading": "Kenya-Ethiopia border",
-      "text": "There have been attacks using landmines around Moyale, close to the main A2 road south. Vehicles crossing the Kenya-Ethiopia border at this point should stay on the A2. Avoid staying at the rest house at Sololo – travel directly to Marsabit before breaking the journey.",
+      "text": "Violence in the Ethiopian town of Moyale (October 2026) has affected the border area. There have been reports of stray gunfire on the Kenyan side of the border and disruption at the Moyale border crossing. Vehicles crossing the Kenya-Ethiopia border at Moyale should stay on the A2 road and travel directly to Marsabit before breaking your journey, rather than staying at the rest house in Sololo. Check FCDO Travel…",
       "url": "https://www.gov.uk/foreign-travel-advice/kenya/regional-risks"
      }
     ],
