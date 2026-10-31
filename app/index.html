@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Job alerts app: new jobs on your phone | Hostile Environment Jobs</title>
-<meta name="description" content="Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.">
+<title>The H.E. Jobs app: job alerts, rotation tracker and EOD kit list | Hostile Environment Jobs</title>
+<meta name="description" content="Job alerts for new EOD, mine action, security, medic and support jobs straight to your phone, an EOD team kit list and a free rotation tracker that counts down to your next leave. $6 a year.">
 <link rel="canonical" href="https://hostileenvironmentjobs.com/app/">
-<meta property="og:title" content="Job alerts app: new jobs on your phone | Hostile Environment Jobs">
-<meta property="og:description" content="Get a notification on your phone when a new EOD, mine action, security, medic or support job matching what you want goes up, plus a free rotation tracker that counts down to your next leave.">
+<meta property="og:title" content="The H.E. Jobs app: job alerts, rotation tracker and EOD kit list | Hostile Environment Jobs">
+<meta property="og:description" content="Job alerts for new EOD, mine action, security, medic and support jobs straight to your phone, an EOD team kit list and a free rotation tracker that counts down to your next leave. $6 a year.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hostileenvironmentjobs.com/app/">
 <meta property="og:site_name" content="Hostile Environment Jobs">
@@ -71,6 +71,21 @@ details summary { cursor: pointer; font-weight: 600; }
 .logs li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .logs li small { display: block; color: var(--muted); font: 500 13px var(--mono); }
 .logs button { font: 600 13px var(--body); background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 4px 9px; cursor: pointer; flex: none; }
+.kit-sec h3 { margin: 16px 0 6px; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.kit-list { list-style: none; padding: 0; margin: 0; }
+.kit-list li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.kit-list li small { display: block; color: var(--muted); font-size: 14px; }
+.kit-list .q { font: 900 20px/1.1 var(--display); color: var(--accent); white-space: nowrap; text-align: right; flex: none; }
+.kit-list .q small { font: 500 12px var(--mono); }
+.kit-list .q.locked { color: var(--muted); }
+.kit-lock { border-left: 3px solid var(--accent); padding-left: 10px; }
+@media print {
+  body.print-kit header, body.print-kit footer, body.print-kit .app > :not(#kit), body.print-kit #kit .row-btns, body.print-kit #kit .where { display: none !important; }
+  body.print-kit, body.print-kit main, body.print-kit #kit { background: #fff !important; color: #000 !important; border: 0; }
+  body.print-kit .kit-list li { color: #000; break-inside: avoid; padding-left: 24px; position: relative; }
+  body.print-kit .kit-list li::before { content: ""; position: absolute; left: 0; top: 10px; width: 13px; height: 13px; border: 1.5px solid #000; }
+  body.print-kit .kit-list .q, body.print-kit .kit-list li small { color: #000; }
+}
 @media (max-width: 640px) { .rota form .row3 { grid-template-columns: 1fr 1fr; } .rota .count b { font-size: 46px; } }
 </style>
 <style>
@@ -281,7 +296,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/pay/">Pay guide</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
-    <a href="/app/" aria-current="page">Job alerts</a>
+    <a href="/app/" aria-current="page">The App</a>
     <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
     <a href="/#about" data-view="about">About</a>
@@ -289,9 +304,9 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 <main class="wrap">
 <div class="app">
-  <p class="eyebrow" style="margin-top:32px">Job alerts app</p>
-  <h1>New jobs, straight to your <span class="amp">phone</span></h1>
-  <p>Pick the work and regions you want. When a matching job or course goes up on the site, your phone gets a notification within a few hours, wherever you are. No laptop needed and no app store: it installs from this page. There's a free rotation tracker in it too, counting down to your next leave.</p>
+  <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
+  <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
+  <p>Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
 
   <div class="panel hot" id="install" hidden>
     <h2>First, add it to your home screen</h2>
@@ -347,9 +362,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <li>Alerts for new jobs and courses that match what you picked</li>
       <li>Change what you get any time</li>
       <li>Use it on up to 5 phones</li>
+      <li>The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
       <li id="renew-perk">Renews each year, cancel any time</li>
     </ul>
-    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get job alerts</button></div>
+    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $6 a year</button></div>
     <p class="msg" id="pay-msg"></p>
     <details style="margin-top:10px"><summary>Already paid? Use your code</summary>
       <p class="sub">Your code was shown after you paid and is under "Your account" on your other phone.</p>
@@ -383,6 +399,14 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <a class="btn" id="refer-fb" target="_blank" rel="noopener">Facebook</a>
     </div>
     <p class="msg" id="refer-msg"></p>
+  </div>
+
+  <div class="panel" id="kit">
+    <h2>EOD team kit list</h2>
+    <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
+    <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with the app. <a href="#buy">Get the app</a></p>
+    <div class="row-btns"><button class="btn" type="button" id="kit-print" hidden>Print or save as PDF checklist</button></div>
+    <div id="kit-body"></div>
   </div>
 
   <div class="panel rota" id="rota">
@@ -559,6 +583,7 @@ async function draw() {
   $("buy").hidden = Boolean(acct?.active);
   $("referred").hidden = Boolean(acct) || !store.get("hej-ref");
   drawRefer();
+  drawKit();
   $("save-row").hidden = !acct;
   $("account").hidden = !acct;
   $("notify").hidden = true;
@@ -568,7 +593,7 @@ async function draw() {
   const until = acct.free ? "free while testing" : acct.active ? (acct.renews ? "renews " : "paid until ") + fmtDate(acct.paid_until) : acct.paid_until ? "ran out " + fmtDate(acct.paid_until) : "not paid yet";
   $("acct-status").innerHTML = `Alerts: <b class="${acct.active && sub ? "" : "off"}">${acct.active ? (sub ? "on for this phone" : "notifications not on yet") : "off"}</b> · ${esc(until)} · ${acct.devices.length} phone${acct.devices.length === 1 ? "" : "s"}`;
   $("renew").hidden = acct.free || acct.renews || (acct.active && acct.paid_until - Date.now() / 1000 > 30 * 86400);
-  if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get job alerts again.";
+  if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get the app again.";
   $("notify").hidden = !acct.active || Boolean(sub) || !pushable;
   if (acct.active && !$("notify").hidden && needsHome) {
     $("enable").disabled = true;
@@ -859,6 +884,23 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 
 drawPrefs();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+// Kit list: everyone sees the items; quantities, notes, supplier links and the checklist need a paid account.
+let KIT = null;
+function drawKit() {
+  if (!KIT) return;
+  const open = Boolean(acct?.active);
+  $("kit-locked").hidden = open;
+  $("kit-print").hidden = !open;
+  const sup = KIT.suppliers;
+  $("kit-body").innerHTML = KIT.sections.map(s => `<div class="kit-sec"><h3>${esc(s.name)}</h3><ul class="kit-list">${s.items.map(it => {
+    if (!open) return `<li><span>${esc(it.item)}</span><span class="q locked" aria-label="Quantity for subscribers">?</span></li>`;
+    const links = (it.suppliers || []).map(k => `<a href="${esc(sup[k].url)}" target="_blank" rel="noopener">${esc(sup[k].name)}</a>`).join(", ");
+    return `<li><span>${esc(it.item)}${it.note ? `<small>${esc(it.note)}</small>` : ""}${links ? `<small class="where">Where to look: ${links}</small>` : ""}</span><span class="q">${esc(it.qty)}${it.unit ? `<small> ${esc(it.unit)}</small>` : ""}</span></li>`;
+  }).join("")}</ul></div>`).join("") + (open ? (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("") : "");
+}
+$("kit-print").onclick = () => { document.body.classList.add("print-kit"); window.print(); };
+addEventListener("afterprint", () => document.body.classList.remove("print-kit"));
+fetch("/kit.json", { cache: "no-cache" }).then(r => r.json()).then(d => { KIT = d; drawKit(); }).catch(() => {});
 fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); }).catch(() => {});
 (API ? api("/api/config").then(c => config = c).catch(err => { $("pay-msg").textContent = "Alerts are unavailable just now: " + err.message; }) : Promise.resolve()).then(load);
 </script>
