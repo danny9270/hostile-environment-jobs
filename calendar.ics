@@ -61,6 +61,38 @@ URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:job-drc-hma-field-medic-aleppo@hostileenvironmentjobs.com
+DTSTAMP:20261101T000000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Job closes: Humanitarian Mine Action Field Medic (Danish Refugee Co
+ uncil (DRC))
+LOCATION:Aleppo\, Syria (may deploy elsewhere in Syria)
+DESCRIPTION:Danish Refugee Council (DRC)\, Aleppo\, Syria (may deploy elsew
+ here in Syria)\nProvides on-site medical cover\, casevac planning and medi
+ cal training for DRC mine clearance teams in Syria.\n\nDetails and how to 
+ apply: https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-roving-emergency-advisor-hdp@hostileenvironmentjobs.com
+DTSTAMP:20261101T000000Z
+DTSTART;VALUE=DATE:20261105
+DTEND;VALUE=DATE:20261106
+SUMMARY:Job closes: Roving Emergency Advisor\, Humanitarian Disarmament & P
+ eacebuilding (Danish Refugee Council (DRC))
+LOCATION:Roving (global\, deployable within 72 hours)
+DESCRIPTION:Danish Refugee Council (DRC)\, Roving (global\, deployable with
+ in 72 hours)\nSenior advisor who deploys at short notice to set up and lea
+ d mine action and peacebuilding responses in new emergencies.\n\nDetails a
+ nd how to apply: https://hostileenvironmentjobs.com/jobs/drc-roving-emerge
+ ncy-advisor-hdp/
+URL:https://hostileenvironmentjobs.com/jobs/drc-roving-emergency-advisor-hd
+ p/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:job-drc-hma-mechanical-operator-kharkiv@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261106
@@ -74,6 +106,39 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nOperate and m
  /drc-hma-mechanical-operator-kharkiv/
 URL:https://hostileenvironmentjobs.com/jobs/drc-hma-mechanical-operator-kha
  rkiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-sub-national-mine-action-coordinator-south-syria@hostileenviron
+ mentjobs.com
+DTSTAMP:20261101T000000Z
+DTSTART;VALUE=DATE:20261107
+DTEND;VALUE=DATE:20261108
+SUMMARY:Job closes: Sub-National Mine Action Coordinator\, South Syria (Dan
+ ish Refugee Council (DRC))
+LOCATION:Damascus\, Syria
+DESCRIPTION:Danish Refugee Council (DRC)\, Damascus\, Syria\nCoordinates hu
+ manitarian mine action across southern Syria on behalf of the Mine Action 
+ Sector.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jo
+ bs/drc-sub-national-mine-action-coordinator-south-syria/
+URL:https://hostileenvironmentjobs.com/jobs/drc-sub-national-mine-action-co
+ ordinator-south-syria/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-operations-manager-beirut@hostileenvironmentjobs.com
+DTSTAMP:20261101T000000Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261110
+SUMMARY:Job closes: HMA Operations Manager (Danish Refugee Council (DRC))
+LOCATION:Beirut\, Lebanon
+DESCRIPTION:Danish Refugee Council (DRC)\, Beirut\, Lebanon\nLeads technica
+ l training\, quality assurance and planning for DRC's mine action operatio
+ ns in Lebanon\, including oversight of local partners.\n\nDetails and how 
+ to apply: https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manag
+ er-beirut/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manager-beir
+ ut/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
@@ -128,6 +193,22 @@ DESCRIPTION:Global Risk Advice\, Near Deventer\, Netherlands. 3 days\, 2 ni
 URL:https://globalriskadvice.com/event/heat-training-24-26-november-2026/?u
  tm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=course-c
  alendar&utm_content=gra-heat-nov-2026
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-safety-assistant-radio-operator-kyiv@hostileenvironmentjobs.com
+DTSTAMP:20261101T000000Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261128
+SUMMARY:Job closes: Safety Assistant (Radio Operator) (Danish Refugee Counc
+ il (DRC))
+LOCATION:Kyiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kyiv\, Ukraine\nOffice-based rol
+ e tracking DRC vehicles and staff movements and passing on security update
+ s and alerts.\n\nDetails and how to apply: https://hostileenvironmentjobs.
+ com/jobs/drc-safety-assistant-radio-operator-kyiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-radio-oper
+ ator-kyiv/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
