@@ -1,5 +1,105 @@
 [
  {
+  "id": "drc-hma-operations-manager-beirut",
+  "title": "HMA Operations Manager",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Management",
+  "location": "Beirut, Lebanon",
+  "region": "Middle East",
+  "contract": "National contract, 12 months, renewable",
+  "salary": "Not stated (DRC band E-2)",
+  "requirements": [
+   "3-4+ years humanitarian mine action experience in an international context",
+   "IMAS EOD Level 3 required, Level 3+ preferred",
+   "Master's degree in a related field",
+   "Fluent English and Arabic"
+  ],
+  "summary": "Leads technical training, quality assurance and planning for DRC's mine action operations in Lebanon, including oversight of local partners.",
+  "closing": "2026-11-09",
+  "apply_url": "https://drc.ngo/jobs/job?id=176696",
+  "posted": "2026-11-01"
+ },
+ {
+  "id": "drc-roving-emergency-advisor-hdp",
+  "title": "Roving Emergency Advisor, Humanitarian Disarmament & Peacebuilding",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Management",
+  "location": "Roving (global, deployable within 72 hours)",
+  "region": "Worldwide",
+  "contract": "Expatriate contract, 12 months",
+  "salary": "Not stated (DRC band F)",
+  "requirements": [
+   "5+ years humanitarian mine action experience",
+   "IMAS EOD Level 3 and previous Operations Manager experience",
+   "Management experience in emergency or insecure settings",
+   "Experience with IMAS accreditation"
+  ],
+  "summary": "Senior advisor who deploys at short notice to set up and lead mine action and peacebuilding responses in new emergencies.",
+  "closing": "2026-11-05",
+  "apply_url": "https://drc.ngo/jobs/job?id=176352",
+  "posted": "2026-11-01"
+ },
+ {
+  "id": "drc-sub-national-mine-action-coordinator-south-syria",
+  "title": "Sub-National Mine Action Coordinator, South Syria",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Management",
+  "location": "Damascus, Syria",
+  "region": "Middle East",
+  "contract": "National contract, 6 months initially (seconded to the Mine Action Sector)",
+  "salary": "Not stated (DRC grade G)",
+  "requirements": [
+   "3-5 years humanitarian experience including multi-agency coordination",
+   "Understanding of cluster and AoR coordination systems",
+   "Professional fluency in Arabic and English",
+   "Relevant degree or equivalent field experience"
+  ],
+  "summary": "Coordinates humanitarian mine action across southern Syria on behalf of the Mine Action Sector.",
+  "closing": "2026-11-07",
+  "apply_url": "https://drc.ngo/jobs/job?id=177069",
+  "posted": "2026-11-01"
+ },
+ {
+  "id": "drc-hma-field-medic-aleppo",
+  "title": "Humanitarian Mine Action Field Medic",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Medical",
+  "location": "Aleppo, Syria (may deploy elsewhere in Syria)",
+  "region": "Middle East",
+  "contract": "National contract, 9 months, renewable",
+  "salary": "Not stated (DRC grade G)",
+  "requirements": [
+   "Certified paramedic, nurse or equivalent with emergency and trauma care experience",
+   "2+ years medical support in humanitarian or emergency settings",
+   "IMAS Intermediate Care Provider training or equivalent",
+   "Fluent Arabic and advanced English"
+  ],
+  "summary": "Provides on-site medical cover, casevac planning and medical training for DRC mine clearance teams in Syria.",
+  "closing": "2026-11-05",
+  "apply_url": "https://drc.ngo/jobs/job?id=177059",
+  "posted": "2026-11-01"
+ },
+ {
+  "id": "drc-safety-assistant-radio-operator-kyiv",
+  "title": "Safety Assistant (Radio Operator)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Kyiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract, shift work including nights",
+  "salary": "From €1,465 gross per month",
+  "requirements": [
+   "Able to work shifts, including nights",
+   "Good English",
+   "Basic computer skills including Excel",
+   "Ideally 1+ year relevant experience"
+  ],
+  "summary": "Office-based role tracking DRC vehicles and staff movements and passing on security updates and alerts.",
+  "closing": "2026-11-27",
+  "apply_url": "https://drc.ngo/jobs/job?id=176583",
+  "posted": "2026-11-01"
+ },
+ {
   "id": "opec-systems-eod-uxo-technician-australia",
   "title": "EOD / UXO Technician",
   "employer": "OPEC Systems (Defence Division)",
