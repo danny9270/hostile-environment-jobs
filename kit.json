@@ -44,6 +44,10 @@
     "rofi": {
       "name": "ROFI",
       "url": "https://www.rofi.com"
+    },
+    "fenix": {
+      "name": "Fenix Insight",
+      "url": "https://www.fenixinsight.com"
     }
   },
   "sections": [
@@ -334,6 +338,37 @@
         {
           "item": "Rechargeable head torch",
           "qty": "2"
+        }
+      ]
+    },
+    {
+      "name": "Ordnance ID and training",
+      "items": [
+        {
+          "item": "Ordnance identification reference",
+          "qty": "1",
+          "unit": "per team leader",
+          "note": "Munitions database or app for identifying items found on task; check it covers the region you're working in.",
+          "suppliers": [
+            "fenix"
+          ]
+        },
+        {
+          "item": "Hazard recognition cards",
+          "qty": "1",
+          "unit": "set",
+          "note": "Quick visual reference for briefings and community liaison.",
+          "suppliers": [
+            "fenix"
+          ]
+        },
+        {
+          "item": "Inert training aids",
+          "qty": "As needed",
+          "note": "Certified inert or surrogate items for refresher training. Never use recovered items.",
+          "suppliers": [
+            "fenix"
+          ]
         }
       ]
     },
