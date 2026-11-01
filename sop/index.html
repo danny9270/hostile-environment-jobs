@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mine Action SOP Builder (trial) | Hostile Environment Jobs</title>
+<meta name="description" content="Build an IMAS-aligned mine action SOP set in your browser and export it to Word. Trial version.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#111310">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+/* Same dark "field kit" look as the rest of the site. Module list on the left, the section editor on the right.
+   Preview shows the SOP on white paper; printing shows only the paper. */
+:root {
+  --bg: #111310; --surface: #1a1d19; --raised: #222620; --ink: #ecebe4; --muted: #a3a79c; --line: #30352d;
+  --accent: #f29a2e; --accent-ink: #1b1204; --sand: #c9b48a; --soft: #3a2a14; --ok: #8fd19e; --warn: #ff7a59;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.05; margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 900; text-transform: uppercase; letter-spacing: .01em; }
+h2 { font-size: 26px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+h3 { font-size: 20px; font-weight: 800; }
+.amp { color: var(--accent); }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+header.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 60px; flex-wrap: wrap; }
+.brand { font: 900 21px var(--display); text-transform: uppercase; letter-spacing: .03em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; color: var(--accent); }
+.top-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.trial-tag { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); background: var(--sand); padding: 3px 8px; border-radius: 4px; }
+.hero { border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, #2b2416 0%, var(--bg) 60%); }
+.hero .wrap { padding-block: 32px 24px; }
+.eyebrow { font: 500 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--sand); margin: 0 0 12px; }
+.lede { max-width: 760px; margin: 0; font-size: 18px; opacity: .88; }
+.pledge { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 16px 0 0; padding: 0; list-style: none; font: 500 13.5px var(--mono); color: var(--muted); }
+.pledge li::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--accent); transform: rotate(45deg); margin-right: 8px; }
+
+.btn { display: inline-block; font: 800 15px var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--raised); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--sand); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.small { font-size: 13px; padding: 6px 10px; }
+.btn.ghost { background: transparent; }
+
+.builder { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; padding-block: 24px 48px; align-items: start; }
+.side { position: sticky; top: 76px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px; max-height: calc(100vh - 92px); overflow: auto; }
+.side h2 { font-size: 15px; letter-spacing: .1em; color: var(--sand); margin: 6px 8px 8px; }
+.side button { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 8px; text-align: left; font: 600 15px var(--body); color: var(--ink); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 7px 9px; cursor: pointer; }
+.side button:hover { border-color: var(--line); }
+.side button[aria-current="true"] { background: var(--soft); border-color: var(--accent); }
+.side button .no { font: 500 12.5px var(--mono); color: var(--accent); margin-right: 6px; }
+.side button .tag { font: 500 11.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.side button .tag.done { color: var(--ok); }
+.side button.locked { color: var(--muted); }
+.side hr { border: 0; border-top: 1px solid var(--line); margin: 8px 4px; }
+
+.main { display: grid; gap: 14px; min-width: 0; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.card > h2 { font-size: 24px; margin: 0 0 4px; }
+.card > p.hint, .hint { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+.mod-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.imas { font: 500 13px var(--mono); color: var(--sand); }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fields .full { grid-column: 1 / -1; }
+label { display: grid; gap: 4px; font-weight: 600; font-size: 14.5px; }
+label small { font-weight: 400; color: var(--muted); }
+input, select, textarea { font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; width: 100%; }
+textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+input[type="checkbox"] { width: auto; accent-color: var(--accent); }
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 14px; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 400; font-size: 15px; }
+
+.section { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.section:first-of-type { border-top: 0; margin-top: 4px; padding-top: 4px; }
+.section h3 { display: flex; gap: 10px; align-items: baseline; margin: 0 0 8px; }
+.section h3 .n { font: 500 13px var(--mono); color: var(--accent); }
+.sec-tools { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 6px; font: 500 12.5px var(--mono); color: var(--muted); }
+.sec-tools .left { color: var(--accent); }
+.sec-tools .left.clear { color: var(--ok); }
+.icon-btn { font: 600 13px var(--body); background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 3px 8px; cursor: pointer; }
+.icon-btn:hover { color: var(--ink); border-color: var(--sand); }
+.guide { background: var(--raised); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; align-self: start; }
+.guide b { display: block; font: 800 15px var(--display); text-transform: uppercase; letter-spacing: .05em; color: var(--sand); margin-bottom: 4px; }
+.guide p { margin: 0 0 6px; }
+.note { padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--soft); border-radius: 0 8px 8px 0; font-size: 15px; margin: 0; }
+.note.blank { border-left-color: var(--warn); }
+.locked-list { margin: 10px 0 0; padding-left: 20px; color: var(--muted); }
+.locked-list li { margin-bottom: 3px; }
+.upsell { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.amend { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.amend th, .amend td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+.amend th { color: var(--sand); font-weight: 600; }
+
+/* Preview: the SOP on white paper. */
+.preview-wrap { display: grid; gap: 10px; }
+.paper { background: #fff; color: #1d1f1c; font: 14px/1.5 var(--body); padding: 40px 46px; border-radius: 6px; color-scheme: light; }
+.paper .cover { text-align: center; padding: 60px 0 40px; border-bottom: 2px solid #1d1f1c; margin-bottom: 28px; }
+.paper .cover h1 { font: 800 30px/1.1 var(--body); text-transform: none; letter-spacing: 0; color: #111; margin: 10px 0; }
+.paper .cover .org { font-size: 18px; font-weight: 700; color: #8a4b08; }
+.paper .cover p { margin: 4px 0; }
+.paper h2 { font: 700 20px/1.2 var(--body); text-transform: none; letter-spacing: 0; color: #111; border-bottom: 2px solid #8a4b08; padding-bottom: 4px; margin: 30px 0 4px; }
+.paper .p-imas { font-size: 12.5px; color: #6a6d66; margin: 0 0 10px; }
+.paper h3 { font: 700 15px/1.3 var(--body); color: #111; margin: 16px 0 6px; }
+.paper p { margin: 0 0 8px; }
+.paper ul { margin: 0 0 8px; padding-left: 20px; }
+.paper table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+.paper th, .paper td { border: 1px solid #c9c6bc; padding: 4px 6px; text-align: left; vertical-align: top; }
+.paper .ph { background: #ffe9a8; border-radius: 2px; padding: 0 2px; }
+.paper .disc { font-size: 12.5px; color: #4a4d47; border: 1px solid #c9c6bc; padding: 10px 12px; margin: 0 0 20px; }
+.paper .madewith { font-size: 11.5px; color: #8a8d86; text-align: center; margin-top: 30px; }
+
+footer { color: var(--muted); font-size: 14px; padding: 20px 0 32px; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ok); color: #0c1a10; font-weight: 600; padding: 10px 16px; border-radius: 8px; z-index: 20; }
+
+@media (max-width: 900px) {
+  .builder { grid-template-columns: 1fr; }
+  .side { position: static; max-height: none; }
+  .section { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .fields { grid-template-columns: 1fr; }
+  .top-actions { margin-left: 0; }
+  .paper { padding: 22px 16px; font-size: 13.5px; }
+}
+@media print {
+  @page { size: A4; margin: 18mm 16mm; }
+  body { background: #fff; }
+  body::before, header.top, .hero, .side, .no-print, footer, .toast { display: none !important; }
+  .wrap, .builder { display: block; padding: 0; max-width: none; }
+  .paper { padding: 0; border-radius: 0; font-size: 10.5pt; }
+  .paper .ph { background: none; }
+  .paper .cover { page-break-after: always; border: 0; padding-top: 120px; }
+  .paper h2 { break-after: avoid; }
+  .paper .mod { page-break-before: always; }
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/">
+    <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/></svg>
+    Hostile Environment <span class="amp">Jobs</span></a>
+  <span class="trial-tag">SOP Builder trial</span>
+  <div class="top-actions">
+    <button class="btn small ghost" type="button" id="btn-preview">Preview</button>
+    <button class="btn small primary" type="button" id="btn-export">Export to Word</button>
+  </div>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <p class="eyebrow">Mine Action SOP Builder · trial</p>
+  <h1>Build your SOPs, <span class="amp">export to Word</span></h1>
+  <p class="lede">Fill in your organisation once, then work through each module. Every section starts with sample wording aligned to IMAS. Edit it, replace anything in [brackets], and export a Word draft ready for your own review and accreditation.</p>
+  <ul class="pledge">
+    <li>Works in your browser</li>
+    <li>Nothing is uploaded</li>
+    <li>IMAS and IATG referenced</li>
+    <li>Structure and admin only</li>
+    <li>Word (.docx) export</li>
+  </ul>
+</div></section>
+
+<div class="wrap builder">
+  <aside class="side" aria-label="Modules">
+    <h2>Your SOP</h2>
+    <div id="nav"></div>
+    <hr>
+    <button type="button" id="btn-save-file">Save project file <span class="tag">.json</span></button>
+    <button type="button" id="btn-open-file">Open project file <span class="tag">.json</span></button>
+    <input type="file" id="file-in" accept=".json,application/json" hidden>
+    <button type="button" id="btn-feedback">Send trial feedback <span class="tag">email</span></button>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<footer class="no-print"><div class="wrap">
+  <span>Made by the H.E. Jobs Team · <a href="/">hostileenvironmentjobs.com</a></span>
+  <span>A template only. It is not approved by any authority and must be reviewed and accredited before use.</span>
+</div></footer>
+
+<script>
+(() => {
+'use strict';
+const STORE = 'hej-sop-v1';
+const FEEDBACK = 'contact@hostileenvironmentjobs.com';
+
+const ACTIVITIES = [
+  ['nts', 'Non-technical survey'], ['ts', 'Technical survey'], ['mmc', 'Manual mine clearance'],
+  ['mech', 'Mechanical operations'], ['mdd', 'Mine detection dogs'], ['bac', 'Battle area clearance'],
+  ['bc', 'Building clearance'], ['eod', 'EOD spot tasks'], ['eore', 'EO risk education']
+];
+
+/* Country presets: national authority and standards names. Checked as far as possible but names change, so the user is always told to confirm with the authority. */
+const COUNTRIES = [
+  ['Afghanistan', 'Directorate of Mine Action Coordination (DMAC)', 'Afghanistan Mine Action Standards (AMAS)'],
+  ['Angola', 'National Mine Action Agency (ANAM)', 'Angola National Mine Action Standards'],
+  ['Azerbaijan', 'Mine Action Agency of the Republic of Azerbaijan (ANAMA)', 'Azerbaijan National Mine Action Standards'],
+  ['Bosnia and Herzegovina', 'Bosnia and Herzegovina Mine Action Centre (BHMAC)', 'Bosnia and Herzegovina Mine Action Standards'],
+  ['Cambodia', 'Cambodian Mine Action and Victim Assistance Authority (CMAA)', 'Cambodian Mine Action Standards (CMAS)'],
+  ['Colombia', 'Descontamina Colombia (Office of the High Commissioner for Peace)', 'Colombian National Mine Action Standards'],
+  ['Iraq (federal)', 'Directorate of Mine Action (DMA)', 'Iraq National Mine Action Standards (INMAS)'],
+  ['Iraq (Kurdistan Region)', 'Iraqi Kurdistan Mine Action Agency (IKMAA)', 'Iraq National Mine Action Standards (INMAS)'],
+  ['Lao PDR', 'National Regulatory Authority for UXO/Mine Action (NRA)', 'Lao National Standards for UXO/Mine Action'],
+  ['Lebanon', 'Lebanon Mine Action Centre (LMAC)', 'Lebanon National Mine Action Standards'],
+  ['Libya', 'Libyan Mine Action Centre (LibMAC)', 'Libya National Mine Action Standards'],
+  ['Palestine', 'Palestine Mine Action Centre (PMAC)', 'Palestine National Mine Action Standards'],
+  ['Somalia', 'Somali Explosive Management Authority (SEMA)', 'Somalia National Mine Action Standards'],
+  ['South Sudan', 'National Mine Action Authority (NMAA)', 'South Sudan National Mine Action Standards'],
+  ['Sri Lanka', 'National Mine Action Centre (NMAC)', 'Sri Lanka National Mine Action Standards'],
+  ['Sudan', 'National Mine Action Center (NMAC)', 'Sudan National Mine Action Standards'],
+  ['Tajikistan', 'Tajikistan National Mine Action Centre (TNMAC)', 'Tajikistan National Mine Action Standards'],
+  ['Ukraine', '[National Mine Action Authority of Ukraine]', 'Ukraine national mine action standards (DSTU series)'],
+  ['Viet Nam', 'Viet Nam National Mine Action Centre (VNMAC)', 'Viet Nam National Technical Standards for mine action'],
+  ['Yemen', 'Yemen Executive Mine Action Center (YEMAC)', 'Yemen National Mine Action Standards'],
+  ['Zimbabwe', 'Zimbabwe Mine Action Centre (ZIMAC)', 'Zimbabwe National Mine Action Standards']
+];
+
+/* Module library. Sample text uses tokens filled from setup: {ORG} {PROG} {COUNTRY} {AUTH} {NMAS} {ACTS} {APPROVER} {ROLE}.
+   Anything in [square brackets] is for the user to replace. IMAS numbers should be checked against the current edition. */
+const MODULES = [
+  { id: 'm00', no: '00', title: 'Cover and approval', imas: 'IMAS 07.30 (accreditation)', free: true, cover: true },
+  { id: 'm01', no: '01', title: 'Overview', imas: 'IMAS 01.10, 07.30', free: true, amend: true, sections: [
+    { t: 'Scope', g: 'Say what the SOPs cover and who must follow them. List the activities you are accredited for.',
+      x: 'These Standard Operating Procedures (SOPs) set out how {ORG} plans, conducts, manages and reports mine action activities in {COUNTRY} under the {PROG}.\n\nThey apply to all {ORG} staff, contractors and visitors at any {ORG} worksite, office or facility.\n\nThe SOPs cover the following activities:\n{ACTS}' },
+    { t: 'Authority and compliance', g: 'Link your SOPs to IMAS and the national standards. Reviewers check that the SOPs never fall below either.',
+      x: 'These SOPs are written in line with the International Mine Action Standards (IMAS) and the {NMAS} issued by {AUTH}. Where they deal with the storage, transport and accounting of explosives they also follow the International Ammunition Technical Guidelines (IATG).\n\nWhere these SOPs and the national standards differ, the national standards take precedence unless {AUTH} has agreed otherwise in writing.\n\nNo activity may be carried out unless {ORG} holds current accreditation from {AUTH} for that activity.' },
+    { t: 'SOP format and numbering', g: 'Explain how chapters, sections and annexes are numbered so people can find and reference them.',
+      x: 'The SOPs are divided into numbered modules. Each module covers one subject and is made up of numbered sections, for example 03.04 is section 4 of module 03.\n\nForms and supporting documents are attached as annexes to the module they support, numbered with the module number and a letter, for example Annex 08A.\n\nEach module carries its own amendment record so that changes can be traced.' },
+    { t: 'Responsibilities', g: 'Name the roles that own the SOPs, approve changes and make sure staff are briefed.',
+      x: 'The {ROLE} is responsible for approving these SOPs and any amendments.\n\nThe [Operations Manager] is responsible for making sure all operational staff are trained on, and follow, the current SOPs.\n\nThe [QA Manager] is responsible for monitoring compliance and recording any non-conformities.\n\nAll staff are responsible for reading and following the SOPs relevant to their role, and for reporting anything that is unsafe, unclear or out of date.' },
+    { t: 'Distribution and control', g: 'Say where the master copy lives and how old versions are withdrawn.',
+      x: 'The master copy of these SOPs is held by [the Operations Manager] at [location / shared drive].\n\nControlled copies are issued to [each team leader and site supervisor]. A copy of the relevant modules must be available at every worksite.\n\nWhen an amendment is issued, superseded copies are withdrawn and destroyed. Printed copies are uncontrolled unless signed and dated by [the Operations Manager].' },
+    { t: 'Review and amendment', g: 'Set a review cycle and say what triggers an early review (accidents, new standards, new activities).',
+      x: 'These SOPs are reviewed at least [every 12 months], and also after any accident or serious incident, any change to IMAS or the {NMAS}, or the start of a new activity.\n\nAny member of staff may propose an amendment in writing to [the Operations Manager]. Approved amendments are recorded in the amendment record, briefed to affected staff and sent to {AUTH} where required.' },
+    { t: 'References', g: 'List the standards and documents the SOPs rely on.',
+      x: '- International Mine Action Standards (IMAS), current editions, www.mineactionstandards.org\n- International Ammunition Technical Guidelines (IATG), current editions, for explosives storage, transport and accounting\n- {NMAS}, [edition and date], issued by {AUTH}\n- [Donor or contract requirements]\n- [Organisation policies, for example safeguarding, security and HR policies]' }
+  ]},
+  { id: 'm02', no: '02', title: 'Terminology', imas: 'IMAS 04.10 (glossary), IATG 01.40 (terms and definitions)', free: true, sections: [
+    { t: 'Use of terms', g: 'Point to IMAS 04.10 as the master glossary and only define terms you use differently or locally.',
+      x: 'Terms in these SOPs have the meaning given in IMAS 04.10, Glossary of mine action terms, definitions and abbreviations, unless stated otherwise below or in the {NMAS}. Terms about the storage, transport and accounting of explosives follow IATG 01.40, Terms, glossary and definitions.\n\nIn these SOPs "shall" means a requirement, "should" means a recommendation and "may" means something that is allowed.' },
+    { t: 'Key terms', g: 'Short plain-language definitions. Check each one against IMAS 04.10 and your national standards before issue.',
+      x: '- Accreditation: the process by which an organisation is formally recognised by {AUTH} as able to carry out a mine action activity.\n- Cancelled land: land removed from a suspected or confirmed hazardous area through non-technical survey.\n- Confirmed hazardous area (CHA): an area where there is direct evidence of explosive ordnance contamination.\n- Explosive ordnance (EO): mines, cluster munitions, unexploded and abandoned ordnance, booby traps and other devices covered by IMAS.\n- Land release: the process of applying all reasonable effort to identify, define and remove the presence and suspicion of explosive ordnance through survey and clearance.\n- Quality assurance (QA): the part of quality management that gives confidence that requirements will be met, including monitoring of activities.\n- Quality control (QC): the inspection of a finished product, such as cleared land, against the agreed requirements.\n- Reduced land: land removed from a hazardous area through technical survey or clearance.\n- Suspected hazardous area (SHA): an area where there is reasonable suspicion of explosive ordnance contamination.\n- Worksite: any place where mine action activities are being carried out, including its control and rest areas.' },
+    { t: 'Abbreviations', g: 'Add the abbreviations used in your SOPs and forms.',
+      x: '- CASEVAC: casualty evacuation\n- CHA: confirmed hazardous area\n- EO: explosive ordnance\n- EORE: explosive ordnance risk education\n- IATG: International Ammunition Technical Guidelines\n- IMAS: International Mine Action Standards\n- NMAS: national mine action standards\n- NTS / TS: non-technical survey / technical survey\n- PPE: personal protective equipment\n- QA / QC: quality assurance / quality control\n- SHA: suspected hazardous area\n- [Add your own]' }
+  ]},
+  { id: 'm03', no: '03', title: 'Health, safety and environment', imas: 'IMAS 10.10, 10.20, 10.30, 07.13', free: true, sections: [
+    { t: 'Policy', g: 'A short commitment signed off by senior management.',
+      x: '{ORG} is committed to protecting the health and safety of its staff, the communities it works in and the environment. No task is so important that it justifies taking unnecessary risks.\n\nEvery member of staff has the right and the duty to stop work they believe is unsafe, without fear of blame.' },
+    { t: 'Responsibilities', g: 'Make it clear who owns safety at programme, site and individual level.',
+      x: 'The {ROLE} has overall responsibility for health, safety and environment (HSE) across the programme.\n\nSite supervisors are responsible for safety at their worksite, including briefings, control of access and enforcement of these SOPs.\n\nEvery member of staff is responsible for their own safety and that of others, and for reporting hazards, near misses and accidents straight away.' },
+    { t: 'Risk assessment', g: 'Explain when risk assessments are done and who signs them. The form sits in the operations module.',
+      x: 'A written task risk assessment is completed before any new task starts, and reviewed whenever conditions change.\n\nRisk assessments are prepared by [the team leader], approved by [the Operations Manager] and briefed to all team members before work starts. Copies are kept on site and on file.' },
+    { t: 'Personal protective equipment', g: 'Set out who issues PPE, how it is checked and replaced. Protection levels follow IMAS 10.30 and your national standard.',
+      x: 'PPE is issued free of charge to all staff who need it, and must meet IMAS 10.30 and the {NMAS}.\n\nPPE is inspected [before each use] by the wearer and [monthly] by [the site supervisor]. Damaged or expired PPE is withdrawn and replaced. Records of issue and inspection are kept by [the logistics officer].' },
+    { t: 'Working hours and welfare', g: 'Limit working hours, set rest breaks and cover heat, water and shelter.',
+      x: 'Normal working hours are [hours per day] with a rest break of at least [10 minutes] every [hour] in hazardous areas, and a longer break of [time] at mid-day.\n\nDrinking water, shade or shelter, and toilet facilities are provided at every worksite. Work is adjusted or stopped in extreme heat, cold, storms or poor visibility.\n\nStaff must be fit for work. Alcohol and drugs are prohibited on duty and at worksites.' },
+    { t: 'Vehicles and driving', g: 'Driver authorisation, seat belts, speed, journey management.',
+      x: 'Only authorised drivers with a valid licence may drive {ORG} vehicles. Seat belts are worn by everyone at all times.\n\nSpeed limits are [limit] on roads and [limit] on tracks. Journeys outside [area] are logged with [the radio operator / security focal point] before departure and on arrival.\n\nVehicles are checked daily by the driver using the vehicle checklist, and serviced on schedule.' },
+    { t: 'Fire safety', g: 'Fire points, extinguishers and what to do in a fire.',
+      x: 'Fire extinguishers are provided in every vehicle, office, accommodation and worksite control point, and checked [monthly].\n\nSmoking is allowed only in designated areas away from fuel and stores. All staff are briefed on fire points and evacuation routes.' },
+    { t: 'Environment', g: 'Minimise damage to land, water and vegetation. IMAS 07.13 covers environmental management in mine action.',
+      x: 'Operations are planned to keep environmental damage to a minimum, in line with IMAS 07.13.\n\nVegetation is cut only as far as needed for the task. Fuel and oil are stored and handled to prevent spills. All waste is removed from the worksite and disposed of at [approved location].\n\nWhere land has been disturbed, it is left in a safe and usable condition agreed with the community and {AUTH}.' },
+    { t: 'Accident and incident reporting', g: 'Point to the full procedure in the medical and operations modules.',
+      x: 'All accidents, incidents and near misses are reported immediately to [the site supervisor] and recorded on the accident and incident report form.\n\nSerious accidents are reported to {AUTH} within [time] as required by the {NMAS}. Investigation and reporting follow the procedures in Module 10.' }
+  ]},
+  { id: 'm04', no: '04', title: 'Marking system', imas: 'IMAS 08.40', plan: ['Hazard marking signs and colours', 'Permanent and temporary marking', 'Worksite and lane marking', 'Marking of cleared and released land', 'Handover of marking to the community'] },
+  { id: 'm05', no: '05', title: 'Communications', imas: 'IMAS 10.20', plan: ['Communications plan', 'Radio procedures and call signs', 'Radio checks and logs', 'Loss of communications', 'Emergency messages'] },
+  { id: 'm06', no: '06', title: 'Site preparation and setting out', imas: 'IMAS 10.20', plan: ['Worksite layout and control point', 'Safety distances (your national values)', 'Control of access and visitors', 'Daily briefings', 'Site closure'] },
+  { id: 'm07', no: '07', title: 'Explosives storage, transport and accounting', imas: 'IMAS 10.50, IATG 03 (accounting), IATG 06 (storage operations), IATG 08 (transport), IATG 09 (security)', plan: ['Licensing and responsibilities', 'Storage records and inventory', 'Transport documentation', 'Issue and return accounting', 'Loss and theft reporting'], note: 'Admin and record keeping only. No technical handling procedures are included.' },
+  { id: 'm08', no: '08', title: 'Medical support and CASEVAC', imas: 'IMAS 10.40', plan: ['Medical support levels and staffing', 'Medic and first aid kit lists', 'CASEVAC planning and timings', 'Accident reporting format', 'Medical records'] },
+  { id: 'm09', no: '09', title: 'Quality management', imas: 'IMAS 07.12', plan: ['Quality policy and objectives', 'Internal QA visits', 'QC and sampling', 'Non-conformities and corrective action', 'Stop work and resumption', 'Records and continual improvement'] },
+  { id: 'm10', no: '10', title: 'Management of operations', imas: 'IMAS 10.60, 05.10', plan: ['Roles and responsibilities', 'Discipline', 'Daily reporting and documentation', 'Accident investigation', 'External reporting and handover'] },
+  { id: 'm11', no: '11', title: 'Land release: survey', imas: 'IMAS 07.11, 08.10, 08.20', plan: ['Land release principles', 'Non-technical survey', 'Technical survey', 'Evidence, decisions and reporting', 'Handover of released land'] },
+  { id: 'm113', no: '11.3', title: 'Clearance methods', imas: 'IMAS 09.10, 09.30, 09.40, 09.50', plan: ['Manual clearance (management and QC)', 'Mechanical operations (management and QC)', 'Mine detection dogs (management and QC)', 'Battle area and building clearance (management and QC)', 'EOD spot tasks (management and reporting)'], note: 'Headings, roles, admin and QC only. Technical procedures stay blank for your organisation to insert from its own approved sources.' },
+  { id: 'm12', no: '12', title: 'Explosive ordnance risk education', imas: 'IMAS 12.10', plan: ['Needs assessment', 'Planning sessions and audiences', 'Delivery and safeguarding', 'Session reporting', 'Monitoring and evaluation'] },
+  { id: 'mfa', no: 'A', title: 'Forms and annexes', imas: 'Matched to your modules', plan: ['Task risk assessment', 'Implementation plan and CASEVAC plan', 'Daily report, hazard report', 'Attendance, radio and visitor logs', 'QA visit forms and non-conformity matrix', 'Corrective action plan and sampling record'] }
+];
+const FREE = MODULES.filter(m => m.free);
+
+/* ---------- state ---------- */
+const today = new Date().toISOString().slice(0, 10);
+const blank = () => ({ setup: { org: '', prog: '', country: '', auth: '', nmas: 'National Mine Action Standards (NMAS)', version: '1.0', date: today, approver: '', role: 'Country Director', acts: ['nts', 'ts', 'mmc', 'eod'] }, edits: {}, current: 'm00' });
+let S = blank();
+try { const raw = localStorage.getItem(STORE); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) { /* storage blocked: work in memory */ }
+let saveTimer;
+const save = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => { try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }, 300); };
+
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = id => document.getElementById(id);
+const val = (v, ph) => (v && v.trim()) ? v.trim() : '[' + ph + ']';
+function fill(text) {
+  const s = S.setup;
+  const acts = ACTIVITIES.filter(a => s.acts.includes(a[0])).map(a => '- ' + a[1]).join('\n') || '- [List your accredited activities]';
+  return text.replace(/\{ORG\}/g, val(s.org, 'Organisation name')).replace(/\{PROG\}/g, val(s.prog, 'programme name'))
+    .replace(/\{COUNTRY\}/g, val(s.country, 'country')).replace(/\{AUTH\}/g, val(s.auth, 'National Mine Action Authority'))
+    .replace(/\{NMAS\}/g, val(s.nmas, 'National Mine Action Standards')).replace(/\{ROLE\}/g, val(s.role, 'Country Director'))
+    .replace(/\{APPROVER\}/g, val(s.approver, 'Name')).replace(/\{ACTS\}/g, acts);
+}
+const key = (m, i) => m.id + '.' + i;
+const textOf = (m, i) => (S.edits[key(m, i)] !== undefined) ? S.edits[key(m, i)] : fill(m.sections[i].x);
+const countPh = t => (t.match(/\[[^\]]+\]/g) || []).length;
+const secNo = (m, i) => m.no + '.' + String(i + 1).padStart(2, '0');
+const moduleLeft = m => m.cover ? coverPh() : m.sections.reduce((n, _, i) => n + countPh(textOf(m, i)), 0);
+function coverPh() { const s = S.setup; return ['org', 'prog', 'country', 'auth', 'approver'].filter(k => !(s[k] || '').trim()).length; }
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+
+/* ---------- nav ---------- */
+function renderNav() {
+  $('nav').innerHTML = MODULES.map(m => {
+    let tag;
+    if (!m.free) tag = '<span class="tag">Full</span>';
+    else { const left = moduleLeft(m); tag = left ? `<span class="tag">${left} to fill</span>` : '<span class="tag done">done</span>'; }
+    return `<button type="button" data-mod="${m.id}" class="${m.free ? '' : 'locked'}" aria-current="${S.current === m.id}"><span><span class="no">${esc(m.no)}</span>${esc(m.title)}</span>${tag}</button>`;
+  }).join('') + `<button type="button" data-mod="preview" aria-current="${S.current === 'preview'}"><span><span class="no">&#9656;</span>Preview whole SOP</span></button>`;
+}
+$('nav').addEventListener('click', e => { const b = e.target.closest('button[data-mod]'); if (!b) return; go(b.dataset.mod); });
+function go(id) { S.current = id; save(); renderNav(); renderMain(); if (window.innerWidth < 900) $('main').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+/* ---------- main views ---------- */
+function renderMain() {
+  const m = MODULES.find(x => x.id === S.current);
+  if (S.current === 'preview') return renderPreview();
+  if (!m) { S.current = 'm00'; return renderMain(); }
+  if (m.cover) return renderSetup();
+  if (!m.free) return renderLocked(m);
+  renderModule(m);
+}
+
+function renderSetup() {
+  const s = S.setup;
+  const f = (k, label, hint, full) => `<label class="${full ? 'full' : ''}">${label}${hint ? ` <small>${hint}</small>` : ''}<input data-k="${k}" value="${esc(s[k] || '')}"></label>`;
+  $('main').innerHTML = `
+  <section class="card">
+    <div class="mod-head"><div><h2>00 Cover and approval</h2><p class="imas">${esc(MODULES[0].imas)}</p></div></div>
+    <p class="hint">Fill this in once. Your answers flow into every module, the cover page and the headers of the Word file.</p>
+    <div class="fields">
+      ${f('org', 'Organisation name', '', true)}
+      ${f('prog', 'Programme or project name', 'e.g. Northern Region Clearance Programme', true)}
+      <label class="full">Country <small>sets the national authority and standards below</small><select id="country-pick"><option value="">Choose a country</option>${COUNTRIES.map(c => `<option ${c[0] === s.country ? 'selected' : ''}>${esc(c[0])}</option>`).join('')}<option value="__other" ${s.country && !COUNTRIES.some(c => c[0] === s.country) ? 'selected' : ''}>Other / not listed</option></select></label>
+      <label class="full" id="country-other" ${s.country && !COUNTRIES.some(c => c[0] === s.country) ? '' : 'hidden'}>Country name<input data-k="country" value="${esc(s.country || '')}"></label>
+      ${f('auth', 'National authority', 'filled from the country, edit if needed')}
+      ${f('nmas', 'National standards (NMAS)', 'cited in Module 01 and the references')}
+      <p class="note full" style="font-size:14px">Authority and standards names are a starting point. Always confirm the current NMAS edition with the national authority or the UNMAS / GICHD country team, and cite it with its date in Module 01 References.</p>
+      ${f('version', 'SOP version')}
+      <label>Issue date<input type="date" data-k="date" value="${esc(s.date || '')}"></label>
+      ${f('approver', 'Approved by (name)')}
+      ${f('role', 'Approver role')}
+    </div>
+  </section>
+  <section class="card">
+    <h2>Activities</h2>
+    <p class="hint">Tick what your organisation does. This sets the scope in Module 01 and, in the full version, which modules and forms are included.</p>
+    <div class="checks">${ACTIVITIES.map(a => `<label class="check"><input type="checkbox" data-act="${a[0]}" ${s.acts.includes(a[0]) ? 'checked' : ''}>${esc(a[1])}</label>`).join('')}</div>
+  </section>
+  <section class="card">
+    <h2>What's in the trial</h2>
+    <p class="hint">Modules 00 to 03 are fully written in this trial. The full version adds modules 04 to 12, clearance method headings, and all the blank forms, with your logo for organisations.</p>
+    <p class="note">This builder gives structure, management and admin wording only. It never includes render safe, demolition or other technical explosive procedures. Those sections are left for your organisation to write from its own approved sources.</p>
+    <div class="upsell"><button class="btn primary" type="button" data-go="m01">Start Module 01</button></div>
+  </section>`;
+  $('main').querySelectorAll('input[data-k]').forEach(inp => inp.addEventListener('input', () => { s[inp.dataset.k] = inp.value; save(); renderNav(); }));
+  $('country-pick').addEventListener('change', e => {
+    const v = e.target.value, c = COUNTRIES.find(x => x[0] === v);
+    $('country-other').hidden = v !== '__other';
+    if (c) { s.country = c[0]; s.auth = c[1]; s.nmas = c[2]; }
+    else if (v === '__other') { s.country = ''; s.auth = ''; s.nmas = 'National Mine Action Standards (NMAS)'; }
+    else { s.country = ''; }
+    save(); renderSetup();
+  });
+  $('main').querySelectorAll('input[data-act]').forEach(inp => inp.addEventListener('change', () => {
+    s.acts = ACTIVITIES.map(a => a[0]).filter(k => $('main').querySelector(`input[data-act="${k}"]`).checked); save(); renderNav();
+  }));
+  bindGo();
+}
+
+function renderModule(m) {
+  const idx = FREE.indexOf(m), next = FREE[idx + 1] || { id: 'preview', title: 'Preview' };
+  $('main').innerHTML = `
+  <section class="card">
+    <div class="mod-head"><div><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="imas">${esc(m.imas)}</p></div>
+      <button class="icon-btn" type="button" id="reset-mod">Reset module to sample text</button></div>
+    <p class="hint">Edit the wording to match how you actually work. Highlighted counts show how many [bracketed] items are still to replace.</p>
+    ${m.amend ? amendTable() : ''}
+    ${m.sections.map((sec, i) => `
+      <div class="section">
+        <div>
+          <h3><span class="n">${secNo(m, i)}</span>${esc(sec.t)}</h3>
+          <textarea data-i="${i}" aria-label="${esc(secNo(m, i) + ' ' + sec.t)}">${esc(textOf(m, i))}</textarea>
+          <div class="sec-tools"><span class="left" data-left="${i}"></span><button class="icon-btn" type="button" data-reset="${i}">Reset</button></div>
+        </div>
+        <div class="guide"><b>Guidance</b><p>${esc(sec.g)}</p><p style="color:var(--muted)">Lines starting with "- " become bullet points.</p></div>
+      </div>`).join('')}
+    <div class="upsell"><button class="btn primary" type="button" data-go="${next.id}">Next: ${esc(next.title)}</button></div>
+  </section>`;
+  const upd = i => { const t = textOf(m, i), n = countPh(t), el = $('main').querySelector(`[data-left="${i}"]`); el.textContent = n ? `${n} to replace` : 'All filled'; el.className = 'left' + (n ? '' : ' clear'); };
+  m.sections.forEach((_, i) => upd(i));
+  $('main').querySelectorAll('textarea[data-i]').forEach(ta => ta.addEventListener('input', () => { const i = +ta.dataset.i; S.edits[key(m, i)] = ta.value; save(); upd(i); renderNav(); }));
+  $('main').querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => { if (!confirm('Replace this section with the sample text?')) return; delete S.edits[key(m, +b.dataset.reset)]; save(); renderNav(); renderModule(m); }));
+  $('reset-mod').addEventListener('click', () => { if (!confirm('Replace every section in this module with the sample text?')) return; m.sections.forEach((_, i) => delete S.edits[key(m, i)]); save(); renderNav(); renderModule(m); });
+  bindGo();
+}
+
+function amendTable() {
+  const s = S.setup;
+  return `<h3 style="margin-top:8px">Amendment record</h3><p class="hint">Added automatically to the Word file with your first issue filled in.</p>
+  <div style="overflow-x:auto"><table class="amend"><thead><tr><th>Version</th><th>Date</th><th>Sections</th><th>Summary</th><th>Approved by</th></tr></thead>
+  <tbody><tr><td>${esc(s.version || '1.0')}</td><td>${esc(s.date || '')}</td><td>All</td><td>First issue</td><td>${esc(val(s.approver, 'Name'))}</td></tr></tbody></table></div>`;
+}
+
+function renderLocked(m) {
+  $('main').innerHTML = `
+  <section class="card">
+    <div class="mod-head"><div><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="imas">${esc(m.imas)}</p></div></div>
+    <p class="hint">Coming in the full version. Planned sections:</p>
+    <ul class="locked-list">${m.plan.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+    ${m.note ? `<p class="note blank" style="margin-top:12px">${esc(m.note)}</p>` : ''}
+    <p class="note" style="margin-top:12px">Individuals get every module with The App ($6 a year). Organisations get the full set with their logo and up to 5 users for £99 a year, and the first 7 organisations get year one free.</p>
+    <div class="upsell"><a class="btn primary" href="/app/">See The App</a><button class="btn" type="button" id="btn-org">Claim a free organisation place</button></div>
+  </section>`;
+  $('btn-org').addEventListener('click', () => { location.href = mailto('Free organisation place: SOP Builder', `Hi H.E. Jobs Team,\n\nWe'd like one of the 7 free organisation places for the SOP Builder.\n\nOrganisation: ${S.setup.org}\nCountry: ${S.setup.country}\nContact name:\n`); });
+}
+
+/* ---------- preview (also used for print) ---------- */
+function paraHtml(text) {
+  const ph = s => esc(s).replace(/\[[^\]]+\]/g, x => `<span class="ph">${x}</span>`);
+  return blocks(text).map(b => b.list ? `<ul>${b.items.map(i => `<li>${ph(i)}</li>`).join('')}</ul>` : `<p>${ph(b.text)}</p>`).join('');
+}
+function blocks(text) {
+  const out = [];
+  text.replace(/\r/g, '').split(/\n\s*\n/).forEach(chunk => {
+    const lines = chunk.split('\n').filter(l => l.trim());
+    let para = [];
+    lines.forEach(l => {
+      const mm = l.match(/^\s*[-•*]\s+(.*)$/);
+      if (mm) { if (para.length) { out.push({ text: para.join(' ') }); para = []; } const last = out[out.length - 1]; if (last && last.list && last.open) last.items.push(mm[1]); else out.push({ list: true, open: true, items: [mm[1]] }); }
+      else { const last = out[out.length - 1]; if (last && last.list) last.open = false; para.push(l.trim()); }
+    });
+    if (para.length) out.push({ text: para.join(' ') });
+    const last = out[out.length - 1]; if (last && last.list) last.open = false;
+  });
+  return out;
+}
+function renderPreview() {
+  const s = S.setup, total = FREE.reduce((n, m) => n + moduleLeft(m), 0);
+  $('main').innerHTML = `
+  <div class="preview-wrap">
+    <div class="card no-print"><div class="mod-head"><div><h2>Preview</h2>
+      <p class="hint" style="margin:0">${total ? `${total} items still to fill (highlighted in yellow).` : 'Everything is filled in.'} Print this page to save a PDF, or export to Word to keep editing.</p></div>
+      <div class="upsell" style="margin:0"><button class="btn" type="button" onclick="window.print()">Print / PDF</button><button class="btn primary" type="button" data-export>Export to Word</button></div></div></div>
+    <article class="paper">
+      <div class="cover">
+        <div class="org">${paraInline(val(s.org, 'Organisation name'))}</div>
+        <h1>Standard Operating Procedures</h1>
+        <p>${paraInline(val(s.prog, 'programme name'))} · ${paraInline(val(s.country, 'country'))}</p>
+        <p>Version ${esc(s.version || '1.0')} · ${esc(s.date || '')}</p>
+        <p style="margin-top:24px">Approved by ${paraInline(val(s.approver, 'Name'))}, ${paraInline(val(s.role, 'Country Director'))}</p>
+      </div>
+      <p class="disc">${esc(DISCLAIMER)}</p>
+      ${FREE.filter(m => !m.cover).map(m => `<div class="mod"><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="p-imas">References: ${esc(m.imas)}</p>
+        ${m.amend ? `<h3>Amendment record</h3><table><tr><th>Version</th><th>Date</th><th>Sections</th><th>Summary</th><th>Approved by</th></tr><tr><td>${esc(s.version || '1.0')}</td><td>${esc(s.date || '')}</td><td>All</td><td>First issue</td><td>${paraInline(val(s.approver, 'Name'))}</td></tr></table>` : ''}
+        ${m.sections.map((sec, i) => `<h3>${secNo(m, i)} ${esc(sec.t)}</h3>${paraHtml(textOf(m, i))}`).join('')}</div>`).join('')}
+      <p class="madewith">Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com</p>
+    </article>
+  </div>`;
+  $('main').querySelector('[data-export]').addEventListener('click', exportDocx);
+}
+const paraInline = t => esc(t).replace(/\[[^\]]+\]/g, x => `<span class="ph">${x}</span>`);
+const DISCLAIMER = 'This document was drafted with the H.E. Jobs SOP Builder. It is a template only. It has not been approved by any national authority or by H.E. Jobs, and it must be reviewed by competent staff and accredited by the national mine action authority before use. Technical explosive procedures are not included and must be added by the organisation from its own approved sources. H.E. Jobs Team.';
+
+function bindGo() { $('main').querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go))); }
+
+/* ---------- Word export: builds a .docx (zip of XML parts) in the browser ---------- */
+const X = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function runs(text, rpr = '') {
+  return String(text).split(/(\[[^\]]+\])/).filter(Boolean).map(part => {
+    const hl = /^\[[^\]]+\]$/.test(part) ? '<w:highlight w:val="yellow"/>' : '';
+    return `<w:r>${rpr || hl ? `<w:rPr>${rpr}${hl}</w:rPr>` : ''}<w:t xml:space="preserve">${X(part)}</w:t></w:r>`;
+  }).join('');
+}
+const P = (text, style, extra = '') => `<w:p>${style || extra ? `<w:pPr>${style ? `<w:pStyle w:val="${style}"/>` : ''}${extra}</w:pPr>` : ''}${runs(text)}</w:p>`;
+const PB = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+function bodyXml(text) {
+  return blocks(text).map(b => b.list ? b.items.map(i => `<w:p><w:pPr><w:pStyle w:val="ListBullet"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr></w:pPr>${runs(i)}</w:p>`).join('') : P(b.text)).join('');
+}
+function cell(text, head) { return `<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>${head ? '<w:shd w:val="clear" w:color="auto" w:fill="EDE7DA"/>' : ''}</w:tcPr><w:p>${runs(text, head ? '<w:b/>' : '')}</w:p></w:tc>`; }
+function table(rows) {
+  return `<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="5000" w:type="pct"/></w:tblPr>` +
+    rows.map((r, ri) => `<w:tr>${r.map(c => cell(c, ri === 0)).join('')}</w:tr>`).join('') + '</w:tbl>' + P('');
+}
+function documentXml() {
+  const s = S.setup;
+  const tc = '<w:p><w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \\o "1-2" \\h \\z \\u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Right-click here and choose Update Field to build the contents list.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>';
+  let b = '';
+  b += P('', '', '<w:spacing w:before="2400"/>');
+  b += P(val(s.org, 'Organisation name'), 'Subtitle');
+  b += P('Standard Operating Procedures', 'Title');
+  b += P(val(s.prog, 'programme name') + ' · ' + val(s.country, 'country'), 'Subtitle');
+  b += P('Version ' + (s.version || '1.0') + ' · ' + (s.date || ''), 'Subtitle');
+  b += P('', '', '<w:spacing w:before="1200"/>');
+  b += table([['Approved by', 'Role', 'Signature', 'Date'], [val(s.approver, 'Name'), val(s.role, 'Country Director'), '', '']]);
+  b += P(DISCLAIMER, 'Disclaimer');
+  b += PB + P('Contents', 'TOCHeading') + tc;
+  FREE.filter(m => !m.cover).forEach(m => {
+    b += P(m.no + ' ' + m.title, 'Heading1') + P('References: ' + m.imas, 'Refs');
+    if (m.amend) { b += P('Amendment record', 'Heading2') + table([['Version', 'Date', 'Sections', 'Summary', 'Approved by'], [s.version || '1.0', s.date || '', 'All', 'First issue', val(s.approver, 'Name')], ['', '', '', '', ''], ['', '', '', '', '']]); }
+    m.sections.forEach((sec, i) => { b += P(secNo(m, i) + ' ' + sec.t, 'Heading2') + bodyXml(textOf(m, i)); });
+  });
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${b}<w:sectPr><w:headerReference w:type="default" r:id="rIdH"/><w:footerReference w:type="default" r:id="rIdF"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1304" w:right="1134" w:bottom="1304" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/><w:titlePg/></w:sectPr></w:body></w:document>`;
+}
+const W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+function stylesXml() {
+  const st = (id, name, ppr, rpr, extra = '') => `<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/>${extra}<w:qFormat/><w:pPr>${ppr}</w:pPr><w:rPr>${rpr}</w:rPr></w:style>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${W}>
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri" w:eastAsia="Calibri"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="en-GB"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+${st('Title', 'Title', '<w:jc w:val="center"/><w:spacing w:after="240"/>', '<w:b/><w:sz w:val="52"/><w:color w:val="1D1F1C"/>')}
+${st('Subtitle', 'Subtitle', '<w:jc w:val="center"/><w:spacing w:after="120"/>', '<w:sz w:val="28"/><w:color w:val="4A4D47"/>')}
+${st('Heading1', 'heading 1', '<w:keepNext/><w:pageBreakBefore/><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="8A4B08"/></w:pBdr><w:spacing w:before="0" w:after="80"/><w:outlineLvl w:val="0"/>', '<w:b/><w:sz w:val="34"/><w:color w:val="1D1F1C"/>')}
+${st('Heading2', 'heading 2', '<w:keepNext/><w:spacing w:before="240" w:after="80"/><w:outlineLvl w:val="1"/>', '<w:b/><w:sz w:val="25"/><w:color w:val="8A4B08"/>')}
+${st('TOCHeading', 'TOC Heading', '<w:spacing w:after="200"/>', '<w:b/><w:sz w:val="34"/>')}
+${st('Refs', 'References line', '<w:spacing w:after="200"/>', '<w:i/><w:sz w:val="19"/><w:color w:val="6A6D66"/>')}
+${st('Disclaimer', 'Disclaimer', '<w:pBdr><w:top w:val="single" w:sz="4" w:space="6" w:color="C9C6BC"/><w:left w:val="single" w:sz="4" w:space="6" w:color="C9C6BC"/><w:bottom w:val="single" w:sz="4" w:space="6" w:color="C9C6BC"/><w:right w:val="single" w:sz="4" w:space="6" w:color="C9C6BC"/></w:pBdr><w:spacing w:before="600"/>', '<w:sz w:val="18"/><w:color w:val="4A4D47"/>')}
+${st('ListBullet', 'List Bullet', '<w:ind w:left="567" w:hanging="283"/><w:spacing w:after="60"/>', '')}
+${st('Header', 'header', '<w:tabs><w:tab w:val="right" w:pos="9638"/></w:tabs><w:spacing w:after="0"/>', '<w:sz w:val="17"/><w:color w:val="6A6D66"/>')}
+<w:style w:type="table" w:styleId="TableGrid"><w:name w:val="Table Grid"/><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4" w:color="A9A69C"/><w:left w:val="single" w:sz="4" w:color="A9A69C"/><w:bottom w:val="single" w:sz="4" w:color="A9A69C"/><w:right w:val="single" w:sz="4" w:color="A9A69C"/><w:insideH w:val="single" w:sz="4" w:color="A9A69C"/><w:insideV w:val="single" w:sz="4" w:color="A9A69C"/></w:tblBorders><w:tblCellMar><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style>
+</w:styles>`;
+}
+const numberingXml = () => `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering ${W}><w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="singleLevel"/><w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:lvlJc w:val="left"/><w:pPr><w:ind w:left="567" w:hanging="283"/></w:pPr></w:lvl></w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num></w:numbering>`;
+function headerXml() { const s = S.setup; return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr ${W}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${runs(val(s.org, 'Organisation name') + ' · Standard Operating Procedures')}<w:r><w:tab/></w:r>${runs('Version ' + (s.version || '1.0'))}</w:p></w:hdr>`; }
+function footerXml() {
+  const s = S.setup;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${W}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${runs('Uncontrolled when printed · ' + (s.date || ''))}<w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">Page </w:t></w:r><w:fldSimple w:instr=" PAGE "><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p><w:p><w:pPr><w:pStyle w:val="Header"/><w:jc w:val="center"/></w:pPr>${runs('Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com')}</w:p></w:ftr>`;
+}
+function docxParts() {
+  const s = S.setup;
+  return {
+    '[Content_Types].xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`,
+    '_rels/.rels': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`,
+    'docProps/core.xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${X((s.org || 'Organisation') + ' Standard Operating Procedures')}</dc:title><dc:creator>${X(s.org || 'H.E. Jobs SOP Builder')}</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0, 19)}Z</dcterms:created></cp:coreProperties>`,
+    'word/_rels/document.xml.rels': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdT" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/><Relationship Id="rIdN" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/><Relationship Id="rIdH" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rIdF" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>`,
+    'word/settings.xml': `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:settings ${W}><w:updateFields w:val="true"/><w:defaultTabStop w:val="720"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`,
+    'word/styles.xml': stylesXml(),
+    'word/numbering.xml': numberingXml(),
+    'word/header1.xml': headerXml(),
+    'word/footer1.xml': footerXml(),
+    'word/document.xml': documentXml()
+  };
+}
+/* Minimal zip writer (stored, no compression). */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zip(files) {
+  const enc = new TextEncoder(), chunks = [], central = []; let off = 0;
+  const u16 = v => [v & 255, (v >>> 8) & 255], u32 = v => [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255];
+  for (const [name, text] of Object.entries(files)) {
+    const nb = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+    const common = [...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nb.length), ...u16(0)];
+    const local = new Uint8Array([...u32(0x04034b50), ...common]);
+    chunks.push(local, nb, data);
+    central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...common, ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), nb);
+    off += local.length + nb.length + data.length;
+  }
+  const cdSize = central.reduce((n, c) => n + c.length, 0), count = Object.keys(files).length;
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(count), ...u16(count), ...u32(cdSize), ...u32(off), ...u16(0)]);
+  return new Blob([...chunks, ...central, end], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+}
+function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+const fileBase = () => ((S.setup.org || 'SOP').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'SOP') + '-SOP-v' + (S.setup.version || '1.0').replace(/[^\w.]/g, '');
+function exportDocx() {
+  const left = FREE.reduce((n, m) => n + moduleLeft(m), 0);
+  download(zip(docxParts()), fileBase() + '.docx');
+  toast(left ? `Word file saved. ${left} items still highlighted to fill.` : 'Word file saved.');
+}
+window.__sop = { docxParts, zip, S: () => S };
+
+/* ---------- top bar and side actions ---------- */
+$('btn-export').addEventListener('click', exportDocx);
+$('btn-preview').addEventListener('click', () => go('preview'));
+$('btn-save-file').addEventListener('click', () => download(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' }), fileBase() + '.json'));
+$('btn-open-file').addEventListener('click', () => $('file-in').click());
+$('file-in').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  f.text().then(t => { const d = JSON.parse(t); if (!d.setup) throw new Error('bad'); S = Object.assign(blank(), d); save(); renderNav(); renderMain(); toast('Project opened.'); })
+    .catch(() => alert('That file is not an SOP Builder project.'));
+  e.target.value = '';
+});
+const mailto = (subj, body) => `mailto:${FEEDBACK}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+$('btn-feedback').addEventListener('click', () => { location.href = mailto('SOP Builder trial feedback', 'Hi H.E. Jobs Team,\n\nMy role:\nWhat worked well:\nWhat was missing or wrong:\nWould my organisation use it (yes / no / maybe):\n'); });
+
+renderNav();
+renderMain();
+})();
+</script>
+</body>
+</html>
