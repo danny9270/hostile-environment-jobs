@@ -63,6 +63,8 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 26px 0 0; padding: 0; list-style: none; }
 .stats li { font: 500 14px var(--mono); color: var(--muted); }
 .stats b { display: block; font: 900 38px/1 var(--display); color: var(--ink); }
+.hero .guide-link { margin: 18px 0 0; font: 500 14px var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.hero .guide-link a { color: var(--accent); }
 .hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 .page-hero .wrap { padding-block: 44px 30px; }
 .page-hero h1 { font-size: clamp(36px, 6vw, 60px); }
@@ -127,6 +129,22 @@ form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .note { color: var(--warn); } .sent { color: var(--ok); }
+/* Course reviews: star summary on each course card, plus the moderated review form. */
+.stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
+.rev summary { cursor: pointer; color: var(--ink); }
+.rev blockquote { margin: 10px 0 0; padding: 10px 12px; background: var(--raised); border-left: 3px solid var(--sand); border-radius: 4px; color: var(--ink); }
+.rev blockquote p { margin: 4px 0; }
+.rev cite { font: 500 12.5px var(--mono); color: var(--muted); font-style: normal; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.rate { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; border: 0; padding: 0; margin: 0; }
+.rate legend { font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 4px; }
+.rate input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+form .rate label { display: inline; font-size: 32px; line-height: 1; color: #4a5045; cursor: pointer; }
+.rate input:checked ~ label, .rate label:hover, .rate label:hover ~ label { color: var(--accent); }
+.rate input:focus-visible + label { outline: 2px solid var(--sand); outline-offset: 2px; }
+form label.check { display: flex; gap: 8px; align-items: baseline; font-weight: 400; }
+form label.check input { width: auto; flex: none; }
 .guide { border-top: 1px solid var(--line); padding: 14px 0; }
 .guide summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .guide summary::-webkit-details-marker { display: none; }
@@ -152,9 +170,25 @@ form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); margin: 10px 0 0; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sand); }
 .legend .lj::before { background: var(--accent); }
+/* Paid extras: featured jobs, employer profiles, Advertise page */
+.job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
+.tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
+.detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.who a { color: inherit; }
+.profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0 10px; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; align-content: start; gap: 6px; }
+.plan.best { border-color: var(--accent); }
+.plan h2 { margin: 0; font-size: 22px; }
+.plan .price { font: 900 40px/1 var(--display); margin: 6px 0; }
+.plan .price span { font: 500 13px var(--mono); color: var(--muted); }
+.plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
+.plan .btn { justify-self: start; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
+#sitrep { scroll-margin-top: 130px; }
 .sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
@@ -194,6 +228,13 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/#courses" data-view="courses">Courses</a>
     <a href="/#calendar" data-view="calendar">Calendar</a>
     <a href="/#careers" data-view="careers">Getting in</a>
+    <a href="/guide/">How it works</a>
+    <a href="/leavers/">Service leavers</a>
+    <a href="/pay/">Pay guide</a>
+    <a href="/deploy/">Deployment guide</a>
+    <a href="/cv/">CV builder</a>
+    <a href="/app/">The App</a>
+    <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
     <a href="/#about" data-view="about">About</a>
   </nav>
@@ -202,13 +243,19 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <h1 style="margin-top:24px">The Sitrep</h1>
 <p>New jobs, closing dates and course dates in one short email every Monday.</p>
 <div class="actions"><a class="btn primary" href="/#sitrep">Subscribe free</a><a class="btn" href="/sitrep/feed.xml">RSS feed</a></div>
-<p>The first issue goes out on Monday.</p>
+<h2>Past issues</h2>
+<ul>
+<li><a href="/sitrep/2026-11-02/">Sitrep #1: 24 open jobs, 5 course dates</a> <span class="when">2 Nov 2026</span></li>
+</ul>
 </main>
 <footer><div class="wrap">
   <span>&copy; 2026 Hostile Environment Jobs</span>
   <a href="/#privacy" data-view="privacy">Privacy</a>
   <a href="/jobs/">All open jobs</a>
+  <a href="/pay/">Pay guide</a>
+  <a href="/deploy/">Deployment guide</a>
   <a href="/#post" data-view="post">Post a job</a>
+  <a href="/advertise/">Advertise</a>
   <a href="/#list-course" data-view="courses">List a course</a>
   <a href="/#calendar" data-view="calendar">Calendar</a>
   <a href="/#sitrep">Sitrep newsletter</a>
