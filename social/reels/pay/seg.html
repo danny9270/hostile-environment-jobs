@@ -21,6 +21,7 @@ html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden;color:
 .big{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;font-size:200px;line-height:.86}
 .url{font-family:"Big Shoulders Display";font-weight:800;font-size:64px;margin-top:50px}
 .free{font-size:34px;color:var(--muted);margin-top:30px}
+.app{position:absolute;inset:0;overflow:hidden;z-index:2}.app img{position:absolute;left:0;top:0;width:1080px}.band{position:absolute;left:0;right:0;bottom:0;height:820px;background:linear-gradient(transparent,rgba(17,19,16,.97) 22%,#111310);z-index:3}.capb{position:absolute;left:80px;right:80px;bottom:150px;z-index:4}
 .flash{position:absolute;inset:0;background:#f29a2e;z-index:9;pointer-events:none}
 .vig{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55))}
 </style></head><body>
@@ -34,7 +35,8 @@ const C={
  s3:{kick:'Help the next operator',head:'Report your pay.<br><span class="acc">Anonymously.</span>',sub:'The more who do, the sharper it gets.',a:1900,b:2700},
 };
 const root=document.getElementById('root');
-if(S==='end'){root.innerHTML='<div class="full"><div class="mono kick">Hostile Environment Jobs</div><div class="big" id="h">Know your<br><span class="acc">worth.</span></div><div class="url" id="u">hostileenvironmentjobs.com<span class="acc">/pay</span></div><div class="free mono" id="f">Free · No sign-up</div></div>';}
+if(S==='s1'){const c=C.s1;root.innerHTML='<div class="app"><img id="im" src="pay.jpg"></div><div class="band"></div><div class="capb" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div>';}
+else if(S==='end'){root.innerHTML='<div class="full"><div class="mono kick">Hostile Environment Jobs</div><div class="big" id="h">Know your<br><span class="acc">worth.</span></div><div class="url" id="u">hostileenvironmentjobs.com<span class="acc">/pay</span></div><div class="free mono" id="f">Free · No sign-up</div></div>';}
 else{const c=C[S];root.innerHTML='<div class="brand">H.E. <span class="acc">JOBS</span></div><div class="cap" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div><div class="phone" id="ph"><div class="screen"><img id="im" src="pay.jpg"></div></div>';}
 const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
 function render(t){
@@ -43,6 +45,7 @@ function render(t){
   ['h','u','f'].forEach((id,i)=>{const e=ease((t-.1-i*.25)/.35);const el=document.getElementById(id);el.style.opacity=e;el.style.transform='translateY('+(40*(1-e))+'px) scale('+(1.06-.06*e)+')';});
   return;}
  const c=C[S],D=+(new URLSearchParams(location.search).get('d')||4.5);
+ if(S==='s1'){const z=1.12-0.12*ease(t/.5);document.getElementById('im').style.transform='scale('+z+') translateY('+(140-760*Math.max(0,Math.min(1,(t-.9)/(D-.9))))+'px)';document.getElementById('im').style.transformOrigin='50% 0';const e=ease((t-.35)/.3);const cap=document.getElementById('cap');cap.style.opacity=e;cap.style.transform='translateY('+(40*(1-e))+'px)';return;}
  const e=ease(t/.3);const cap=document.getElementById('cap');cap.style.opacity=e;cap.style.transform='translateX('+(-60*(1-e))+'px)';
  const p=ease((t-.05)/.4);const ph=document.getElementById('ph');ph.style.transform='translateY('+(260*(1-p))+'px) scale('+(1.04-0.04*p)+')';
  const k=Math.min(1,Math.max(0,(t-.4)/(D-.6)));const s=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
