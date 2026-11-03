@@ -10,24 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:course-pcm-imas-eod-3plus-nov-2026@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261102
-DTEND;VALUE=DATE:20261103
-SUMMARY:Course starts: IMAS EOD Level 3+ (Kosovo)
-LOCATION:Kosovo
-DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
- eeks. On request\nAdvanced EOD course for operators already employed at IM
- AS EOD Level 3. Next dates March and November 2027.\n\nBook: https://www.p
- cm-erw.com/course-dates-pre-registration/?utm_source=hostileenvironmentjob
- s&utm_medium=referral&utm_campaign=course-calendar&utm_content=pcm-imas-eo
- d-3plus-nov-2026
-URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
- leenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_con
- tent=pcm-imas-eod-3plus-nov-2026
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-uk-med-health-advisor-roving@hostileenvironmentjobs.com
 DTSTAMP:20261014T000000Z
 DTSTART;VALUE=DATE:20261103
@@ -139,6 +121,38 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Beirut\, Lebanon\nLeads technica
  er-beirut/
 URL:https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manager-beir
  ut/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-team-leader-rural-damascus@hostileenvironmentjobs.com
+DTSTAMP:20261103T000000Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Job closes: Humanitarian Mine Action Team Leader (Danish Refugee Co
+ uncil (DRC))
+LOCATION:Rural Damascus\, Syria
+DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nLead non
+ -technical survey and explosive ordnance risk education teams in Rural Dam
+ ascus to IMAS and NMAS standards.\n\nDetails and how to apply: https://hos
+ tileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damascus/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damas
+ cus/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-team-member-rural-damascus@hostileenvironmentjobs.com
+DTSTAMP:20261103T000000Z
+DTSTART;VALUE=DATE:20261110
+DTEND;VALUE=DATE:20261111
+SUMMARY:Job closes: Humanitarian Mine Action Team Member (Danish Refugee Co
+ uncil (DRC))
+LOCATION:Rural Damascus\, Syria
+DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nCarry ou
+ t non-technical survey\, community liaison and explosive ordnance risk edu
+ cation in Rural Damascus.\n\nDetails and how to apply: https://hostileenvi
+ ronmentjobs.com/jobs/drc-hma-team-member-rural-damascus/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-member-rural-damas
+ cus/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
