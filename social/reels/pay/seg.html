@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+:root{--bg:#111310;--ink:#ecebe4;--muted:#a3a79c;--accent:#f29a2e}
+html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden;color:var(--ink);font-family:"Source Sans 3",sans-serif}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:54px 54px}
+.glow{position:absolute;width:1300px;height:1300px;left:-350px;top:-500px;background:radial-gradient(circle,rgba(242,154,46,.18),transparent 60%)}
+.stripe{position:absolute;left:0;right:0;bottom:0;height:22px;background:repeating-linear-gradient(-45deg,var(--accent) 0 26px,var(--bg) 26px 52px);z-index:5}
+.brand{position:absolute;top:150px;left:80px;font-family:"Big Shoulders Display";font-weight:900;font-size:44px;letter-spacing:.02em;z-index:4}
+.acc{color:var(--accent)}
+.mono{font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.14em}
+.cap{position:absolute;left:80px;right:80px;top:250px;z-index:4}
+.kick{font-size:30px;color:var(--accent);margin-bottom:20px}
+.head{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;font-size:132px;line-height:.9}
+.sub{font-size:38px;color:var(--muted);margin-top:24px;line-height:1.3}
+.phone{position:absolute;left:50%;top:820px;width:700px;height:1400px;margin-left:-350px;border-radius:60px;background:#050605;border:3px solid #3a4036;padding:16px;box-shadow:0 40px 140px rgba(0,0,0,.7),0 0 0 10px #1c1f1b;z-index:3}
+.screen{width:100%;height:100%;border-radius:46px;overflow:hidden;position:relative;background:var(--bg)}
+.screen img{position:absolute;left:0;top:0;width:100%;display:block}
+.full{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 90px;z-index:4}
+.big{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;font-size:200px;line-height:.86}
+.url{font-family:"Big Shoulders Display";font-weight:800;font-size:64px;margin-top:50px}
+.free{font-size:34px;color:var(--muted);margin-top:30px}
+.flash{position:absolute;inset:0;background:#f29a2e;z-index:9;pointer-events:none}
+.vig{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55))}
+</style></head><body>
+<div class="grid"></div><div class="glow"></div>
+<div id="root"></div><div class="vig"></div><div class="flash" id="fl"></div><div class="stripe"></div>
+<script>
+const S=new URLSearchParams(location.search).get('s');
+const C={
+ s1:{kick:'Free · Pay guide',head:'Know your<br><span class="acc">day rate</span>',sub:'EOD, mine action, security, medics and support roles.',a:0,b:950},
+ s2:{kick:'Real numbers',head:'From real<br><span class="acc">adverts</span>',sub:'Every figure marked advert, published or estimate.',a:950,b:1900},
+ s3:{kick:'Help the next operator',head:'Report your pay.<br><span class="acc">Anonymously.</span>',sub:'The more who do, the sharper it gets.',a:1900,b:2700},
+};
+const root=document.getElementById('root');
+if(S==='end'){root.innerHTML='<div class="full"><div class="mono kick">Hostile Environment Jobs</div><div class="big" id="h">Know your<br><span class="acc">worth.</span></div><div class="url" id="u">hostileenvironmentjobs.com<span class="acc">/pay</span></div><div class="free mono" id="f">Free · No sign-up</div></div>';}
+else{const c=C[S];root.innerHTML='<div class="brand">H.E. <span class="acc">JOBS</span></div><div class="cap" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div><div class="phone" id="ph"><div class="screen"><img id="im" src="pay.jpg"></div></div>';}
+const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+function render(t){
+ document.getElementById('fl').style.opacity=Math.max(0,.55-t*3.5);
+ if(S==='end'){
+  ['h','u','f'].forEach((id,i)=>{const e=ease((t-.1-i*.25)/.35);const el=document.getElementById(id);el.style.opacity=e;el.style.transform='translateY('+(40*(1-e))+'px) scale('+(1.06-.06*e)+')';});
+  return;}
+ const c=C[S],D=+(new URLSearchParams(location.search).get('d')||4.5);
+ const e=ease(t/.3);const cap=document.getElementById('cap');cap.style.opacity=e;cap.style.transform='translateX('+(-60*(1-e))+'px)';
+ const p=ease((t-.05)/.4);const ph=document.getElementById('ph');ph.style.transform='translateY('+(260*(1-p))+'px) scale('+(1.04-0.04*p)+')';
+ const k=Math.min(1,Math.max(0,(t-.4)/(D-.6)));const s=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+ document.getElementById('im').style.transform='translateY('+(-(c.a+(c.b-c.a)*s)*(668/780))+'px)';
+}
+render(0);
+</script></body></html>
