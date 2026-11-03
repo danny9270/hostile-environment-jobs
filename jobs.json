@@ -1,5 +1,85 @@
 [
  {
+  "id": "drc-hma-team-leader-rural-damascus",
+  "title": "Humanitarian Mine Action Team Leader",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Rural Damascus, Syria",
+  "region": "Middle East",
+  "contract": "National contract, 1 year (extendable)",
+  "salary": "DRC grade G (amount not stated)",
+  "requirements": [
+   "Previous mine action team leader experience",
+   "Non-technical survey experience plus 1 year EORE",
+   "NTS course certificate; IMAS level 3 desirable",
+   "English and Arabic"
+  ],
+  "summary": "Lead non-technical survey and explosive ordnance risk education teams in Rural Damascus to IMAS and NMAS standards.",
+  "closing": "2026-11-10",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177094&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-03"
+ },
+ {
+  "id": "drc-hma-team-member-rural-damascus",
+  "title": "Humanitarian Mine Action Team Member",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Rural Damascus, Syria",
+  "region": "Middle East",
+  "contract": "National contract, 1 year (extendable)",
+  "salary": "DRC grade J (amount not stated)",
+  "requirements": [
+   "NTS/EORE certificate from a recognised mine action training provider",
+   "Basic mine and UXO recognition for Syria",
+   "Map, compass and GPS skills",
+   "Fluent Arabic and English"
+  ],
+  "summary": "Carry out non-technical survey, community liaison and explosive ordnance risk education in Rural Damascus.",
+  "closing": "2026-11-10",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177095&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-03"
+ },
+ {
+  "id": "errg-uxo-technician-i",
+  "title": "UXO Technician I",
+  "employer": "ERRG",
+  "category": "EOD",
+  "location": "United States (various sites)",
+  "region": "Americas",
+  "contract": "Project-based, up to 100% travel",
+  "salary": "Not stated",
+  "requirements": [
+   "UXO Technician I course or military EOD school (US, CA, UK, DE, AU)",
+   "40-hour HAZWOPER plus refresher",
+   "Meets DDESB TP-18",
+   "Valid driving licence"
+  ],
+  "summary": "Locate and detect subsurface UXO and munitions on munitions response projects across the US.",
+  "closing": "Rolling",
+  "apply_url": "https://job-boards.greenhouse.io/errg/jobs/4576004008",
+  "posted": "2026-11-03"
+ },
+ {
+  "id": "errg-munitions-response-project-manager",
+  "title": "Munitions Response Project Manager",
+  "employer": "ERRG",
+  "category": "Management",
+  "location": "Remote, United States",
+  "region": "Americas",
+  "contract": "Remote, up to 25% travel",
+  "salary": "$100,000 - $112,000 (California range)",
+  "requirements": [
+   "Degree in engineering, geology or environmental field",
+   "3+ years munitions or remediation experience",
+   "Current 40-hour HAZWOPER (or obtain before start)",
+   "CERCLA document writing"
+  ],
+  "summary": "Plan and run military munitions response and remediation projects, managing technical and UXO staff.",
+  "closing": "Rolling",
+  "apply_url": "https://job-boards.greenhouse.io/errg/jobs/5388022008",
+  "posted": "2026-11-03"
+ },
+ {
   "id": "drc-hma-operations-manager-beirut",
   "title": "HMA Operations Manager",
   "employer": "Danish Refugee Council (DRC)",
