@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=block" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+:root{--bg:#111310;--ink:#ecebe4;--muted:#a3a79c;--accent:#f29a2e}
+html,body{width:1080px;height:1920px;background:var(--bg);overflow:hidden;color:var(--ink);font-family:"Source Sans 3",sans-serif}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:54px 54px}
+.glow{position:absolute;width:1300px;height:1300px;left:-350px;top:-500px;background:radial-gradient(circle,rgba(242,154,46,.18),transparent 60%)}
+.stripe{position:absolute;left:0;right:0;bottom:0;height:22px;background:repeating-linear-gradient(-45deg,var(--accent) 0 26px,var(--bg) 26px 52px);z-index:5}
+.brand{position:absolute;top:150px;left:80px;font-family:"Big Shoulders Display";font-weight:900;font-size:44px;letter-spacing:.02em;z-index:4}
+.acc{color:var(--accent)}
+.mono{font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.14em}
+.cap{position:absolute;left:80px;right:80px;top:250px;z-index:4}
+.kick{font-size:30px;color:var(--accent);margin-bottom:20px}
+.head{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;font-size:132px;line-height:.9}
+.sub{font-size:38px;color:var(--muted);margin-top:24px;line-height:1.3}
+.phone{position:absolute;left:50%;top:820px;width:700px;height:1400px;margin-left:-350px;border-radius:60px;background:#050605;border:3px solid #3a4036;padding:16px;box-shadow:0 40px 140px rgba(0,0,0,.7),0 0 0 10px #1c1f1b;z-index:3}
+.screen{width:100%;height:100%;border-radius:46px;overflow:hidden;position:relative;background:var(--bg)}
+.screen img{position:absolute;left:0;top:0;width:100%;display:block}
+.full{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 90px;z-index:4}
+.big{font-family:"Big Shoulders Display";font-weight:900;text-transform:uppercase;font-size:190px;line-height:.86}
+.url{font-family:"Big Shoulders Display";font-weight:800;font-size:60px;margin-top:50px}
+.free{font-size:32px;color:var(--muted);margin-top:30px}
+.note{font-size:30px;color:var(--muted);margin-top:26px;line-height:1.35}
+.app{position:absolute;inset:0;overflow:hidden;z-index:2}.app img{position:absolute;left:0;top:0;width:1080px;transform-origin:50% 0}
+.band{position:absolute;left:0;right:0;bottom:0;height:820px;background:linear-gradient(transparent,rgba(17,19,16,.97) 22%,#111310);z-index:3}
+.capb{position:absolute;left:80px;right:80px;bottom:150px;z-index:4}
+.flash{position:absolute;inset:0;background:#f29a2e;z-index:9;pointer-events:none}
+.vig{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55))}
+</style></head><body>
+<div class="grid"></div><div class="glow"></div>
+<div id="root"></div><div class="vig"></div><div class="flash" id="fl"></div><div class="stripe"></div>
+<script>
+const Q=new URLSearchParams(location.search);const R=Q.get('r'),S=Q.get('s'),D=+(Q.get('d')||4.5);
+const CFG={
+ cv:{img:'cv/cv-full.png',url:'hostileenvironmentjobs.com<span class="acc">/cv</span>',end:'Your next contract<br><span class="acc">starts here.</span>',endnote:'Free · No sign-up',
+  s1:{kick:'Free · CV builder',head:'Pick the<br><span class="acc">format</span>',sub:'UN agency, NGO or security company.',a:140,b:-1900},
+  s2:{kick:'Step two',head:'Lose the<br><span class="acc">jargon</span>',sub:'It swaps military terms for words a recruiter gets.',a:3200,b:3900},
+  s3:{kick:'Step three',head:'Print it or<br><span class="acc">save it</span>',sub:'Nothing leaves your phone. No sign-up.',a:4900,b:5900}},
+ rota:{img:'rota/tracker.png',url:'hostileenvironmentjobs.com<span class="acc">/app</span>',end:'Know your<br><span class="acc">days.</span>',endnote:'Rotation tracker is free',
+  s1:{kick:'Free · Rotation tracker',head:'Days to<br><span class="acc">leave</span>',sub:'Count down to your next flight home.',a:220,b:-150},
+  s2:{kick:'Days and pay',head:'Hitch, month,<br><span class="acc">tax year</span>',sub:'Every day and every pound, added up for you.',a:380,b:700},
+  s3:{kick:'A record, not tax advice',head:'Your days<br><span class="acc">logged</span>',sub:'Handy for HMRC residence rules. Not tax advice: check with an adviser.',a:1050,b:1350}},
+ closing:{img:'closing/closing-full.png',url:'hostileenvironmentjobs.com',end:'Apply before<br><span class="acc">it closes.</span>',endnote:'Free to search · Free to post a job',
+  s1:{kick:'Closing this week',head:'Sorted by<br><span class="acc">deadline</span>',sub:'Pick “Closing soonest” on the jobs list.',a:-3700,b:-5600},
+  s2:{kick:'Real adverts',head:'Straight to<br><span class="acc">the employer</span>',sub:'Every job links to the employer’s own advert.',a:3300,b:4500},
+  s3:{kick:'Never miss one',head:'Job alerts<br><span class="acc">on your phone</span>',sub:'Pick your trade and regions in The App.',a:4500,b:5600}}
+};
+const C=CFG[R];const root=document.getElementById('root');
+if(S==='s1'){const c=C.s1;root.innerHTML='<div class="app"><img id="im" src="'+C.img+'"></div><div class="band"></div><div class="capb" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div>';}
+else if(S==='end'){root.innerHTML='<div class="full"><div class="mono kick">Hostile Environment Jobs</div><div class="big" id="h">'+C.end+'</div><div class="url" id="u">'+C.url+'</div><div class="free mono" id="f">'+C.endnote+'</div></div>';}
+else{const c=C[S];root.innerHTML='<div class="brand">H.E. <span class="acc">JOBS</span></div><div class="cap" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div><div class="phone" id="ph"><div class="screen"><img id="im" src="'+C.img+'"></div></div>';}
+const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+function render(t){
+ document.getElementById('fl').style.opacity=Math.max(0,.55-t*3.5);
+ if(S==='end'){['h','u','f'].forEach((id,i)=>{const e=ease((t-.1-i*.25)/.35);const el=document.getElementById(id);el.style.opacity=e;el.style.transform='translateY('+(40*(1-e))+'px) scale('+(1.06-.06*e)+')';});return;}
+ const c=C[S];const im=document.getElementById('im');
+ const k=Math.min(1,Math.max(0,(t-.9)/(D-.9)));const s=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+ if(S==='s1'){const sc=1080/im.naturalWidth;const z=1.12-0.12*ease(t/.5);const y=c.a+(c.b-c.a)*s;
+  im.style.transform='translateY('+y+'px) scale('+z+')';
+  const e=ease((t-.35)/.3);const cap=document.getElementById('cap');cap.style.opacity=e;cap.style.transform='translateY('+(40*(1-e))+'px)';return;}
+ const e=ease(t/.3);const cap=document.getElementById('cap');cap.style.opacity=e;cap.style.transform='translateX('+(-60*(1-e))+'px)';
+ const p=ease((t-.05)/.4);document.getElementById('ph').style.transform='translateY('+(260*(1-p))+'px) scale('+(1.04-0.04*p)+')';
+ const kk=Math.min(1,Math.max(0,(t-.4)/(D-.6)));const ss=kk<.5?2*kk*kk:1-Math.pow(-2*kk+2,2)/2;
+ im.style.transform='translateY('+(-(c.a+(c.b-c.a)*ss)*(668/im.naturalWidth))+'px)';
+}
+window.addEventListener('load',()=>render(0));
+</script></body></html>
