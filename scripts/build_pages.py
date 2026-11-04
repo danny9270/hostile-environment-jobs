@@ -137,7 +137,7 @@ def job_page(j, employers=()):
     ld = json.dumps({k: v for k, v in posting.items() if v}, ensure_ascii=False).replace("</", "<\\/")
     body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
 <article class="detail">
-  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
   <h1>{e(j['title'])}</h1>
   <div class="who">{f'<a href="/employers/{e(profile["id"])}/">{e(j["employer"])}</a>' if profile else e(j['employer'])} · {e(j['location'])}</div>
   <p>{e(j['summary'])}</p>
@@ -155,7 +155,7 @@ def job_page(j, employers=()):
 
 def jobs_index(jobs, browse=""):
     cards = "\n".join(f"""<article class="detail{' featured' if j.get('_featured') else ''}">
-  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
   <h2><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h2>
   <div class="who">{e(j['employer'])} · {e(j['location'])} · {closing_text(j)}</div>
   <p>{e(j['summary'])}</p>
@@ -237,6 +237,7 @@ def main():
     employers = paid.load(ROOT, TODAY)
     for j in jobs:
         j["_featured"] = paid.is_featured(j, employers, TODAY)
+        j["_tag"] = f' <span class="tag featured-tag">{paid.badge(j, employers)}</span>' if j["_featured"] else ""
     jobs.sort(key=lambda j: not j["_featured"])  # featured first, newest first within each group
     out = ROOT / "jobs"
     if out.exists():
@@ -261,7 +262,7 @@ def main():
         profile_urls.append((SITE + path, "weekly"))
     (emp_out / "index.html").write_text(paid.employers_index(employers, page, e))
     (ROOT / "advertise").mkdir(exist_ok=True)
-    (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e))
+    (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e, employers))
 
     # Closed jobs' pages are deleted, so old shared links land here instead.
     (ROOT / "404.html").write_text(page("Page not found | Hostile Environment Jobs", "This page or job has gone.", "/404.html",

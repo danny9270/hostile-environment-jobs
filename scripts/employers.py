@@ -2,6 +2,8 @@
 
 build_pages.py imports this. Employers who pay for a profile go in employers.json; a job is featured
 while its "featured_until" date hasn't passed, or while its employer's profile is live.
+An employer with "partner": true is a founding partner: the featured employer plan given free until its
+"featured_until" date, shown with a "Founding partner" badge and named on the Advertise page.
 """
 import datetime
 import json
@@ -55,6 +57,16 @@ def is_featured(job, employers, today):
     return (is_date(until) and datetime.date.fromisoformat(until) >= today) or profile_for(job, employers) is not None
 
 
+def badge(job, employers):
+    """Badge text for a featured job: founding partners (free featured employer plan) get their own badge."""
+    profile = profile_for(job, employers)
+    return "Founding partner" if profile and profile.get("partner") else "Featured"
+
+
+def employer_tag(x):
+    return "Founding partner" if x.get("partner") else "Featured employer"
+
+
 def profile_page(x, jobs, page, e, closing_text, site):
     path = f"/employers/{x['id']}/"
     logo = f'<img class="logo" src="{e(x["logo"])}" alt="{e(x["name"])} logo">' if x.get("logo") else ""
@@ -70,7 +82,7 @@ def profile_page(x, jobs, page, e, closing_text, site):
                     for i, (t, u) in enumerate([("Careers page", x.get("careers_url")), ("Website", x.get("website"))]) if u)
     body = f"""<a class="back" href="/employers/">&larr; Featured employers</a>
 <article class="detail profile">
-  <div class="profile-head">{logo}<div><span class="tag featured-tag">Featured employer</span><h1>{e(x['name'])}</h1>
+  <div class="profile-head">{logo}<div><span class="tag featured-tag">{employer_tag(x)}</span><h1>{e(x['name'])}</h1>
     {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}</div></div>
   {about}
   {f"<dl>{dl}</dl>" if dl else ""}
@@ -87,8 +99,9 @@ def profile_page(x, jobs, page, e, closing_text, site):
 
 
 def employers_index(employers, page, e):
+    employers = sorted(employers, key=lambda x: not x.get("partner"))  # founding partners first
     cards = "\n".join(f"""<article class="detail">
-  <span class="tag featured-tag">Featured employer</span>
+  <span class="tag featured-tag">{employer_tag(x)}</span>
   <h2><a href="/employers/{e(x['id'])}/">{e(x['name'])}</a></h2>
   {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}
 </article>""" for x in employers) or "<p>No featured employers yet.</p>"
@@ -99,7 +112,16 @@ def employers_index(employers, page, e):
     return page("Featured employers | Hostile Environment Jobs", "Companies and NGOs hiring EOD, security, medic and mine action staff.", "/employers/", body)
 
 
-def advertise_page(page, e):
+def partners_strip(employers, e):
+    """Names of the founding partners on the Advertise page, so new employers can see who's already with us."""
+    partners = [x for x in employers if x.get("partner")]
+    if not partners:
+        return ""
+    links = ", ".join(f'<a href="/employers/{e(x["id"])}/">{e(x["name"])}</a>' for x in partners)
+    return f'<p class="meta-line"><b>Our founding partners:</b> {links}. Thanks for backing the site from day one.</p>'
+
+
+def advertise_page(page, e, employers=()):
     def button(p):
         if p["payment_link"] is None:
             return '<a class="btn" href="/#post">Post a job free</a>'
@@ -121,6 +143,7 @@ def advertise_page(page, e):
 <div class="plans">
 {plans}
 </div>
+{partners_strip(employers, e)}
 <p class="meta-line" id="pool-count" hidden></p>
 <script>
 // The talent pool's size, once it's big enough to be worth showing (POOL_MIN in scripts/candidates.html).

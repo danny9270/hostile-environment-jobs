@@ -570,7 +570,7 @@ function renderList() {
   document.getElementById("count").textContent = `${open.length} of ${total} open jobs` + (lastChecked ? ` · updated ${fmtDate(lastChecked)}` : "");
   document.getElementById("list").innerHTML = open.map(j => `<article class="job${featured(j) ? " featured" : soonish(j) ? " soon-card" : ""}">
     <span class="ico">${icon(j.category)}</span>
-    <div><span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
+    <div><span class="tag">${esc(j.category)}</span>${featured(j) ? ` <span class="tag featured-tag">${featTag(j)}</span>` : ""}
       <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
       <div class="who">${esc(j.employer)}</div>
       <ul class="meta"><li>${esc(j.location)}</li>${j.contract && j.contract !== "See advert" ? `<li>${esc(j.contract)}</li>` : ""}${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
@@ -603,7 +603,7 @@ function renderDetail(id) {
   const closed = !isOpen(j);
   const link = location.origin + "/jobs/" + encodeURIComponent(j.id) + "/"; // its own page, built by scripts/build_pages.py
   const prof = profileFor(j);
-  el.innerHTML = `<span class="tag">${esc(j.category)}</span>${featured(j) ? ' <span class="tag featured-tag">Featured</span>' : ""}
+  el.innerHTML = `<span class="tag">${esc(j.category)}</span>${featured(j) ? ` <span class="tag featured-tag">${featTag(j)}</span>` : ""}
     <h1>${esc(j.title)}</h1>
     <div class="who">${prof ? `<a href="/employers/${encodeURIComponent(prof.id)}/">${esc(j.employer)}</a>` : esc(j.employer)} · ${esc(j.location)}</div>
     ${closed ? `<p class="note"><strong>This job has closed.</strong></p>` : ""}
@@ -624,6 +624,7 @@ let EMPLOYERS = [];
 const liveDate = d => /^\d{4}-\d\d-\d\d$/.test(d || "") && new Date(d + "T23:59:59") >= today;
 const profileFor = j => EMPLOYERS.find(x => [x.name, ...(x.aliases || [])].includes(j.employer));
 const featured = j => liveDate(j.featured_until) || !!profileFor(j);
+const featTag = j => profileFor(j)?.partner ? "Founding partner" : "Featured"; // founding partners: free featured employer plan
 const employersLoaded = fetch("employers.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => [])
   .then(data => EMPLOYERS = (Array.isArray(data) ? data : []).filter(x => x.id && x.name && (!x.featured_until || liveDate(x.featured_until))));
 const jobsLoaded = Promise.all([fetch("jobs.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []), employersLoaded]).then(([data]) => {
