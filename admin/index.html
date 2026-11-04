@@ -231,7 +231,7 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
 
 <section id="featured" hidden>
   <h1>Featured</h1>
-  <p class="small">Paid extras on top of the free listings. A <b>Featured job</b> (£49) is pinned to the top for 30 days. A <b>Featured employer</b> (£149) gets a profile page at /employers/, all its jobs featured for 90 days, and 90 days of talent pool search: give that in <button class="btn sm" data-go="talent">Talent pool</button> with <b>+90 days</b>. A <b>Founding partner</b> gets the Featured employer plan free until the date you set, a "Founding partner" badge, and their name on the Advertise page. Changes here show on the site in a minute or two.</p>
+  <p class="small">Paid extras on top of the free listings. A <b>Featured job</b> (£49) is pinned to the top for 30 days. A <b>Featured employer</b> (£149) gets a profile page at /employers/, all its jobs featured for 90 days, and 90 days of talent pool search: give that in <button class="btn sm" data-go="talent">Talent pool</button> with <b>+90 days</b>. A <b>Founding partner</b> gets the Featured employer plan free until the date you set, a "Founding partner" badge, and their name on the Advertise page. Any profile can carry a <b>deal</b> (shown on /deals/) and a <b>booking email</b>, which adds a Request a booking form for their courses with contact@ copied in, so you can claim commission. Changes here show on the site in a minute or two.</p>
   <div class="grid tiles" id="feat-tiles"></div>
   <h2>Featured jobs</h2>
   <div class="toolbar"><select id="feat-pick"></select><button class="btn primary" id="feat-add">Feature for 30 days</button></div>
@@ -996,6 +996,8 @@ const EMPLOYER_FIELDS = [
   ["based", "Based in", "text"], ["works_in", "Works in", "text"],
   ["sectors", "Sectors", "lines"], ["aliases", "Other names it posts jobs under", "lines"],
   ["about", "About the company (blank line between paragraphs)", "area"],
+  ["offer", "Deal for our users, e.g. 10% off courses with code HEJ10 (shows on their page, jobs, courses and /deals/)", "text"],
+  ["booking_email", "Booking email (turns on a Request a booking form for their courses, copied to contact@)", "email"],
   ["partner", "Founding partner: free, shows a Founding partner badge and their name on the Advertise page", "check"],
 ];
 const REVIEW_FIELDS = [

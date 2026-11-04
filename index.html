@@ -181,6 +181,7 @@ form label.check input { width: auto; flex: none; }
 .job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
 .tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
 .detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.offer { border-left: 3px solid var(--accent); background: var(--soft); padding: 8px 12px; border-radius: 0 6px 6px 0; }
 .who a { color: inherit; }
 .profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
 .profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
@@ -606,6 +607,7 @@ function renderDetail(id) {
   el.innerHTML = `<span class="tag">${esc(j.category)}</span>${featured(j) ? ` <span class="tag featured-tag">${featTag(j)}</span>` : ""}
     <h1>${esc(j.title)}</h1>
     <div class="who">${prof ? `<a href="/employers/${encodeURIComponent(prof.id)}/">${esc(j.employer)}</a>` : esc(j.employer)} · ${esc(j.location)}</div>
+    ${offerLine(prof)}
     ${closed ? `<p class="note"><strong>This job has closed.</strong></p>` : ""}
     <p>${esc(j.summary)}</p>
     <dl><dt>Closing</dt><dd>${due(j)}</dd><dt>Contract</dt><dd>${esc(j.contract)}</dd><dt>Salary</dt><dd>${esc(j.salary || "Not stated")}</dd>
@@ -624,6 +626,9 @@ let EMPLOYERS = [];
 const liveDate = d => /^\d{4}-\d\d-\d\d$/.test(d || "") && new Date(d + "T23:59:59") >= today;
 const profileFor = j => EMPLOYERS.find(x => [x.name, ...(x.aliases || [])].includes(j.employer));
 const featured = j => liveDate(j.featured_until) || !!profileFor(j);
+// A partner's deal for our users ("offer" in employers.json), shown with its jobs and courses.
+const offerLine = x => x && x.offer ? `<p class="offer"><b>${x.partner ? "Founding partner offer" : "Offer"}:</b> ${esc(x.offer)}</p>` : "";
+const providerProfile = c => EMPLOYERS.find(x => [x.name, ...(x.aliases || [])].includes(c.provider));
 const featTag = j => profileFor(j)?.partner ? "Founding partner" : "Featured"; // founding partners: free featured employer plan
 const employersLoaded = fetch("employers.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => [])
   .then(data => EMPLOYERS = (Array.isArray(data) ? data : []).filter(x => x.id && x.name && (!x.featured_until || liveDate(x.featured_until))));
@@ -660,11 +665,11 @@ function renderCourses() {
     <div><span class="tag">${esc(c.type)}</span>
       <h3><a href="${esc(bookingUrl(c))}" target="_blank" rel="noopener" data-book="${esc(c.id)}">${esc(c.title)}</a></h3>
       <div class="who">${esc(c.provider)} · ${esc(c.location)}</div>
-      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}${c.promo_code ? `<br><strong>Quote ${esc(c.promo_code)} when you book</strong>` : ""}</p>${reviewBlock(c)}</div>
+      <p class="who">${esc(c.summary)}${c.accreditation ? `<br><strong>Accreditation:</strong> ${esc(c.accreditation)}` : ""}${c.promo_code ? `<br><strong>Quote ${esc(c.promo_code)} when you book</strong>` : ""}</p>${offerLine(providerProfile(c))}${providerProfile(c)?.booking_email ? `<p class="who"><a href="/employers/${encodeURIComponent(providerProfile(c).id)}/?course=${encodeURIComponent(c.id)}#book">Request a booking through us</a></p>` : ""}${reviewBlock(c)}</div>
     <div class="side">${/^\d{4}/.test(c.start) ? "Starts " + fmtDate(c.start) : "Start anytime"}<br>${esc(c.duration || "")}<br>${esc(c.price || "")}</div>
   </article>`).join("");
 }
-const coursesLoaded = fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []).then(data => {
+const coursesLoaded = Promise.all([fetch("courses.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => []), employersLoaded]).then(([data]) => {
   COURSES = Array.isArray(data) ? data : (data.courses || []);
   document.getElementById("course-sample-note").hidden = !COURSES.some(c => c.sample);
   const used = new Set(COURSES.filter(courseOpen).map(c => c.type));
