@@ -1,5 +1,25 @@
 [
  {
+  "id": "drc-safety-officer-partnership-kharkiv",
+  "title": "Safety Officer (Partnership Officer)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Kharkiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract (Ukrainian citizens or residence permit holders)",
+  "salary": "From EUR 2,025 gross per month",
+  "requirements": [
+   "1+ year NGO safety or incident management experience",
+   "Experience delivering safety training and capacity building",
+   "Context or security analysis experience",
+   "Full professional English and Ukrainian"
+  ],
+  "summary": "Support the safety of DRC's local partners in Kharkiv through safety and first aid training, capacity assessments and safety plans.",
+  "closing": "2026-11-20",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177115&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-05"
+ },
+ {
   "id": "drc-hma-team-leader-rural-damascus",
   "title": "Humanitarian Mine Action Team Leader",
   "employer": "Danish Refugee Council (DRC)",
@@ -260,25 +280,6 @@
   "posted": "2026-10-29"
  },
  {
-  "id": "gardaworld-risk-analyst-intern-dubai",
-  "title": "Risk Analyst Intern",
-  "employer": "GardaWorld",
-  "category": "Security Risk & Analysis",
-  "location": "Dubai, UAE",
-  "region": "Middle East",
-  "contract": "Internship",
-  "salary": "Not stated",
-  "requirements": [
-   "Current or recent graduate in security studies, international relations, conflict studies or similar",
-   "Strong interest in high-risk environments",
-   "Comfortable with large datasets, mapping and analytical tools"
-  ],
-  "summary": "Supports senior analysts producing security risk reporting on Haiti and Sudan, including incident monitoring, mapping and database work.",
-  "closing": "Rolling",
-  "apply_url": "https://jobs.garda.com/job/Dubai-Risk-Analyst-Intern-UAE/1430483200/",
-  "posted": "2026-10-29"
- },
- {
   "id": "brimstone-uxo-engineer-uk",
   "title": "UXO Engineer",
   "employer": "Brimstone UXO",
@@ -535,24 +536,5 @@
   "closing": "Rolling",
   "apply_url": "https://acuityinternational.wd5.myworkdayjobs.com/en-US/External/job/PSS-Paramedic--PSS-PARA----WPS-III--Iraq-_JR6407-1",
   "posted": "2026-10-15"
- },
- {
-  "id": "uk-med-health-advisor-roving",
-  "title": "Health Advisor (Roving)",
-  "employer": "UK-Med",
-  "category": "Medical",
-  "location": "Manchester, UK, with up to 80% deployment",
-  "region": "Worldwide",
-  "contract": "12 months, possible extension",
-  "salary": "Up to GBP 42,440",
-  "requirements": [
-   "Doctor or registered nurse",
-   "Significant humanitarian response experience (conflict, disaster, outbreaks)",
-   "Able to deploy internationally at short notice"
-  ],
-  "summary": "Deploy to emergency health responses worldwide, advising and setting up UK-Med's medical programmes in conflict and disaster zones.",
-  "closing": "2026-11-03",
-  "apply_url": "https://grnh.se/t859aukp4us",
-  "posted": "2026-10-14"
  }
 ]
