@@ -10,39 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-uk-med-health-advisor-roving@hostileenvironmentjobs.com
-DTSTAMP:20261014T000000Z
-DTSTART;VALUE=DATE:20261103
-DTEND;VALUE=DATE:20261104
-SUMMARY:Job closes: Health Advisor (Roving) (UK-Med)
-LOCATION:Manchester\, UK\, with up to 80% deployment
-DESCRIPTION:UK-Med\, Manchester\, UK\, with up to 80% deployment\nDeploy to
-  emergency health responses worldwide\, advising and setting up UK-Med's m
- edical programmes in conflict and disaster zones.\n\nDetails and how to ap
- ply: https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
-URL:https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261104
-DTEND;VALUE=DATE:20261105
-SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
- (Soesterberg\, Netherlands)
-LOCATION:Soesterberg\, Netherlands
-DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
- ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
- d HEAT for NGO\, UN and media staff. Further dates 23 Nov\, 7 Dec\, 16 Dec
-  and through 2027.\n\nBook: https://www.centreforsafety.org/course/basic-h
- eat-course/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_camp
- aign=course-calendar&utm_content=csd-basic-heat-nl
-URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
- stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
- content=csd-basic-heat-nl
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-drc-hma-field-medic-aleppo@hostileenvironmentjobs.com
 DTSTAMP:20261101T000000Z
 DTSTART;VALUE=DATE:20261105
@@ -192,6 +159,23 @@ URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:job-drc-safety-officer-partnership-kharkiv@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:Job closes: Safety Officer (Partnership Officer) (Danish Refugee Co
+ uncil (DRC))
+LOCATION:Kharkiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nSupport the s
+ afety of DRC's local partners in Kharkiv through safety and first aid trai
+ ning\, capacity assessments and safety plans.\n\nDetails and how to apply:
+  https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-kh
+ arkiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-
+ kharkiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:course-gra-heat-nov-2026@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261124
@@ -299,6 +283,27 @@ URL:https://www.3rg.co.uk/store/p/4th-26th-january-2027-close-protection-fr
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:course-pcm-cuas-missiles-eod-jan-2027@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20270111
+DTEND;VALUE=DATE:20270112
+SUMMARY:Course starts: Counter-UAS\, Missiles and Guided Weapons EOD Operat
+ ors Course (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
+ eeks (11 Jan - 5 Feb). On request\nNew course for IMAS EOD Level 3/3+ oper
+ ators on recognising and rendering safe UAS\, FPV drones\, missiles and gu
+ ided weapons.\n\nBook: https://www.pcm-erw.com/training-courses/technical-
+ courses/counter-unmanned-aerial-systems-and-missiles-eod-operators-course/
+ ?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=course
+ -calendar&utm_content=pcm-cuas-missiles-eod-jan-2027
+URL:https://www.pcm-erw.com/training-courses/technical-courses/counter-unma
+ nned-aerial-systems-and-missiles-eod-operators-course/?utm_source=hostilee
+ nvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_conten
+ t=pcm-cuas-missiles-eod-jan-2027
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:course-pcm-imas-eod-1-2-jan-2027@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20270111
@@ -371,6 +376,24 @@ DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
 URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
  leenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_con
  tent=pcm-imas-eod-3plus-mar-2027
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-l5-diploma-cmd-mar-2027@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20270329
+DTEND;VALUE=DATE:20270330
+SUMMARY:Course starts: L5 Diploma in CMD (Peja\, Kosovo)
+LOCATION:Peja\, Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Peja\, Koso
+ vo. 5 days. On request\nNew management diploma for IMAS EOD Level 3+ techn
+ icians with 2+ years at Level 3\, preparing them for programme leadership 
+ roles.\n\nBook: https://www.pcm-erw.com/dip-cmd/?utm_source=hostileenviron
+ mentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=pcm-
+ l5-diploma-cmd-mar-2027
+URL:https://www.pcm-erw.com/dip-cmd/?utm_source=hostileenvironmentjobs&utm_
+ medium=referral&utm_campaign=course-calendar&utm_content=pcm-l5-diploma-cm
+ d-mar-2027
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR
