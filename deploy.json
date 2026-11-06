@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-05T12:44:48Z",
+ "updated": "2026-11-06T12:29:15Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -965,9 +965,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/uganda",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-28",
-    "reviewed": "2026-10-28",
+    "updated": "2026-11-06",
+    "reviewed": "2026-11-06",
     "changes": [
+     {
+      "date": "2026-11-06",
+      "note": "Updated information about precautionary measures in response to the Ebola outbreak in the region (‘Health’ page)."
+     },
      {
       "date": "2026-10-28",
       "note": "Updated information about precautionary measures around the Ebola outbreak in the region (‘Entry requirements’ and ‘Health’ pages)."
@@ -983,10 +987,6 @@
      {
       "date": "2026-08-28",
       "note": "Updated information about exemptions to travel restrictions on National cleaning days ('Safety and security' page)."
-     },
-     {
-      "date": "2026-07-27",
-      "note": "Updated information about a new monthly curfew (See 'National cleaning day' on the 'Safety and security' page)."
      }
     ],
     "warnings": [
