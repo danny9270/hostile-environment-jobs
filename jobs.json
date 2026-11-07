@@ -1,5 +1,25 @@
 [
  {
+  "id": "drc-safety-assistant-barvinkove",
+  "title": "Safety Assistant",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Barvinkove, Ukraine",
+  "region": "Europe",
+  "contract": "National contract (3-month probation, then subject to funding)",
+  "salary": "From EUR 1,465 gross per month",
+  "requirements": [
+   "6+ months experience in a related field, ideally with an international NGO",
+   "Bachelor's degree in safety or a related field",
+   "MS Office, especially Excel and PowerPoint",
+   "NGO safety/security experience and English B1+ an advantage"
+  ],
+  "summary": "Support DRC's Barvinkove safety team with safety plans, staff briefings, documentation and safety equipment.",
+  "closing": "2026-11-19",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177119&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-07"
+ },
+ {
   "id": "drc-safety-officer-partnership-kharkiv",
   "title": "Safety Officer (Partnership Officer)",
   "employer": "Danish Refugee Council (DRC)",
@@ -120,26 +140,6 @@
   "posted": "2026-11-01"
  },
  {
-  "id": "drc-roving-emergency-advisor-hdp",
-  "title": "Roving Emergency Advisor, Humanitarian Disarmament & Peacebuilding",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Management",
-  "location": "Roving (global, deployable within 72 hours)",
-  "region": "Worldwide",
-  "contract": "Expatriate contract, 12 months",
-  "salary": "Not stated (DRC band F)",
-  "requirements": [
-   "5+ years humanitarian mine action experience",
-   "IMAS EOD Level 3 and previous Operations Manager experience",
-   "Management experience in emergency or insecure settings",
-   "Experience with IMAS accreditation"
-  ],
-  "summary": "Senior advisor who deploys at short notice to set up and lead mine action and peacebuilding responses in new emergencies.",
-  "closing": "2026-11-05",
-  "apply_url": "https://drc.ngo/jobs/job?id=176352",
-  "posted": "2026-11-01"
- },
- {
   "id": "drc-sub-national-mine-action-coordinator-south-syria",
   "title": "Sub-National Mine Action Coordinator, South Syria",
   "employer": "Danish Refugee Council (DRC)",
@@ -157,26 +157,6 @@
   "summary": "Coordinates humanitarian mine action across southern Syria on behalf of the Mine Action Sector.",
   "closing": "2026-11-07",
   "apply_url": "https://drc.ngo/jobs/job?id=177069",
-  "posted": "2026-11-01"
- },
- {
-  "id": "drc-hma-field-medic-aleppo",
-  "title": "Humanitarian Mine Action Field Medic",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Medical",
-  "location": "Aleppo, Syria (may deploy elsewhere in Syria)",
-  "region": "Middle East",
-  "contract": "National contract, 9 months, renewable",
-  "salary": "Not stated (DRC grade G)",
-  "requirements": [
-   "Certified paramedic, nurse or equivalent with emergency and trauma care experience",
-   "2+ years medical support in humanitarian or emergency settings",
-   "IMAS Intermediate Care Provider training or equivalent",
-   "Fluent Arabic and advanced English"
-  ],
-  "summary": "Provides on-site medical cover, casevac planning and medical training for DRC mine clearance teams in Syria.",
-  "closing": "2026-11-05",
-  "apply_url": "https://drc.ngo/jobs/job?id=177059",
   "posted": "2026-11-01"
  },
  {
@@ -376,26 +356,6 @@
   "closing": "Rolling",
   "apply_url": "https://job-boards.greenhouse.io/errg/jobs/4576015008",
   "posted": "2026-10-27"
- },
- {
-  "id": "drc-hma-mechanical-operator-kharkiv",
-  "title": "Humanitarian Mine Action Team Member (Mechanical Operator)",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Kharkiv, Ukraine",
-  "region": "Europe",
-  "contract": "National contract",
-  "salary": "From EUR 1,080 gross per month",
-  "requirements": [
-   "3+ years operating demining machines, earth-movers or heavy vehicles",
-   "21 days DRC training on the GCS 200",
-   "Driving licence category B",
-   "Good Ukrainian"
-  ],
-  "summary": "Operate and maintain mechanical demining machines supporting land release in Kharkiv oblast.",
-  "closing": "2026-11-06",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177029&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-10-28"
  },
  {
   "id": "silent-professionals-maritime-anti-piracy",
