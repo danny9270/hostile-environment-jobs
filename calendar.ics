@@ -10,54 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-drc-hma-field-medic-aleppo@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261105
-DTEND;VALUE=DATE:20261106
-SUMMARY:Job closes: Humanitarian Mine Action Field Medic (Danish Refugee Co
- uncil (DRC))
-LOCATION:Aleppo\, Syria (may deploy elsewhere in Syria)
-DESCRIPTION:Danish Refugee Council (DRC)\, Aleppo\, Syria (may deploy elsew
- here in Syria)\nProvides on-site medical cover\, casevac planning and medi
- cal training for DRC mine clearance teams in Syria.\n\nDetails and how to 
- apply: https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-roving-emergency-advisor-hdp@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261105
-DTEND;VALUE=DATE:20261106
-SUMMARY:Job closes: Roving Emergency Advisor\, Humanitarian Disarmament & P
- eacebuilding (Danish Refugee Council (DRC))
-LOCATION:Roving (global\, deployable within 72 hours)
-DESCRIPTION:Danish Refugee Council (DRC)\, Roving (global\, deployable with
- in 72 hours)\nSenior advisor who deploys at short notice to set up and lea
- d mine action and peacebuilding responses in new emergencies.\n\nDetails a
- nd how to apply: https://hostileenvironmentjobs.com/jobs/drc-roving-emerge
- ncy-advisor-hdp/
-URL:https://hostileenvironmentjobs.com/jobs/drc-roving-emergency-advisor-hd
- p/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-mechanical-operator-kharkiv@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261106
-DTEND;VALUE=DATE:20261107
-SUMMARY:Job closes: Humanitarian Mine Action Team Member (Mechanical Operat
- or) (Danish Refugee Council (DRC))
-LOCATION:Kharkiv\, Ukraine
-DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nOperate and m
- aintain mechanical demining machines supporting land release in Kharkiv ob
- last.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs
- /drc-hma-mechanical-operator-kharkiv/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-mechanical-operator-kha
- rkiv/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-drc-sub-national-mine-action-coordinator-south-syria@hostileenviron
  mentjobs.com
 DTSTAMP:20261101T000000Z
@@ -159,6 +111,21 @@ URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
+UID:job-drc-safety-assistant-barvinkove@hostileenvironmentjobs.com
+DTSTAMP:20261107T000000Z
+DTSTART;VALUE=DATE:20261119
+DTEND;VALUE=DATE:20261120
+SUMMARY:Job closes: Safety Assistant (Danish Refugee Council (DRC))
+LOCATION:Barvinkove\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Barvinkove\, Ukraine\nSupport DR
+ C's Barvinkove safety team with safety plans\, staff briefings\, documenta
+ tion and safety equipment.\n\nDetails and how to apply: https://hostileenv
+ ironmentjobs.com/jobs/drc-safety-assistant-barvinkove/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-barvinkove
+ /
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
 UID:job-drc-safety-officer-partnership-kharkiv@hostileenvironmentjobs.com
 DTSTAMP:20261105T000000Z
 DTSTART;VALUE=DATE:20261120
@@ -173,6 +140,25 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nSupport the s
  arkiv/
 URL:https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-
  kharkiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
+ (Soesterberg\, Netherlands)
+LOCATION:Soesterberg\, Netherlands
+DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
+ ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
+ d HEAT for NGO\, UN and media staff. Further dates 7 Dec\, 16 Dec and thro
+ ugh 2027.\n\nBook: https://www.centreforsafety.org/course/basic-heat-cours
+ e/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=cour
+ se-calendar&utm_content=csd-basic-heat-nl
+URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
+ stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
+ content=csd-basic-heat-nl
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
@@ -219,10 +205,10 @@ SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training)
 LOCATION:Nairobi\, Kenya
 DESCRIPTION:Centre for Safety and Development (CSD)\, Nairobi\, Kenya. 3 da
  ys. €3\,200 incl. 2 nights\nThe same CSD HEAT course run in Nairobi\, ha
- ndy for East Africa based staff. 2027 dates from January.\n\nBook: https:/
- /www.centreforsafety.org/course/basic-heat-course/?utm_source=hostileenvir
- onmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=cs
- d-basic-heat-nairobi
+ ndy for East Africa based staff. 2027 dates from March.\n\nBook: https://w
+ ww.centreforsafety.org/course/basic-heat-course/?utm_source=hostileenviron
+ mentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=csd-
+ basic-heat-nairobi
 URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
  stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
  content=csd-basic-heat-nairobi
