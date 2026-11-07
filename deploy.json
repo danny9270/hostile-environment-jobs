@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06T12:29:15Z",
+ "updated": "2026-11-07T11:20:30Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -553,9 +553,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/kenya",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-30",
-    "reviewed": "2026-10-30",
+    "updated": "2026-11-06",
+    "reviewed": "2026-11-06",
     "changes": [
+     {
+      "date": "2026-11-06",
+      "note": "FCDO now advises against all but essential travel to Moyale Town and up to 5km around it, including to the border with Ethiopia. Updated information about the Kenya-Ethiopia border ('Warnings and insurance' and 'Regional risks' pages)."
+     },
      {
       "date": "2026-10-30",
       "note": "Updated information about the Kenya-Ethiopia border (‘Regional risks’ page)."
@@ -571,10 +575,6 @@
      {
       "date": "2026-10-13",
       "note": "Updated information about travel health insurance requirements for entry into Kenya (See ‘Mandatory Travel Insurance’ on the ‘Entry requirements’ page)."
-     },
-     {
-      "date": "2026-10-09",
-      "note": "New information about mandatory travel health insurance requirement for foreign visitors staying in Kenya (‘Entry requirements’ page)."
      }
     ],
     "warnings": [
@@ -616,7 +616,7 @@
      },
      {
       "heading": "Kenya-Ethiopia border",
-      "text": "Violence in the Ethiopian town of Moyale (October 2026) has affected the border area. There have been reports of stray gunfire on the Kenyan side of the border and disruption at the Moyale border crossing. Vehicles crossing the Kenya-Ethiopia border at Moyale should stay on the A2 road and travel directly to Marsabit before breaking your journey, rather than staying at the rest house in Sololo. Check FCDO Travel…",
+      "text": "Since October 2026, violence in the Ethiopian town of Moyale has affected the border area, including on the Kenyan side. There have been reports of stray gunfire, unexploded ordnance and projectiles landing in and up to 3km around the Kenyan town of Moyale, resulting in fatalities and injuries. There have also been reports of disruption at the Moyale border crossing. The security situation remains unpredictable and…",
       "url": "https://www.gov.uk/foreign-travel-advice/kenya/regional-risks"
      }
     ],
