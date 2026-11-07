@@ -231,13 +231,13 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
 
 <section id="featured" hidden>
   <h1>Featured</h1>
-  <p class="small">Paid extras on top of the free listings. A <b>Featured job</b> (£49) is pinned to the top for 30 days. A <b>Featured employer</b> (£149) gets a profile page at /employers/, all its jobs featured for 90 days, and 90 days of talent pool search: give that in <button class="btn sm" data-go="talent">Talent pool</button> with <b>+90 days</b>. Changes here show on the site in a minute or two.</p>
+  <p class="small">Paid extras on top of the free listings. A <b>Featured job</b> (£49) is pinned to the top for 30 days. A <b>Featured employer</b> (£149) gets a profile page at /employers/, all its jobs featured for 90 days, and 90 days of talent pool search: give that in <button class="btn sm" data-go="talent">Talent pool</button> with <b>+90 days</b>. A <b>Founding partner</b> gets the Featured employer plan free until the date you set, a "Founding partner" badge, and their name on the Advertise page. Any profile can carry a <b>deal</b> (shown on /deals/) and a <b>booking email</b>, which adds a Request a booking form for their courses with contact@ copied in, so you can claim commission. Changes here show on the site in a minute or two.</p>
   <div class="grid tiles" id="feat-tiles"></div>
   <h2>Featured jobs</h2>
   <div class="toolbar"><select id="feat-pick"></select><button class="btn primary" id="feat-add">Feature for 30 days</button></div>
   <div class="list" id="feat-jobs"></div>
   <h2 style="margin-top:22px">Employer profiles</h2>
-  <div class="toolbar"><button class="btn primary" id="add-employer">Add employer profile</button></div>
+  <div class="toolbar"><button class="btn primary" id="add-employer">Add employer profile</button><button class="btn" id="add-partner">Add founding partner (free)</button></div>
   <div class="list" id="employer-list"></div>
   <h2 style="margin-top:22px">Featured payments, last 90 days</h2>
   <p class="small muted">Match each payment to a job or profile above. Payments come from Stripe; see <button class="btn sm" data-go="payments">Payments</button> for everything.</p>
@@ -810,7 +810,7 @@ function renderFeatured() {
       <div class="acts"><button class="btn sm" data-feat="${esc(j.id)}" data-days="30">+30 days</button>${featLive(j) ? `<button class="btn sm" data-feat="${esc(j.id)}" data-days="0">End now</button>` : ""}<button class="btn sm" data-edit="jobs" data-id="${esc(j.id)}">Edit</button></div></div>`).join("")
     : `<div class="empty">No featured jobs yet. When someone pays £49, pick their job above.</div>`;
   $("employer-list").innerHTML = E.length ? E.map(x => `<div class="item"><div>
-      <div class="t">${esc(x.name)} ${untilBadge(x.featured_until, true)}</div>
+      <div class="t">${esc(x.name)} ${untilBadge(x.featured_until, true)}${x.partner ? ' <span class="badge">founding partner, free</span>' : ""}</div>
       <div class="m">${x.tagline ? esc(x.tagline) + " · " : ""}${plural(profileJobs(x).length, "live job")} featured through the profile${x.logo ? "" : " · no logo yet"}</div></div>
       <div class="acts"><a class="btn sm" href="../employers/${esc(x.id)}/" target="_blank" rel="noopener">Page</a><button class="btn sm" data-emp-days="${esc(x.id)}">+90 days</button><button class="btn sm" data-edit="employers" data-id="${esc(x.id)}">Edit</button><button class="btn sm danger" data-del="employers" data-id="${esc(x.id)}">Delete</button></div></div>`).join("")
     : `<div class="empty">No employer profiles yet. When someone pays £149, add theirs here.</div>`;
@@ -890,7 +890,7 @@ function comingItems() {
   files.jobs.data.filter(j => featLive(j) && jobLive(j) && daysFromToday(j.featured_until) <= 7)
     .forEach(j => out.push({ date: j.featured_until, text: `Featured job ends: <b>${esc(j.title)}</b>, ${esc(j.employer)}`, go: "featured" }));
   files.employers.data.filter(x => x.featured_until && profileLive(x) && daysFromToday(x.featured_until) <= 14)
-    .forEach(x => out.push({ date: x.featured_until, text: `Employer profile ends: <b>${esc(x.name)}</b>`, go: "featured" }));
+    .forEach(x => out.push({ date: x.featured_until, text: `${x.partner ? "Founding partner's free time" : "Employer profile"} ends: <b>${esc(x.name)}</b>`, go: "featured" }));
   if (TALENT) {
     const waiting = TALENT.recruiters.filter(r => r.status === "pending").length;
     if (waiting) out.push({ date: "", text: `${plural(waiting, "employer")} waiting for you to approve them for the talent pool`, go: "talent" });
@@ -900,7 +900,7 @@ function comingItems() {
   if (PENDING.length) out.push({ date: "", text: `${plural(PENDING.length, "course review")} waiting to be checked`, go: "reviews" });
   if (PAY) {
     const jobPays = featPays(30).filter(p => /^Featured job/.test(p.what)).length, empPays = featPays(30).filter(p => /^Featured employer/.test(p.what)).length;
-    const liveJobs = files.jobs.data.filter(j => featLive(j) && jobLive(j)).length, liveProfiles = files.employers.data.filter(profileLive).length;
+    const liveJobs = files.jobs.data.filter(j => featLive(j) && jobLive(j)).length, liveProfiles = files.employers.data.filter(x => profileLive(x) && !x.partner).length;
     if (jobPays > liveJobs) out.push({ date: "", text: `${plural(jobPays, "featured job payment")} in 30 days but only ${liveJobs} featured job${liveJobs === 1 ? "" : "s"} running. Check each has its job featured`, go: "featured" });
     if (empPays > liveProfiles) out.push({ date: "", text: `${plural(empPays, "featured employer payment")} in 30 days but only ${plural(liveProfiles, "profile")} live. Add the missing profile`, go: "featured" });
   }
@@ -996,6 +996,9 @@ const EMPLOYER_FIELDS = [
   ["based", "Based in", "text"], ["works_in", "Works in", "text"],
   ["sectors", "Sectors", "lines"], ["aliases", "Other names it posts jobs under", "lines"],
   ["about", "About the company (blank line between paragraphs)", "area"],
+  ["offer", "Deal for our users, e.g. 10% off courses with code HEJ10 (shows on their page, jobs, courses and /deals/)", "text"],
+  ["booking_email", "Booking email (turns on a Request a booking form for their courses, copied to contact@)", "email"],
+  ["partner", "Founding partner: free, shows a Founding partner badge and their name on the Advertise page", "check"],
 ];
 const REVIEW_FIELDS = [
   ["course", "Course title (as listed)", "text", true], ["provider", "Provider (as listed)", "text", true],
@@ -1013,6 +1016,7 @@ function field([name, label, type, req], val) {
     const opts = type.includes(val) || !val ? type : [...type, val];
     return `<label>${label}<select name="${name}"${r}><option value="">Choose...</option>${opts.map(o => `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select></label>`;
   }
+  if (type === "check") return `<label class="check"><input type="checkbox" name="${name}"${val ? " checked" : ""}> ${label}</label>`;
   if (type === "area") return `<label>${label}<textarea name="${name}" rows="3"${r}>${esc(val)}</textarea></label>`;
   if (type === "lines") return `<label>${label} <span class="hint">(one per line)</span><textarea name="${name}" rows="4">${esc((val || []).join("\n"))}</textarea></label>`;
   if (type === "closing") {
@@ -1071,6 +1075,7 @@ $("edit-form").addEventListener("submit", async e => {
   const out = {};
   for (const [name, label, type, req] of fields) {
     const el = form.elements[name];
+    if (type === "check") { out[name] = el.checked; continue; }
     let v = el.value.trim();
     if (type === "lines") v = v.split("\n").map(s => s.trim()).filter(Boolean);
     if (type === "closing") {
@@ -1088,7 +1093,7 @@ $("edit-form").addEventListener("submit", async e => {
   if (!item.referral_url) delete item.referral_url;
   if (!item.promo_code) delete item.promo_code;
   if (!item.elcas) delete item.elcas;
-  if (kind === "employers") { for (const [k, v] of Object.entries(item)) if (v === "" || (Array.isArray(v) && !v.length)) delete item[k]; }
+  if (kind === "employers") { for (const [k, v] of Object.entries(item)) if (v === "" || v === false || (Array.isArray(v) && !v.length)) delete item[k]; }
   else if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));
@@ -1149,6 +1154,14 @@ $("add-job").onclick = () => openEditor("jobs");
 $("add-course").onclick = () => openEditor("courses");
 $("add-review").onclick = () => openEditor("reviews");
 $("add-employer").onclick = () => openEditor("employers");
+// Founding partners: the Featured employer plan free for a set number of months. Their free time ends on its own.
+$("add-partner").onclick = () => {
+  const m = prompt("How many months free?", "3");
+  if (m === null) return;
+  const months = Math.max(1, Math.round(Number(m)) || 3), d = new Date(TODAY + "T00:00:00");
+  d.setMonth(d.getMonth() + months);
+  openEditor("employers", null, { partner: true, featured_until: iso(d) });
+};
 $("review-q").addEventListener("input", renderReviews);
 ["job-q", "job-f"].forEach(id => $(id).addEventListener("input", () => renderList("jobs")));
 ["course-q", "course-f"].forEach(id => $(id).addEventListener("input", () => renderList("courses")));
