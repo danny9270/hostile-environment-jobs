@@ -41,13 +41,17 @@ const CFG={
   s1:{kick:'Free · Rotation tracker',head:'Days to<br><span class="acc">leave</span>',sub:'Count down to your next flight home.',a:220,b:-150},
   s2:{kick:'Days and pay',head:'Hitch, month,<br><span class="acc">tax year</span>',sub:'Every day and every pound, added up for you.',a:380,b:700},
   s3:{kick:'A record, not tax advice',head:'Your days<br><span class="acc">logged</span>',sub:'Handy for HMRC residence rules. Not tax advice: check with an adviser.',a:1050,b:1350}},
+ talent:{img:'talent/talent-full.png',s1img:'talent/search-col.png',s1note:'Example profiles',url:'hostileenvironmentjobs.com<span class="acc">/candidates</span>',end:'Let the work<br><span class="acc">find you.</span>',endnote:'Free for operators, always',
+  s1:{kick:'Free · Talent pool',head:'Employers<br><span class="acc">search here</span>',sub:'By trade, region and the date you\'re free.',a:120,b:-1000},
+  s2:{kick:'Stay anonymous',head:'They see your<br><span class="acc">skills</span>',sub:'Not your name or contact details.',a:1900,b:2500},
+  s3:{kick:'You decide',head:'Say yes,<br><span class="acc">they call</span>',sub:'Say no and they never know who you are.',a:1000,b:1500}},
  closing:{img:'closing/closing-full.png',url:'hostileenvironmentjobs.com',end:'Apply before<br><span class="acc">it closes.</span>',endnote:'Free to search · Free to post a job',
   s1:{kick:'Closing this week',head:'Sorted by<br><span class="acc">deadline</span>',sub:'Pick “Closing soonest” on the jobs list.',a:-3700,b:-5600},
   s2:{kick:'Real adverts',head:'Straight to<br><span class="acc">the employer</span>',sub:'Every job links to the employer’s own advert.',a:3300,b:4500},
   s3:{kick:'Never miss one',head:'Job alerts<br><span class="acc">on your phone</span>',sub:'Pick your trade and regions in The App.',a:4500,b:5600}}
 };
 const C=CFG[R];const root=document.getElementById('root');
-if(S==='s1'){const c=C.s1;root.innerHTML='<div class="app"><img id="im" src="'+C.img+'"></div><div class="band"></div><div class="capb" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div>';}
+if(S==='s1'){const c=C.s1;root.innerHTML='<div class="app"><img id="im" src="'+(C.s1img||C.img)+'"></div>'+(C.s1note?'<div class="mono" style="position:absolute;top:60px;right:60px;z-index:6;font-size:24px;color:#a3a79c;background:rgba(17,19,16,.8);padding:10px 16px;border-radius:8px">'+C.s1note+'</div>':'')+'<div class="band"></div><div class="capb" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div>';}
 else if(S==='end'){root.innerHTML='<div class="full"><div class="mono kick">Hostile Environment Jobs</div><div class="big" id="h">'+C.end+'</div><div class="url" id="u">'+C.url+'</div><div class="free mono" id="f">'+C.endnote+'</div></div>';}
 else{const c=C[S];root.innerHTML='<div class="brand">H.E. <span class="acc">JOBS</span></div><div class="cap" id="cap"><div class="mono kick">'+c.kick+'</div><div class="head">'+c.head+'</div><div class="sub">'+c.sub+'</div></div><div class="phone" id="ph"><div class="screen"><img id="im" src="'+C.img+'"></div></div>';}
 const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
