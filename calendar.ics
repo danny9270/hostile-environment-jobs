@@ -10,23 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-drc-sub-national-mine-action-coordinator-south-syria@hostileenviron
- mentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261107
-DTEND;VALUE=DATE:20261108
-SUMMARY:Job closes: Sub-National Mine Action Coordinator\, South Syria (Dan
- ish Refugee Council (DRC))
-LOCATION:Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Damascus\, Syria\nCoordinates hu
- manitarian mine action across southern Syria on behalf of the Mine Action 
- Sector.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jo
- bs/drc-sub-national-mine-action-coordinator-south-syria/
-URL:https://hostileenvironmentjobs.com/jobs/drc-sub-national-mine-action-co
- ordinator-south-syria/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-drc-hma-operations-manager-beirut@hostileenvironmentjobs.com
 DTSTAMP:20261101T000000Z
 DTSTART;VALUE=DATE:20261109
