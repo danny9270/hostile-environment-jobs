@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09T13:22:47Z",
+ "updated": "2026-11-10T12:58:59Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -305,9 +305,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/eritrea",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-12",
-    "reviewed": "2026-10-12",
+    "updated": "2026-11-09",
+    "reviewed": "2026-11-09",
     "changes": [
+     {
+      "date": "2026-11-09",
+      "note": "Removal of information about the temporary withdrawal of dependants of British Embassy staff from Eritrea ('Warnings and insurance' page)."
+     },
      {
       "date": "2026-10-12",
       "note": "Addition of information about the temporary withdrawal of dependants of British Embassy staff from Eritrea (‘Warnings and insurance’ page)."
@@ -323,10 +327,6 @@
      {
       "date": "2026-04-27",
       "note": "Updated information on local security measures (‘Safety and security’ page)."
-     },
-     {
-      "date": "2026-01-27",
-      "note": "Updated information about getting in touch with the British Embassy in Asmara if you need urgent help (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
