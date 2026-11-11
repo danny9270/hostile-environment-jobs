@@ -10,71 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-drc-hma-operations-manager-beirut@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261109
-DTEND;VALUE=DATE:20261110
-SUMMARY:Job closes: HMA Operations Manager (Danish Refugee Council (DRC))
-LOCATION:Beirut\, Lebanon
-DESCRIPTION:Danish Refugee Council (DRC)\, Beirut\, Lebanon\nLeads technica
- l training\, quality assurance and planning for DRC's mine action operatio
- ns in Lebanon\, including oversight of local partners.\n\nDetails and how 
- to apply: https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manag
- er-beirut/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manager-beir
- ut/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-team-leader-rural-damascus@hostileenvironmentjobs.com
-DTSTAMP:20261103T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Humanitarian Mine Action Team Leader (Danish Refugee Co
- uncil (DRC))
-LOCATION:Rural Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nLead non
- -technical survey and explosive ordnance risk education teams in Rural Dam
- ascus to IMAS and NMAS standards.\n\nDetails and how to apply: https://hos
- tileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damascus/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damas
- cus/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-team-member-rural-damascus@hostileenvironmentjobs.com
-DTSTAMP:20261103T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Humanitarian Mine Action Team Member (Danish Refugee Co
- uncil (DRC))
-LOCATION:Rural Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nCarry ou
- t non-technical survey\, community liaison and explosive ordnance risk edu
- cation in Rural Damascus.\n\nDetails and how to apply: https://hostileenvi
- ronmentjobs.com/jobs/drc-hma-team-member-rural-damascus/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-member-rural-damas
- cus/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-nonviolent-peaceforce-security-officer-mykolaiv@hostileenvironmentj
- obs.com
-DTSTAMP:20261024T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Safety & Security Officer (Ukrainian nationals) (Nonvio
- lent Peaceforce)
-LOCATION:Mykolaiv\, Ukraine
-DESCRIPTION:Nonviolent Peaceforce\, Mykolaiv\, Ukraine\nSupport safety and 
- security management for humanitarian protection teams in southern Ukraine.
- \n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs/nonv
- iolent-peaceforce-security-officer-mykolaiv/
-URL:https://hostileenvironmentjobs.com/jobs/nonviolent-peaceforce-security-
- officer-mykolaiv/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:course-pcm-imas-eod-1-2-ukr-nov-2026@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261116
@@ -142,6 +77,21 @@ DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
 URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
  stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
  content=csd-basic-heat-nl
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-translator-kyiv@hostileenvironmentjobs.com
+DTSTAMP:20261111T000000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Job closes: Translator (Humanitarian Mine Action Officer) (Danish R
+ efugee Council (DRC))
+LOCATION:Kyiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kyiv\, Ukraine\nInterpret and tr
+ anslate for DRC's international mine action team\, including technical SOP
+ s and training materials.\n\nDetails and how to apply: https://hostileenvi
+ ronmentjobs.com/jobs/drc-hma-translator-kyiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-translator-kyiv/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
