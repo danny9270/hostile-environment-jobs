@@ -1,5 +1,42 @@
 [
  {
+  "id": "gardaworld-canine-trainer-iraq",
+  "title": "Canine Trainer",
+  "employer": "GardaWorld",
+  "category": "K9",
+  "location": "Balad, Iraq",
+  "region": "Middle East",
+  "contract": "Independent contractor, open-ended, 15 weeks on / 5 off",
+  "salary": "Not stated (accommodation, food, insurance and rotation flights included)",
+  "requirements": [
+   "Certification as an explosive detection working dog trainer",
+   "3+ years as a military, law enforcement or commercial security canine trainer in the last 10 years"
+  ],
+  "summary": "Validate and train explosive detection dogs in Iraq, keeping training records and overseeing their daily health and welfare.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Baghdad-Canine-Trainer-Iraq-Iraq/1449315600/",
+  "posted": "2026-11-11"
+ },
+ {
+  "id": "drc-hma-translator-kyiv",
+  "title": "Translator (Humanitarian Mine Action Officer)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Other",
+  "location": "Kyiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract, 6 months (extendable)",
+  "salary": "From EUR 2,025 gross per month",
+  "requirements": [
+   "2+ years in a similar role or an international organisation",
+   "Advanced English and fluent Ukrainian",
+   "Strong communication and negotiation skills"
+  ],
+  "summary": "Interpret and translate for DRC's international mine action team, including technical SOPs and training materials.",
+  "closing": "2026-11-23",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177146&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-11"
+ },
+ {
   "id": "drc-safety-assistant-barvinkove",
   "title": "Safety Assistant",
   "employer": "Danish Refugee Council (DRC)",
@@ -40,46 +77,6 @@
   "posted": "2026-11-05"
  },
  {
-  "id": "drc-hma-team-leader-rural-damascus",
-  "title": "Humanitarian Mine Action Team Leader",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Rural Damascus, Syria",
-  "region": "Middle East",
-  "contract": "National contract, 1 year (extendable)",
-  "salary": "DRC grade G (amount not stated)",
-  "requirements": [
-   "Previous mine action team leader experience",
-   "Non-technical survey experience plus 1 year EORE",
-   "NTS course certificate; IMAS level 3 desirable",
-   "English and Arabic"
-  ],
-  "summary": "Lead non-technical survey and explosive ordnance risk education teams in Rural Damascus to IMAS and NMAS standards.",
-  "closing": "2026-11-10",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177094&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-11-03"
- },
- {
-  "id": "drc-hma-team-member-rural-damascus",
-  "title": "Humanitarian Mine Action Team Member",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Rural Damascus, Syria",
-  "region": "Middle East",
-  "contract": "National contract, 1 year (extendable)",
-  "salary": "DRC grade J (amount not stated)",
-  "requirements": [
-   "NTS/EORE certificate from a recognised mine action training provider",
-   "Basic mine and UXO recognition for Syria",
-   "Map, compass and GPS skills",
-   "Fluent Arabic and English"
-  ],
-  "summary": "Carry out non-technical survey, community liaison and explosive ordnance risk education in Rural Damascus.",
-  "closing": "2026-11-10",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177095&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-11-03"
- },
- {
   "id": "errg-uxo-technician-i",
   "title": "UXO Technician I",
   "employer": "ERRG",
@@ -118,26 +115,6 @@
   "closing": "Rolling",
   "apply_url": "https://job-boards.greenhouse.io/errg/jobs/5388022008",
   "posted": "2026-11-03"
- },
- {
-  "id": "drc-hma-operations-manager-beirut",
-  "title": "HMA Operations Manager",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Management",
-  "location": "Beirut, Lebanon",
-  "region": "Middle East",
-  "contract": "National contract, 12 months, renewable",
-  "salary": "Not stated (DRC band E-2)",
-  "requirements": [
-   "3-4+ years humanitarian mine action experience in an international context",
-   "IMAS EOD Level 3 required, Level 3+ preferred",
-   "Master's degree in a related field",
-   "Fluent English and Arabic"
-  ],
-  "summary": "Leads technical training, quality assurance and planning for DRC's mine action operations in Lebanon, including oversight of local partners.",
-  "closing": "2026-11-09",
-  "apply_url": "https://drc.ngo/jobs/job?id=176696",
-  "posted": "2026-11-01"
  },
  {
   "id": "drc-safety-assistant-radio-operator-kyiv",
@@ -436,26 +413,6 @@
   "closing": "2026-12-31",
   "apply_url": "https://theirc.wd1.myworkdayjobs.com/External_Careers/job/Nairobi-Kenya/Emergency-Humanitarian-Access--Safety-and-Security-Advisor_JR00005192-1",
   "posted": "2026-10-21"
- },
- {
-  "id": "nonviolent-peaceforce-security-officer-mykolaiv",
-  "title": "Safety & Security Officer (Ukrainian nationals)",
-  "employer": "Nonviolent Peaceforce",
-  "category": "Security",
-  "location": "Mykolaiv, Ukraine",
-  "region": "Europe",
-  "contract": "Full-time",
-  "salary": "Not stated",
-  "requirements": [
-   "Ukrainian nationals only",
-   "2+ years humanitarian security or related experience",
-   "English, Ukrainian and Russian",
-   "Valid Ukrainian driving licence"
-  ],
-  "summary": "Support safety and security management for humanitarian protection teams in southern Ukraine.",
-  "closing": "2026-11-10",
-  "apply_url": "https://nonviolentpeaceforce.bamboohr.com/careers/712",
-  "posted": "2026-10-24"
  },
  {
   "id": "acuity-pss-paramedic-wps3-iraq",
