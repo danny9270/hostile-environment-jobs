@@ -98,7 +98,7 @@ def countries_in(location, names):
 
 def job_cards(jobs, e, closing_text):
     return "\n".join(f"""<article class="detail{' featured' if j.get('_featured') else ''}">
-  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
   <h3><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h3>
   <div class="who">{e(j['employer'])} · {e(j['location'])} · {closing_text(j)}</div>
   <p>{e(j['summary'])}</p>

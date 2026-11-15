@@ -2,10 +2,16 @@
 
 build_pages.py imports this. Employers who pay for a profile go in employers.json; a job is featured
 while its "featured_until" date hasn't passed, or while its employer's profile is live.
+A profile's "offer" is a deal for our users (shown on its page, its jobs and courses, and /deals/), and
+"booking_email" turns on a "Request a booking" form for its courses, copied to contact@ so we see every booking.
+An employer with "partner": true is a founding partner: the featured employer plan given free until its
+"featured_until" date, shown with a "Founding partner" badge and named on the Advertise page.
 """
 import datetime
 import json
 import re
+
+from referral import booking_url, promo_text
 
 # Prices and what each plan includes. Change them here and the Advertise page follows.
 PLANS = [
@@ -55,7 +61,68 @@ def is_featured(job, employers, today):
     return (is_date(until) and datetime.date.fromisoformat(until) >= today) or profile_for(job, employers) is not None
 
 
-def profile_page(x, jobs, page, e, closing_text, site):
+def badge(job, employers):
+    """Badge text for a featured job: founding partners (free featured employer plan) get their own badge."""
+    profile = profile_for(job, employers)
+    return "Founding partner" if profile and profile.get("partner") else "Featured"
+
+
+def courses_for(x, courses, today):
+    names = [x["name"], *x.get("aliases", [])]
+    return [c for c in courses if c.get("provider") in names and c.get("id") and not c.get("sample")
+            and (not is_date(c.get("start")) or datetime.date.fromisoformat(c["start"]) >= today)]
+
+
+def offer_box(x, e):
+    """The partner's deal for our users, as a highlighted line."""
+    if not x.get("offer"):
+        return ""
+    return f'<p class="offer"><b>{"Founding partner offer" if x.get("partner") else "Offer"}:</b> {e(x["offer"])}</p>'
+
+
+def booking_form(x, courses, e):
+    """A booking request that goes to contact@ with the provider copied in, so every booking is on record."""
+    if not (x.get("booking_email") and courses):
+        return ""
+    opts = "".join(f'<option value="{e(c["id"])}">{e(c["title"])}{" (" + e(c["start"]) + ")" if is_date(c.get("start")) else ""}</option>' for c in courses)
+    # The provider's address is put together in the browser so spam bots don't collect it.
+    user, _, domain = x["booking_email"].partition("@")
+    return f"""<h2 id="book">Request a booking</h2>
+<p>Send your details and {e(x['name'])} will reply to confirm dates, price and payment.{' Mention Hostile Environment Jobs for the partner offer.' if x.get('offer') else ''}</p>
+<form id="book-form" method="POST" data-u="{e(user)}" data-d="{e(domain)}">
+  <input type="hidden" name="_subject" value="Course booking request from Hostile Environment Jobs: {e(x['name'])}">
+  <input type="hidden" name="_next" value="https://hostileenvironmentjobs.com/employers/{e(x['id'])}/?sent=1#book">
+  <input type="hidden" name="_cc" id="book-cc">
+  <input type="hidden" name="provider" value="{e(x['name'])}">
+  <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+  <label>Course <select name="course" id="book-course">{opts}</select></label>
+  <div class="row">
+    <label>Your name <input name="name" required></label>
+    <label>Email <input name="email" type="email" required></label>
+  </div>
+  <div class="row">
+    <label>Phone (optional) <input name="phone" type="tel"></label>
+    <label>Places <input name="places" type="number" min="1" value="1"></label>
+  </div>
+  <label>Anything else (funding such as ELCAS, dates that suit you) <textarea name="details" rows="3"></textarea></label>
+  <button class="btn primary" type="submit">Send booking request</button>
+  <p class="sent" id="book-sent" hidden>Thanks, your request has gone to {e(x['name'])}. They'll be in touch to confirm.</p>
+</form>
+<script>
+const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"), bf = document.getElementById("book-form");
+bf.action = "https://formsubmit.co/" + CONTACT;
+document.getElementById("book-cc").value = bf.dataset.u + "@" + bf.dataset.d;
+document.getElementById("book-sent").hidden = !/sent=1/.test(location.search);
+const want = new URLSearchParams(location.search).get("course"), sel = document.getElementById("book-course");
+if (want && [...sel.options].some(o => o.value === want)) sel.value = want;
+</script>"""
+
+
+def employer_tag(x):
+    return "Founding partner" if x.get("partner") else "Featured employer"
+
+
+def profile_page(x, jobs, page, e, closing_text, site, courses=()):
     path = f"/employers/{x['id']}/"
     logo = f'<img class="logo" src="{e(x["logo"])}" alt="{e(x["name"])} logo">' if x.get("logo") else ""
     facts = [("Based", x.get("based")), ("Works in", x.get("works_in")), ("Sectors", ", ".join(x.get("sectors", [])))]
@@ -70,14 +137,17 @@ def profile_page(x, jobs, page, e, closing_text, site):
                     for i, (t, u) in enumerate([("Careers page", x.get("careers_url")), ("Website", x.get("website"))]) if u)
     body = f"""<a class="back" href="/employers/">&larr; Featured employers</a>
 <article class="detail profile">
-  <div class="profile-head">{logo}<div><span class="tag featured-tag">Featured employer</span><h1>{e(x['name'])}</h1>
+  <div class="profile-head">{logo}<div><span class="tag featured-tag">{employer_tag(x)}</span><h1>{e(x['name'])}</h1>
     {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}</div></div>
+  {offer_box(x, e)}
   {about}
   {f"<dl>{dl}</dl>" if dl else ""}
   {f'<div class="actions">{links}</div>' if links else ""}
 </article>
 <h2>Open jobs at {e(x['name'])}</h2>
-{cards}"""
+{cards}
+{course_list(x, courses, e)}
+{booking_form(x, courses, e)}"""
     org = {"@context": "https://schema.org", "@type": "Organization", "name": x["name"], "url": x.get("website"),
            "logo": (site + x["logo"]) if str(x.get("logo", "")).startswith("/") else x.get("logo"),
            "description": x.get("tagline") or x.get("about", "")[:200]}
@@ -86,20 +156,64 @@ def profile_page(x, jobs, page, e, closing_text, site):
     return path, page(f"{x['name']} jobs | Hostile Environment Jobs", desc, path, body, f'<script type="application/ld+json">{ld}</script>\n')
 
 
-def employers_index(employers, page, e):
+def course_list(x, courses, e):
+    if not courses:
+        return ""
+    book = lambda c: (f'<a class="btn primary" href="#book" data-course="{e(c["id"])}">Request a booking</a>' if x.get("booking_email") else "")
     cards = "\n".join(f"""<article class="detail">
-  <span class="tag featured-tag">Featured employer</span>
+  <span class="tag">{e(c['type'])}</span>
+  <h3><a href="{e(booking_url(c, 'partner'))}" target="_blank" rel="noopener">{e(c['title'])}</a></h3>
+  <div class="who">{e(c['location'])}{' · Starts ' + e(c['start']) if c.get('start') else ''}{' · ' + e(c['price']) if c.get('price') else ''}</div>
+  <p>{e(c.get('summary'))}{'<br><strong>' + e(promo_text(c)) + '</strong>' if c.get('promo_code') else ''}</p>
+  <div class="actions"><a class="btn" href="{e(booking_url(c, 'partner'))}" target="_blank" rel="noopener">Book on their site</a>{book(c)}</div>
+</article>""" for c in courses)
+    return f"""<h2>Courses from {e(x['name'])}</h2>
+{cards}
+<script>document.querySelectorAll("[data-course]").forEach(a => a.addEventListener("click", () => {{ const s = document.getElementById("book-course"); if (s) s.value = a.dataset.course; }}));</script>"""
+
+
+def deals_page(employers, page, e):
+    """Every live profile with an offer, founding partners first."""
+    with_offer = sorted((x for x in employers if x.get("offer")), key=lambda x: not x.get("partner"))
+    cards = "\n".join(f"""<article class="detail">
+  <span class="tag featured-tag">{employer_tag(x)}</span>
+  <h2><a href="/employers/{e(x['id'])}/">{e(x['name'])}</a></h2>
+  {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}
+  {offer_box(x, e)}
+  <div class="actions"><a class="btn primary" href="/employers/{e(x['id'])}/{'#book' if x.get('booking_email') else ''}">{'Book or see jobs' if x.get('booking_email') else 'See their jobs'}</a></div>
+</article>""" for x in with_offer) or "<p>No partner deals right now. Check back soon, or get them in the weekly Sitrep.</p>"
+    body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
+<h1 style="margin-top:24px">Partner deals</h1>
+<p>Discounts and extras from the companies and training providers backing Hostile Environment Jobs. Mention us when you book or apply.</p>
+{cards}
+<p class="meta-line">Run a company or training school and want to offer something here? <a href="/advertise/">Advertise with us</a>.</p>"""
+    return page("Partner deals | Hostile Environment Jobs", "Course discounts and offers from employers and training providers in EOD, security, medic and mine action work.", "/deals/", body)
+
+
+def employers_index(employers, page, e):
+    employers = sorted(employers, key=lambda x: not x.get("partner"))  # founding partners first
+    cards = "\n".join(f"""<article class="detail">
+  <span class="tag featured-tag">{employer_tag(x)}</span>
   <h2><a href="/employers/{e(x['id'])}/">{e(x['name'])}</a></h2>
   {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}
 </article>""" for x in employers) or "<p>No featured employers yet.</p>"
     body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
 <h1 style="margin-top:24px">Featured employers</h1>
-<p>Organisations hiring in hostile and high-risk places. <a href="/advertise/">Want your company here?</a></p>
+<p>Organisations hiring in hostile and high-risk places. <a href="/deals/">See partner deals</a> · <a href="/advertise/">Want your company here?</a></p>
 {cards}"""
     return page("Featured employers | Hostile Environment Jobs", "Companies and NGOs hiring EOD, security, medic and mine action staff.", "/employers/", body)
 
 
-def advertise_page(page, e):
+def partners_strip(employers, e):
+    """Names of the founding partners on the Advertise page, so new employers can see who's already with us."""
+    partners = [x for x in employers if x.get("partner")]
+    if not partners:
+        return ""
+    links = ", ".join(f'<a href="/employers/{e(x["id"])}/">{e(x["name"])}</a>' for x in partners)
+    return f'<p class="meta-line"><b>Our founding partners:</b> {links}. Thanks for backing the site from day one.</p>'
+
+
+def advertise_page(page, e, employers=()):
     def button(p):
         if p["payment_link"] is None:
             return '<a class="btn" href="/#post">Post a job free</a>'
@@ -121,6 +235,7 @@ def advertise_page(page, e):
 <div class="plans">
 {plans}
 </div>
+{partners_strip(employers, e)}
 <p class="meta-line" id="pool-count" hidden></p>
 <script>
 // The talent pool's size, once it's big enough to be worth showing (POOL_MIN in scripts/candidates.html).

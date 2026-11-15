@@ -137,9 +137,10 @@ def job_page(j, employers=()):
     ld = json.dumps({k: v for k, v in posting.items() if v}, ensure_ascii=False).replace("</", "<\\/")
     body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
 <article class="detail">
-  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
   <h1>{e(j['title'])}</h1>
   <div class="who">{f'<a href="/employers/{e(profile["id"])}/">{e(j["employer"])}</a>' if profile else e(j['employer'])} · {e(j['location'])}</div>
+  {paid.offer_box(profile, e) if profile else ''}
   <p>{e(j['summary'])}</p>
   <dl><dt>Closing</dt><dd>{closing_text(j)}</dd><dt>Contract</dt><dd>{e(j.get('contract'))}</dd><dt>Salary</dt><dd>{e(j.get('salary') or 'Not stated')}</dd>
     <dt>Requirements</dt><dd>{'<br>'.join(e(r) for r in reqs)}</dd><dt>Added</dt><dd>{fmt(j['posted']) if j.get('posted') else ''}</dd></dl>
@@ -155,7 +156,7 @@ def job_page(j, employers=()):
 
 def jobs_index(jobs, browse=""):
     cards = "\n".join(f"""<article class="detail{' featured' if j.get('_featured') else ''}">
-  <span class="tag">{e(j['category'])}</span>{' <span class="tag featured-tag">Featured</span>' if j.get('_featured') else ''}
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
   <h2><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h2>
   <div class="who">{e(j['employer'])} · {e(j['location'])} · {closing_text(j)}</div>
   <p>{e(j['summary'])}</p>
@@ -237,6 +238,7 @@ def main():
     employers = paid.load(ROOT, TODAY)
     for j in jobs:
         j["_featured"] = paid.is_featured(j, employers, TODAY)
+        j["_tag"] = f' <span class="tag featured-tag">{paid.badge(j, employers)}</span>' if j["_featured"] else ""
     jobs.sort(key=lambda j: not j["_featured"])  # featured first, newest first within each group
     out = ROOT / "jobs"
     if out.exists():
@@ -255,13 +257,15 @@ def main():
     emp_out.mkdir()
     profile_urls = []
     for x in employers:
-        path, html_text = paid.profile_page(x, [j for j in jobs if paid.profile_for(j, [x])], page, e, closing_text, SITE)
+        path, html_text = paid.profile_page(x, [j for j in jobs if paid.profile_for(j, [x])], page, e, closing_text, SITE, paid.courses_for(x, courses, TODAY))
         (ROOT / path.strip("/")).mkdir(parents=True)
         (ROOT / path.strip("/") / "index.html").write_text(html_text)
         profile_urls.append((SITE + path, "weekly"))
     (emp_out / "index.html").write_text(paid.employers_index(employers, page, e))
+    (ROOT / "deals").mkdir(exist_ok=True)
+    (ROOT / "deals" / "index.html").write_text(paid.deals_page(employers, page, e))
     (ROOT / "advertise").mkdir(exist_ok=True)
-    (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e))
+    (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e, employers))
 
     # Closed jobs' pages are deleted, so old shared links land here instead.
     (ROOT / "404.html").write_text(page("Page not found | Hostile Environment Jobs", "This page or job has gone.", "/404.html",
@@ -317,7 +321,7 @@ def main():
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
     urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
-    urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + profile_urls
+    urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + ([(SITE + "/deals/", "weekly")] if any(x.get("offer") for x in employers) else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
     print(f"Built {len(jobs)} job pages, {len(employers)} employer profiles and {n_events} calendar events")

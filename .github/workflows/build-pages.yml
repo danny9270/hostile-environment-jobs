@@ -3,7 +3,7 @@ name: Build job pages
 on:
   push:
     branches: [main]
-    paths: [jobs.json, courses.json, employers.json, index.html, scripts/build_pages.py, scripts/employers.py, scripts/landing.py, scripts/pay.html, scripts/app.html, scripts/deploy.html, scripts/deploy-map.svg]
+    paths: [jobs.json, courses.json, employers.json, index.html, scripts/build_pages.py, scripts/employers.py, scripts/referral.py, scripts/landing.py, scripts/pay.html, scripts/app.html, scripts/deploy.html, scripts/deploy-map.svg]
   schedule:
     - cron: "15 3 * * *"
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add -A jobs work employers advertise pay app deploy sitemap.xml 404.html calendar.ics
+          git add -A jobs work employers deals advertise pay app deploy sitemap.xml 404.html calendar.ics
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

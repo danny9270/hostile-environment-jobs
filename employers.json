@@ -1,1 +1,26 @@
-[]
+[
+ {
+  "id": "invictus-strategic-solutions",
+  "name": "Invictus Strategic Solutions Ltd",
+  "aliases": [
+   "Invictus Strategic Solutions",
+   "Invictus"
+  ],
+  "partner": true,
+  "featured_until": "2027-02-15",
+  "tagline": "Veteran-owned training in pre-hospital emergency care, first aid, hostile environments and travel risk",
+  "offer": "5% off any Invictus course for Hostile Environment Jobs members. Mention us when you book.",
+  "booking_email": "info@invictusstrategicsolutions.com",
+  "website": "https://invictusstrategicsolutions.com/",
+  "based": "Oxfordshire, UK (near Bicester)",
+  "works_in": "UK, plus bespoke courses for organisations",
+  "sectors": [
+   "Pre-hospital emergency care",
+   "First aid",
+   "Hostile environment training",
+   "Travel risk"
+  ],
+  "about": "Invictus Strategic Solutions is a veteran-owned UK training and consultancy company. Its instructors come from specialist military, law enforcement, security and frontline pre-hospital emergency care backgrounds.\n\nIt runs Qualsafe FREC 3 and FREC 3 requalification courses near Bicester, a residential HEAT course at the Fire Service College, and bespoke HEAT for organisations on request. It works with people and teams in the security, humanitarian, international travel and high-risk sectors.",
+  "logo": "/logos/invictus.jpg"
+ }
+]
