@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /leavers/ hub, the /app/ job alerts page, the /candidates/ talent pool, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /leavers/ hub, the /app/ job alerts page, the /candidates/ talent pool, the /closing-soon/ list, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -13,6 +13,7 @@ import re
 import shutil
 
 import employers as paid
+import closing_soon as soon
 import landing
 from referral import booking_url, promo_text
 
@@ -228,6 +229,30 @@ def calendar(jobs, courses):
     return "\r\n".join(ics_fold(l) for l in lines) + "\r\n", len(events)
 
 
+def closing_page(jobs):
+    """Jobs with a closing date in the next couple of weeks, soonest first. Rebuilt daily, so it stays current."""
+    rows = soon.closing_soon(jobs, TODAY)
+    cards = "\n".join(f"""<article class="detail soon-detail{' featured' if j.get('_featured') else ''}">
+  <span class="tag">{e(j['category'])}</span>{j.get('_tag', '')}
+  <h2><a href="/jobs/{e(j['id'])}/">{e(j['title'])}</a></h2>
+  <div class="who">{e(j['employer'])} · {e(j['location'])}</div>
+  <p class="soon-when"><span class="soon">{soon.left_text(j, TODAY)}</span> · {closing_text(j)}</p>
+  <p>{e(j['summary'])}</p>
+  <div class="actions"><a class="btn primary" href="{e(j['apply_url'])}" target="_blank" rel="noopener">Apply on employer's site</a><a class="btn" href="/jobs/{e(j['id'])}/">Details</a></div>
+</article>""" for j in rows)
+    empty = '<p class="empty">Nothing closes in the next two weeks. Most jobs here are open until filled, so <a href="/#jobs">browse them all</a>.</p>'
+    body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
+<p class="eyebrow" style="margin-top:24px">Next {soon.WINDOW} days</p>
+<h1>Closing soon</h1>
+<p>Jobs with an application deadline in the next {soon.WINDOW} days, soonest first. Apply before they go: closed jobs drop off the site automatically.</p>
+{cards or empty}
+<div class="actions" style="margin-bottom:40px"><a class="btn" href="/#jobs">See all open jobs</a><a class="btn" href="/#calendar">Calendar of closing dates</a></div>"""
+    n = len(rows)
+    desc = (f"{n} EOD, security, mine action and medic job{'s' if n != 1 else ''} closing in the next {soon.WINDOW} days. Apply before the deadline."
+            if n else f"EOD, security, mine action and medic jobs closing in the next {soon.WINDOW} days.")
+    return page("Jobs closing soon | Hostile Environment Jobs", desc, "/closing-soon/", body)
+
+
 def main():
     all_jobs = json.loads((ROOT / "jobs.json").read_text())
     courses = json.loads((ROOT / "courses.json").read_text())
@@ -249,6 +274,8 @@ def main():
     out.mkdir(exist_ok=True)
     landing_urls, browse = landing.build(ROOT, jobs, courses, page, e, closing_text, SITE, COUNTRIES, country, TODAY)
     (out / "index.html").write_text(jobs_index(jobs, browse))
+    (ROOT / "closing-soon").mkdir(exist_ok=True)
+    (ROOT / "closing-soon" / "index.html").write_text(closing_page(jobs))
 
     # Employer profiles last only while paid for, so the folder is rebuilt each time.
     emp_out = ROOT / "employers"
@@ -320,7 +347,7 @@ def main():
         "Watch how to search EOD, mine action, security and medic jobs, find courses, post a job free and use the pay guide, CV builder, deployment guide, talent pool and app.",
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + ([(SITE + "/deals/", "weekly")] if any(x.get("offer") for x in employers) else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
