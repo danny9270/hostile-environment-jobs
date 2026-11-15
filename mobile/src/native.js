@@ -14,6 +14,7 @@ const Share = registerPlugin("Share");
 const Filesystem = registerPlugin("Filesystem");
 const App = registerPlugin("App");
 const Splash = registerPlugin("SplashScreen");
+const Widget = registerPlugin("HEJWidget"); // the app's own plugin for the home-screen rotation countdown (ios/App/App/WidgetPlugin.swift, android .../WidgetPlugin.java)
 
 const SITE = "https://hostileenvironmentjobs.com";
 const ENTITLEMENT = "alerts"; // the RevenueCat entitlement that the yearly subscription unlocks
@@ -107,6 +108,9 @@ window.HEJNative = {
   },
   async share(opts) { return Share.share(opts); },
   open: openUrl,
+
+  // Gives the home-screen countdown widget the rotation (days on, days off, first day of a hitch).
+  widget: r => Widget.setRota({ on: r.on || 0, off: r.off || 0, start: r.start || "" }).catch(() => {}),
 };
 
 // Links to the website open in the in-app browser, not inside the app's own page.

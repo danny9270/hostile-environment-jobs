@@ -20,6 +20,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Home-screen rotation countdown (RotaWidgetProvider). -->
+        <receiver android:name=".RotaWidgetProvider" android:exported="false" android:label="Rotation countdown">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/rota_widget_info" />
+        </receiver>
+
         <!-- Job alert notifications: the small icon in the status bar, its colour and the channel they arrive on. -->
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_alert" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/alert_accent" />
