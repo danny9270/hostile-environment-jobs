@@ -67,6 +67,15 @@ It also lists the open courses from `courses.json`. Add `"elcas": "1234"` to a c
 - **Give someone free alerts:** after they've tapped "Get job alerts" once, run `UPDATE accounts SET paid_until = strftime('%s','2027-12-31') WHERE code = 'HEJ-...'` in the same console.
 - **Rotation tracker:** free for everyone, no account. People enter days on, days off and the first day of any hitch; it counts down to leave, logs worked, travel, standby and unpaid days with a day rate, and totals pay for the hitch, month, year and UK tax year. It's kept only in that phone's browser (`localStorage` key `hej-rota`), never sent to the Worker. They can download the log as CSV and load it back, and download the next 12 rotations as an `.ics` calendar file.
 
+## Mine Action SOP Builder
+
+`/sop/` (hand-written page, `sop/index.html`, not built by a script) builds an IMAS and IATG referenced SOP set in the browser and exports it to Word (.docx made in the browser) or print/PDF. Work is kept in that browser (`localStorage` key `hej-sop-v1`) and can be saved and opened as a `.json` project file. Nothing is uploaded.
+
+- **Modules:** `MODULES` in the page script. 00 to 03 have `free: true`; 04 to 12, 11.3 clearance methods and Annex A (blank forms, using `fields` and `form` columns) export only with The App. A module or section with `acts` drops out when none of those activities are ticked on the cover page.
+- **Guardrail:** structure, management, admin and QC wording only. Never add render safe, demolition, charge placement, firing or IED procedure content; technical sections stay as bracketed placeholders.
+- **Unlock:** anyone can edit every module on screen. The full export checks the visitor's App account code against the alerts Worker (`GET /api/account`, the same `hej-code` the `/app/` page keeps), so App subscribers on the same browser are unlocked automatically. It's a soft lock, like the app's kit list. Full exports drop the "Made with" footer line; the disclaimer is on every export.
+- **Organisations:** the first 7 get the full set free for year one (enquiries by email to contact@). Logo and shared projects aren't built yet.
+
 ## Talent pool
 
 Operators say when they're free and what they do; checked employers who've paid for search find them. Posting jobs and browsing the jobs list stay free.
