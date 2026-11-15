@@ -189,14 +189,41 @@ form label.check input { width: auto; flex: none; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
 #sitrep { scroll-margin-top: 130px; }
-.partners-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px 14px; margin: 18px 0 0; font-size: 15px; }
-.partners-strip .eyebrow { margin: 0; }
-.partners-strip .partner { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.partners-strip .partner a { font-weight: 700; color: var(--ink); text-decoration: none; }
-.partners-strip .partner a:hover { color: var(--accent); }
-.partners-strip img { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: #fff; flex: none; }
-.partners-strip .deal { color: var(--muted); }
-.partners-strip .more { margin-left: auto; font-weight: 600; white-space: nowrap; }
+.partners-home { margin: 26px 0 6px; }
+.phead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin-bottom: 14px; }
+.phead .eyebrow { flex-basis: 100%; margin: 0; }
+.phead h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0; }
+.phead .more { margin-left: auto; font-weight: 600; white-space: nowrap; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; margin: 18px 0 28px; }
+.partners-home .pgrid { margin: 0; }
+.pcard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.pcard:hover { border-color: var(--sand); }
+.pbanner { position: relative; display: grid; place-items: center; min-height: 150px; padding: 26px 20px 50px; text-decoration: none;
+  background: radial-gradient(120% 120% at 85% 0%, #3a2a14 0%, transparent 55%),
+    repeating-radial-gradient(circle at 18% 120%, transparent 0 22px, rgba(242,154,46,.13) 22px 23px), var(--raised); background-size: cover; background-position: center; }
+.pbanner.photo { min-height: 190px; }
+.plogo { width: auto; max-width: 220px; height: 96px; object-fit: contain; background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.plogo.ptext { display: grid; place-items: center; width: 96px; font: 900 48px var(--display); color: var(--accent-ink); background: var(--accent); }
+.pbadge { position: absolute; left: 12px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 4px 10px 4px 8px; }
+.pbody { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px 18px; flex: 1; }
+.pbody h3 { font-size: 26px; margin: 0; }
+.pbody h3 a { color: var(--ink); text-decoration: none; }
+.pbody .who { margin: 0; color: var(--muted); font-size: 15px; }
+.pdeal { display: flex; align-items: center; gap: 12px; background: var(--soft); border: 1px dashed var(--accent); border-radius: 10px; padding: 10px 12px; }
+.pdeal b { font: 900 34px/1 var(--display); color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+.pdeal span { font-size: 15px; line-height: 1.3; }
+.pcourses { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 15px; }
+.pcourses li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 6px; }
+.pcourses .when { font: 600 13px var(--mono); color: var(--sand); text-transform: uppercase; }
+.pcourses .price { font: 500 13px var(--mono); color: var(--muted); }
+.pmore { margin: 0; font: 500 13px var(--mono); color: var(--muted); }
+.pbody .actions { margin-top: auto; padding-top: 6px; }
+@media (min-width: 760px) {
+  .pgrid.one { grid-template-columns: 1fr; }
+  .pgrid.one .pcard { flex-direction: row; }
+  .pgrid.one .pbanner { flex: 0 0 38%; min-height: 0; }
+}
 .sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
@@ -249,15 +276,19 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 <main class="wrap">
 <a class="back" href="/#jobs">&larr; All jobs</a>
-<h1 style="margin-top:24px">Partner deals</h1>
-<p>Discounts and extras from the companies and training providers backing Hostile Environment Jobs. Mention us when you book or apply.</p>
-<article class="detail">
-  <span class="tag featured-tag">Founding partner</span>
-  <h2><a href="/employers/invictus-strategic-solutions/">Invictus Strategic Solutions Ltd</a></h2>
-  <div class="who">Veteran-owned training in pre-hospital emergency care, first aid, hostile environments and travel risk</div>
-  <p class="offer"><b>Founding partner offer:</b> 5% off any Invictus course for Hostile Environment Jobs members. Mention us when you book.</p>
-  <div class="actions"><a class="btn primary" href="/employers/invictus-strategic-solutions/#book">Book or see jobs</a></div>
-</article>
+<p class="eyebrow" style="margin-top:28px">Partner deals</p>
+<h1>Discounts from the people <span class="amp">backing the site</span></h1>
+<p>Course discounts and extras from the companies and training providers who support Hostile Environment Jobs. Mention us when you book or apply.</p>
+<div class="pgrid"><article class="pcard">
+  <a class="pbanner" href="/employers/invictus-strategic-solutions/"><img class="plogo" src="/logos/invictus.jpg" alt="Invictus Strategic Solutions Ltd logo"><span class="pbadge"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm0 5 1.5 3.1 3.4.5-2.5 2.4.6 3.4L12 14.8 9 16.4l.6-3.4-2.5-2.4 3.4-.5L12 7Z"/></svg>Founding partner</span></a>
+  <div class="pbody">
+    <h3><a href="/employers/invictus-strategic-solutions/">Invictus Strategic Solutions Ltd</a></h3>
+    <p class="who">Veteran-owned training in pre-hospital emergency care, first aid, hostile environments and travel risk</p>
+    <div class="pdeal"><b>5% off</b><span>Any Invictus course for Hostile Environment Jobs members.</span></div>
+    <ul class="pcourses"><li><span class="when">11 Jan</span><span>FREC 3 (First Response Emergency Care, Level 3)</span><span class=price>£495</span></li><li><span class="when">19 Jan</span><span>FREC 3 Requalification</span><span class=price>£295</span></li><li><span class="when">9 Feb</span><span>FREC 3 Requalification</span><span class=price>£295</span></li></ul><p class="pmore">+5 more dates</p>
+    <div class="actions"><a class="btn primary" href="/employers/invictus-strategic-solutions/#book">Book with the deal</a><a class="btn" href="/employers/invictus-strategic-solutions/">Profile</a></div>
+  </div>
+</article></div>
 <p class="meta-line">Run a company or training school and want to offer something here? <a href="/advertise/">Advertise with us</a>.</p>
 </main>
 <footer><div class="wrap">

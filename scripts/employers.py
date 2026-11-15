@@ -169,7 +169,7 @@ def course_list(x, courses, e):
   <p>{e(c.get('summary'))}{'<br><strong>' + e(promo_text(c)) + '</strong>' if c.get('promo_code') else ''}</p>
   <div class="actions"><a class="btn" href="{e(booking_url(c, 'partner'))}" target="_blank" rel="noopener">Book on their site</a>{book(c)}</div>
 </article>""" for c in courses)
-    return f"""<h2>Courses from {e(x['name'])}</h2>
+    return f"""<h2 id="courses-list">Courses from {e(x['name'])}</h2>
 {cards}
 <script>document.querySelectorAll("[data-course]").forEach(a => a.addEventListener("click", () => {{ const s = document.getElementById("book-course"); if (s) s.value = a.dataset.course; }}));</script>"""
 
@@ -194,34 +194,78 @@ def short_offer(x):
     return re.split(r"(?<=[.!])\s", (x.get("offer") or "").strip(), maxsplit=1)[0]
 
 
-def home_strip(employers, today, e):
-    """A one-line "New partners" bar for the top of the home page, pointing at /deals/. Empty when nobody's new."""
+def deal_parts(x):
+    """Split an offer into a big headline ("5% off") and the rest, for the partner cards."""
+    offer = short_offer(x)
+    m = re.search(r"(\d+\s?%|£\s?\d+)\s+off\b", offer, re.I)
+    if not m:
+        return "", offer
+    rest = (offer[:m.start()] + offer[m.end():]).strip(" .,:-")
+    return m.group(0), rest[:1].upper() + rest[1:] + ("." if rest else "")
+
+
+SHIELD = ('<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.4 8 11 '
+          '4.6-1.6 8-6 8-11V5l-8-3Zm0 5 1.5 3.1 3.4.5-2.5 2.4.6 3.4L12 14.8 9 16.4l.6-3.4-2.5-2.4 3.4-.5L12 7Z"/></svg>')
+
+
+def partner_badge(x):
+    label = "Founding partner" if x.get("partner") else "Partner"
+    return f'<span class="pbadge">{SHIELD}{label}</span>'
+
+
+def short_date(d):
+    return datetime.date.fromisoformat(d).strftime("%-d %b") if is_date(d) else ""
+
+
+def partner_card(x, courses, e, n_courses=3):
+    """A visual card for a partner: banner with their photo (or our topo pattern) and logo, badge, big deal, next course dates."""
+    photo = f' style="background-image:linear-gradient(180deg,rgba(17,19,16,.15),rgba(17,19,16,.75)),url(\'{e(x["photo"])}\')"' if x.get("photo") else ""
+    logo = f'<img class="plogo" src="{e(x["logo"])}" alt="{e(x["name"])} logo">' if x.get("logo") else f'<span class="plogo ptext">{e(x["name"][:1])}</span>'
+    big, rest = deal_parts(x)
+    deal = (f'<div class="pdeal">{f"<b>{e(big)}</b>" if big else ""}<span>{e(rest)}</span></div>' if x.get("offer") else "")
+    upcoming = sorted((c for c in courses if is_date(c.get("start"))), key=lambda c: c["start"])
+    rows = "".join(f'<li><span class="when">{short_date(c["start"])}</span><span>{e(c["title"])}</span>'
+                   f'{f"<span class=price>{e(c.get("price"))}</span>" if c.get("price") else ""}</li>' for c in upcoming[:n_courses])
+    more = f'<p class="pmore">+{len(upcoming) - n_courses} more date{"s" if len(upcoming) - n_courses > 1 else ""}</p>' if len(upcoming) > n_courses else ""
+    href = f"/employers/{e(x['id'])}/"
+    cta = (f'<a class="btn primary" href="{href}#book">Book with the deal</a>' if x.get("booking_email")
+           else f'<a class="btn primary" href="{href}">See their jobs</a>')
+    return f"""<article class="pcard">
+  <a class="pbanner{' photo' if photo else ''}" href="{href}"{photo}>{logo}{partner_badge(x)}</a>
+  <div class="pbody">
+    <h3><a href="{href}">{e(x['name'])}</a></h3>
+    {f'<p class="who">{e(x["tagline"])}</p>' if x.get("tagline") else ""}
+    {deal}
+    {f'<ul class="pcourses">{rows}</ul>{more}' if rows else ""}
+    <div class="actions">{cta}<a class="btn" href="{href}">Profile</a></div>
+  </div>
+</article>"""
+
+
+def home_strip(employers, today, e, courses=()):
+    """New partners as visual cards near the top of the home page, pointing at /deals/. Empty when nobody's new."""
     fresh = new_partners(employers, today)[:3]
     if not fresh:
         return ""
-    def one(x):
-        logo = f'<img src="{e(x["logo"])}" alt="" loading="lazy">' if x.get("logo") else ""
-        deal = f' <span class="deal">{e(short_offer(x))}</span>' if x.get("offer") else ""
-        return f'<span class="partner">{logo}<span><a href="/employers/{e(x["id"])}/">{e(x["name"])}</a>{deal}</span></span>'
     label = "New partner" if len(fresh) == 1 else "New partners"
     deals = any(x.get("offer") for x in employers)
-    more = '<a class="more" href="/deals/">See partner deals &rarr;</a>' if deals else '<a class="more" href="/employers/">See our partners &rarr;</a>'
-    return f'<div class="partners-strip" aria-label="{label}"><span class="eyebrow">{label}</span>{"".join(one(x) for x in fresh)}{more}</div>'
+    more = '<a class="more" href="/deals/">All partner deals &rarr;</a>' if deals else '<a class="more" href="/employers/">See our partners &rarr;</a>'
+    cards = "".join(partner_card(x, courses_for(x, courses, today), e, 2) for x in fresh)
+    return (f'<section class="partners-home" aria-label="{label}"><div class="phead"><p class="eyebrow">{label}</p>'
+            f'<h2>Backed by people who\'ve <span class="amp">done the job</span></h2>{more}</div>'
+            f'<div class="pgrid{" one" if len(fresh) == 1 else ""}">{cards}</div></section>')
 
 
-def deals_page(employers, page, e):
-    """Every live profile with an offer, founding partners first."""
+def deals_page(employers, page, e, courses=(), today=None):
+    """Every live profile with an offer, founding partners first, as visual cards."""
+    today = today or datetime.date.today()
     with_offer = sorted((x for x in employers if x.get("offer")), key=lambda x: not x.get("partner"))
-    cards = "\n".join(f"""<article class="detail">
-  <span class="tag featured-tag">{employer_tag(x)}</span>
-  <h2><a href="/employers/{e(x['id'])}/">{e(x['name'])}</a></h2>
-  {f'<div class="who">{e(x["tagline"])}</div>' if x.get("tagline") else ""}
-  {offer_box(x, e)}
-  <div class="actions"><a class="btn primary" href="/employers/{e(x['id'])}/{'#book' if x.get('booking_email') else ''}">{'Book or see jobs' if x.get('booking_email') else 'See their jobs'}</a></div>
-</article>""" for x in with_offer) or "<p>No partner deals right now. Check back soon, or get them in the weekly Sitrep.</p>"
+    cards = "\n".join(partner_card(x, courses_for(x, courses, today), e) for x in with_offer)
+    cards = f'<div class="pgrid">{cards}</div>' if cards else "<p>No partner deals right now. Check back soon, or get them in the weekly Sitrep.</p>"
     body = f"""<a class="back" href="/#jobs">&larr; All jobs</a>
-<h1 style="margin-top:24px">Partner deals</h1>
-<p>Discounts and extras from the companies and training providers backing Hostile Environment Jobs. Mention us when you book or apply.</p>
+<p class="eyebrow" style="margin-top:28px">Partner deals</p>
+<h1>Discounts from the people <span class="amp">backing the site</span></h1>
+<p>Course discounts and extras from the companies and training providers who support Hostile Environment Jobs. Mention us when you book or apply.</p>
 {cards}
 <p class="meta-line">Run a company or training school and want to offer something here? <a href="/advertise/">Advertise with us</a>.</p>"""
     return page("Partner deals | Hostile Environment Jobs", "Course discounts and offers from employers and training providers in EOD, security, medic and mine action work.", "/deals/", body)
