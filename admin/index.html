@@ -1040,6 +1040,7 @@ const COURSE_FIELDS = [
 const EMPLOYER_FIELDS = [
   ["name", "Company name (exactly as on its job adverts)", "text", true], ["featured_until", "Featured until (blank = until removed)", "date"],
   ["tagline", "One-line tagline", "text"], ["logo", "Logo image link", "url"],
+  ["photo", "Banner photo link (optional: a wide photo of their course or team for their partner card)", "url"],
   ["website", "Website", "url"], ["careers_url", "Careers page", "url"],
   ["based", "Based in", "text"], ["works_in", "Works in", "text"],
   ["sectors", "Sectors", "lines"], ["aliases", "Other names it posts jobs under", "lines"],
@@ -1047,6 +1048,7 @@ const EMPLOYER_FIELDS = [
   ["offer", "Deal for our users, e.g. 10% off courses with code HEJ10 (shows on their page, jobs, courses and /deals/)", "text"],
   ["booking_email", "Booking email (turns on a Request a booking form for their courses, copied to contact@)", "email"],
   ["partner", "Founding partner: free, shows a Founding partner badge and their name on the Advertise page", "check"],
+  ["joined", "Partner since (a founding partner or one with a deal shows in the home page's New partners strip for 60 days, and in the next Sitrep)", "date"],
 ];
 const REVIEW_FIELDS = [
   ["course", "Course title (as listed)", "text", true], ["provider", "Provider (as listed)", "text", true],
@@ -1222,14 +1224,14 @@ $("add-course").onclick = () => openEditor("courses");
 $("add-review").onclick = () => openEditor("reviews");
 $("add-ereview").onclick = () => openEditor("ereviews");
 $("ereview-q").addEventListener("input", renderEReviews);
-$("add-employer").onclick = () => openEditor("employers");
+$("add-employer").onclick = () => openEditor("employers", null, { joined: TODAY });
 // Founding partners: the Featured employer plan free for a set number of months. Their free time ends on its own.
 $("add-partner").onclick = () => {
   const m = prompt("How many months free?", "3");
   if (m === null) return;
   const months = Math.max(1, Math.round(Number(m)) || 3), d = new Date(TODAY + "T00:00:00");
   d.setMonth(d.getMonth() + months);
-  openEditor("employers", null, { partner: true, featured_until: iso(d) });
+  openEditor("employers", null, { partner: true, featured_until: iso(d), joined: TODAY });
 };
 $("review-q").addEventListener("input", renderReviews);
 ["job-q", "job-f"].forEach(id => $(id).addEventListener("input", () => renderList("jobs")));

@@ -292,7 +292,11 @@ def main():
         profile_urls.append((SITE + path, "weekly"))
     (emp_out / "index.html").write_text(paid.employers_index(employers, page, e))
     (ROOT / "deals").mkdir(exist_ok=True)
-    (ROOT / "deals" / "index.html").write_text(paid.deals_page(employers, page, e))
+    (ROOT / "deals" / "index.html").write_text(paid.deals_page(employers, page, e, courses, TODAY))
+    # The home page is hand-written; only its "New partners" strip is filled in here.
+    home = re.sub(r"<!--partners-->.*?<!--/partners-->", lambda m: f"<!--partners-->{paid.home_strip(employers, TODAY, e, courses)}<!--/partners-->", index, count=1, flags=re.S)
+    if home != index:
+        (ROOT / "index.html").write_text(home)
     (ROOT / "advertise").mkdir(exist_ok=True)
     (ROOT / "advertise" / "index.html").write_text(paid.advertise_page(page, e, employers))
 
