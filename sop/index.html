@@ -3,13 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mine Action SOP Builder (trial) | Hostile Environment Jobs</title>
-<meta name="description" content="Build an IMAS-aligned mine action SOP set in your browser and export it to Word. Trial version.">
-<meta name="robots" content="noindex, nofollow">
+<title>Mine Action SOP Builder: IMAS-aligned SOPs in Word | Hostile Environment Jobs</title>
+<meta name="description" content="Build a mine action SOP set in your browser: IMAS and IATG referenced modules from cover to forms, filled with your organisation, country and national standards, exported to Word. Free to start.">
+<link rel="canonical" href="https://hostileenvironmentjobs.com/sop/">
+<meta property="og:title" content="Mine Action SOP Builder | Hostile Environment Jobs">
+<meta property="og:description" content="IMAS-aligned mine action SOPs in your browser, exported to Word. Free to start, nothing uploaded.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hostileenvironmentjobs.com/sop/">
+<meta property="og:site_name" content="Hostile Environment Jobs">
+<meta property="og:image" content="https://hostileenvironmentjobs.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#111310">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -98,6 +106,18 @@ input[type="checkbox"] { width: auto; accent-color: var(--accent); }
 .note.blank { border-left-color: var(--warn); }
 .locked-list { margin: 10px 0 0; padding-left: 20px; color: var(--muted); }
 .locked-list li { margin-bottom: 3px; }
+.side button.off { opacity: .55; }
+.unlock { border: 1px solid var(--line); background: var(--raised); border-radius: 10px; padding: 14px 16px; margin: 0 0 16px; }
+.unlock h3 { margin: 0 0 4px; }
+.unlock p { margin: 0 0 8px; font-size: 15px; }
+.unlock .code-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.unlock .code-row input { flex: 1 1 220px; font: 500 15px var(--mono); text-transform: uppercase; }
+.unlock .msg { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.unlock.ok { border-color: var(--ok); }
+.form-preview { overflow-x: auto; margin-top: 8px; }
+.form-preview table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.form-preview th, .form-preview td { border: 1px solid var(--line); padding: 4px 6px; text-align: left; height: 26px; }
+.form-preview th { background: var(--raised); }
 .upsell { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .amend { width: 100%; border-collapse: collapse; font-size: 14.5px; }
 .amend th, .amend td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
@@ -148,13 +168,14 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   .paper .mod { page-break-before: always; }
 }
 </style>
+<script data-goatcounter="https://hostileenvironmentjobs.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <header class="top"><div class="wrap">
   <a class="brand" href="/">
     <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/></svg>
     Hostile Environment <span class="amp">Jobs</span></a>
-  <span class="trial-tag">SOP Builder trial</span>
+  <span class="trial-tag">SOP Builder</span>
   <div class="top-actions">
     <button class="btn small ghost" type="button" id="btn-preview">Preview</button>
     <button class="btn small primary" type="button" id="btn-export">Export to Word</button>
@@ -162,7 +183,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 
 <section class="hero"><div class="wrap">
-  <p class="eyebrow">Mine Action SOP Builder · trial</p>
+  <p class="eyebrow">Mine Action SOP Builder</p>
   <h1>Build your SOPs, <span class="amp">export to Word</span></h1>
   <p class="lede">Fill in your organisation once, then work through each module. Every section starts with sample wording aligned to IMAS. Edit it, replace anything in [brackets], and export a Word draft ready for your own review and accreditation.</p>
   <ul class="pledge">
@@ -171,6 +192,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <li>IMAS and IATG referenced</li>
     <li>Structure and admin only</li>
     <li>Word (.docx) export</li>
+    <li>Free to start</li>
   </ul>
 </div></section>
 
@@ -182,7 +204,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <button type="button" id="btn-save-file">Save project file <span class="tag">.json</span></button>
     <button type="button" id="btn-open-file">Open project file <span class="tag">.json</span></button>
     <input type="file" id="file-in" accept=".json,application/json" hidden>
-    <button type="button" id="btn-feedback">Send trial feedback <span class="tag">email</span></button>
+    <button type="button" id="btn-feedback">Send feedback <span class="tag">email</span></button>
   </aside>
   <main class="main" id="main"></main>
 </div>
@@ -277,19 +299,184 @@ const MODULES = [
     { t: 'Accident and incident reporting', g: 'Point to the full procedure in the medical and operations modules.',
       x: 'All accidents, incidents and near misses are reported immediately to [the site supervisor] and recorded on the accident and incident report form.\n\nSerious accidents are reported to {AUTH} within [time] as required by the {NMAS}. Investigation and reporting follow the procedures in Module 10.' }
   ]},
-  { id: 'm04', no: '04', title: 'Marking system', imas: 'IMAS 08.40', plan: ['Hazard marking signs and colours', 'Permanent and temporary marking', 'Worksite and lane marking', 'Marking of cleared and released land', 'Handover of marking to the community'] },
-  { id: 'm05', no: '05', title: 'Communications', imas: 'IMAS 10.20', plan: ['Communications plan', 'Radio procedures and call signs', 'Radio checks and logs', 'Loss of communications', 'Emergency messages'] },
-  { id: 'm06', no: '06', title: 'Site preparation and setting out', imas: 'IMAS 10.20', plan: ['Worksite layout and control point', 'Safety distances (your national values)', 'Control of access and visitors', 'Daily briefings', 'Site closure'] },
-  { id: 'm07', no: '07', title: 'Explosives storage, transport and accounting', imas: 'IMAS 10.50, IATG 03 (accounting), IATG 06 (storage operations), IATG 08 (transport), IATG 09 (security)', plan: ['Licensing and responsibilities', 'Storage records and inventory', 'Transport documentation', 'Issue and return accounting', 'Loss and theft reporting'], note: 'Admin and record keeping only. No technical handling procedures are included.' },
-  { id: 'm08', no: '08', title: 'Medical support and CASEVAC', imas: 'IMAS 10.40', plan: ['Medical support levels and staffing', 'Medic and first aid kit lists', 'CASEVAC planning and timings', 'Accident reporting format', 'Medical records'] },
-  { id: 'm09', no: '09', title: 'Quality management', imas: 'IMAS 07.12', plan: ['Quality policy and objectives', 'Internal QA visits', 'QC and sampling', 'Non-conformities and corrective action', 'Stop work and resumption', 'Records and continual improvement'] },
-  { id: 'm10', no: '10', title: 'Management of operations', imas: 'IMAS 10.60, 05.10', plan: ['Roles and responsibilities', 'Discipline', 'Daily reporting and documentation', 'Accident investigation', 'External reporting and handover'] },
-  { id: 'm11', no: '11', title: 'Land release: survey', imas: 'IMAS 07.11, 08.10, 08.20', plan: ['Land release principles', 'Non-technical survey', 'Technical survey', 'Evidence, decisions and reporting', 'Handover of released land'] },
-  { id: 'm113', no: '11.3', title: 'Clearance methods', imas: 'IMAS 09.10, 09.30, 09.40, 09.50', plan: ['Manual clearance (management and QC)', 'Mechanical operations (management and QC)', 'Mine detection dogs (management and QC)', 'Battle area and building clearance (management and QC)', 'EOD spot tasks (management and reporting)'], note: 'Headings, roles, admin and QC only. Technical procedures stay blank for your organisation to insert from its own approved sources.' },
-  { id: 'm12', no: '12', title: 'Explosive ordnance risk education', imas: 'IMAS 12.10', plan: ['Needs assessment', 'Planning sessions and audiences', 'Delivery and safeguarding', 'Session reporting', 'Monitoring and evaluation'] },
-  { id: 'mfa', no: 'A', title: 'Forms and annexes', imas: 'Matched to your modules', plan: ['Task risk assessment', 'Implementation plan and CASEVAC plan', 'Daily report, hazard report', 'Attendance, radio and visitor logs', 'QA visit forms and non-conformity matrix', 'Corrective action plan and sampling record'] }
+  { id: 'm04', no: '04', title: 'Marking system', imas: 'IMAS 08.40 (marking explosive ordnance hazards)', sections: [
+    { t: 'Purpose and standard', g: 'Say that marking follows IMAS 08.40 and the national standard, and who approves the marking plan for each task.',
+      x: 'Marking warns people of explosive ordnance hazards, controls access to worksites and shows the limits of cleared and released land. All marking used by {ORG} follows IMAS 08.40 and the {NMAS}.\n\nThe marking plan for each task is set out in the task implementation plan and approved by [the Operations Manager] before work starts.' },
+    { t: 'Hazard marking signs and colours', g: 'Describe the signs you use: shape, colour, size, wording and languages. Use the national design if there is one.',
+      x: 'Hazard signs are [shape and size, for example a triangle with sides of at least 280 mm], with a [red] background and [white] symbol and lettering, as set out in the {NMAS}.\n\nSigns carry the national warning text in [local language(s)] and English, and the {AUTH} approved symbol. They face outwards from the hazard and are placed so that each sign can be seen from the next one, at no more than [distance] apart.\n\nOnly signs approved by {AUTH} are used. Home-made or community signs found on site are recorded on the hazard report and left in place until replaced.' },
+    { t: 'Permanent and temporary marking', g: 'Explain the difference, what materials you use for each and who looks after it.',
+      x: 'Temporary marking is used during survey and clearance to show the edge of the hazard area and the worksite. It is made of [materials, for example pickets, tape and signs] and is checked by the team leader at the start of each working day.\n\nPermanent marking is used where a hazard area cannot be cleared straight away. It is made of [materials, for example concrete or steel posts and painted signs] built to last at least [period], and is recorded on the hazard report with its coordinates.\n\nDamaged, moved or missing marking is reported to [the site supervisor] the same day and repaired before work continues.' },
+    { t: 'Worksite and lane marking', g: 'Set out the colour code your teams use inside the worksite, for example for cleared lanes, safe areas and the control point. Use your national colour code.',
+      x: 'Inside the worksite, marking follows this colour code unless the {NMAS} sets a different one:\n- [Colour]: edge of the hazard area\n- [Colour]: safe lanes and cleared areas\n- [Colour]: control point, rest area, parking and medical point\n- [Colour]: the start and finish points of each lane\n\nWorksite marking is laid out as shown in the worksite layout in Module 06. Every team member is briefed on the colour code before entering the worksite.' },
+    { t: 'Marking of cleared and released land', g: 'Say how the limits of cleared and released land are shown, and when marking is removed.',
+      x: 'The limits of cleared and released land are marked with [description] and recorded with coordinates on the completion report.\n\nHazard marking is removed only once the land has passed quality control and the handover has been agreed with {AUTH} and the community. Benchmarks and reference points are left in place as set out in the {NMAS}.' },
+    { t: 'Handover of marking to the community', g: 'Who is told about marking that stays in place, and who looks after it afterwards.',
+      x: 'Where permanent marking stays in place, the community, local authorities and {AUTH} are told where it is and why. The handover is recorded on the handover form and signed by [community representative] and [the team leader].\n\nCommunity members are briefed not to move or remove marking, and on how to report damaged or missing signs to [contact].' }
+  ]},
+  { id: 'm05', no: '05', title: 'Communications', imas: 'IMAS 10.20 (worksite safety)', sections: [
+    { t: 'Communications plan', g: 'Every task needs a communications plan that links the worksite, the base and the medical support.',
+      x: 'Every task has a communications plan, set out in the task implementation plan, which links the worksite, the [field base], the [programme office] and the CASEVAC chain.\n\nThe plan names the primary and back-up means of communication, the call signs, the radio check times and the emergency procedure. It is briefed to all staff at the start of the task and tested before work starts each day.' },
+    { t: 'Equipment', g: 'List the equipment each team carries and how it is checked and charged.',
+      x: 'Each team carries:\n- [number] handheld radios\n- [vehicle radio / base station]\n- [satellite phone or other back-up means]\n- spare batteries and chargers\n\nEquipment is checked and charged daily and any fault is reported to [the logistics officer]. Radios are not used within [distance] of [any equipment your SOPs say must be kept away from transmitters].' },
+    { t: 'Radio procedures and call signs', g: 'Keep messages short and standard. Put your call sign list in an annex so it can change without a full SOP amendment.',
+      x: 'Radio messages are short, clear and use standard procedure words. Call signs are listed in [annex / the task communications plan] and no personal names or sensitive locations are sent in clear.\n\nOnly authorised staff use the radio. Each net has a control station, which is [the field base].' },
+    { t: 'Radio checks and logs', g: 'Set the check times and say what happens when a check is missed.',
+      x: 'Each worksite reports to control at [times], on arrival and on departure. Control records every check in the radio log.\n\nIf a scheduled check is missed, control calls the worksite. If there is no answer within [time], the back-up means is used and [the site supervisor / security focal point] is told.' },
+    { t: 'Loss of communications', g: 'What teams do if they lose contact. Work must not continue without working communications to the CASEVAC chain.',
+      x: 'Work in a hazard area does not start, or stops, if the worksite cannot reach the CASEVAC chain.\n\nIf communications are lost, the team leader makes safe the worksite, tries the back-up means and, if contact is not restored within [time], [moves the team to a point where contact can be made / returns to base] as set out in the communications plan.' },
+    { t: 'Emergency messages', g: 'Give the format for an accident message and who it goes to. The medical module holds the full CASEVAC drill.',
+      x: 'Emergency messages take priority over all other traffic. On hearing an emergency message, all other stations stay off the net unless called.\n\nAccident and medical messages follow the format in Module 08 and Annex A. Control passes the message to [the medical support / Operations Manager] straight away and logs the time of each step.' }
+  ]},
+  { id: 'm06', no: '06', title: 'Site preparation and setting out', imas: 'IMAS 10.20 (worksite safety), 10.10', sections: [
+    { t: 'Worksite layout and control point', g: 'Describe the standard layout. A sketch of your layout can go in an annex.',
+      x: 'Each worksite is laid out as set out in the task implementation plan, with:\n- a control point at the entry to the worksite\n- a medical point and ambulance parking with a clear route out\n- a rest area and equipment area\n- parking for vehicles\n- the hazard area and working lanes, marked as set out in Module 04\n\nThe control point is in a safe area agreed by [the site supervisor] and is staffed whenever work is going on.' },
+    { t: 'Safety distances', g: 'Do not invent distances. Copy the values set in your national standards and IMAS 10.20 for each activity, and state the source.',
+      x: 'Minimum safety distances between workers, and between the hazard area and the control point, rest area and medical point, are those set in the {NMAS} and IMAS 10.20:\n- Between workers in the hazard area: [distance from the NMAS]\n- Between the hazard area and the control point and rest area: [distance from the NMAS]\n- For mechanical assets and dogs: [distances from the NMAS]\n\nWhere the {NMAS} and IMAS differ, the greater distance is used unless {AUTH} has agreed otherwise in writing.' },
+    { t: 'Control of access and visitors', g: 'Who can enter, how they are logged and briefed, and what PPE they need.',
+      x: 'Only staff on the task and authorised visitors enter the worksite. Every person entering is recorded in the visitor log at the control point.\n\nVisitors are briefed on the worksite, the hazards and the emergency procedure, are given PPE and are escorted at all times by [a named team member]. Visitors do not enter the hazard area unless authorised by [the site supervisor].' },
+    { t: 'Daily briefings', g: 'The daily brief is often where accidents are prevented. List what it always covers.',
+      x: 'Before work starts each day the team leader briefs the whole team on:\n- the work planned for the day and who is doing what\n- the hazards expected and any changes since the last brief\n- the CASEVAC plan, the medic and the vehicle\n- the radio plan and check times\n- weather and welfare\n\nThe brief is recorded in the daily log and signed by the team leader. Staff who missed the brief are briefed before they enter the hazard area.' },
+    { t: 'Site closure', g: 'What is done at the end of each day and at the end of a task.',
+      x: 'At the end of each working day the team leader checks that all staff and equipment are out of the hazard area, the marking is complete, the worksite is left safe and the day is recorded in the daily report.\n\nAt the end of a task the worksite is cleared of all equipment and waste, and the task moves to completion and handover as set out in Modules 10 and 11.' }
+  ]},
+  { id: 'm07', no: '07', title: 'Explosives storage, transport and accounting', imas: 'IMAS 10.50, IATG 03 (accounting), IATG 06 (storage operations), IATG 08 (transport), IATG 09 (security)', note: 'Admin and record keeping only. No technical content on handling or using explosives is included in any version.', sections: [
+    { t: 'Licensing and responsibilities', g: 'Who holds the licence or authority for explosives, and who is responsible for storage, issue and records.',
+      x: '{ORG} holds, uses and stores explosives only under [licence or authorisation reference] issued by [authority], and in line with IMAS 10.50 and the IATG.\n\nThe [Explosives Store Manager] is responsible for the store, the records and the security of explosives. The [Operations Manager] authorises every issue. Only staff named on the authorised list in [annex] may receive or sign for explosives.' },
+    { t: 'Storage records and inventory', g: 'Records follow IATG 03. Say how stock is counted and how often.',
+      x: 'The store keeps a running ledger of all receipts, issues and returns, by type, lot or batch number and quantity, as set out in IATG 03.\n\nA physical stock check is carried out [weekly] by the store manager and [monthly] by [a second named person], and any difference is reported straight away to [the Operations Manager].\n\nThe store meets the requirements for the site set by [authority] and IATG 06, and its keys are held as set out in the store security plan.' },
+    { t: 'Transport documentation', g: 'Paperwork and authorisations for moving explosives. Your transport rules come from national law and IATG 08.',
+      x: 'Explosives are moved only with a signed movement authority from [the Operations Manager], in vehicles and under conditions that meet national law and IATG 08.\n\nEach movement is recorded with the date, vehicle, driver, escort, items and quantities, and the receiving person signs on arrival.' },
+    { t: 'Issue and return accounting', g: 'Every item issued must be returned, used or accounted for the same day.',
+      x: 'Explosives are issued against a signed request for the task and day. The receiver checks and signs for the items on issue.\n\nAt the end of the day all unused items are returned to the store and signed back in. Items used are recorded on the [daily usage record] and countersigned by [the site supervisor]. Issue, use and return must balance before the store is closed.' },
+    { t: 'Loss and theft reporting', g: 'Losses must be reported fast, to the right people, and investigated.',
+      x: 'Any loss, theft or unexplained difference in stock is reported immediately to [the Operations Manager], who reports it to {AUTH} and [police or other authority] within [time].\n\nNo further issues are made from the store until the difference is resolved or {AUTH} agrees. Each case is investigated and recorded as set out in Module 10.' },
+    { t: 'Technical procedures', g: 'Left blank on purpose. Insert your organisation\'s own approved procedures here.',
+      x: '[Insert your organisation\'s approved technical procedures for explosives here, from its own approved sources. The SOP Builder does not provide this content.]' }
+  ]},
+  { id: 'm08', no: '08', title: 'Medical support and CASEVAC', imas: 'IMAS 10.40 (medical support to demining operations)', sections: [
+    { t: 'Medical support levels and staffing', g: 'Say what medical cover every worksite has, in line with IMAS 10.40 and the NMAS.',
+      x: 'Every worksite where work is going on in a hazard area has a trained medic, a medical kit and a vehicle for CASEVAC, as set out in IMAS 10.40 and the {NMAS}.\n\nMedics hold [qualification] and refresh it every [period]. All operational staff are trained in first aid and refresh it every [period].\n\nWork in the hazard area does not start, or stops, if the medic, the vehicle or the communications to the receiving medical facility are not available.' },
+    { t: 'Medic and first aid kit lists', g: 'Keep the kit list as an annex so it can be updated by the medical lead.',
+      x: 'The medic kit, first aid kits and vehicle kits are set out in [annex], approved by [the medical lead].\n\nKits are checked by the medic [daily] and by [the medical lead] [monthly]. Used or expired items are replaced before the next working day.' },
+    { t: 'CASEVAC planning and timings', g: 'IMAS 10.40 asks for a CASEVAC plan for every task. Fill in your real facilities and times.',
+      x: 'A CASEVAC plan is made for every task and attached to the task implementation plan. It names the receiving medical facilities, routes, travel times, contact details and the means of evacuation.\n\nThe plan is tested by [a dry run / timed drive] before work starts. The time from accident to arrival at the first receiving facility must not exceed [time from the NMAS].\n\nCASEVAC drills are practised [frequency] and recorded.' },
+    { t: 'Accident reporting format', g: 'A short standard message so the right information is passed quickly.',
+      x: 'An accident is reported to control straight away using this format:\n- who is reporting and from where\n- what happened and when\n- number of casualties and their condition\n- help needed\n- the CASEVAC route and meeting point\n\nThe full accident report follows the procedure in Module 10.' },
+    { t: 'Medical records', g: 'Keep personal medical information private.',
+      x: 'Each member of staff has a medical record held confidentially by [the medical lead], with blood group, allergies and next of kin.\n\nTreatment given at the worksite is recorded on the casualty record and passed to the receiving facility. Medical records are only shared with people who need them to provide care.' }
+  ]},
+  { id: 'm09', no: '09', title: 'Quality management', imas: 'IMAS 07.12 (quality management), 08.30 (post-clearance documentation)', sections: [
+    { t: 'Quality policy and objectives', g: 'A short statement of how you make sure land is safe and work meets standards.',
+      x: '{ORG} manages quality so that land is released safely and in line with IMAS 07.12 and the {NMAS}, and so that the people who use released land can trust it.\n\nQuality objectives for each year are set by [the QA Manager] and reviewed by the {ROLE}.' },
+    { t: 'Internal QA visits', g: 'Who carries out internal QA, how often, and what gets checked.',
+      x: 'Internal quality assurance visits are carried out by [the QA Manager or QA officers] at least [frequency] for each team, and unannounced visits are made as well.\n\nEach visit checks that the worksite, documentation and procedures follow these SOPs, and is recorded on the QA visit form in Annex A.' },
+    { t: 'QC and sampling', g: 'External QC is carried out by the national authority. Describe your own internal QC and how you support external QC.',
+      x: 'Internal quality control of cleared land is carried out as set out in [the sampling plan / the {NMAS}], and recorded on the sampling record.\n\n{ORG} supports external quality management by {AUTH} and gives inspectors access to worksites, staff and records.' },
+    { t: 'Non-conformities and corrective action', g: 'How problems found are graded, recorded and fixed.',
+      x: 'Every non-conformity found by internal or external QA is recorded in the non-conformity log, graded as [minor / major / critical] and given an owner and a date.\n\nCorrective actions are agreed in a corrective action plan and checked by [the QA Manager] when complete.' },
+    { t: 'Stop work and resumption', g: 'When work stops for a quality or safety failure, and who can restart it.',
+      x: 'Work stops at once if a critical non-conformity is found, or if any person sees a danger to people or a failure that means land may not be safe.\n\nWork restarts only when [the Operations Manager] has confirmed in writing that the cause has been dealt with, and {AUTH} has agreed where the {NMAS} requires it.' },
+    { t: 'Records and continual improvement', g: 'What records are kept, for how long, and how you learn from them.',
+      x: 'Quality records are kept for at least [period] and handed to {AUTH} as required.\n\nQA findings, accident investigations and feedback are reviewed by [management] every [period], and lessons learned lead to changes in training and these SOPs.' }
+  ]},
+  { id: 'm10', no: '10', title: 'Management of operations', imas: 'IMAS 10.60 (investigation and reporting of accidents and incidents), 05.10 (information management)', sections: [
+    { t: 'Roles and responsibilities', g: 'A short list of key operational roles. Keep job descriptions in HR documents.',
+      x: '- {ROLE}: overall responsibility for the programme and approval of these SOPs.\n- [Operations Manager]: planning, tasking and control of operations.\n- [QA Manager]: internal quality management and monitoring compliance.\n- [Site supervisor]: control of the worksite, safety and briefings.\n- [Team leader]: the team\'s work, records and daily reporting.\n- [Medic]: medical support and CASEVAC at the worksite.' },
+    { t: 'Tasking and planning', g: 'How tasks are received and what planning documents are made before work starts.',
+      x: 'Tasks are issued by {AUTH} through [task dossier / tasking order]. Before work starts, [the Operations Manager] prepares a task implementation plan including the risk assessment, the marking plan, the communications plan and the CASEVAC plan.\n\nThe plan is approved by [role] and briefed to the team.' },
+    { t: 'Discipline', g: 'Make it clear that breaking safety rules has consequences.',
+      x: 'All staff follow these SOPs and the {ORG} code of conduct. A breach of a safety rule is reported to [the site supervisor] and dealt with under the [disciplinary policy].\n\nA serious breach, or any work under the influence of alcohol or drugs, leads to immediate removal from the worksite.' },
+    { t: 'Daily reporting and documentation', g: 'What paperwork each team completes every day and where it goes.',
+      x: 'Each team completes a daily report showing staff present, area worked, items found and any incidents. Reports are checked by [the site supervisor] and sent to [the operations office] by [time].\n\nData is entered into [the national information management system] as set out in IMAS 05.10 and the {NMAS}.' },
+    { t: 'Accident and incident investigation', g: 'Investigations follow IMAS 10.60. Say who investigates and what triggers one.',
+      x: 'Every accident, and every incident or near miss that could have caused harm, is investigated in line with IMAS 10.60.\n\n[The Operations Manager] sets up an investigation board for any accident involving explosive ordnance or causing serious injury. {AUTH} is informed within [time] and may lead or join the investigation. The findings and recommendations are recorded and shared with staff.' },
+    { t: 'External reporting and handover', g: 'What is sent to the national authority and when.',
+      x: 'Completion reports for each task are sent to {AUTH} within [time] of the end of the task, in the format set by the {NMAS}.\n\n{ORG} also reports [monthly] to {AUTH} and to [donors] on progress, as set out in the relevant agreements.' }
+  ]},
+  { id: 'm11', no: '11', title: 'Land release: survey', imas: 'IMAS 07.11 (land release), 08.10 (non-technical survey), 08.20 (technical survey)', acts: ['nts', 'ts'], sections: [
+    { t: 'Land release principles', g: 'Explain that land is cancelled, reduced or cleared on evidence, as set out in IMAS 07.11.',
+      x: '{ORG} releases land in line with IMAS 07.11 and the {NMAS}. Land is cancelled through non-technical survey, reduced through technical survey or cleared, based on reliable evidence.\n\nEvery decision to release land is made by [role], recorded with the evidence behind it and agreed with {AUTH}.' },
+    { t: 'Non-technical survey', g: 'Survey teams collect and check information. This covers who, how and what is recorded.', acts: ['nts'],
+      x: 'Non-technical survey (NTS) is carried out by trained survey teams in line with IMAS 08.10. Teams collect information from [community members, local authorities, records and site visits] and check it against other sources.\n\nTeams do not enter suspected hazardous areas during NTS. Findings are recorded on the hazard report form with coordinates and sketch maps.' },
+    { t: 'Technical survey', g: 'When technical survey is used and how decisions are recorded. Technical methods belong in your approved procedures.', acts: ['ts'],
+      x: 'Technical survey (TS) is used where NTS shows that evidence is needed from inside a suspected area, in line with IMAS 08.20.\n\nThe method, extent and limits of each technical survey are approved in the task implementation plan by [role]. Results are recorded on [the technical survey report].\n\n[Insert your organisation\'s approved technical survey procedures here, from its own approved sources.]' },
+    { t: 'Evidence, decisions and reporting', g: 'How evidence points and land release decisions are documented.',
+      x: 'Evidence points, the boundaries of hazard areas and land release decisions are recorded with coordinates and photographs, and entered in [the information management system].\n\nCompleted survey reports are checked by [role] and sent to {AUTH} within [time].' },
+    { t: 'Handover of released land', g: 'How land goes back to the community, with the right paperwork.',
+      x: 'Released land is handed over to [the community and local authorities] in a meeting recorded on the handover form, signed by [community representative], [the team leader] and {AUTH} where required.\n\nThe community is told what was done, what was found and how to report any item found later.' }
+  ]},
+  { id: 'm113', no: '11.3', title: 'Clearance methods', imas: 'IMAS 09.10 (clearance requirements), 09.30 (EOD), 09.40 (mine detection dogs), 09.50 (mechanical)', acts: ['mmc', 'mech', 'mdd', 'bac', 'bc', 'eod'], note: 'Headings, roles, admin and QC only. Technical procedures are left as blank placeholders for your organisation to complete from its own approved sources.', sections: [
+    { t: 'Clearance requirements', g: 'State the clearance requirement your national standard sets (area and depth).',
+      x: 'Clearance is carried out so that land meets the clearance requirement in IMAS 09.10 and the {NMAS}: [area and depth set by the NMAS].\n\nThe method for each area is chosen in the task implementation plan based on the survey evidence and approved by [role].' },
+    { t: 'Manual clearance (management and QC)', g: 'Supervision ratios, records and QC for manual teams.', acts: ['mmc'],
+      x: 'Manual clearance teams work under a team leader with no more than [number] deminers per supervisor. Lanes and progress are recorded daily on the daily report and the worksite map.\n\nInternal QC is carried out as set out in Module 09.\n\n[Insert your organisation\'s approved manual clearance procedures here, from its own approved sources.]' },
+    { t: 'Mechanical operations (management and QC)', g: 'Roles, accreditation and records for machines, in line with IMAS 09.50.', acts: ['mech'],
+      x: 'Machines are used only for tasks and in roles approved by {AUTH}, in line with IMAS 09.50. Each machine has a trained operator and [a supervisor], and its maintenance and hours are logged daily.\n\n[Insert your organisation\'s approved mechanical procedures here, from its own approved sources.]' },
+    { t: 'Mine detection dogs (management and QC)', g: 'Accreditation, welfare and records for dog teams, in line with IMAS 09.40.', acts: ['mdd'],
+      x: 'Dog teams are accredited by {AUTH} in line with IMAS 09.40 and the {NMAS}, and re-tested every [period]. Daily training, working hours, health and welfare of each dog are recorded.\n\n[Insert your organisation\'s approved MDD procedures here, from its own approved sources.]' },
+    { t: 'Battle area and building clearance (management and QC)', g: 'Supervision and records for BAC and building clearance.', acts: ['bac', 'bc'],
+      x: 'Battle area and building clearance teams work under a qualified supervisor. The area or building, search progress and items found are recorded daily.\n\n[Insert your organisation\'s approved BAC and building clearance procedures here, from its own approved sources.]' },
+    { t: 'EOD spot tasks (management and reporting)', g: 'How spot tasks are received, recorded and reported, and who is qualified to do them. No technical content.', acts: ['eod'],
+      x: 'EOD spot tasks are received from [the community, the police or {AUTH}], logged by [the operations office] and allocated to a team led by a qualified operator holding [IMAS EOD level required].\n\nEvery task is recorded on the spot task report and entered into [the information management system].\n\n[Insert your organisation\'s approved EOD procedures here, from its own approved sources.]' }
+  ]},
+  { id: 'm12', no: '12', title: 'Explosive ordnance risk education', imas: 'IMAS 12.10 (EORE)', acts: ['eore'], sections: [
+    { t: 'Needs assessment', g: 'Who is at risk and what they need to know, in line with IMAS 12.10.',
+      x: 'Before planning EORE, {ORG} assesses who is at risk, why, and what they already know, using [survey data, casualty data and community consultation], in line with IMAS 12.10.\n\nThe assessment is shared with {AUTH} and other organisations working in the area.' },
+    { t: 'Planning sessions and audiences', g: 'Plan for different groups, for example children, farmers, returnees.',
+      x: 'Sessions are planned for each at-risk group, for example [children, farmers, herders, returnees and displaced people], with messages, methods and timings that suit them.\n\nKey messages follow the national EORE messages approved by {AUTH}.' },
+    { t: 'Delivery and safeguarding', g: 'Who delivers sessions and how participants, especially children, are protected.',
+      x: 'Sessions are delivered by trained EORE facilitators, in [languages]. Sessions with children are delivered with [a teacher or guardian] present.\n\nAll staff follow the {ORG} safeguarding policy. Real or replica explosive ordnance is never used in sessions.' },
+    { t: 'Session reporting', g: 'What is recorded after each session.',
+      x: 'Each session is recorded on the EORE session report with the date, location, participants by age and gender, and any hazards reported by the community.\n\nHazards reported during sessions are passed to [the operations office] the same day.' },
+    { t: 'Monitoring and evaluation', g: 'How you check that people remember and act on the messages.',
+      x: 'Knowledge and behaviour are checked through [pre and post session questions / follow-up visits] and reported to {AUTH} and [donors] [frequency].' }
+  ]},
+  { id: 'mfa', no: 'A', title: 'Forms and annexes', imas: 'Matched to your modules', sections: [
+    { t: 'Task risk assessment', g: 'Fill one in for each task. Add rows as needed in Word.',
+      x: 'Completed by the team leader before the task starts and approved by [the Operations Manager].',
+      fields: ['Task name and number', 'Location and coordinates', 'Prepared by / date', 'Approved by / date'],
+      form: ['Hazard', 'Who could be harmed', 'Controls in place', 'Risk (low / medium / high)', 'Further action'], rows: 6 },
+    { t: 'CASEVAC plan', g: 'Attach to the task implementation plan.',
+      x: 'Completed for every task and tested before work starts.',
+      fields: ['Task name and number', 'Worksite medic', 'CASEVAC vehicle', 'Radio call signs and frequencies'],
+      form: ['Receiving facility', 'Route', 'Travel time', 'Contact name and number'], rows: 3 },
+    { t: 'Daily report', g: 'One per team per day.',
+      x: 'Sent to [the operations office] by [time] each day.',
+      fields: ['Date', 'Team', 'Task name and number', 'Staff present', 'Area worked (m²)', 'Weather'],
+      form: ['Item found', 'Quantity', 'Location / coordinates', 'Action taken', 'Remarks'], rows: 6 },
+    { t: 'Hazard report', g: 'Used for NTS and for any hazard found or reported.',
+      x: 'Sent to [the operations office] and entered into [the information management system].',
+      fields: ['Date', 'Reported by', 'Location and coordinates', 'Type of hazard', 'Source of information', 'Marking in place'],
+      form: ['Evidence', 'Reliability', 'Photo / sketch reference'], rows: 4 },
+    { t: 'Visitor log', g: 'Kept at the control point.',
+      x: 'Every person entering the worksite is recorded here.',
+      form: ['Date', 'Name', 'Organisation', 'Time in', 'Time out', 'Briefed by', 'Signature'], rows: 10 },
+    { t: 'Radio log', g: 'Kept by control.',
+      x: 'Every radio check and message is recorded here.',
+      form: ['Time', 'From', 'To', 'Message', 'Action', 'Initials'], rows: 12 },
+    { t: 'QA visit form', g: 'Used for internal QA visits.',
+      x: 'Completed by the QA officer and signed by the team leader.',
+      fields: ['Date', 'QA officer', 'Team and task', 'Type of visit (planned / unannounced)'],
+      form: ['Item checked', 'Conforms (yes / no)', 'Finding', 'Non-conformity grade'], rows: 8 },
+    { t: 'Non-conformity log and corrective action plan', g: 'Tracks every non-conformity to closure.',
+      x: 'Kept by [the QA Manager].',
+      form: ['No.', 'Date', 'Non-conformity', 'Grade', 'Corrective action', 'Owner', 'Due date', 'Closed (date)'], rows: 8 },
+    { t: 'Handover form', g: 'Signed when land or marking is handed over.',
+      x: 'Signed by the community representative, the team leader and {AUTH} where required.',
+      fields: ['Task name and number', 'Location and coordinates', 'Area released (m²)', 'Method (cancelled / reduced / cleared)', 'Items found and destroyed', 'Marking left in place'],
+      form: ['Name', 'Role', 'Signature', 'Date'], rows: 3 }
+  ]}
 ];
 const FREE = MODULES.filter(m => m.free);
+/* Modules and sections can be limited to activities (acts); they drop out when none of those activities are ticked. */
+const applies = x => !x.acts || x.acts.some(a => S.setup.acts.includes(a));
+const secs = m => (m.sections || []).map((sec, i) => [sec, i]).filter(([sec]) => applies(sec));
+const inUse = () => MODULES.filter(applies);
+/* Full export: modules 00 to 03 are free; the rest come with The App ($6 a year), checked against the alerts Worker
+   with the same account code the /app/ page keeps in localStorage "hej-code". A soft lock, like the app's kit list. */
+const ALERTS_API = 'https://hej-alerts.danieldobb.workers.dev';
+let unlocked = false;
+const exportable = () => inUse().filter(m => m.free || unlocked);
 
 /* ---------- state ---------- */
 const today = new Date().toISOString().slice(0, 10);
@@ -315,7 +502,7 @@ const key = (m, i) => m.id + '.' + i;
 const textOf = (m, i) => (S.edits[key(m, i)] !== undefined) ? S.edits[key(m, i)] : fill(m.sections[i].x);
 const countPh = t => (t.match(/\[[^\]]+\]/g) || []).length;
 const secNo = (m, i) => m.no + '.' + String(i + 1).padStart(2, '0');
-const moduleLeft = m => m.cover ? coverPh() : m.sections.reduce((n, _, i) => n + countPh(textOf(m, i)), 0);
+const moduleLeft = m => m.cover ? coverPh() : secs(m).reduce((n, [, i]) => n + countPh(textOf(m, i)), 0);
 function coverPh() { const s = S.setup; return ['org', 'prog', 'country', 'auth', 'approver'].filter(k => !(s[k] || '').trim()).length; }
 function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
 
@@ -323,9 +510,10 @@ function toast(msg) { const t = document.createElement('div'); t.className = 'to
 function renderNav() {
   $('nav').innerHTML = MODULES.map(m => {
     let tag;
-    if (!m.free) tag = '<span class="tag">Full</span>';
+    if (!applies(m)) tag = '<span class="tag">not in scope</span>';
     else { const left = moduleLeft(m); tag = left ? `<span class="tag">${left} to fill</span>` : '<span class="tag done">done</span>'; }
-    return `<button type="button" data-mod="${m.id}" class="${m.free ? '' : 'locked'}" aria-current="${S.current === m.id}"><span><span class="no">${esc(m.no)}</span>${esc(m.title)}</span>${tag}</button>`;
+    if (applies(m) && !m.free && !unlocked) tag = '<span class="tag" title="Edit free here. Exports with The App.">App</span>';
+    return `<button type="button" data-mod="${m.id}" class="${applies(m) ? '' : 'off'}" aria-current="${S.current === m.id}"><span><span class="no">${esc(m.no)}</span>${esc(m.title)}</span>${tag}</button>`;
   }).join('') + `<button type="button" data-mod="preview" aria-current="${S.current === 'preview'}"><span><span class="no">&#9656;</span>Preview whole SOP</span></button>`;
 }
 $('nav').addEventListener('click', e => { const b = e.target.closest('button[data-mod]'); if (!b) return; go(b.dataset.mod); });
@@ -337,7 +525,6 @@ function renderMain() {
   if (S.current === 'preview') return renderPreview();
   if (!m) { S.current = 'm00'; return renderMain(); }
   if (m.cover) return renderSetup();
-  if (!m.free) return renderLocked(m);
   renderModule(m);
 }
 
@@ -364,12 +551,13 @@ function renderSetup() {
   </section>
   <section class="card">
     <h2>Activities</h2>
-    <p class="hint">Tick what your organisation does. This sets the scope in Module 01 and, in the full version, which modules and forms are included.</p>
+    <p class="hint">Tick what your organisation does. This sets the scope in Module 01 and which modules and clearance sections are included.</p>
     <div class="checks">${ACTIVITIES.map(a => `<label class="check"><input type="checkbox" data-act="${a[0]}" ${s.acts.includes(a[0]) ? 'checked' : ''}>${esc(a[1])}</label>`).join('')}</div>
   </section>
   <section class="card">
-    <h2>What's in the trial</h2>
-    <p class="hint">Modules 00 to 03 are fully written in this trial. The full version adds modules 04 to 12, clearance method headings, and all the blank forms, with your logo for organisations.</p>
+    <h2>Free and full export</h2>
+    <p class="hint">Every module is written and you can edit all of them here for free. The Word file and print include modules 00 to 03 for free. The full set, modules 04 to 12, clearance methods and the blank forms, comes with The App.</p>
+    ${unlockBox()}
     <p class="note">This builder gives structure, management and admin wording only. It never includes render safe, demolition or other technical explosive procedures. Those sections are left for your organisation to write from its own approved sources.</p>
     <div class="upsell"><button class="btn primary" type="button" data-go="m01">Start Module 01</button></div>
   </section>`;
@@ -385,34 +573,45 @@ function renderSetup() {
   $('main').querySelectorAll('input[data-act]').forEach(inp => inp.addEventListener('change', () => {
     s.acts = ACTIVITIES.map(a => a[0]).filter(k => $('main').querySelector(`input[data-act="${k}"]`).checked); save(); renderNav();
   }));
-  bindGo();
+  bindGo(); bindUnlock();
 }
 
 function renderModule(m) {
-  const idx = FREE.indexOf(m), next = FREE[idx + 1] || { id: 'preview', title: 'Preview' };
+  const list = inUse(), next = list[list.indexOf(m) + 1] || { id: 'preview', title: 'Preview' };
+  const scope = !applies(m) ? `<p class="note blank">None of the activities this module covers are ticked on the cover page, so it is left out of the preview and the Word file. <button class="icon-btn" type="button" data-go="m00">Change activities</button></p>` : '';
   $('main').innerHTML = `
   <section class="card">
     <div class="mod-head"><div><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="imas">${esc(m.imas)}</p></div>
       <button class="icon-btn" type="button" id="reset-mod">Reset module to sample text</button></div>
+    ${scope}${!m.free && !unlocked && applies(m) ? unlockBox() : ''}${m.note ? `<p class="note blank" style="margin-bottom:12px">${esc(m.note)}</p>` : ''}
     <p class="hint">Edit the wording to match how you actually work. Highlighted counts show how many [bracketed] items are still to replace.</p>
     ${m.amend ? amendTable() : ''}
-    ${m.sections.map((sec, i) => `
+    ${secs(m).map(([sec, i]) => `
       <div class="section">
         <div>
           <h3><span class="n">${secNo(m, i)}</span>${esc(sec.t)}</h3>
           <textarea data-i="${i}" aria-label="${esc(secNo(m, i) + ' ' + sec.t)}">${esc(textOf(m, i))}</textarea>
           <div class="sec-tools"><span class="left" data-left="${i}"></span><button class="icon-btn" type="button" data-reset="${i}">Reset</button></div>
+          ${formPreview(sec)}
         </div>
         <div class="guide"><b>Guidance</b><p>${esc(sec.g)}</p><p style="color:var(--muted)">Lines starting with "- " become bullet points.</p></div>
       </div>`).join('')}
     <div class="upsell"><button class="btn primary" type="button" data-go="${next.id}">Next: ${esc(next.title)}</button></div>
   </section>`;
   const upd = i => { const t = textOf(m, i), n = countPh(t), el = $('main').querySelector(`[data-left="${i}"]`); el.textContent = n ? `${n} to replace` : 'All filled'; el.className = 'left' + (n ? '' : ' clear'); };
-  m.sections.forEach((_, i) => upd(i));
+  secs(m).forEach(([, i]) => upd(i));
   $('main').querySelectorAll('textarea[data-i]').forEach(ta => ta.addEventListener('input', () => { const i = +ta.dataset.i; S.edits[key(m, i)] = ta.value; save(); upd(i); renderNav(); }));
   $('main').querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => { if (!confirm('Replace this section with the sample text?')) return; delete S.edits[key(m, +b.dataset.reset)]; save(); renderNav(); renderModule(m); }));
   $('reset-mod').addEventListener('click', () => { if (!confirm('Replace every section in this module with the sample text?')) return; m.sections.forEach((_, i) => delete S.edits[key(m, i)]); save(); renderNav(); renderModule(m); });
-  bindGo();
+  bindGo(); bindUnlock();
+}
+
+/* Blank forms: an optional key/value block (fields) and a ruled table (form columns, rows). */
+function formPreview(sec) {
+  if (!sec.fields && !sec.form) return '';
+  const f = sec.fields ? `<table>${sec.fields.map(l => `<tr><th style="width:38%">${esc(l)}</th><td></td></tr>`).join('')}</table><br>` : '';
+  const t = sec.form ? `<table><tr>${sec.form.map(c => `<th>${esc(c)}</th>`).join('')}</tr>${'<tr>' + sec.form.map(() => '<td></td>').join('') + '</tr>'}</table><p class="hint" style="margin:4px 0 0">${sec.rows || 6} blank rows in the Word file.</p>` : '';
+  return `<div class="form-preview">${f}${t}</div>`;
 }
 
 function amendTable() {
@@ -422,17 +621,41 @@ function amendTable() {
   <tbody><tr><td>${esc(s.version || '1.0')}</td><td>${esc(s.date || '')}</td><td>All</td><td>First issue</td><td>${esc(val(s.approver, 'Name'))}</td></tr></tbody></table></div>`;
 }
 
-function renderLocked(m) {
-  $('main').innerHTML = `
-  <section class="card">
-    <div class="mod-head"><div><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="imas">${esc(m.imas)}</p></div></div>
-    <p class="hint">Coming in the full version. Planned sections:</p>
-    <ul class="locked-list">${m.plan.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
-    ${m.note ? `<p class="note blank" style="margin-top:12px">${esc(m.note)}</p>` : ''}
-    <p class="note" style="margin-top:12px">Individuals get every module with The App ($6 a year). Organisations get the full set with their logo and up to 5 users for £99 a year, and the first 7 organisations get year one free.</p>
-    <div class="upsell"><a class="btn primary" href="/app/">See The App</a><button class="btn" type="button" id="btn-org">Claim a free organisation place</button></div>
-  </section>`;
-  $('btn-org').addEventListener('click', () => { location.href = mailto('Free organisation place: SOP Builder', `Hi H.E. Jobs Team,\n\nWe'd like one of the 7 free organisation places for the SOP Builder.\n\nOrganisation: ${S.setup.org}\nCountry: ${S.setup.country}\nContact name:\n`); });
+function unlockBox() {
+  if (unlocked) return `<div class="unlock ok"><h3>Full export on</h3><p>Your App account is active, so the Word file and print include every module and form, without the "Made with" line.</p></div>`;
+  return `<div class="unlock"><h3>Export the full set with The App</h3>
+    <p>Modules 00 to 03 export free. Every module, the clearance sections and the blank forms export with The App, $6 a year, which also gives you job alerts and the EOD kit list.</p>
+    <div class="code-row"><input data-code placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your App account code"><button class="btn primary" type="button" data-unlock>Unlock</button><a class="btn" href="/app/#buy">Get The App</a></div>
+    <p class="msg" data-unlock-msg>Already have it? Enter the account code shown under "Your account" in the app.</p>
+    <p class="msg">Organisations: the first 7 get the full set with their logo and up to 5 users free for year one. <a href="#" data-org>Claim a place</a></p></div>`;
+}
+function bindUnlock() {
+  const m = $('main');
+  m.querySelectorAll('[data-unlock]').forEach(b => b.addEventListener('click', () => {
+    const inp = b.parentNode.querySelector('[data-code]'), msg = b.closest('.unlock').querySelector('[data-unlock-msg]');
+    msg.textContent = 'Checking...';
+    checkCode(inp.value.trim()).then(ok => { if (!ok) msg.textContent = 'That account is not active. Check the code, or renew it on the app page.'; })
+      .catch(err => { msg.textContent = err.message; });
+  }));
+  m.querySelectorAll('[data-org]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); location.href = mailto('Free organisation place: SOP Builder', `Hi H.E. Jobs Team,\n\nWe'd like one of the 7 free organisation places for the SOP Builder.\n\nOrganisation: ${S.setup.org}\nCountry: ${S.setup.country}\nContact name:\n`); }));
+}
+const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+async function checkCode(code) {
+  if (!code) throw new Error('Enter your account code first.');
+  let r;
+  try { r = await fetch(ALERTS_API + '/api/account?code=' + encodeURIComponent(code)); } catch (e) { throw new Error('Could not reach the server. Check your connection and try again.'); }
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { if (r.status === 404) lsSet('hej-code', null); throw new Error(d.error || 'Could not check that code.'); }
+  lsSet('hej-code', d.code);
+  setUnlocked(Boolean(d.active), d.active ? (d.paid_until || 0) : 0);
+  return Boolean(d.active);
+}
+function setUnlocked(on, until) {
+  const was = unlocked; unlocked = on;
+  lsSet('hej-sop-unlock', on ? String(until || 0) : null);
+  if (on && !was) toast('Full export unlocked.');
+  if (on !== was) { renderNav(); renderMain(); }
 }
 
 /* ---------- preview (also used for print) ---------- */
@@ -456,12 +679,14 @@ function blocks(text) {
   return out;
 }
 function renderPreview() {
-  const s = S.setup, total = FREE.reduce((n, m) => n + moduleLeft(m), 0);
+  const s = S.setup, mods = exportable(), total = mods.reduce((n, m) => n + moduleLeft(m), 0);
+  const held = inUse().filter(m => !mods.includes(m));
   $('main').innerHTML = `
   <div class="preview-wrap">
     <div class="card no-print"><div class="mod-head"><div><h2>Preview</h2>
       <p class="hint" style="margin:0">${total ? `${total} items still to fill (highlighted in yellow).` : 'Everything is filled in.'} Print this page to save a PDF, or export to Word to keep editing.</p></div>
-      <div class="upsell" style="margin:0"><button class="btn" type="button" onclick="window.print()">Print / PDF</button><button class="btn primary" type="button" data-export>Export to Word</button></div></div></div>
+      <div class="upsell" style="margin:0"><button class="btn" type="button" onclick="window.print()">Print / PDF</button><button class="btn primary" type="button" data-export>Export to Word</button></div></div>
+      ${held.length ? `<p class="note" style="margin-top:12px">Not in this free export: ${held.map(m => esc(m.no + ' ' + m.title)).join(', ')}.</p><div style="margin-top:12px">${unlockBox()}</div>` : ''}</div>
     <article class="paper">
       <div class="cover">
         <div class="org">${paraInline(val(s.org, 'Organisation name'))}</div>
@@ -471,13 +696,19 @@ function renderPreview() {
         <p style="margin-top:24px">Approved by ${paraInline(val(s.approver, 'Name'))}, ${paraInline(val(s.role, 'Country Director'))}</p>
       </div>
       <p class="disc">${esc(DISCLAIMER)}</p>
-      ${FREE.filter(m => !m.cover).map(m => `<div class="mod"><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="p-imas">References: ${esc(m.imas)}</p>
+      ${mods.filter(m => !m.cover).map(m => `<div class="mod"><h2>${esc(m.no)} ${esc(m.title)}</h2><p class="p-imas">References: ${esc(m.imas)}</p>
         ${m.amend ? `<h3>Amendment record</h3><table><tr><th>Version</th><th>Date</th><th>Sections</th><th>Summary</th><th>Approved by</th></tr><tr><td>${esc(s.version || '1.0')}</td><td>${esc(s.date || '')}</td><td>All</td><td>First issue</td><td>${paraInline(val(s.approver, 'Name'))}</td></tr></table>` : ''}
-        ${m.sections.map((sec, i) => `<h3>${secNo(m, i)} ${esc(sec.t)}</h3>${paraHtml(textOf(m, i))}`).join('')}</div>`).join('')}
-      <p class="madewith">Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com</p>
+        ${secs(m).map(([sec, i]) => `<h3>${secNo(m, i)} ${esc(sec.t)}</h3>${paraHtml(textOf(m, i))}${formHtml(sec)}`).join('')}</div>`).join('')}
+      ${unlocked ? '' : '<p class="madewith">Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com</p>'}
     </article>
   </div>`;
   $('main').querySelector('[data-export]').addEventListener('click', exportDocx);
+  bindUnlock();
+}
+function formHtml(sec) {
+  const f = sec.fields ? `<table>${sec.fields.map(l => `<tr><th style="width:38%">${esc(l)}</th><td>&nbsp;</td></tr>`).join('')}</table>` : '';
+  const t = sec.form ? `<table><tr>${sec.form.map(c => `<th>${esc(c)}</th>`).join('')}</tr>${('<tr>' + sec.form.map(() => '<td>&nbsp;</td>').join('') + '</tr>').repeat(sec.rows || 6)}</table>` : '';
+  return f + t;
 }
 const paraInline = t => esc(t).replace(/\[[^\]]+\]/g, x => `<span class="ph">${x}</span>`);
 const DISCLAIMER = 'This document was drafted with the H.E. Jobs SOP Builder. It is a template only. It has not been approved by any national authority or by H.E. Jobs, and it must be reviewed by competent staff and accredited by the national mine action authority before use. Technical explosive procedures are not included and must be added by the organisation from its own approved sources. H.E. Jobs Team.';
@@ -515,10 +746,14 @@ function documentXml() {
   b += table([['Approved by', 'Role', 'Signature', 'Date'], [val(s.approver, 'Name'), val(s.role, 'Country Director'), '', '']]);
   b += P(DISCLAIMER, 'Disclaimer');
   b += PB + P('Contents', 'TOCHeading') + tc;
-  FREE.filter(m => !m.cover).forEach(m => {
+  exportable().filter(m => !m.cover).forEach(m => {
     b += P(m.no + ' ' + m.title, 'Heading1') + P('References: ' + m.imas, 'Refs');
     if (m.amend) { b += P('Amendment record', 'Heading2') + table([['Version', 'Date', 'Sections', 'Summary', 'Approved by'], [s.version || '1.0', s.date || '', 'All', 'First issue', val(s.approver, 'Name')], ['', '', '', '', ''], ['', '', '', '', '']]); }
-    m.sections.forEach((sec, i) => { b += P(secNo(m, i) + ' ' + sec.t, 'Heading2') + bodyXml(textOf(m, i)); });
+    secs(m).forEach(([sec, i]) => {
+      b += P(secNo(m, i) + ' ' + sec.t, 'Heading2') + bodyXml(textOf(m, i));
+      if (sec.fields) b += table([['Item', 'Details'], ...sec.fields.map(l => [l, ''])]);
+      if (sec.form) b += table([sec.form, ...Array.from({ length: sec.rows || 6 }, () => sec.form.map(() => ''))]);
+    });
   });
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${b}<w:sectPr><w:headerReference w:type="default" r:id="rIdH"/><w:footerReference w:type="default" r:id="rIdF"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1304" w:right="1134" w:bottom="1304" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/><w:titlePg/></w:sectPr></w:body></w:document>`;
@@ -545,7 +780,7 @@ const numberingXml = () => `<?xml version="1.0" encoding="UTF-8" standalone="yes
 function headerXml() { const s = S.setup; return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr ${W}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${runs(val(s.org, 'Organisation name') + ' · Standard Operating Procedures')}<w:r><w:tab/></w:r>${runs('Version ' + (s.version || '1.0'))}</w:p></w:hdr>`; }
 function footerXml() {
   const s = S.setup;
-  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${W}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${runs('Uncontrolled when printed · ' + (s.date || ''))}<w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">Page </w:t></w:r><w:fldSimple w:instr=" PAGE "><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p><w:p><w:pPr><w:pStyle w:val="Header"/><w:jc w:val="center"/></w:pPr>${runs('Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com')}</w:p></w:ftr>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${W}><w:p><w:pPr><w:pStyle w:val="Header"/></w:pPr>${runs('Uncontrolled when printed · ' + (s.date || ''))}<w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">Page </w:t></w:r><w:fldSimple w:instr=" PAGE "><w:r><w:t>1</w:t></w:r></w:fldSimple></w:p>${unlocked ? '' : `<w:p><w:pPr><w:pStyle w:val="Header"/><w:jc w:val="center"/></w:pPr>${runs('Made with the H.E. Jobs SOP Builder · hostileenvironmentjobs.com')}</w:p>`}</w:ftr>`;
 }
 function docxParts() {
   const s = S.setup;
@@ -583,11 +818,12 @@ function zip(files) {
 function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
 const fileBase = () => ((S.setup.org || 'SOP').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') || 'SOP') + '-SOP-v' + (S.setup.version || '1.0').replace(/[^\w.]/g, '');
 function exportDocx() {
-  const left = FREE.reduce((n, m) => n + moduleLeft(m), 0);
+  const left = exportable().reduce((n, m) => n + moduleLeft(m), 0);
   download(zip(docxParts()), fileBase() + '.docx');
-  toast(left ? `Word file saved. ${left} items still highlighted to fill.` : 'Word file saved.');
+  const held = inUse().length - exportable().length;
+  toast((left ? `Word file saved. ${left} items still highlighted to fill.` : 'Word file saved.') + (held ? ` Free export: ${held} modules left out.` : ''));
 }
-window.__sop = { docxParts, zip, S: () => S };
+window.__sop = { docxParts, zip, S: () => S, unlock: setUnlocked };
 
 /* ---------- top bar and side actions ---------- */
 $('btn-export').addEventListener('click', exportDocx);
@@ -601,10 +837,15 @@ $('file-in').addEventListener('change', e => {
   e.target.value = '';
 });
 const mailto = (subj, body) => `mailto:${FEEDBACK}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
-$('btn-feedback').addEventListener('click', () => { location.href = mailto('SOP Builder trial feedback', 'Hi H.E. Jobs Team,\n\nMy role:\nWhat worked well:\nWhat was missing or wrong:\nWould my organisation use it (yes / no / maybe):\n'); });
+$('btn-feedback').addEventListener('click', () => { location.href = mailto('SOP Builder feedback', 'Hi H.E. Jobs Team,\n\nMy role:\nWhat worked well:\nWhat was missing or wrong:\nWould my organisation use it (yes / no / maybe):\n'); });
 
+const cached = lsGet('hej-sop-unlock');
+if (cached !== null && (+cached === 0 || +cached * 1000 > Date.now())) unlocked = true;
+const qcode = new URLSearchParams(location.search).get('code');
+if (qcode) lsSet('hej-code', qcode);
 renderNav();
 renderMain();
+if (lsGet('hej-code')) checkCode(lsGet('hej-code')).catch(() => {});
 })();
 </script>
 </body>
