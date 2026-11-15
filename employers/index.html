@@ -173,9 +173,10 @@ form label.check input { width: auto; flex: none; }
 .job.featured, .detail.featured { border-color: var(--accent); background: linear-gradient(90deg, var(--soft), var(--surface) 45%); }
 .tag.featured-tag { color: var(--accent-ink); background: var(--accent); border-radius: 3px; padding: 1px 6px; margin-left: 6px; }
 .detail > .tag.featured-tag:first-child, .profile-head .featured-tag { margin-left: 0; }
+.offer { border-left: 3px solid var(--accent); background: var(--soft); padding: 8px 12px; border-radius: 0 6px 6px 0; }
 .who a { color: inherit; }
 .profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-.profile-head .logo { width: 88px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
+.profile-head .logo { width: auto; max-width: 200px; height: 88px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px; }
 .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 24px 0 10px; }
 .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; align-content: start; gap: 6px; }
 .plan.best { border-color: var(--accent); }
@@ -241,8 +242,12 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <main class="wrap">
 <a class="back" href="/#jobs">&larr; All jobs</a>
 <h1 style="margin-top:24px">Featured employers</h1>
-<p>Organisations hiring in hostile and high-risk places. <a href="/advertise/">Want your company here?</a></p>
-<p>No featured employers yet.</p>
+<p>Organisations hiring in hostile and high-risk places. <a href="/deals/">See partner deals</a> · <a href="/advertise/">Want your company here?</a></p>
+<article class="detail">
+  <span class="tag featured-tag">Founding partner</span>
+  <h2><a href="/employers/invictus-strategic-solutions/">Invictus Strategic Solutions Ltd</a></h2>
+  <div class="who">Veteran-owned training in pre-hospital emergency care, first aid, hostile environments and travel risk</div>
+</article>
 </main>
 <footer><div class="wrap">
   <span>&copy; 2026 Hostile Environment Jobs</span>

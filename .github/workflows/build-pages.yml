@@ -21,12 +21,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add -A jobs work employers deals advertise pay app deploy sitemap.xml 404.html calendar.ics
+          git add -A jobs work employers deals advertise pay app deploy leavers guide candidates sitemap.xml 404.html calendar.ics
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Rebuild job pages"
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
           git push origin HEAD:main
           # Pushes made with the workflow token don't start a Pages build on their own.
           gh api -X POST "repos/${{ github.repository }}/pages/builds"
