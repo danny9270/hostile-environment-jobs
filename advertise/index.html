@@ -185,6 +185,8 @@ form label.check input { width: auto; flex: none; }
 .plan .price span { font: 500 13px var(--mono); color: var(--muted); }
 .plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
 .plan .btn { justify-self: start; }
+.plan .invoice { font-size: 13px; color: var(--muted); }
+.paid { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 4px 20px; margin: 28px 0 0; scroll-margin-top: 220px; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
@@ -283,6 +285,10 @@ fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.
 }).catch(() => {});
 </script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
+<div class="paid" id="ad-paid" hidden>
+  <h2>Payment received, thank you</h2>
+  <p>Stripe has emailed your receipt. Now tell us which job or company to feature using the form below, and we'll have it live within a day. Featured time starts when it goes live, not when you paid.</p>
+</div>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
 <form id="ad-form" method="POST">
@@ -308,6 +314,17 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
 document.getElementById("ad-form").action = "https://formsubmit.co/" + CONTACT;
 document.getElementById("ad-sent").hidden = !/sent=1/.test(location.search);
 document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click", () => document.getElementById("ad-plan").value = a.dataset.plan));
+// Back from a Stripe Payment Link (?paid=featured-job): thank them and ask what to feature.
+const paid = new URLSearchParams(location.search).get("paid");
+if (paid) {
+  const plan = {"featured-job": "Featured job", "featured-employer": "Featured employer"}[paid];
+  if (plan) document.getElementById("ad-plan").value = plan;
+  document.querySelector("#ad-form [name=_subject]").value = "PAID: " + (plan || "featured plan") + " for Hostile Environment Jobs";
+  document.querySelector("#ad-form [name=details]").placeholder = "The job link, or your company name, website and logo";
+  document.getElementById("enquire").textContent = "Tell us what to feature";
+  document.getElementById("ad-paid").hidden = false;
+  document.getElementById("ad-paid").scrollIntoView();
+}
 </script>
 </main>
 <footer><div class="wrap">
