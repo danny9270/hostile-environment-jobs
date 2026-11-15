@@ -86,6 +86,35 @@ details summary { cursor: pointer; font-weight: 600; }
   body.print-kit .kit-list li::before { content: ""; position: absolute; left: 0; top: 10px; width: 13px; height: 13px; border: 1.5px solid #000; }
   body.print-kit .kit-list .q, body.print-kit .kit-list li small { color: #000; }
 }
+/* Tabs: one section at a time, picked from the bar at the bottom, so there's less scrolling. */
+.app[data-on="rota"] [data-tab]:not([data-tab~="rota"]), .app[data-on="alerts"] [data-tab]:not([data-tab~="alerts"]),
+.app[data-on="jobs"] [data-tab]:not([data-tab~="jobs"]), .app[data-on="kit"] [data-tab]:not([data-tab~="kit"]),
+.app[data-on="account"] [data-tab]:not([data-tab~="account"]) { display: none !important; }
+.app { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+.app > [data-tab]:first-child .panel:first-child, .app > .panel:first-child { margin-top: 24px; }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: repeat(5, 1fr); padding: 0 max(0px, calc((100% - 760px) / 2)) env(safe-area-inset-bottom); }
+.tabbar button { background: none; border: 0; color: var(--muted); font: 600 12px var(--body); letter-spacing: .02em; padding: 9px 2px 10px; min-height: 60px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.tabbar svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar button[aria-selected="true"] { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
+.tab-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 26px 0 0; }
+.tab-head h2 { margin: 0; }
+/* Sections you open with a tap instead of scrolling past. */
+details.fold { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; background: var(--raised); }
+details.fold > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 14px 16px; min-height: 52px;
+  font: 800 17px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary small { font: 500 13px var(--mono); text-transform: none; letter-spacing: 0; color: var(--sand); margin-left: auto; white-space: nowrap; }
+details.fold > summary::after { content: "+"; font: 500 22px/1 var(--mono); color: var(--accent); }
+details.fold[open] > summary::after { content: "–"; }
+.app details.fold > :not(summary) { margin-left: 16px; margin-right: 16px; }
+details.fold > :last-child { margin-bottom: 14px; }
+.pick details.fold .hint { margin-top: 0; }
+#kit-body details.fold .kit-list li:last-child { border-bottom: 0; }
+html[data-native] .app h1 { font-size: 34px; }
+html[data-native] .app .eyebrow { margin-top: 20px !important; }
+@media print { .tabbar { display: none !important; } body.print-kit details.fold { border: 0; background: none; } body.print-kit details.fold > summary::after { content: none; } }
 @media (max-width: 640px) { .rota form .row3 { grid-template-columns: 1fr 1fr; } .rota .count b { font-size: 46px; } }
 </style>
 <style>
@@ -364,13 +393,15 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 </div></header>
 <main class="wrap">
 <div class="app">
+  <div data-tab="alerts">
   <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
   <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
   <p id="intro-web">Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
   <p id="intro-native" hidden>Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. The rotation tracker is free; alerts and the full kit list come with a yearly subscription.</p>
   <div class="row-btns" id="stores" hidden></div>
+  </div>
 
-  <div class="panel hot" id="install" hidden>
+  <div class="panel hot" id="install" data-tab="alerts" hidden>
     <h2>First, add it to your home screen</h2>
     <div id="install-ios" hidden>
       <p>On iPhone, notifications only work once the app is on your home screen (iOS 16.4 or newer).</p>
@@ -388,36 +419,38 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     </div>
   </div>
 
-  <div class="panel hot" id="notify" hidden>
+  <div class="panel hot" id="notify" data-tab="alerts account" hidden>
     <h2>Turn on notifications</h2>
     <p>Last step. Tap below and choose <b>Allow</b> when your phone asks.</p>
     <div class="row-btns"><button class="btn primary" type="button" id="enable">Turn on notifications</button></div>
     <p class="msg" id="notify-msg"></p>
   </div>
 
-  <div class="panel" id="off" hidden>
+  <div class="panel" id="off" data-tab="alerts account" hidden>
     <p>Job alerts are being switched on. Check back soon, or join the <a href="/#sitrep">weekly Sitrep</a> in the meantime.</p>
   </div>
 
-  <form class="panel pick" id="prefs" hidden onsubmit="return false">
+  <form class="panel pick" id="prefs" data-tab="alerts" hidden onsubmit="return false">
     <h2>What should we alert you about?</h2>
-    <h3>Job types</h3>
-    <p class="hint">Leave them all off to hear about every job.</p>
-    <div class="chips" id="p-cats"></div>
-    <h3>Regions</h3>
-    <p class="hint">Leave them all off for anywhere. Worldwide jobs always count.</p>
-    <div class="chips" id="p-regions"></div>
-    <h3>Keywords <span class="hint">(optional)</span></h3>
-    <label><span class="hint">Only jobs mentioning any of these, separated by commas, e.g. <i>IEDD, Ukraine, team leader</i></span>
-      <input id="p-keys" maxlength="200" autocomplete="off"></label>
-    <h3>Courses</h3>
-    <label class="check"><input type="checkbox" id="p-courses"> Also tell me about new courses</label>
-    <div class="chips" id="p-ctypes" hidden></div>
+    <p class="hint">Tap a heading to change it.</p>
+    <details class="fold"><summary>Job types <small id="n-cats"></small></summary>
+      <p class="hint">Leave them all off to hear about every job.</p>
+      <div class="chips" id="p-cats"></div></details>
+    <details class="fold"><summary>Regions <small id="n-regions"></small></summary>
+      <p class="hint">Leave them all off for anywhere. Worldwide jobs always count.</p>
+      <div class="chips" id="p-regions"></div></details>
+    <details class="fold"><summary>Keywords <small id="n-keys"></small></summary>
+      <label><span class="hint">Only jobs mentioning any of these, separated by commas, e.g. <i>IEDD, Ukraine, team leader</i></span>
+        <input id="p-keys" maxlength="200" autocomplete="off"></label></details>
+    <details class="fold"><summary>Courses <small id="n-courses"></small></summary>
+      <label class="check"><input type="checkbox" id="p-courses"> Also tell me about new courses</label>
+      <div class="chips" id="p-ctypes" hidden></div></details>
+    <div class="row-btns"><a class="btn" href="#jobs" id="see-matches">See matching jobs</a></div>
     <div class="row-btns" id="save-row" hidden><button class="btn" type="button" id="save">Save preferences</button></div>
     <p class="msg" id="save-msg"></p>
   </form>
 
-  <div class="panel" id="buy" hidden>
+  <div class="panel" id="buy" data-tab="alerts account" hidden>
     <p class="sub" id="referred" hidden>A mate sent you here. When you sign up, it counts towards their free year.</p>
     <div class="price" id="price">$6<small>a year</small></div>
     <ul class="perks">
@@ -439,7 +472,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     </details>
   </div>
 
-  <div class="panel" id="account" hidden>
+  <div class="panel" id="account" data-tab="account" hidden>
     <h2>Your account</h2>
     <p class="status" id="acct-status"></p>
     <p>Your code: <span class="code" id="acct-code"></span></p>
@@ -458,7 +491,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     </details>
   </div>
 
-  <div class="panel" id="refer" hidden>
+  <div class="panel" id="refer" data-tab="account" hidden>
     <h2>Refer 3 mates, get a year free</h2>
     <p>Share your link. For every 3 people who sign up through it, you get another year of alerts free.</p>
     <p class="refer-link" id="refer-link"></p>
@@ -472,7 +505,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <p class="msg" id="refer-msg"></p>
   </div>
 
-  <div class="panel" id="kit">
+  <div class="panel" id="kit" data-tab="kit">
     <h2>EOD team kit list</h2>
     <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
     <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with the app. <a href="#buy">Get the app</a></p>
@@ -480,7 +513,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <div id="kit-body"></div>
   </div>
 
-  <div class="panel rota" id="rota">
+  <div class="panel rota" id="rota" data-tab="rota">
     <p class="eyebrow">Rotation tracker · free</p>
     <div id="rota-live" hidden>
       <div class="count"><b id="rota-num"></b><span id="rota-what"></span></div>
@@ -496,9 +529,9 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <h3>Days and pay</h3>
       <table class="totals"><thead><tr><th></th><th>Days worked</th><th>Pay</th></tr></thead><tbody id="rota-totals"></tbody></table>
 
-      <h3>Your log</h3>
-      <ul class="logs" id="rota-log"></ul>
-      <details><summary>Add days</summary>
+      <details class="fold"><summary>Your log <small id="rota-log-n"></small></summary>
+        <ul class="logs" id="rota-log"></ul></details>
+      <details class="fold"><summary>Add days</summary>
         <form id="rota-add" onsubmit="return false">
           <div class="row"><label>From<input type="date" id="add-from" required></label><label>To<input type="date" id="add-to"></label></div>
           <div class="row"><label>Type<select id="add-type"><option value="w">Worked</option><option value="t">Travel</option><option value="s">Standby</option><option value="u">Unpaid</option></select></label>
@@ -511,7 +544,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <h2>Count down to your next leave</h2>
       <p>Put in your rotation and this counts the days to leave, logs the days you've worked and adds up what you're owed. It works without an alerts subscription.</p>
     </div>
-    <details id="rota-setup">
+    <details class="fold" id="rota-setup">
       <summary id="rota-setup-sum">Set up my rotation</summary>
       <form id="rota-form" onsubmit="return false">
         <div class="row3">
@@ -527,7 +560,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
         <div class="row-btns" style="margin:0"><button class="btn primary" type="button" id="r-save">Save rotation</button></div>
       </form>
     </details>
-    <details id="rota-data" style="margin-top:10px"><summary>Your data</summary>
+    <details class="fold" id="rota-data"><summary>Your data</summary>
       <p class="sub">Everything here stays on this phone. Nothing is sent to us. On iPhone, the home screen app and Safari keep separate copies, so use one or the other. Download a copy now and then so you don't lose it with your phone.</p>
       <div class="row-btns">
         <button class="btn" type="button" id="rota-csv">Download log (CSV)</button>
@@ -539,12 +572,20 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     </details>
   </div>
 
-  <section id="matches" hidden>
-    <h2 style="margin-top:28px">Open jobs that match</h2>
-    <p class="sub" id="match-count"></p>
+  <section id="matches" data-tab="jobs">
+    <div class="tab-head"><h2>Jobs that match</h2><a class="btn" href="#alerts">Change</a></div>
+    <p class="sub" id="match-count">Loading jobs…</p>
     <div class="jobs" id="match-list"></div>
-    <div class="actions"><a class="btn" href="/#jobs">See all jobs</a></div>
+    <div class="row-btns"><button class="btn" type="button" id="match-more" hidden></button><a class="btn" href="/#jobs">See all jobs</a></div>
   </section>
+
+  <nav class="tabbar" role="tablist" aria-label="App sections">
+    <button type="button" role="tab" data-go="rota"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h3"/></svg>Rotation</button>
+    <button type="button" role="tab" data-go="alerts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>Alerts</button>
+    <button type="button" role="tab" data-go="jobs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2M3.5 13h17"/></svg>Jobs</button>
+    <button type="button" role="tab" data-go="kit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1H9"/><path d="M9 11.5l1.5 1.5L14 9.5M9 17h6"/></svg>Kit list</button>
+    <button type="button" role="tab" data-go="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>Account</button>
+  </nav>
 </div>
 <script>
 // The alerts Worker's address. Empty means alerts aren't switched on yet and the page says so.
@@ -598,12 +639,22 @@ function drawPrefs() {
   $("p-keys").value = prefs.keywords || "";
   $("p-courses").checked = Boolean(prefs.courses);
   $("p-ctypes").hidden = !prefs.courses;
+  countPrefs();
+}
+const picked = (k, all) => prefs[k]?.length ? `${prefs[k].length} of ${all}` : "All";
+function countPrefs() {
+  $("n-cats").textContent = picked("categories", CATEGORIES.length);
+  $("n-regions").textContent = picked("regions", REGIONS.length) === "All" ? "Anywhere" : picked("regions", REGIONS.length);
+  const keys = (prefs.keywords || "").split(/[,;\n]/).filter(w => w.trim()).length;
+  $("n-keys").textContent = keys ? `${keys} word${keys === 1 ? "" : "s"}` : "None";
+  $("n-courses").textContent = !prefs.courses ? "Off" : prefs.course_types?.length ? `${prefs.course_types.length} types` : "All courses";
 }
 function changed() {
   prefs.keywords = $("p-keys").value;
   prefs.courses = $("p-courses").checked;
   $("p-ctypes").hidden = !prefs.courses;
   store.set("hej-prefs", JSON.stringify(prefs));
+  countPrefs();
   $("save-msg").textContent = acct ? "Not saved yet." : "";
   drawMatches();
 }
@@ -619,16 +670,22 @@ function matches(j) {
   return !keys.length || keys.some(k => hay.includes(k));
 }
 const isOpen = j => !j.sample && (!j.closing || j.closing === "Rolling" || new Date(j.closing + "T23:59:59") >= new Date());
+let showAll = false;
 function drawMatches() {
   if (!JOBS.length) return;
-  const list = JOBS.filter(isOpen).filter(matches).sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
-  $("matches").hidden = false;
-  $("match-count").textContent = `${list.length} of ${JOBS.filter(isOpen).length} open jobs match what you picked.`;
+  const all = JOBS.filter(isOpen).filter(matches).sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+  const list = showAll ? all : all.slice(0, 15);
+  $("match-count").textContent = `${all.length} of ${JOBS.filter(isOpen).length} open jobs match what you picked.`;
+  $("see-matches").textContent = `See ${all.length} matching job${all.length === 1 ? "" : "s"}`;
+  $("match-more").hidden = list.length === all.length;
+  $("match-more").textContent = `Show all ${all.length}`;
   $("match-list").innerHTML = list.map(j => `<article class="job"><div><span class="tag">${esc(j.category)}</span>
     <h3><a href="/jobs/${encodeURIComponent(j.id)}/">${esc(j.title)}</a></h3><div class="who">${esc(j.employer)}</div>
     <ul class="meta"><li>${esc(j.location)}</li>${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
     <div class="side">${j.closing && j.closing !== "Rolling" ? "Closes " + esc(j.closing) : "Open"}</div></article>`).join("");
 }
+
+$("match-more").onclick = () => { showAll = true; drawMatches(); };
 
 const fmtDate = t => new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 async function subscribed() {
@@ -934,7 +991,8 @@ function drawRota() {
   if (ph.onsite) rows[0][0] = "This hitch";
   $("rota-totals").innerHTML = rows.map(([label, a, b]) => { const s = sum(a, b); return `<tr><td>${label}</td><td>${s.days}</td><td class="pay">${s.pay ? esc(money(s.pay)) : "–"}</td></tr>`; }).join("");
 
-  const list = runs();
+  const list = runs(), nLogged = Object.keys(rota.log).length;
+  $("rota-log-n").textContent = nLogged ? `${nLogged} day${nLogged === 1 ? "" : "s"}` : "Empty";
   $("rota-log").innerHTML = list.length ? list.slice(0, 30).map((r, i) => `<li><div>${r.n} ${TYPES[r.t].toLowerCase()} day${r.n === 1 ? "" : "s"}${r.r && pays(r.t) ? " · " + esc(money(r.r * r.n)) : ""}
     <small>${r.from === r.to ? nice(r.from, true) : nice(r.from) + " to " + nice(r.to, true)}${r.r && pays(r.t) ? " · " + esc(money(r.r)) + " a day" : ""}</small></div>
     <button type="button" data-run="${i}" aria-label="Remove these days">Remove</button></li>`).join("")
@@ -1027,9 +1085,32 @@ $("rota-clear").onclick = () => {
   rota = { log: {} }; saveRota(); drawRota();
   $("rota-data-msg").textContent = "Cleared.";
 };
-// Opened from the home screen, or once a rotation is set up, the countdown goes first: it's what people open the app for day to day.
-if (standalone || setUp()) $("install").before($("rota"));
 drawRota();
+
+// Tabs. The hash says which one is showing (#rota, #alerts, #jobs, #kit, #account); older links like #buy still land in the right place.
+const TABS = ["rota", "alerts", "jobs", "kit", "account"];
+const INSIDE = { buy: "alerts", prefs: "alerts", install: "alerts", matches: "jobs", refer: "account", tracker: "rota" };
+const appEl = document.querySelector(".app");
+function showTab(t, spot) {
+  appEl.dataset.on = t;
+  document.querySelectorAll(".tabbar [data-go]").forEach(b => b.setAttribute("aria-selected", b.dataset.go === t));
+  store.set("hej-tab", t);
+  if (spot && $(spot) && !$(spot).hidden) $(spot).scrollIntoView({ block: "start" }); else scrollTo(0, 0);
+}
+function go(name) {
+  const t = TABS.includes(name) ? name : INSIDE[name];
+  if (!t) return false;
+  if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  showTab(t, INSIDE[name] ? name : null);
+  return true;
+}
+document.querySelectorAll(".tabbar [data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
+document.addEventListener("click", e => { const a = e.target.closest('a[href^="#"]'); if (a && go(a.getAttribute("href").slice(1))) e.preventDefault(); });
+addEventListener("hashchange", () => go(location.hash.slice(1)));
+// A tab name in the address would otherwise make the browser jump down to that panel on load.
+addEventListener("load", () => { if (TABS.includes(location.hash.slice(1))) scrollTo(0, 0); });
+// Opened from the home screen, or once a rotation is set up, the countdown goes first: it's what people open the app for day to day.
+if (!go(location.hash.slice(1))) showTab(TABS.includes(store.get("hej-tab")) ? store.get("hej-tab") : standalone || setUp() ? "rota" : "alerts");
 // Roll the countdown over at midnight if the app is left open.
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") drawRota(); });
 
@@ -1043,13 +1124,13 @@ function drawKit() {
   $("kit-locked").hidden = open;
   $("kit-print").hidden = !open || Boolean(native);
   const sup = KIT.suppliers;
-  $("kit-body").innerHTML = KIT.sections.map(s => `<div class="kit-sec"><h3>${esc(s.name)}</h3><ul class="kit-list">${s.items.map(it => {
+  $("kit-body").innerHTML = KIT.sections.map(s => `<details class="fold kit-sec"><summary>${esc(s.name)} <small>${s.items.length} item${s.items.length === 1 ? "" : "s"}</small></summary><ul class="kit-list">${s.items.map(it => {
     if (!open) return `<li><span>${esc(it.item)}</span><span class="q locked" aria-label="Quantity for subscribers">?</span></li>`;
     const links = (it.suppliers || []).map(k => `<a href="${esc(sup[k].url)}" target="_blank" rel="noopener">${esc(sup[k].name)}</a>`).join(", ");
     return `<li><span>${esc(it.item)}${it.note ? `<small>${esc(it.note)}</small>` : ""}${links ? `<small class="where">Where to look: ${links}</small>` : ""}</span><span class="q">${esc(it.qty)}${it.unit ? `<small> ${esc(it.unit)}</small>` : ""}</span></li>`;
-  }).join("")}</ul></div>`).join("") + (open ? (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("") : "");
+  }).join("")}</ul></details>`).join("") + (open ? (KIT.notes || []).map(n => `<p class="sub">${esc(n)}</p>`).join("") : "");
 }
-$("kit-print").onclick = () => { document.body.classList.add("print-kit"); window.print(); };
+$("kit-print").onclick = () => { document.querySelectorAll("#kit-body details").forEach(d => d.open = true); document.body.classList.add("print-kit"); window.print(); };
 addEventListener("afterprint", () => document.body.classList.remove("print-kit"));
 fetch("/kit.json", { cache: "no-cache" }).then(r => r.json()).then(d => { KIT = d; drawKit(); }).catch(() => {});
 fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); }).catch(() => {});
