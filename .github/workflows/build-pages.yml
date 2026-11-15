@@ -1,4 +1,4 @@
-# Rebuilds the per-job pages, employer profiles, the /work/ landing pages, the Advertise page, the job alerts app page, the deployment guide page, sitemap.xml and calendar.ics whenever jobs or courses change, and daily so closed jobs drop off.
+# Rebuilds the per-job pages, employer profiles, the home page's New partners strip, the /work/ landing pages, the Advertise page, the job alerts app page, the deployment guide page, sitemap.xml and calendar.ics whenever jobs or courses change, and daily so closed jobs drop off.
 name: Build job pages
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git add -A jobs work employers deals advertise pay app deploy leavers guide candidates sitemap.xml 404.html calendar.ics
+          git add -A index.html jobs work employers deals advertise pay app deploy leavers guide candidates sitemap.xml 404.html calendar.ics
           if git diff --cached --quiet; then echo "No changes"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

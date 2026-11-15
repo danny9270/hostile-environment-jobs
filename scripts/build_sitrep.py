@@ -1,4 +1,4 @@
-"""Build this week's Sitrep newsletter from jobs.json and courses.json.
+"""Build this week's Sitrep newsletter from jobs.json, courses.json and employers.json (for new partners and their deals).
 
 Writes the web copy to /sitrep/<date>/, the archive at /sitrep/, an RSS feed at /sitrep/feed.xml,
 and the email body to the path given (the "Weekly Sitrep" GitHub Action sends that to Kit).
@@ -11,6 +11,7 @@ import json
 import re
 import sys
 
+import employers as paid
 from build_pages import ROOT, SITE, e, fmt, is_open, page
 from referral import booking_url, promo_text
 
@@ -43,6 +44,15 @@ def content(day, issue, previous):
     upcoming = sorted((c for c in courses if not c.get("sample") and is_date(c.get("start"))
                        and day <= datetime.date.fromisoformat(c["start"]) <= upto), key=lambda c: c["start"])
 
+    profiles = paid.load(ROOT, day)
+    partners = paid.new_partners(profiles, day, previous)
+    deals = any(x.get("offer") for x in profiles)
+
+    def partner(x):
+        return (f'<li style="margin-bottom:10px"><a {A} href="{SITE}/employers/{e(x["id"])}/"><b>{e(x["name"])}</b></a>'
+                f'{"<br>" + e(x["tagline"]) if x.get("tagline") else ""}'
+                f'{"<br><b>Offer:</b> " + e(x["offer"]) if x.get("offer") else ""}</li>')
+
     def job(j):
         closing = "open until filled" if not is_date(j.get("closing")) else "closes " + fmt(j["closing"])
         return (f'<li style="margin-bottom:10px"><a {A} href="{SITE}/jobs/{e(j["id"])}/"><b>{e(j["title"])}</b></a>, {e(j["employer"])}<br>'
@@ -65,6 +75,12 @@ def content(day, issue, previous):
         parts += [f'<h2 {H2}>Closing soon</h2>', "<ul>" + "".join(job(j) for j in soon) + "</ul>"]
     if upcoming:
         parts += [f'<h2 {H2}>Courses starting soon</h2>', "<ul>" + "".join(course(c) for c in upcoming) + "</ul>"]
+    if partners:
+        parts += [f'<h2 {H2}>New partner{"s" if len(partners) > 1 else ""}</h2>',
+                  f'<p>Welcome to the latest compan{"ies" if len(partners) > 1 else "y"} backing the site.</p>',
+                  "<ul>" + "".join(partner(x) for x in partners) + "</ul>"]
+    if deals:
+        parts.append(f'<p>Member discounts from all our partners are on <a {A} href="{SITE}/deals/">the partner deals page</a>.</p>')
     parts.append(f'<p>See every job, filter by trade and region, and add course dates to your calendar at '
                  f'<a {A} href="{SITE}/">hostileenvironmentjobs.com</a>.</p>'
                  f'<p>Hiring or running a course? <a {A} href="{SITE}/#post">List it free</a>. '

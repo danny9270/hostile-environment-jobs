@@ -6,6 +6,8 @@ A profile's "offer" is a deal for our users (shown on its page, its jobs and cou
 "booking_email" turns on a "Request a booking" form for its courses, copied to contact@ so we see every booking.
 An employer with "partner": true is a founding partner: the featured employer plan given free until its
 "featured_until" date, shown with a "Founding partner" badge and named on the Advertise page.
+A partner (founding partner, or any profile with an offer) whose "joined" date is in the last NEW_DAYS days
+shows in the "New partners" strip on the home page, and in the first Sitrep after it joined.
 """
 import datetime
 import json
@@ -170,6 +172,41 @@ def course_list(x, courses, e):
     return f"""<h2>Courses from {e(x['name'])}</h2>
 {cards}
 <script>document.querySelectorAll("[data-course]").forEach(a => a.addEventListener("click", () => {{ const s = document.getElementById("book-course"); if (s) s.value = a.dataset.course; }}));</script>"""
+
+
+NEW_DAYS = 60  # how long a partner stays in the home page's "New partners" strip
+
+
+def is_partner(x):
+    return bool(x.get("partner") or x.get("offer"))
+
+
+def new_partners(employers, today, after=None):
+    """Partners that joined in the last NEW_DAYS days (or after the given date), newest first."""
+    start = datetime.date.fromisoformat(after) + datetime.timedelta(days=1) if after else today - datetime.timedelta(days=NEW_DAYS)
+    fresh = [x for x in employers if is_partner(x) and is_date(x.get("joined"))
+             and start <= datetime.date.fromisoformat(x["joined"]) <= today]
+    return sorted(fresh, key=lambda x: x["joined"], reverse=True)
+
+
+def short_offer(x):
+    """The first sentence of a partner's offer, short enough for a one-line strip."""
+    return re.split(r"(?<=[.!])\s", (x.get("offer") or "").strip(), maxsplit=1)[0]
+
+
+def home_strip(employers, today, e):
+    """A one-line "New partners" bar for the top of the home page, pointing at /deals/. Empty when nobody's new."""
+    fresh = new_partners(employers, today)[:3]
+    if not fresh:
+        return ""
+    def one(x):
+        logo = f'<img src="{e(x["logo"])}" alt="" loading="lazy">' if x.get("logo") else ""
+        deal = f' <span class="deal">{e(short_offer(x))}</span>' if x.get("offer") else ""
+        return f'<span class="partner">{logo}<span><a href="/employers/{e(x["id"])}/">{e(x["name"])}</a>{deal}</span></span>'
+    label = "New partner" if len(fresh) == 1 else "New partners"
+    deals = any(x.get("offer") for x in employers)
+    more = '<a class="more" href="/deals/">See partner deals &rarr;</a>' if deals else '<a class="more" href="/employers/">See our partners &rarr;</a>'
+    return f'<div class="partners-strip" aria-label="{label}"><span class="eyebrow">{label}</span>{"".join(one(x) for x in fresh)}{more}</div>'
 
 
 def deals_page(employers, page, e):
