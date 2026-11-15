@@ -36,7 +36,14 @@ async function purchases(code) {
 // Tapped notifications open the job, in the app's own browser sheet.
 const openUrl = u => {
   const full = new URL(u || "/app/", SITE).href;
-  if (/\/app\/(#.*)?$/.test(full)) { location.hash = new URL(full).hash || "#top"; return; }
+  const here = /deploy\.html$/.test(location.pathname) ? "deploy" : "app";
+  if (/\/app\/(#.*)?$/.test(full)) {
+    const hash = new URL(full).hash || "#top";
+    if (here === "app") location.hash = hash; else location.href = "index.html" + hash;
+    return;
+  }
+  // The deployment guide is bundled with the app, so it opens offline.
+  if (/\/deploy\/(#.*)?$/.test(full)) { location.href = "deploy.html" + new URL(full).hash; return; }
   return Browser.open({ url: full, presentationStyle: "popover", toolbarColor: "#111310" });
 };
 
@@ -44,13 +51,15 @@ window.HEJNative = {
   platform,
   store: platform === "ios" ? "App Store" : "Google Play",
 
-  // The yearly product as the store shows it, e.g. { price: "$5.99", period: "a year" }, or null if it isn't set up.
+  // The yearly product as the store shows it, e.g. { price: "$5.99", period: "a year", trial: true }, or null if it isn't set up.
   async product(code) {
     try {
       const p = await purchases(code);
       const { current } = await p.getOfferings();
       const pkg = current?.annual || current?.availablePackages?.[0];
-      return pkg ? { price: pkg.product.priceString, period: "a year" } : null;
+      // trial is true when the store has a free introductory period set up for this product (the free first month).
+      const intro = pkg?.product?.introPrice;
+      return pkg ? { price: pkg.product.priceString, period: "a year", trial: Boolean(intro && Number(intro.price) === 0) } : null;
     } catch { return null; }
   },
 

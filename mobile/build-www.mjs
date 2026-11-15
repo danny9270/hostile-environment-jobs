@@ -19,8 +19,9 @@ const out = path.join(here, "www");
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 
-let html = fs.readFileSync(path.join(root, "app", "index.html"), "utf8");
-const must = (re, what) => { if (!re.test(html)) throw new Error(`build-www: couldn't find ${what} in app/index.html`); };
+function appPage(src, brand) {
+let html = fs.readFileSync(path.join(root, src), "utf8");
+const must = (re, what) => { if (!re.test(html)) throw new Error(`build-www: couldn't find ${what} in ${src}`); };
 
 // The site's menu and footer: keep the brand, drop the website links.
 must(/<nav[\s>][\s\S]*?<\/nav>/, "the site menu");
@@ -42,7 +43,7 @@ html = html.replace(/fetch\("\//g, `fetch("${SITE}/`);
 html = html.replace(/href="\/jobs\/\$\{/g, `href="${SITE}/jobs/\${`);
 html = html.replace(/<a href="https:\/\/hostileenvironmentjobs\.com\/app\/" aria-current="page">/g, '<a href="#top" aria-current="page">');
 // The brand's link goes to the top of the app rather than the website.
-html = html.replace(/<a class="brand" href="[^"]*"/, '<a class="brand" href="#top"');
+html = html.replace(/<a class="brand" href="[^"]*"/, `<a class="brand" href="${brand}"`);
 
 // Native helpers load before the page's own script, and the page knows it's inside the app from the first paint.
 must(/<\/head>/, "</head>");
@@ -54,8 +55,16 @@ html[data-native] footer a { margin-right: 14px; }
 <script src="native.js"></script>
 </head>`);
 
+return html;
+}
+
+const html = appPage("app/index.html", "#top");
 fs.writeFileSync(path.join(out, "index.html"), html);
+// The deployment guide is carried in the app too, so it opens with no signal (native.js opens it for /deploy/ links).
+fs.writeFileSync(path.join(out, "deploy.html"), appPage("deploy/index.html", "index.html#kit").replace('<main class="wrap">', '<main class="wrap"><p style="margin:16px 0 0"><a class="btn" href="index.html#kit">&lsaquo; Back to the app</a></p>'));
 for (const f of ["icon-192.png", "favicon-96x96.png", "favicon.svg"]) fs.copyFileSync(path.join(root, f), path.join(out, f));
+// Copies of the data the app reads, so the kit list, jobs and deployment guide still open with no signal.
+for (const f of ["kit.json", "jobs.json", "deploy.json"]) fs.copyFileSync(path.join(root, f), path.join(out, f));
 
 await build({ entryPoints: [path.join(here, "src", "native.js")], bundle: true, minify: true, format: "iife", target: ["safari15", "chrome100"],
               outfile: path.join(out, "native.js"), define: {
@@ -63,6 +72,6 @@ await build({ entryPoints: [path.join(here, "src", "native.js")], bundle: true, 
                 REVENUECAT_ANDROID_KEY: JSON.stringify(process.env.REVENUECAT_ANDROID_KEY || ""),
               } });
 
-const left = [...html.matchAll(/(?:href|src)="\/(?!\/)[^"]*"/g)].map(m => m[0]);
+const left = [...(html + fs.readFileSync(path.join(out, "deploy.html"), "utf8")).matchAll(/(?:href|src)="\/(?!\/)[^"]*"/g)].map(m => m[0]);
 if (left.length) throw new Error("build-www: links still pointing at the phone: " + left.slice(0, 5).join(", "));
 console.log(`www/ built: index.html (${(html.length / 1024).toFixed(0)} KB) and native.js`);

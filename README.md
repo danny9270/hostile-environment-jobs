@@ -66,7 +66,7 @@ It also lists the open courses from `courses.json`. Add `"elcas": "1234"` to a c
 
 ## Job alerts app
 
-`/app/` is an installable phone app (a web app: Android installs it from Chrome, iPhone from Safari's Share > Add to Home Screen, iOS 16.4 or newer). People pick job types, regions, keywords and course types, pay $6 a year, and get a push notification when a matching job or course goes up. It also lists the open jobs that match.
+`/app/` is an installable phone app (a web app: Android installs it from Chrome, iPhone from Safari's Share > Add to Home Screen, iOS 16.4 or newer). People pick job types, regions, keywords and course types, pay $10 a year after a free first month, and get a push notification when a matching job or course goes up. It also lists the open jobs that match.
 
 - **Page:** `scripts/app.html`, wrapped by `scripts/build_pages.py` into `app/index.html` (don't edit that by hand). `ALERTS_API` at the top of its script is the Worker's address; empty shows "being switched on". `sw.js` at the site root shows the notifications.
 - **Backend:** `alerts/worker.js`, a Cloudflare Worker (free plan) with a D1 database bound as `DB`. It keeps accounts (each has a code like `HEJ-7KQ2-M9XD-4TWB`, used to sign in on another phone), preferences and phones, and takes payment through Stripe Checkout. Settings are explained at the top of the file. With no Stripe settings it's free for everyone, for testing. Paste the file into the Worker's code editor again after changing it.

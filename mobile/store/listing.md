@@ -54,7 +54,7 @@ EOD,mine action,demining,IEDD,security jobs,close protection,medic,UXO,contracto
 - **Copyright**: 2026 Hostile Environment Jobs
 
 ## Subscription (App Store Connect and Play Console)
-- Product ID: `hej_alerts_yearly`, 1 year, auto-renewing, price $5.99 (Apple) / $5.99 (Google), let each store set other currencies
+- Product ID: `hej_alerts_yearly`, 1 year, auto-renewing, price $9.99 (Apple) / $9.99 (Google), with a 1 month free introductory offer, let each store set other currencies
 - Display name: Job alerts, 1 year
 - Description: Job alerts and the full EOD kit list for a year
 

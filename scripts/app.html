@@ -66,12 +66,12 @@ details summary { cursor: pointer; font-weight: 600; }
 /* Tabs: one section at a time, picked from the bar at the bottom, so there's less scrolling. */
 .app[data-on="rota"] [data-tab]:not([data-tab~="rota"]), .app[data-on="alerts"] [data-tab]:not([data-tab~="alerts"]),
 .app[data-on="jobs"] [data-tab]:not([data-tab~="jobs"]), .app[data-on="kit"] [data-tab]:not([data-tab~="kit"]),
-.app[data-on="account"] [data-tab]:not([data-tab~="account"]) { display: none !important; }
+.app[data-on="account"] [data-tab]:not([data-tab~="account"]), .app[data-on="certs"] [data-tab]:not([data-tab~="certs"]) { display: none !important; }
 .app { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
 .app > [data-tab]:first-child .panel:first-child, .app > .panel:first-child { margin-top: 24px; }
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line);
-  display: grid; grid-template-columns: repeat(5, 1fr); padding: 0 max(0px, calc((100% - 760px) / 2)) env(safe-area-inset-bottom); }
-.tabbar button { background: none; border: 0; color: var(--muted); font: 600 12px var(--body); letter-spacing: .02em; padding: 9px 2px 10px; min-height: 60px;
+  display: grid; grid-template-columns: repeat(6, 1fr); padding: 0 max(0px, calc((100% - 760px) / 2)) env(safe-area-inset-bottom); }
+.tabbar button { background: none; border: 0; color: var(--muted); font: 600 11.5px var(--body); letter-spacing: .02em; padding: 9px 2px 10px; min-height: 60px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .tabbar svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar button[aria-selected="true"] { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
@@ -91,6 +91,30 @@ details.fold > :last-child { margin-bottom: 14px; }
 #kit-body details.fold .kit-list li:last-child { border-bottom: 0; }
 html[data-native] .app h1 { font-size: 34px; }
 html[data-native] .app .eyebrow { margin-top: 20px !important; }
+/* Certs: tickets and documents with a countdown to each expiry date. */
+.certs { list-style: none; padding: 0; margin: 10px 0; }
+.certs li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.certs li b { font-size: 17px; }
+.certs li small { display: block; color: var(--muted); font: 500 13px var(--mono); }
+.certs .left { font: 900 26px/1 var(--display); text-align: right; color: var(--ok); }
+.certs .left small { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.certs .left.soon { color: var(--accent); } .certs .left.now { color: var(--warn); }
+.certs .acts { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 6px; }
+.certs .acts button, .seg button { font: 600 13px var(--body); background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+/* Jobs tab: matches or saved, a star to save a job, and Apply straight from the list. */
+.seg { display: flex; gap: 8px; margin: 14px 0 6px; }
+.seg button { flex: 1; font: 800 15px var(--display); text-transform: uppercase; letter-spacing: .03em; padding: 11px 8px; color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.job .side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.job .star, .job .apply { position: relative; z-index: 2; }
+.job .star { font: 600 14px var(--body); background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; white-space: nowrap; }
+.job .star[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.job .apply { padding: 6px 12px; font-size: 14px; }
+.job .soon { color: var(--accent); font-weight: 600; }
+.job.gone { opacity: .6; }
+.tabbar button { position: relative; }
+.tabbar button .dot { position: absolute; top: 8px; left: calc(50% + 8px); width: 9px; height: 9px; border-radius: 50%; background: var(--warn); }
+@media (max-width: 640px) { #matches .job { grid-template-columns: minmax(0, 1fr); } #matches .job .side { grid-column: 1; flex-direction: row; flex-wrap: wrap; align-items: center; text-align: left; gap: 10px; } }
 @media print { .tabbar { display: none !important; } body.print-kit details.fold { border: 0; background: none; } body.print-kit details.fold > summary::after { content: none; } }
 @media (max-width: 640px) { .rota form .row3 { grid-template-columns: 1fr 1fr; } .rota .count b { font-size: 46px; } }
 </style>
@@ -98,7 +122,7 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
   <div data-tab="alerts">
   <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
   <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
-  <p id="intro-web">Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
+  <p id="intro-web">Job alerts, rotation tracker and EOD kit list: first month free, then $10 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
   <p id="intro-native" hidden>Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. The rotation tracker is free; alerts and the full kit list come with a yearly subscription.</p>
   <div class="row-btns" id="stores" hidden></div>
   </div>
@@ -154,7 +178,7 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
 
   <div class="panel" id="buy" data-tab="alerts account" hidden>
     <p class="sub" id="referred" hidden>A mate sent you here. When you sign up, it counts towards their free year.</p>
-    <div class="price" id="price">$6<small>a year</small></div>
+    <div class="price" id="price">$10<small>a year</small></div>
     <ul class="perks">
       <li>Alerts for new jobs and courses that match what you picked</li>
       <li>Change what you get any time</li>
@@ -163,7 +187,7 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
       <li>Full Word export from the <a href="/sop/">Mine Action SOP Builder</a>: every module and blank form</li>
       <li id="renew-perk">Renews each year, cancel any time</li>
     </ul>
-    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $6 a year</button>
+    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $10 a year</button>
       <button class="btn" type="button" id="store-restore" hidden>Restore purchases</button></div>
     <p class="msg" id="pay-msg"></p>
     <p class="sub" id="store-terms" hidden></p>
@@ -211,8 +235,27 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
     <h2>EOD team kit list</h2>
     <p class="sub">What a typical humanitarian mine action multi-task team carries: a team leader (IMAS EOD Level 2) and five searchers, two of them ICP medics. A starting point, not a standard: always work to your organisation's SOPs and national standards. Explosives and detonators are drawn per task under IMAS 10.50 and aren't covered.</p>
     <p class="kit-lock" id="kit-locked">Quantities, notes, where to buy each item and the printable checklist come with the app. <a href="#buy">Get the app</a></p>
-    <div class="row-btns"><button class="btn" type="button" id="kit-print" hidden>Print or save as PDF checklist</button></div>
+    <div class="row-btns"><a class="btn" href="/deploy/">Deployment guide</a><button class="btn" type="button" id="kit-print" hidden>Print or save as PDF checklist</button></div>
+    <p class="sub where" id="kit-offline">The kit list and deployment guide keep working with no signal once you've opened them.</p>
     <div id="kit-body"></div>
+  </div>
+
+  <div class="panel" id="certs" data-tab="certs">
+    <p class="eyebrow">Tickets and documents · free</p>
+    <h2>What runs out, and when</h2>
+    <p class="sub" id="certs-intro">Log your quals, first aid, HEAT, passport and visas, and the app counts down to each expiry date. Tap one to add it.</p>
+    <ul class="certs" id="cert-list"></ul>
+    <p class="status" id="cert-push"></p>
+    <details class="fold" id="cert-add"><summary id="cert-add-sum">Add a ticket or document</summary>
+      <div class="chips" id="cert-quick"></div>
+      <form id="cert-form" onsubmit="return false">
+        <div class="row"><label>What is it?<input id="c-name" maxlength="60" autocomplete="off" placeholder="e.g. HEAT"></label>
+          <label>Runs out on<input type="date" id="c-date"></label></div>
+        <div class="row-btns" style="margin:0"><button class="btn primary" type="button" id="c-save">Save</button><button class="btn" type="button" id="c-cancel" hidden>Cancel</button></div>
+      </form>
+    </details>
+    <div class="row-btns"><button class="btn" type="button" id="cert-ics">Add the dates to my calendar</button></div>
+    <p class="msg" id="cert-msg"></p>
   </div>
 
   <div class="panel rota" id="rota" data-tab="rota">
@@ -275,17 +318,19 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
   </div>
 
   <section id="matches" data-tab="jobs">
-    <div class="tab-head"><h2>Jobs that match</h2><a class="btn" href="#alerts">Change</a></div>
+    <div class="tab-head"><h2 id="jobs-h">Jobs that match</h2><a class="btn" href="#alerts" id="jobs-change">Change</a></div>
+    <div class="seg"><button type="button" id="seg-match" aria-pressed="true">Matches</button><button type="button" id="seg-saved" aria-pressed="false">Saved</button></div>
     <p class="sub" id="match-count">Loading jobs…</p>
     <div class="jobs" id="match-list"></div>
     <div class="row-btns"><button class="btn" type="button" id="match-more" hidden></button><a class="btn" href="/#jobs">See all jobs</a></div>
   </section>
 
   <nav class="tabbar" role="tablist" aria-label="App sections">
-    <button type="button" role="tab" data-go="rota"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h3"/></svg>Rotation</button>
+    <button type="button" role="tab" data-go="rota"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h3"/></svg>Rota</button>
+    <button type="button" role="tab" data-go="certs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="13" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M6 15.5c.6-1.3 1.7-2 3-2s2.4.7 3 2M14 9.5h4M14 12.5h3"/><path d="M8 18v2.5l1.5-1 1.5 1V18"/></svg>Certs</button>
     <button type="button" role="tab" data-go="alerts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>Alerts</button>
     <button type="button" role="tab" data-go="jobs"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="12.5" rx="2"/><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2M3.5 13h17"/></svg>Jobs</button>
-    <button type="button" role="tab" data-go="kit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1H9"/><path d="M9 11.5l1.5 1.5L14 9.5M9 17h6"/></svg>Kit list</button>
+    <button type="button" role="tab" data-go="kit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h2.5a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1H9"/><path d="M9 11.5l1.5 1.5L14 9.5M9 17h6"/></svg>Kit</button>
     <button type="button" role="tab" data-go="account"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>Account</button>
   </nav>
 </div>
@@ -372,22 +417,126 @@ function matches(j) {
   return !keys.length || keys.some(k => hay.includes(k));
 }
 const isOpen = j => !j.sample && (!j.closing || j.closing === "Rolling" || new Date(j.closing + "T23:59:59") >= new Date());
-let showAll = false;
-function drawMatches() {
-  if (!JOBS.length) return;
-  const all = JOBS.filter(isOpen).filter(matches).sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
-  const list = showAll ? all : all.slice(0, 15);
-  $("match-count").textContent = `${all.length} of ${JOBS.filter(isOpen).length} open jobs match what you picked.`;
-  $("see-matches").textContent = `See ${all.length} matching job${all.length === 1 ? "" : "s"}`;
-  $("match-more").hidden = list.length === all.length;
-  $("match-more").textContent = `Show all ${all.length}`;
-  $("match-list").innerHTML = list.map(j => `<article class="job"><div><span class="tag">${esc(j.category)}</span>
+// Saved jobs: kept on this phone ("hej-saved"), with enough of each job to show it after it comes off the site.
+// Subscribers also get a reminder 3 days before a saved job closes (alerts/send_alerts.py), so the ids go to the server too.
+const loadList = k => { try { const v = JSON.parse(store.get(k)); return Array.isArray(v) ? v : []; } catch { return []; } };
+let SAVED = loadList("hej-saved"), CERTS = loadList("hej-certs");
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const daysTo = s => { const [y, m, d] = s.split("-").map(Number), n = new Date(); return Math.round((Date.UTC(y, m - 1, d) - Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5); };
+const longDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" }); };
+const isSaved = id => SAVED.some(x => x.id === id);
+function closes(j) {
+  if (!/^\d{4}-\d\d-\d\d$/.test(j.closing || "")) return "Open";
+  const n = daysTo(j.closing);
+  if (n < 0) return "Closed";
+  return n <= 7 ? `<span class="soon">Closes ${n === 0 ? "today" : n === 1 ? "tomorrow" : "in " + n + " days"}</span>` : "Closes " + esc(j.closing);
+}
+function jobCard(j, gone) {
+  const apply = /^https?:\/\//.test(j.apply_url || "") ? `<a class="btn apply" href="${esc(j.apply_url)}" target="_blank" rel="noopener">Apply</a>` : "";
+  return `<article class="job${gone ? " gone" : ""}"><div><span class="tag">${esc(j.category || "")}</span>
     <h3><a href="/jobs/${encodeURIComponent(j.id)}/">${esc(j.title)}</a></h3><div class="who">${esc(j.employer)}</div>
-    <ul class="meta"><li>${esc(j.location)}</li>${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
-    <div class="side">${j.closing && j.closing !== "Rolling" ? "Closes " + esc(j.closing) : "Open"}</div></article>`).join("");
+    <ul class="meta"><li>${esc(j.location || "")}</li>${j.salary && j.salary !== "Not stated" ? `<li class="pay">${esc(j.salary)}</li>` : ""}</ul></div>
+    <div class="side">${gone ? "No longer listed" : closes(j)}<button type="button" class="star" data-star="${esc(j.id)}" aria-pressed="${isSaved(j.id)}">${isSaved(j.id) ? "★ Saved" : "☆ Save"}</button>${gone ? "" : apply}</div></article>`;
+}
+let showAll = false, jobsView = "match";
+function drawMatches() {
+  const soon = SAVED.some(x => { const j = JOBS.find(y => y.id === x.id) || x; return /^\d{4}-\d\d-\d\d$/.test(j.closing || "") && daysTo(j.closing) >= 0 && daysTo(j.closing) <= 3; });
+  const tab = document.querySelector('.tabbar [data-go="jobs"]');
+  if (tab && soon !== Boolean(tab.querySelector(".dot"))) soon ? tab.insertAdjacentHTML("beforeend", '<i class="dot" aria-label="A saved job closes soon"></i>') : tab.querySelector(".dot").remove();
+  $("seg-saved").textContent = `Saved (${SAVED.length})`;
+  $("seg-match").setAttribute("aria-pressed", jobsView === "match");
+  $("seg-saved").setAttribute("aria-pressed", jobsView === "saved");
+  $("jobs-h").textContent = jobsView === "match" ? "Jobs that match" : "Saved jobs";
+  $("jobs-change").hidden = jobsView !== "match";
+  if (jobsView === "saved") {
+    const rows = SAVED.map(x => { const j = JOBS.find(y => y.id === x.id); return { j: j || x, gone: JOBS.length > 0 && (!j || !isOpen(j)) }; })
+      .sort((a, b) => a.gone - b.gone || String(a.j.closing || "9999").localeCompare(String(b.j.closing || "9999")));
+    $("match-count").textContent = SAVED.length ? "Soonest closing first." + (acct?.active ? " We'll remind you 3 days before each one closes." : "") : "Tap ☆ Save on any job to keep it here.";
+    $("match-list").innerHTML = rows.map(r => jobCard(r.j, r.gone)).join("");
+    $("match-more").hidden = true;
+  } else if (JOBS.length) {
+    const all = JOBS.filter(isOpen).filter(matches).sort((a, b) => String(b.posted).localeCompare(String(a.posted)));
+    const list = showAll ? all : all.slice(0, 15);
+    $("match-count").textContent = `${all.length} of ${JOBS.filter(isOpen).length} open jobs match what you picked.`;
+    $("see-matches").textContent = `See ${all.length} matching job${all.length === 1 ? "" : "s"}`;
+    $("match-more").hidden = list.length === all.length;
+    $("match-more").textContent = `Show all ${all.length}`;
+    $("match-list").innerHTML = list.map(j => jobCard(j)).join("");
+  }
+  $("match-list").querySelectorAll("[data-star]").forEach(b => b.onclick = () => {
+    const id = b.dataset.star, j = JOBS.find(y => y.id === id);
+    if (isSaved(id)) SAVED = SAVED.filter(x => x.id !== id);
+    else if (j) SAVED.push({ id, title: j.title, employer: j.employer, location: j.location, category: j.category, closing: j.closing, salary: j.salary });
+    store.set("hej-saved", JSON.stringify(SAVED)); syncLists(); drawMatches();
+  });
+}
+$("seg-match").onclick = () => { jobsView = "match"; drawMatches(); };
+$("seg-saved").onclick = () => { jobsView = "saved"; drawMatches(); };
+$("match-more").onclick = () => { showAll = true; drawMatches(); };
+
+// What the server keeps for reminders: the alert choices plus cert dates and saved job ids.
+const withLists = base => ({ ...base, certs: CERTS.map(c => ({ n: c.n, d: c.d })), saved: SAVED.map(x => x.id) });
+let syncTimer = null;
+function syncLists() {
+  if (!acct?.active) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => api("/api/account", { method: "PUT", body: { code: acct.code, prefs: withLists(acct.prefs || {}) } }).then(a => { acct = a; }).catch(() => {}), 800);
 }
 
-$("match-more").onclick = () => { showAll = true; drawMatches(); };
+// Certs: tickets and documents with expiry dates ("hej-certs"). Free for everyone; subscribers get push reminders 60, 30 and 7 days before.
+const CERT_PRESETS = ["EOD / IEDD qualification", "First aid / medic", "HEAT", "Passport", "Visa", "Driving licence", "SIA licence", "Medical / fitness", "Firearms", "Security clearance"];
+let certEdit = null;
+function drawCerts() {
+  CERTS.sort((a, b) => a.d.localeCompare(b.d));
+  $("certs-intro").hidden = CERTS.length > 0;
+  $("cert-list").innerHTML = CERTS.map((c, i) => {
+    const n = daysTo(c.d), cls = n < 30 ? "now" : n <= 60 ? "soon" : "";
+    const left = n < 0 ? `<b>Ran out</b><small>${-n} days ago</small>` : n > 365 ? `${(n / 365).toFixed(1)}<small> years</small>` : `${n}<small> day${n === 1 ? "" : "s"}</small>`;
+    return `<li><div><b>${esc(c.n)}</b><small>${n < 0 ? "Ran out" : "Runs out"} ${esc(longDate(c.d))}</small></div><div class="left ${cls}">${left}</div>
+      <div class="acts"><button type="button" data-cedit="${i}">Change</button><button type="button" data-cdel="${i}">Remove</button></div></li>`;
+  }).join("");
+  $("cert-push").innerHTML = !CERTS.length ? "" : acct?.active ? "Reminders on: we'll send a notification 60, 30 and 7 days before each one runs out."
+    : `Get a notification 60, 30 and 7 days before each one runs out with the app subscription. <a href="#buy">Get the app</a>`;
+  $("cert-add-sum").textContent = certEdit != null ? "Change " + CERTS[certEdit].n : CERTS.length ? "Add another" : "Add a ticket or document";
+  $("c-cancel").hidden = certEdit == null;
+  if (!CERTS.length) $("cert-add").open = true;
+  $("cert-list").querySelectorAll("[data-cedit]").forEach(b => b.onclick = () => {
+    certEdit = +b.dataset.cedit; $("c-name").value = CERTS[certEdit].n; $("c-date").value = CERTS[certEdit].d;
+    $("cert-add").open = true; drawCerts(); $("cert-add").scrollIntoView({ block: "center" });
+  });
+  $("cert-list").querySelectorAll("[data-cdel]").forEach(b => b.onclick = () => {
+    if (!confirm(`Remove ${CERTS[+b.dataset.cdel].n}?`)) return;
+    CERTS.splice(+b.dataset.cdel, 1); certEdit = null; saveCerts();
+  });
+}
+function saveCerts() { store.set("hej-certs", JSON.stringify(CERTS)); syncLists(); drawCerts(); }
+$("cert-quick").innerHTML = CERT_PRESETS.map(n => `<button type="button">${esc(n)}</button>`).join("");
+$("cert-quick").querySelectorAll("button").forEach(b => b.onclick = () => { $("c-name").value = b.textContent; $("c-date").focus(); });
+$("c-save").onclick = () => {
+  const n = $("c-name").value.trim(), d = $("c-date").value;
+  if (!n || !/^\d{4}-\d\d-\d\d$/.test(d)) return $("cert-msg").textContent = "Put in what it is and the date it runs out.";
+  if (certEdit != null) CERTS[certEdit] = { n, d }; else if (CERTS.length < 30) CERTS.push({ n, d });
+  certEdit = null; $("c-name").value = ""; $("c-date").value = ""; $("cert-add").open = false;
+  $("cert-msg").textContent = "Saved."; saveCerts();
+};
+$("c-cancel").onclick = () => { certEdit = null; $("c-name").value = ""; $("c-date").value = ""; drawCerts(); };
+$("cert-ics").onclick = () => {
+  if (!CERTS.length) return $("cert-msg").textContent = "Add a ticket or document first.";
+  const stamp = new Date().toISOString().replace(/[-:]|\.\d+/g, ""), next = s => { const [y, m, d] = s.split("-").map(Number); return ymd(new Date(y, m - 1, d + 1)).replace(/-/g, ""); };
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Hostile Environment Jobs//Certs//EN", "CALSCALE:GREGORIAN"]
+    .concat(...CERTS.map(c => ["BEGIN:VEVENT", `UID:cert-${c.d}-${c.n.replace(/[^A-Za-z0-9]/g, "")}@hostileenvironmentjobs.com`, `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${c.d.replace(/-/g, "")}`, `DTEND;VALUE=DATE:${next(c.d)}`, `SUMMARY:${c.n.replace(/[,;\\]/g, " ")} runs out`, "TRANSP:TRANSPARENT",
+      ...[60, 30, 7].flatMap(t => ["BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${c.n.replace(/[,;\\]/g, " ")} runs out in ${t} days`, `TRIGGER:-P${t}D`, "END:VALARM"]), "END:VEVENT"]), "END:VCALENDAR");
+  download("expiry-dates.ics", "text/calendar", ics.join("\r\n") + "\r\n");
+  $("cert-msg").textContent = "Open the file to add the dates to your calendar, with reminders 60, 30 and 7 days before.";
+};
+
+// Kit list, jobs and the deployment guide still open with no signal: the last copy is kept on the phone,
+// and the store apps also carry a copy from when they were built.
+function cachedJson(get, key, local) {
+  return get().then(r => r.ok ? r.text() : Promise.reject()).then(t => { store.set(key, t); return JSON.parse(t); })
+    .catch(() => { const t = store.get(key); return t ? JSON.parse(t) : native && local ? fetch(local).then(r => r.json()) : Promise.reject(); });
+}
 
 const fmtDate = t => new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 async function subscribed() {
@@ -406,15 +555,17 @@ async function draw() {
   $("install-android").hidden = ios;
   if (native) {
     const p = await native.product(store.get("hej-code") || undefined);
-    const price = p ? p.price : "$6";
-    $("price").innerHTML = `${esc(price)}<small>a year</small>`;
-    $("pay").textContent = `Subscribe, ${price} a year`;
-    $("renew-perk").textContent = "Renews each year, cancel any time";
-    $("store-terms").innerHTML = `The yearly subscription is charged to your ${native.platform === "ios" ? "Apple ID" : "Google account"} and renews each year unless you cancel at least 24 hours before it ends. Cancel any time in your ${esc(native.store)} subscriptions. <a href="https://hostileenvironmentjobs.com/terms/">Terms</a> · <a href="https://hostileenvironmentjobs.com/privacy/">Privacy</a>`;
+    const price = p ? p.price : "$9.99";
+    $("price").innerHTML = p?.trial ? `Free<small>for a month, then ${esc(price)} a year</small>` : `${esc(price)}<small>a year</small>`;
+    $("pay").textContent = p?.trial ? "Start my free month" : `Subscribe, ${price} a year`;
+    $("renew-perk").textContent = p?.trial ? `First month free, then ${price} a year. Cancel before the month ends and you pay nothing.` : "Renews each year, cancel any time";
+    $("store-terms").innerHTML = `The yearly subscription is charged to your ${native.platform === "ios" ? "Apple ID" : "Google account"} and renews each year unless you cancel at least 24 hours before it ends.${p?.trial ? " With the free month, the first charge is when the month ends, unless you cancel at least 24 hours before." : ""} Cancel any time in your ${esc(native.store)} subscriptions. <a href="https://hostileenvironmentjobs.com/terms/">Terms</a> · <a href="https://hostileenvironmentjobs.com/privacy/">Privacy</a>`;
   } else if (config?.price) {
     const p = config.price, money = new Intl.NumberFormat("en", { style: "currency", currency: p.currency }).format(p.amount);
-    $("price").innerHTML = `${esc(money.replace(/\.00$/, ""))}<small>${p.recurring ? "a year" : "for a year"}</small>`;
-    $("renew-perk").textContent = p.recurring ? "Renews each year, cancel any time" : "One payment covers a whole year";
+    const cost = esc(money.replace(/\.00$/, ""));
+    $("price").innerHTML = p.trial_days ? `Free<small>for a month, then ${cost} a year</small>` : `${cost}<small>${p.recurring ? "a year" : "for a year"}</small>`;
+    $("renew-perk").textContent = p.trial_days ? `First month free, then ${money.replace(/\.00$/, "")} a year. Cancel before the month ends and you pay nothing.` : p.recurring ? "Renews each year, cancel any time" : "One payment covers a whole year";
+    if (p.trial_days && !acct?.paid_until) $("pay").textContent = "Start my free month";
   } else if (config?.free) {
     $("price").innerHTML = "Free<small>while we test it</small>";
     $("renew-perk").textContent = "Free during testing";
@@ -426,6 +577,8 @@ async function draw() {
   $("referred").hidden = Boolean(acct) || !store.get("hej-ref") || Boolean(native);
   drawRefer();
   drawKit();
+  drawCerts();
+  drawMatches();
   $("save-row").hidden = !acct;
   $("account").hidden = !acct;
   $("notify").hidden = true;
@@ -470,7 +623,12 @@ async function load() {
   if (!code) return draw();
   try {
     acct = await api("/api/account?code=" + encodeURIComponent(code));
-    prefs = acct.prefs; store.set("hej-prefs", JSON.stringify(prefs)); drawPrefs(); drawMatches();
+    prefs = acct.prefs; store.set("hej-prefs", JSON.stringify(prefs)); drawPrefs();
+    // A new phone gets the cert dates and saved jobs back from the account; otherwise this phone's lists win.
+    if (!CERTS.length && acct.prefs?.certs?.length) { CERTS = acct.prefs.certs.map(c => ({ n: c.n, d: c.d })); store.set("hej-certs", JSON.stringify(CERTS)); }
+    if (!SAVED.length && acct.prefs?.saved?.length) { SAVED = acct.prefs.saved.map(id => ({ id, title: "Saved job", employer: "" })); store.set("hej-saved", JSON.stringify(SAVED)); }
+    if (JSON.stringify(withLists({}).certs) !== JSON.stringify(acct.prefs?.certs || []) || JSON.stringify(SAVED.map(x => x.id)) !== JSON.stringify(acct.prefs?.saved || [])) syncLists();
+    drawCerts(); drawMatches();
     const sub = await subscribed().catch(() => null);
     if (sub && acct.active && native) native.pushToken().then(token => { store.set("hej-fcm", token); return api("/api/devices", { method: "POST", body: { code: acct.code, kind: "fcm", token } }); }).catch(() => {});
     else if (sub && acct.active) api("/api/devices", { method: "POST", body: { code: acct.code, subscription: sub.toJSON() } }).catch(() => {});
@@ -483,7 +641,7 @@ async function load() {
 
 // In the store apps: make (or reuse) the account, buy through the store, then have the Worker check the store and switch alerts on.
 async function storeAccount() {
-  const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs, native: native.platform } });
+  const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs: withLists(prefs), native: native.platform } });
   store.set("hej-code", r.code);
   return r.code;
 }
@@ -524,7 +682,7 @@ $("pay").onclick = $("renew").onclick = async () => {
     return;
   }
   try {
-    const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs, ref: store.get("hej-ref") } });
+    const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs: withLists(prefs), ref: store.get("hej-ref") } });
     store.set("hej-code", r.code);
     if (r.url) location.href = r.url;
     else { await load(); $("pay-msg").textContent = ""; }
@@ -544,7 +702,7 @@ $("restore").onclick = async () => {
 
 $("save").onclick = async () => {
   $("save-msg").textContent = "Saving…";
-  try { acct = await api("/api/account", { method: "PUT", body: { code: acct.code, prefs } }); $("save-msg").textContent = "Saved. New alerts will follow these."; }
+  try { acct = await api("/api/account", { method: "PUT", body: { code: acct.code, prefs: withLists(prefs) } }); $("save-msg").textContent = "Saved. New alerts will follow these."; }
   catch (err) { $("save-msg").textContent = err.message; }
 };
 
@@ -790,8 +948,8 @@ $("rota-clear").onclick = () => {
 drawRota();
 
 // Tabs. The hash says which one is showing (#rota, #alerts, #jobs, #kit, #account); older links like #buy still land in the right place.
-const TABS = ["rota", "alerts", "jobs", "kit", "account"];
-const INSIDE = { buy: "alerts", prefs: "alerts", install: "alerts", matches: "jobs", refer: "account", tracker: "rota" };
+const TABS = ["rota", "certs", "alerts", "jobs", "kit", "account"];
+const INSIDE = { buy: "alerts", prefs: "alerts", install: "alerts", matches: "jobs", saved: "jobs", refer: "account", tracker: "rota" };
 const appEl = document.querySelector(".app");
 function showTab(t, spot) {
   appEl.dataset.on = t;
@@ -800,6 +958,7 @@ function showTab(t, spot) {
   if (spot && $(spot) && !$(spot).hidden) $(spot).scrollIntoView({ block: "start" }); else scrollTo(0, 0);
 }
 function go(name) {
+  if (name === "saved") { jobsView = "saved"; drawMatches(); }
   const t = TABS.includes(name) ? name : INSIDE[name];
   if (!t) return false;
   if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
@@ -834,7 +993,10 @@ function drawKit() {
 }
 $("kit-print").onclick = () => { document.querySelectorAll("#kit-body details").forEach(d => d.open = true); document.body.classList.add("print-kit"); window.print(); };
 addEventListener("afterprint", () => document.body.classList.remove("print-kit"));
-fetch("/kit.json", { cache: "no-cache" }).then(r => r.json()).then(d => { KIT = d; drawKit(); }).catch(() => {});
-fetch("/jobs.json", { cache: "no-cache" }).then(r => r.json()).then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); }).catch(() => {});
+cachedJson(() => fetch("/kit.json", { cache: "no-cache" }), "hej-kit-cache", "kit.json").then(d => { KIT = d; drawKit(); }).catch(() => {});
+cachedJson(() => fetch("/jobs.json", { cache: "no-cache" }), "hej-jobs-cache", "jobs.json").then(d => { JOBS = Array.isArray(d) ? d : d.jobs || []; drawMatches(); })
+  .catch(() => { $("match-count").textContent = "Can't load jobs with no signal. Try again when you're back online."; drawMatches(); });
+drawCerts();
+drawMatches();
 (API ? api("/api/config").then(c => config = c).catch(err => { $("pay-msg").textContent = "Alerts are unavailable just now: " + err.message; }) : Promise.resolve()).then(load);
 </script>

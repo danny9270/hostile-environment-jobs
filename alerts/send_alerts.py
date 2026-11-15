@@ -3,6 +3,7 @@
 Asks the alerts Worker (ALERTS_API) for every paid-up phone and its preferences, finds listings in jobs.json and
 courses.json it hasn't sent before, waits until each new job's own page is live, and pushes the matches.
 Up to 3 matches go as one notification each; more than that go as one "N new jobs" notification.
+It also reminds subscribers 60, 30 and 7 days before a ticket or document they logged runs out, and 3 days before a saved job closes.
 The very first run only records what's already listed, so nobody gets a flood of old jobs.
 
 Store-app phones (kind "fcm") are sent through Firebase Cloud Messaging, which reaches both iPhones and Android phones.
@@ -82,6 +83,56 @@ def plan(recipients, jobs, courses, seen):
     return out, sent
 
 
+CERT_DAYS = (60, 30, 7)  # reminders go this many days before a ticket or document runs out
+SAVED_DAYS = 3  # and this many days before a saved job closes
+
+
+def nice_date(d):
+    return f"{d.day} {d.strftime('%b %Y')}"
+
+
+def plan_reminders(recipients, jobs, seen, today=None):
+    """Cert expiry and saved-job reminders. Returns ({endpoint: [notification, ...]}, ids now sent).
+    Each reminder is sent once per account; when two thresholds pass between runs, only the nearest one goes."""
+    today = today or TODAY
+    seen = set(seen)
+    by_id = {j["id"]: j for j in jobs if j.get("id")}
+    per_code, sent = {}, []
+    for r in recipients:
+        if r["code"] in per_code:
+            continue
+        p, notes = r.get("prefs") or {}, []
+        for c in p.get("certs") or []:
+            try:
+                d = datetime.date.fromisoformat(c.get("d", ""))
+            except ValueError:
+                continue
+            left, name = (d - today).days, (c.get("n") or "A ticket").strip()[:60]
+            if left < 0:
+                continue
+            due = [t for t in CERT_DAYS if left <= t and f"rem:{r['code']}:c:{name}:{c['d']}:{t}" not in seen]
+            if not due:
+                continue
+            sent += [f"rem:{r['code']}:c:{name}:{c['d']}:{t}" for t in due]
+            when = "today" if left == 0 else "tomorrow" if left == 1 else f"in {left} days"
+            notes.append({"title": f"Your {name} runs out {when}", "body": f"Expires {nice_date(d)}. Tap to see all your dates.",
+                          "url": "/app/#certs", "tag": f"cert-{c['d']}-{re.sub(r'[^A-Za-z0-9]', '', name)[:20]}"})
+        for jid in p.get("saved") or []:
+            j = by_id.get(jid)
+            key = f"rem:{r['code']}:s:{jid}"
+            if not j or key in seen or not re.fullmatch(r"\d{4}-\d\d-\d\d", j.get("closing") or ""):
+                continue
+            left = (datetime.date.fromisoformat(j["closing"]) - today).days
+            if 0 <= left <= SAVED_DAYS:
+                sent.append(key)
+                when = "today" if left == 0 else "tomorrow" if left == 1 else f"in {left} days"
+                notes.append({"title": f"Saved job closes {when}: {j['title']}", "body": f"{j['employer']} · {j['location']}",
+                              "url": f"/jobs/{j['id']}/", "tag": "saved-" + j["id"]})
+        per_code[r["code"]] = notes
+    out = {r["endpoint"]: per_code[r["code"]] for r in recipients if per_code.get(r["code"])}
+    return out, sent
+
+
 def page_live(path):
     try:
         return urllib.request.urlopen(urllib.request.Request(SITE + path, method="HEAD"), timeout=20).status == 200
@@ -157,6 +208,10 @@ def main():
     if not dry:
         jobs = [j for j in jobs if "job:" + j["id"] in seen or page_live(f"/jobs/{j['id']}/")]
     todo, sent = plan(data["recipients"], jobs, courses, seen)
+    reminders, rem_sent = plan_reminders(data["recipients"], jobs, seen)
+    for endpoint, notes in reminders.items():
+        todo.setdefault(endpoint, []).extend(notes)
+    sent += rem_sent
     print(f"{len(sent)} new listings, {sum(map(len, todo.values()))} notifications to {len(todo)} phones")
     if dry:
         print(json.dumps(todo, indent=1))

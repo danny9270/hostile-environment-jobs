@@ -1,7 +1,17 @@
 // Service worker for the job alerts app (/app/). It only shows push notifications and opens the job when one is tapped;
-// pages aren't cached, so the site always shows the latest listings.
+// The app and deployment guide pages are fetched fresh each time, with the last copy kept for when there's no signal.
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", event => event.waitUntil(self.clients.claim()));
+
+const OFFLINE = "hej-offline-v1";
+self.addEventListener("fetch", event => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== "GET" || url.origin !== self.location.origin || !["/app/", "/deploy/"].includes(url.pathname)) return;
+  event.respondWith(fetch(event.request).then(res => {
+    if (res.ok) { const copy = res.clone(); caches.open(OFFLINE).then(c => c.put(url.pathname, copy)); }
+    return res;
+  }).catch(() => caches.match(url.pathname).then(hit => hit || Response.error())));
+});
 
 self.addEventListener("push", event => {
   let n = {};
