@@ -10,169 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-uk-med-health-advisor-roving@hostileenvironmentjobs.com
-DTSTAMP:20261014T000000Z
-DTSTART;VALUE=DATE:20261103
-DTEND;VALUE=DATE:20261104
-SUMMARY:Job closes: Health Advisor (Roving) (UK-Med)
-LOCATION:Manchester\, UK\, with up to 80% deployment
-DESCRIPTION:UK-Med\, Manchester\, UK\, with up to 80% deployment\nDeploy to
-  emergency health responses worldwide\, advising and setting up UK-Med's m
- edical programmes in conflict and disaster zones.\n\nDetails and how to ap
- ply: https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
-URL:https://hostileenvironmentjobs.com/jobs/uk-med-health-advisor-roving/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261104
-DTEND;VALUE=DATE:20261105
-SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
- (Soesterberg\, Netherlands)
-LOCATION:Soesterberg\, Netherlands
-DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
- ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
- d HEAT for NGO\, UN and media staff. Further dates 23 Nov\, 7 Dec\, 16 Dec
-  and through 2027.\n\nBook: https://www.centreforsafety.org/course/basic-h
- eat-course/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_camp
- aign=course-calendar&utm_content=csd-basic-heat-nl
-URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
- stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
- content=csd-basic-heat-nl
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-field-medic-aleppo@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261105
-DTEND;VALUE=DATE:20261106
-SUMMARY:Job closes: Humanitarian Mine Action Field Medic (Danish Refugee Co
- uncil (DRC))
-LOCATION:Aleppo\, Syria (may deploy elsewhere in Syria)
-DESCRIPTION:Danish Refugee Council (DRC)\, Aleppo\, Syria (may deploy elsew
- here in Syria)\nProvides on-site medical cover\, casevac planning and medi
- cal training for DRC mine clearance teams in Syria.\n\nDetails and how to 
- apply: https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-field-medic-aleppo/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-roving-emergency-advisor-hdp@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261105
-DTEND;VALUE=DATE:20261106
-SUMMARY:Job closes: Roving Emergency Advisor\, Humanitarian Disarmament & P
- eacebuilding (Danish Refugee Council (DRC))
-LOCATION:Roving (global\, deployable within 72 hours)
-DESCRIPTION:Danish Refugee Council (DRC)\, Roving (global\, deployable with
- in 72 hours)\nSenior advisor who deploys at short notice to set up and lea
- d mine action and peacebuilding responses in new emergencies.\n\nDetails a
- nd how to apply: https://hostileenvironmentjobs.com/jobs/drc-roving-emerge
- ncy-advisor-hdp/
-URL:https://hostileenvironmentjobs.com/jobs/drc-roving-emergency-advisor-hd
- p/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-mechanical-operator-kharkiv@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261106
-DTEND;VALUE=DATE:20261107
-SUMMARY:Job closes: Humanitarian Mine Action Team Member (Mechanical Operat
- or) (Danish Refugee Council (DRC))
-LOCATION:Kharkiv\, Ukraine
-DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nOperate and m
- aintain mechanical demining machines supporting land release in Kharkiv ob
- last.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs
- /drc-hma-mechanical-operator-kharkiv/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-mechanical-operator-kha
- rkiv/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-sub-national-mine-action-coordinator-south-syria@hostileenviron
- mentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261107
-DTEND;VALUE=DATE:20261108
-SUMMARY:Job closes: Sub-National Mine Action Coordinator\, South Syria (Dan
- ish Refugee Council (DRC))
-LOCATION:Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Damascus\, Syria\nCoordinates hu
- manitarian mine action across southern Syria on behalf of the Mine Action 
- Sector.\n\nDetails and how to apply: https://hostileenvironmentjobs.com/jo
- bs/drc-sub-national-mine-action-coordinator-south-syria/
-URL:https://hostileenvironmentjobs.com/jobs/drc-sub-national-mine-action-co
- ordinator-south-syria/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-operations-manager-beirut@hostileenvironmentjobs.com
-DTSTAMP:20261101T000000Z
-DTSTART;VALUE=DATE:20261109
-DTEND;VALUE=DATE:20261110
-SUMMARY:Job closes: HMA Operations Manager (Danish Refugee Council (DRC))
-LOCATION:Beirut\, Lebanon
-DESCRIPTION:Danish Refugee Council (DRC)\, Beirut\, Lebanon\nLeads technica
- l training\, quality assurance and planning for DRC's mine action operatio
- ns in Lebanon\, including oversight of local partners.\n\nDetails and how 
- to apply: https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manag
- er-beirut/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-operations-manager-beir
- ut/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-team-leader-rural-damascus@hostileenvironmentjobs.com
-DTSTAMP:20261103T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Humanitarian Mine Action Team Leader (Danish Refugee Co
- uncil (DRC))
-LOCATION:Rural Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nLead non
- -technical survey and explosive ordnance risk education teams in Rural Dam
- ascus to IMAS and NMAS standards.\n\nDetails and how to apply: https://hos
- tileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damascus/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-leader-rural-damas
- cus/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-hma-team-member-rural-damascus@hostileenvironmentjobs.com
-DTSTAMP:20261103T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Humanitarian Mine Action Team Member (Danish Refugee Co
- uncil (DRC))
-LOCATION:Rural Damascus\, Syria
-DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nCarry ou
- t non-technical survey\, community liaison and explosive ordnance risk edu
- cation in Rural Damascus.\n\nDetails and how to apply: https://hostileenvi
- ronmentjobs.com/jobs/drc-hma-team-member-rural-damascus/
-URL:https://hostileenvironmentjobs.com/jobs/drc-hma-team-member-rural-damas
- cus/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-nonviolent-peaceforce-security-officer-mykolaiv@hostileenvironmentj
- obs.com
-DTSTAMP:20261024T000000Z
-DTSTART;VALUE=DATE:20261110
-DTEND;VALUE=DATE:20261111
-SUMMARY:Job closes: Safety & Security Officer (Ukrainian nationals) (Nonvio
- lent Peaceforce)
-LOCATION:Mykolaiv\, Ukraine
-DESCRIPTION:Nonviolent Peaceforce\, Mykolaiv\, Ukraine\nSupport safety and 
- security management for humanitarian protection teams in southern Ukraine.
- \n\nDetails and how to apply: https://hostileenvironmentjobs.com/jobs/nonv
- iolent-peaceforce-security-officer-mykolaiv/
-URL:https://hostileenvironmentjobs.com/jobs/nonviolent-peaceforce-security-
- officer-mykolaiv/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:course-pcm-imas-eod-1-2-ukr-nov-2026@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261116
@@ -189,6 +26,72 @@ DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. See
 URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
  leenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_con
  tent=pcm-imas-eod-1-2-ukr-nov-2026
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-safety-assistant-barvinkove@hostileenvironmentjobs.com
+DTSTAMP:20261107T000000Z
+DTSTART;VALUE=DATE:20261119
+DTEND;VALUE=DATE:20261120
+SUMMARY:Job closes: Safety Assistant (Danish Refugee Council (DRC))
+LOCATION:Barvinkove\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Barvinkove\, Ukraine\nSupport DR
+ C's Barvinkove safety team with safety plans\, staff briefings\, documenta
+ tion and safety equipment.\n\nDetails and how to apply: https://hostileenv
+ ironmentjobs.com/jobs/drc-safety-assistant-barvinkove/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-barvinkove
+ /
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-safety-officer-partnership-kharkiv@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:Job closes: Safety Officer (Partnership Officer) (Danish Refugee Co
+ uncil (DRC))
+LOCATION:Kharkiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nSupport the s
+ afety of DRC's local partners in Kharkiv through safety and first aid trai
+ ning\, capacity assessments and safety plans.\n\nDetails and how to apply:
+  https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-kh
+ arkiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-
+ kharkiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
+ (Soesterberg\, Netherlands)
+LOCATION:Soesterberg\, Netherlands
+DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
+ ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
+ d HEAT for NGO\, UN and media staff. Further dates 7 Dec\, 16 Dec and thro
+ ugh 2027.\n\nBook: https://www.centreforsafety.org/course/basic-heat-cours
+ e/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=cour
+ se-calendar&utm_content=csd-basic-heat-nl
+URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
+ stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
+ content=csd-basic-heat-nl
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-hma-translator-kyiv@hostileenvironmentjobs.com
+DTSTAMP:20261111T000000Z
+DTSTART;VALUE=DATE:20261123
+DTEND;VALUE=DATE:20261124
+SUMMARY:Job closes: Translator (Humanitarian Mine Action Officer) (Danish R
+ efugee Council (DRC))
+LOCATION:Kyiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Kyiv\, Ukraine\nInterpret and tr
+ anslate for DRC's international mine action team\, including technical SOP
+ s and training materials.\n\nDetails and how to apply: https://hostileenvi
+ ronmentjobs.com/jobs/drc-hma-translator-kyiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-hma-translator-kyiv/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
@@ -235,10 +138,10 @@ SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training)
 LOCATION:Nairobi\, Kenya
 DESCRIPTION:Centre for Safety and Development (CSD)\, Nairobi\, Kenya. 3 da
  ys. €3\,200 incl. 2 nights\nThe same CSD HEAT course run in Nairobi\, ha
- ndy for East Africa based staff. 2027 dates from January.\n\nBook: https:/
- /www.centreforsafety.org/course/basic-heat-course/?utm_source=hostileenvir
- onmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=cs
- d-basic-heat-nairobi
+ ndy for East Africa based staff. 2027 dates from March.\n\nBook: https://w
+ ww.centreforsafety.org/course/basic-heat-course/?utm_source=hostileenviron
+ mentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=csd-
+ basic-heat-nairobi
 URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
  stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
  content=csd-basic-heat-nairobi
@@ -296,6 +199,27 @@ DESCRIPTION:3rg Security Training\, Poole\, Dorset\, UK. 23 days. £3\,300
 URL:https://www.3rg.co.uk/store/p/4th-26th-january-2027-close-protection-fr
  ec-3-course-deposit?utm_source=hostileenvironmentjobs&utm_medium=referral&
  utm_campaign=course-calendar&utm_content=3rg-cp-frec3-jan-2027
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-cuas-missiles-eod-jan-2027@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20270111
+DTEND;VALUE=DATE:20270112
+SUMMARY:Course starts: Counter-UAS\, Missiles and Guided Weapons EOD Operat
+ ors Course (Kosovo)
+LOCATION:Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
+ eeks (11 Jan - 5 Feb). On request\nNew course for IMAS EOD Level 3/3+ oper
+ ators on recognising and rendering safe UAS\, FPV drones\, missiles and gu
+ ided weapons.\n\nBook: https://www.pcm-erw.com/training-courses/technical-
+ courses/counter-unmanned-aerial-systems-and-missiles-eod-operators-course/
+ ?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=course
+ -calendar&utm_content=pcm-cuas-missiles-eod-jan-2027
+URL:https://www.pcm-erw.com/training-courses/technical-courses/counter-unma
+ nned-aerial-systems-and-missiles-eod-operators-course/?utm_source=hostilee
+ nvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_conten
+ t=pcm-cuas-missiles-eod-jan-2027
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
@@ -371,6 +295,24 @@ DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. 4 w
 URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
  leenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_con
  tent=pcm-imas-eod-3plus-mar-2027
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-pcm-l5-diploma-cmd-mar-2027@hostileenvironmentjobs.com
+DTSTAMP:20261105T000000Z
+DTSTART;VALUE=DATE:20270329
+DTEND;VALUE=DATE:20270330
+SUMMARY:Course starts: L5 Diploma in CMD (Peja\, Kosovo)
+LOCATION:Peja\, Kosovo
+DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Peja\, Koso
+ vo. 5 days. On request\nNew management diploma for IMAS EOD Level 3+ techn
+ icians with 2+ years at Level 3\, preparing them for programme leadership 
+ roles.\n\nBook: https://www.pcm-erw.com/dip-cmd/?utm_source=hostileenviron
+ mentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_content=pcm-
+ l5-diploma-cmd-mar-2027
+URL:https://www.pcm-erw.com/dip-cmd/?utm_source=hostileenvironmentjobs&utm_
+ medium=referral&utm_campaign=course-calendar&utm_content=pcm-l5-diploma-cm
+ d-mar-2027
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

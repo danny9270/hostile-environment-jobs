@@ -1,43 +1,119 @@
 [
  {
-  "id": "drc-hma-team-leader-rural-damascus",
-  "title": "Humanitarian Mine Action Team Leader",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Rural Damascus, Syria",
+  "id": "gardaworld-security-operations-manager-basra",
+  "title": "Security Operations Manager",
+  "employer": "GardaWorld",
+  "category": "Security",
+  "location": "Basra, Iraq",
   "region": "Middle East",
-  "contract": "National contract, 1 year (extendable)",
-  "salary": "DRC grade G (amount not stated)",
+  "contract": "Independent contractor, open-ended, 8 weeks on / 4 off",
+  "salary": "Not stated (accommodation, insurance, flights and life support included)",
   "requirements": [
-   "Previous mine action team leader experience",
-   "Non-technical survey experience plus 1 year EORE",
-   "NTS course certificate; IMAS level 3 desirable",
-   "English and Arabic"
+   "5+ years military, police or law enforcement",
+   "2+ years Iraq experience",
+   "Site security and manned guarding in high-risk environments, ideally oil and gas",
+   "Current FPOS-I or MIRA first aid and an accredited CP course"
   ],
-  "summary": "Lead non-technical survey and explosive ordnance risk education teams in Rural Damascus to IMAS and NMAS standards.",
-  "closing": "2026-11-10",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177094&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-11-03"
+  "summary": "Run a 24/7 local guard force and site security plans protecting staff on an oil and gas project in Basra.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Basra-Operations-Manager-Basra-Iraq/1449740300/",
+  "posted": "2026-11-15"
  },
  {
-  "id": "drc-hma-team-member-rural-damascus",
-  "title": "Humanitarian Mine Action Team Member",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Rural Damascus, Syria",
-  "region": "Middle East",
-  "contract": "National contract, 1 year (extendable)",
-  "salary": "DRC grade J (amount not stated)",
+  "id": "weston-uxo-technician-ii-hawthorne",
+  "title": "UXO Technician II",
+  "employer": "Weston Solutions",
+  "category": "EOD",
+  "location": "Hawthorne, Nevada, USA",
+  "region": "Americas",
+  "contract": "Field project",
+  "salary": "$61,162 - $99,949",
   "requirements": [
-   "NTS/EORE certificate from a recognised mine action training provider",
-   "Basic mine and UXO recognition for Syria",
-   "Map, compass and GPS skills",
-   "Fluent Arabic and English"
+   "Prior military EOD or 3 years munitions response / range clearance",
+   "Graduate of a formal UXO training course or EOD assistant courses",
+   "Able to operate detection and geophysical sensing equipment"
   ],
-  "summary": "Carry out non-technical survey, community liaison and explosive ordnance risk education in Rural Damascus.",
-  "closing": "2026-11-10",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177095&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-11-03"
+  "summary": "Identify and classify UXO and discarded military munitions, move safe items and supervise UXO sweep personnel.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.jobvite.com/weston/job/oIzqAfw1",
+  "posted": "2026-11-15"
+ },
+ {
+  "id": "gardaworld-canine-trainer-iraq",
+  "title": "Canine Trainer",
+  "employer": "GardaWorld",
+  "category": "K9",
+  "location": "Balad, Iraq",
+  "region": "Middle East",
+  "contract": "Independent contractor, open-ended, 15 weeks on / 5 off",
+  "salary": "Not stated (accommodation, food, insurance and rotation flights included)",
+  "requirements": [
+   "Certification as an explosive detection working dog trainer",
+   "3+ years as a military, law enforcement or commercial security canine trainer in the last 10 years"
+  ],
+  "summary": "Validate and train explosive detection dogs in Iraq, keeping training records and overseeing their daily health and welfare.",
+  "closing": "Rolling",
+  "apply_url": "https://jobs.garda.com/job/Baghdad-Canine-Trainer-Iraq-Iraq/1449315600/",
+  "posted": "2026-11-11"
+ },
+ {
+  "id": "drc-hma-translator-kyiv",
+  "title": "Translator (Humanitarian Mine Action Officer)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Other",
+  "location": "Kyiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract, 6 months (extendable)",
+  "salary": "From EUR 2,025 gross per month",
+  "requirements": [
+   "2+ years in a similar role or an international organisation",
+   "Advanced English and fluent Ukrainian",
+   "Strong communication and negotiation skills"
+  ],
+  "summary": "Interpret and translate for DRC's international mine action team, including technical SOPs and training materials.",
+  "closing": "2026-11-23",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177146&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-11"
+ },
+ {
+  "id": "drc-safety-assistant-barvinkove",
+  "title": "Safety Assistant",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Barvinkove, Ukraine",
+  "region": "Europe",
+  "contract": "National contract (3-month probation, then subject to funding)",
+  "salary": "From EUR 1,465 gross per month",
+  "requirements": [
+   "6+ months experience in a related field, ideally with an international NGO",
+   "Bachelor's degree in safety or a related field",
+   "MS Office, especially Excel and PowerPoint",
+   "NGO safety/security experience and English B1+ an advantage"
+  ],
+  "summary": "Support DRC's Barvinkove safety team with safety plans, staff briefings, documentation and safety equipment.",
+  "closing": "2026-11-19",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177119&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-07"
+ },
+ {
+  "id": "drc-safety-officer-partnership-kharkiv",
+  "title": "Safety Officer (Partnership Officer)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Kharkiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract (Ukrainian citizens or residence permit holders)",
+  "salary": "From EUR 2,025 gross per month",
+  "requirements": [
+   "1+ year NGO safety or incident management experience",
+   "Experience delivering safety training and capacity building",
+   "Context or security analysis experience",
+   "Full professional English and Ukrainian"
+  ],
+  "summary": "Support the safety of DRC's local partners in Kharkiv through safety and first aid training, capacity assessments and safety plans.",
+  "closing": "2026-11-20",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177115&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-05"
  },
  {
   "id": "errg-uxo-technician-i",
@@ -78,86 +154,6 @@
   "closing": "Rolling",
   "apply_url": "https://job-boards.greenhouse.io/errg/jobs/5388022008",
   "posted": "2026-11-03"
- },
- {
-  "id": "drc-hma-operations-manager-beirut",
-  "title": "HMA Operations Manager",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Management",
-  "location": "Beirut, Lebanon",
-  "region": "Middle East",
-  "contract": "National contract, 12 months, renewable",
-  "salary": "Not stated (DRC band E-2)",
-  "requirements": [
-   "3-4+ years humanitarian mine action experience in an international context",
-   "IMAS EOD Level 3 required, Level 3+ preferred",
-   "Master's degree in a related field",
-   "Fluent English and Arabic"
-  ],
-  "summary": "Leads technical training, quality assurance and planning for DRC's mine action operations in Lebanon, including oversight of local partners.",
-  "closing": "2026-11-09",
-  "apply_url": "https://drc.ngo/jobs/job?id=176696",
-  "posted": "2026-11-01"
- },
- {
-  "id": "drc-roving-emergency-advisor-hdp",
-  "title": "Roving Emergency Advisor, Humanitarian Disarmament & Peacebuilding",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Management",
-  "location": "Roving (global, deployable within 72 hours)",
-  "region": "Worldwide",
-  "contract": "Expatriate contract, 12 months",
-  "salary": "Not stated (DRC band F)",
-  "requirements": [
-   "5+ years humanitarian mine action experience",
-   "IMAS EOD Level 3 and previous Operations Manager experience",
-   "Management experience in emergency or insecure settings",
-   "Experience with IMAS accreditation"
-  ],
-  "summary": "Senior advisor who deploys at short notice to set up and lead mine action and peacebuilding responses in new emergencies.",
-  "closing": "2026-11-05",
-  "apply_url": "https://drc.ngo/jobs/job?id=176352",
-  "posted": "2026-11-01"
- },
- {
-  "id": "drc-sub-national-mine-action-coordinator-south-syria",
-  "title": "Sub-National Mine Action Coordinator, South Syria",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Management",
-  "location": "Damascus, Syria",
-  "region": "Middle East",
-  "contract": "National contract, 6 months initially (seconded to the Mine Action Sector)",
-  "salary": "Not stated (DRC grade G)",
-  "requirements": [
-   "3-5 years humanitarian experience including multi-agency coordination",
-   "Understanding of cluster and AoR coordination systems",
-   "Professional fluency in Arabic and English",
-   "Relevant degree or equivalent field experience"
-  ],
-  "summary": "Coordinates humanitarian mine action across southern Syria on behalf of the Mine Action Sector.",
-  "closing": "2026-11-07",
-  "apply_url": "https://drc.ngo/jobs/job?id=177069",
-  "posted": "2026-11-01"
- },
- {
-  "id": "drc-hma-field-medic-aleppo",
-  "title": "Humanitarian Mine Action Field Medic",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Medical",
-  "location": "Aleppo, Syria (may deploy elsewhere in Syria)",
-  "region": "Middle East",
-  "contract": "National contract, 9 months, renewable",
-  "salary": "Not stated (DRC grade G)",
-  "requirements": [
-   "Certified paramedic, nurse or equivalent with emergency and trauma care experience",
-   "2+ years medical support in humanitarian or emergency settings",
-   "IMAS Intermediate Care Provider training or equivalent",
-   "Fluent Arabic and advanced English"
-  ],
-  "summary": "Provides on-site medical cover, casevac planning and medical training for DRC mine clearance teams in Syria.",
-  "closing": "2026-11-05",
-  "apply_url": "https://drc.ngo/jobs/job?id=177059",
-  "posted": "2026-11-01"
  },
  {
   "id": "drc-safety-assistant-radio-operator-kyiv",
@@ -260,25 +256,6 @@
   "posted": "2026-10-29"
  },
  {
-  "id": "gardaworld-risk-analyst-intern-dubai",
-  "title": "Risk Analyst Intern",
-  "employer": "GardaWorld",
-  "category": "Security Risk & Analysis",
-  "location": "Dubai, UAE",
-  "region": "Middle East",
-  "contract": "Internship",
-  "salary": "Not stated",
-  "requirements": [
-   "Current or recent graduate in security studies, international relations, conflict studies or similar",
-   "Strong interest in high-risk environments",
-   "Comfortable with large datasets, mapping and analytical tools"
-  ],
-  "summary": "Supports senior analysts producing security risk reporting on Haiti and Sudan, including incident monitoring, mapping and database work.",
-  "closing": "Rolling",
-  "apply_url": "https://jobs.garda.com/job/Dubai-Risk-Analyst-Intern-UAE/1430483200/",
-  "posted": "2026-10-29"
- },
- {
   "id": "brimstone-uxo-engineer-uk",
   "title": "UXO Engineer",
   "employer": "Brimstone UXO",
@@ -375,26 +352,6 @@
   "closing": "Rolling",
   "apply_url": "https://job-boards.greenhouse.io/errg/jobs/4576015008",
   "posted": "2026-10-27"
- },
- {
-  "id": "drc-hma-mechanical-operator-kharkiv",
-  "title": "Humanitarian Mine Action Team Member (Mechanical Operator)",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Survey & Clearance",
-  "location": "Kharkiv, Ukraine",
-  "region": "Europe",
-  "contract": "National contract",
-  "salary": "From EUR 1,080 gross per month",
-  "requirements": [
-   "3+ years operating demining machines, earth-movers or heavy vehicles",
-   "21 days DRC training on the GCS 200",
-   "Driving licence category B",
-   "Good Ukrainian"
-  ],
-  "summary": "Operate and maintain mechanical demining machines supporting land release in Kharkiv oblast.",
-  "closing": "2026-11-06",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177029&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-10-28"
  },
  {
   "id": "silent-professionals-maritime-anti-piracy",
@@ -497,26 +454,6 @@
   "posted": "2026-10-21"
  },
  {
-  "id": "nonviolent-peaceforce-security-officer-mykolaiv",
-  "title": "Safety & Security Officer (Ukrainian nationals)",
-  "employer": "Nonviolent Peaceforce",
-  "category": "Security",
-  "location": "Mykolaiv, Ukraine",
-  "region": "Europe",
-  "contract": "Full-time",
-  "salary": "Not stated",
-  "requirements": [
-   "Ukrainian nationals only",
-   "2+ years humanitarian security or related experience",
-   "English, Ukrainian and Russian",
-   "Valid Ukrainian driving licence"
-  ],
-  "summary": "Support safety and security management for humanitarian protection teams in southern Ukraine.",
-  "closing": "2026-11-10",
-  "apply_url": "https://nonviolentpeaceforce.bamboohr.com/careers/712",
-  "posted": "2026-10-24"
- },
- {
   "id": "acuity-pss-paramedic-wps3-iraq",
   "title": "PSS/Paramedic, WPS III",
   "employer": "Acuity International",
@@ -535,24 +472,5 @@
   "closing": "Rolling",
   "apply_url": "https://acuityinternational.wd5.myworkdayjobs.com/en-US/External/job/PSS-Paramedic--PSS-PARA----WPS-III--Iraq-_JR6407-1",
   "posted": "2026-10-15"
- },
- {
-  "id": "uk-med-health-advisor-roving",
-  "title": "Health Advisor (Roving)",
-  "employer": "UK-Med",
-  "category": "Medical",
-  "location": "Manchester, UK, with up to 80% deployment",
-  "region": "Worldwide",
-  "contract": "12 months, possible extension",
-  "salary": "Up to GBP 42,440",
-  "requirements": [
-   "Doctor or registered nurse",
-   "Significant humanitarian response experience (conflict, disaster, outbreaks)",
-   "Able to deploy internationally at short notice"
-  ],
-  "summary": "Deploy to emergency health responses worldwide, advising and setting up UK-Med's medical programmes in conflict and disaster zones.",
-  "closing": "2026-11-03",
-  "apply_url": "https://grnh.se/t859aukp4us",
-  "posted": "2026-10-14"
  }
 ]

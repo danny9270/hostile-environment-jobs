@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-04T12:32:59Z",
+ "updated": "2026-11-14T11:45:17Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -305,9 +305,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/eritrea",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-12",
-    "reviewed": "2026-10-12",
+    "updated": "2026-11-09",
+    "reviewed": "2026-11-09",
     "changes": [
+     {
+      "date": "2026-11-09",
+      "note": "Removal of information about the temporary withdrawal of dependants of British Embassy staff from Eritrea ('Warnings and insurance' page)."
+     },
      {
       "date": "2026-10-12",
       "note": "Addition of information about the temporary withdrawal of dependants of British Embassy staff from Eritrea (‘Warnings and insurance’ page)."
@@ -323,10 +327,6 @@
      {
       "date": "2026-04-27",
       "note": "Updated information on local security measures (‘Safety and security’ page)."
-     },
-     {
-      "date": "2026-01-27",
-      "note": "Updated information about getting in touch with the British Embassy in Asmara if you need urgent help (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -553,9 +553,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/kenya",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-30",
-    "reviewed": "2026-10-30",
+    "updated": "2026-11-06",
+    "reviewed": "2026-11-06",
     "changes": [
+     {
+      "date": "2026-11-06",
+      "note": "FCDO now advises against all but essential travel to Moyale Town and up to 5km around it, including to the border with Ethiopia. Updated information about the Kenya-Ethiopia border ('Warnings and insurance' and 'Regional risks' pages)."
+     },
      {
       "date": "2026-10-30",
       "note": "Updated information about the Kenya-Ethiopia border (‘Regional risks’ page)."
@@ -571,10 +575,6 @@
      {
       "date": "2026-10-13",
       "note": "Updated information about travel health insurance requirements for entry into Kenya (See ‘Mandatory Travel Insurance’ on the ‘Entry requirements’ page)."
-     },
-     {
-      "date": "2026-10-09",
-      "note": "New information about mandatory travel health insurance requirement for foreign visitors staying in Kenya (‘Entry requirements’ page)."
      }
     ],
     "warnings": [
@@ -616,7 +616,7 @@
      },
      {
       "heading": "Kenya-Ethiopia border",
-      "text": "Violence in the Ethiopian town of Moyale (October 2026) has affected the border area. There have been reports of stray gunfire on the Kenyan side of the border and disruption at the Moyale border crossing. Vehicles crossing the Kenya-Ethiopia border at Moyale should stay on the A2 road and travel directly to Marsabit before breaking your journey, rather than staying at the rest house in Sololo. Check FCDO Travel…",
+      "text": "Since October 2026, violence in the Ethiopian town of Moyale has affected the border area, including on the Kenyan side. There have been reports of stray gunfire, unexploded ordnance and projectiles landing in and up to 3km around the Kenyan town of Moyale, resulting in fatalities and injuries. There have also been reports of disruption at the Moyale border crossing. The security situation remains unpredictable and…",
       "url": "https://www.gov.uk/foreign-travel-advice/kenya/regional-risks"
      }
     ],
@@ -965,9 +965,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/uganda",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-28",
-    "reviewed": "2026-10-28",
+    "updated": "2026-11-06",
+    "reviewed": "2026-11-06",
     "changes": [
+     {
+      "date": "2026-11-06",
+      "note": "Updated information about precautionary measures in response to the Ebola outbreak in the region (‘Health’ page)."
+     },
      {
       "date": "2026-10-28",
       "note": "Updated information about precautionary measures around the Ebola outbreak in the region (‘Entry requirements’ and ‘Health’ pages)."
@@ -983,10 +987,6 @@
      {
       "date": "2026-08-28",
       "note": "Updated information about exemptions to travel restrictions on National cleaning days ('Safety and security' page)."
-     },
-     {
-      "date": "2026-07-27",
-      "note": "Updated information about a new monthly curfew (See 'National cleaning day' on the 'Safety and security' page)."
      }
     ],
     "warnings": [

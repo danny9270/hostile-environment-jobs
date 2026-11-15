@@ -5,7 +5,8 @@
 name: Weekly Sitrep
 on:
   schedule:
-    - cron: "0 5 * * 1"
+    # GitHub often starts scheduled runs hours late, so build early; Kit still holds the email until 07:00 UTC.
+    - cron: "30 0 * * 1"
   workflow_dispatch:
 permissions:
   contents: write
