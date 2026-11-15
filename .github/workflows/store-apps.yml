@@ -121,9 +121,10 @@ jobs:
           if [ "$RELEASE" = true ] && [ -n "$ASC_KEY_P8" ] && [ -n "$APPLE_TEAM_ID" ] && [ "$NO_FIREBASE" != true ]; then
             KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"; printf '%s\n' "$ASC_KEY_P8" > "$KEY"
             sed -i '' 's#<string>development</string>#<string>production</string>#' App/App.entitlements
+            # Sign with "Apple Distribution" so Xcode makes an App Store profile, which needs no registered test iPhones.
             AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEY -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
             xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-              -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+              -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY="Apple Distribution" \
               MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH archive | tail -40
             cat > "$RUNNER_TEMP/export.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
