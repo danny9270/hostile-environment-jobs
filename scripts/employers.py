@@ -9,6 +9,7 @@ An employer with "partner": true is a founding partner: the featured employer pl
 A partner (founding partner, or any profile with an offer) whose "joined" date is in the last NEW_DAYS days
 shows in the "New partners" strip on the home page, and in the first Sitrep after it joined.
 """
+import urllib.parse
 import datetime
 import json
 import re
@@ -148,6 +149,7 @@ def profile_page(x, jobs, page, e, closing_text, site, courses=()):
   {about}
   {f"<dl>{dl}</dl>" if dl else ""}
   {f'<div class="actions">{links}</div>' if links else ""}
+  <p class="who" style="margin-top:16px"><a href="/companies/?company={urllib.parse.quote(x['name'])}">Reviews from people who've worked for {e(x['name'])}</a></p>
 </article>
 <h2>Open jobs at {e(x['name'])}</h2>
 {cards}

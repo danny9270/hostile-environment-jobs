@@ -1,4 +1,4 @@
-"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /leavers/ hub, the /app/ job alerts page, the /candidates/ talent pool, the /closing-soon/ list, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
+"""Build a static page for each open job, a /jobs/ index, the /pay/ guide, the /deploy/ guide, the /leavers/ hub, the /app/ job alerts page, the /candidates/ talent pool, the /closing-soon/ list, /companies/ reviews, /work/ landing pages, sitemap.xml and calendar.ics from jobs.json and courses.json.
 
 The main site is one page with #hash views, which Google can't index one job at a time.
 These pages give every job its own address with JobPosting data for Google's job search.
@@ -11,6 +11,7 @@ import json
 import pathlib
 import re
 import shutil
+import urllib.parse
 
 import employers as paid
 import closing_soon as soon
@@ -149,6 +150,7 @@ def job_page(j, employers=()):
     <a class="btn primary" href="{e(j['apply_url'])}" target="_blank" rel="noopener">Apply on employer's site</a>
     <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u={e(SITE + path)}" target="_blank" rel="noopener">Share on Facebook</a>
   </div>
+  <p class="who" style="margin-top:16px"><a href="/companies/?company={urllib.parse.quote(j['employer'])}">Read what operators say about working for {e(j['employer'])}</a> or <a href="/companies/?company={urllib.parse.quote(j['employer'])}&amp;write=1">review them anonymously</a>.</p>
 </article>"""
     title = f"{j['title']}, {j['location']} | Hostile Environment Jobs"
     desc = f"{j['employer']}: {j['summary']}"
@@ -343,6 +345,14 @@ def main():
         "Leaving the forces for EOD, security, medic or mine action work? Resettlement funding (ELC, IRTC, SLC), which courses count, what your trade fits and a first contract checklist.",
         "/leavers/", lv[len(lv_style):], lv_style).replace('<a href="/leavers/">', '<a href="/leavers/" aria-current="page">', 1))
 
+    # Company reviews: reads employer-reviews.json, jobs.json and employers.json in the browser.
+    co = (ROOT / "scripts" / "companies.html").read_text()
+    co_style = re.match(r"\s*<style>.*?</style>\n", co, re.S).group(0)
+    (ROOT / "companies").mkdir(exist_ok=True)
+    (ROOT / "companies" / "index.html").write_text(page("Company reviews: what it's like to work for them | Hostile Environment Jobs",
+        "Anonymous reviews of EOD, mine action, security and hostile environment employers by the people who've worked for them: pay, rotations, safety and management.",
+        "/companies/", co[len(co_style):], co_style).replace('<a href="/companies/">', '<a href="/companies/" aria-current="page">', 1))
+
     # How it works: the guide video page.
     gd = (ROOT / "scripts" / "guide.html").read_text()
     gd_style = re.match(r"\s*<style>.*?</style>\n", gd, re.S).group(0)
@@ -351,7 +361,7 @@ def main():
         "Watch how to search EOD, mine action, security and medic jobs, find courses, post a job free and use the pay guide, CV builder, deployment guide, talent pool and app.",
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly"), (SITE + "/companies/", "weekly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + ([(SITE + "/deals/", "weekly")] if any(x.get("offer") for x in employers) else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")

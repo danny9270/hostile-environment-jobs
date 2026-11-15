@@ -202,15 +202,35 @@ dialog .foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 
 
 <section id="reviews" hidden>
   <h1>Reviews</h1>
-  <p class="small">Reviews sent from the site wait below until you check them. <b>Publish</b> lets you tidy the wording first, then puts it on the site; <b>Reject</b> deletes it. Leave out anything abusive, names of instructors, or details that shouldn't be public.</p>
+  <p class="small">Course and company reviews sent from the site wait below until you check them. <b>Publish</b> lets you tidy the wording first, then puts it on the site; <b>Reject</b> deletes it. Leave out anything abusive, names of instructors, or details that shouldn't be public. Either way the reviewer's email is deleted once you've dealt with it, so email them first if you need to ask anything.</p>
+  <details class="card" style="margin:12px 0"><summary><b>Checking a company review</b> (read before publishing)</summary>
+    <p class="small">Company reviews carry more risk than course reviews: a company can sue over a review it says is false and damaging. Publishing honest opinions about someone's own experience is fine; publishing damaging claims as fact is where trouble starts. This is a plain guide, not legal advice; if a company threatens legal action, get advice before you reply.</p>
+    <p class="small"><b>Fine to publish:</b> what happened to them ("my pay was six weeks late twice"), and their opinion of it ("management didn't listen", "I wouldn't go back"). Good and bad reviews alike.</p>
+    <p class="small"><b>Edit out, or reject if too much has to go:</b></p>
+    <ul class="small">
+      <li>Names of any person (managers, team leaders, colleagues, clients), or details that point to one person ("the ops manager in Kabul in 2023").</li>
+      <li>Accusations of crimes or serious wrongdoing stated as fact: fraud, theft, bribery, assault, falsified clearance or safety records, unpaid wages "stolen". Ask the reviewer to say what happened to them instead, or reject it.</li>
+      <li>Anything that could put people at risk or breach a contract: exact sites, routes, movement timings, security set-ups, client names, contract details.</li>
+      <li>Abuse, slurs and swearing at people, and anything about someone's private life.</li>
+    </ul>
+    <p class="small"><b>Reject:</b> reviews that look fake (written by the company about itself or a rival, several near-identical ones arriving together, or from someone who clearly didn't work there), and a second review from the same person about the same job. Don't hold back a genuine review because it's negative, or because the company advertises with us: hiding bad reviews, or letting paid companies get rid of them, breaks UK consumer law and would cost the site its trust.</p>
+    <p class="small"><b>Edits:</b> trim, don't rewrite. Never change the stars or the meaning. Put the company name the way it's usually written (as in its jobs or profile) so all its reviews land together.</p>
+    <p class="small"><b>If a company complains:</b> take the review down straight away (Delete below, or copy it somewhere first) while you look into it, and reply within two working days. If the review keeps to the rules above, offer to publish their reply under it (Edit &gt; Company's reply) and put it back. Never tell a company who wrote a review, or hint at it.</p>
+  </details>
   <h2>Waiting for approval</h2>
   <div class="list" id="pending-list"><div class="empty">Loading...</div></div>
-  <h2 style="margin-top:22px">Published</h2>
+  <h2 style="margin-top:22px">Published course reviews</h2>
   <div class="toolbar">
     <input id="review-q" type="search" placeholder="Search course, provider, reviewer">
     <button class="btn primary" id="add-review">Add review</button>
   </div>
   <div class="list" id="review-list"></div>
+  <h2 style="margin-top:22px">Published company reviews</h2>
+  <div class="toolbar">
+    <input id="ereview-q" type="search" placeholder="Search company, role, review">
+    <button class="btn primary" id="add-ereview">Add company review</button>
+  </div>
+  <div class="list" id="ereview-list"></div>
 </section>
 
 <section id="talent" hidden>
@@ -332,10 +352,11 @@ const isDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s || "");
 
 let TOKEN = null;
 const files = { jobs: { path: "jobs.json", data: [], sha: null }, courses: { path: "courses.json", data: [], sha: null }, reviews: { path: "reviews.json", data: [], sha: null },
+                ereviews: { path: "employer-reviews.json", data: [], sha: null },
                 employers: { path: "employers.json", data: [], sha: null } };
-const NOUN = { jobs: "job", courses: "course", reviews: "review", employers: "employer profile" };
+const NOUN = { jobs: "job", courses: "course", reviews: "review", ereviews: "company review", employers: "employer profile" };
 const TABS = ["dash", "jobs", "courses", "reviews", "talent", "featured", "alertsapp", "payments", "settings"];
-const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : kind === "employers" ? x.name : x.title;
+const itemName = (kind, x) => kind === "reviews" ? `${x.name || "Anonymous"} on ${x.course}` : kind === "ereviews" ? `${x.role || "Anonymous"} on ${x.employer}` : kind === "employers" ? x.name : x.title;
 
 function toast(msg, ms = 4000) {
   const t = $("toast"); t.textContent = msg; t.hidden = false;
@@ -363,6 +384,7 @@ const serialise = {
   jobs: arr => JSON.stringify(arr, null, 1),
   courses: arr => "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n",
   reviews: arr => arr.length ? "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n" : "[]\n",
+  ereviews: arr => arr.length ? "[\n" + arr.map(c => " " + JSON.stringify(c)).join(",\n") + "\n]\n" : "[]\n",
   employers: arr => JSON.stringify(arr, null, 1) + "\n",
 };
 
@@ -504,6 +526,26 @@ function renderReviews() {
     </div>`).join("") : `<div class="empty">${files.reviews.data.length ? "No reviews match." : "No reviews yet."}</div>`;
 }
 
+// Company reviews (/companies/) live in employer-reviews.json. Always anonymous; the role and dates are all that's shown.
+const SCORE_KEYS = [["pay", "Paid on time"], ["rotation", "Rotations kept"], ["safety", "Safety, kit and medical"], ["management", "Management and support"]];
+const starRow = n => "★".repeat(n) + "☆".repeat(5 - n);
+function renderEReviews() {
+  const q = $("ereview-q").value.trim().toLowerCase();
+  const rows = files.ereviews.data.filter(r => !q || [r.employer, r.role, r.headline, r.pros, r.cons, r.reply].join(" ").toLowerCase().includes(q));
+  $("ereview-list").innerHTML = rows.length ? rows.map(r => `
+    <div class="item">
+      <div>
+        <div class="t">${starRow(r.rating)} ${esc(r.employer)}${r.reply ? ' <span class="badge live">replied</span>' : ""}</div>
+        <div class="m">${esc(r.role || "")}${r.region ? " · " + esc(r.region) : ""} · ${r.status === "current" ? "works there now" : "used to work there"}${isDate(r.posted) ? " · added " + fmtDate(r.posted) : ""}</div>
+        <div class="m">${r.headline ? `<b>${esc(r.headline)}</b> ` : ""}${esc([r.pros, r.cons].filter(Boolean).join(" / ").slice(0, 160))}${[r.pros, r.cons].join("").length > 160 ? "..." : ""}</div>
+      </div>
+      <div class="acts">
+        <button class="btn sm" data-edit="ereviews" data-id="${esc(r.id)}">Edit</button>
+        <button class="btn sm danger" data-del="ereviews" data-id="${esc(r.id)}">Delete</button>
+      </div>
+    </div>`).join("") : `<div class="empty">${files.ereviews.data.length ? "No company reviews match." : "No company reviews yet."}</div>`;
+}
+
 // Reviews sent from the site wait in the job alerts Worker until they're published (into reviews.json) or rejected.
 let PENDING = [];
 async function loadPending() {
@@ -520,13 +562,19 @@ async function loadPending() {
   document.querySelector('nav [data-tab="reviews"]').textContent = PENDING.length ? `Reviews (${PENDING.length})` : "Reviews";
 }
 function renderPending() {
+  const sent = (email, created) => `<a href="mailto:${esc(email)}">${esc(email)}</a> · sent ${fmtDate(iso(new Date(created * 1000)))}`;
   $("pending-list").innerHTML = PENDING.length ? PENDING.map(({ id, email, created, review: r }) => `
     <div class="item">
-      <div>
-        <div class="t">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)} ${esc(r.course)}</div>
-        <div class="m">${esc(r.provider)} · ${esc(r.name || "Anonymous")}${r.background ? ", " + esc(r.background) : ""} · <a href="mailto:${esc(email)}">${esc(email)}</a> · sent ${fmtDate(iso(new Date(created * 1000)))}</div>
+      ${r.kind === "employer" ? `<div>
+        <div class="t"><span class="badge soon">Company</span> ${starRow(r.rating)} ${esc(r.employer)}${r.recommend ? ` · ${r.recommend === "yes" ? "would" : "wouldn't"} recommend` : ""}</div>
+        <div class="m">${esc(r.role)}${r.region ? " · " + esc(r.region) : ""} · ${r.status === "current" ? "works there now" : "used to"}${r.from || r.to ? " · " + esc([r.from, r.to].filter(Boolean).join("–")) : ""} · ${sent(email, created)}</div>
+        <div class="m">${SCORE_KEYS.filter(([k]) => r[k]).map(([k, l]) => `${l} ${r[k]}/5`).join(" · ")}</div>
+        <div class="m">${r.headline ? `<b>${esc(r.headline)}</b><br>` : ""}${r.pros ? `<b>Good:</b> ${esc(r.pros)}<br>` : ""}${r.cons ? `<b>Could be better:</b> ${esc(r.cons)}` : ""}</div>
+      </div>` : `<div>
+        <div class="t"><span class="badge">Course</span> ${starRow(r.rating)} ${esc(r.course)}</div>
+        <div class="m">${esc(r.provider)} · ${esc(r.name || "Anonymous")}${r.background ? ", " + esc(r.background) : ""} · ${sent(email, created)}</div>
         <div class="m">${r.headline ? `<b>${esc(r.headline)}</b> ` : ""}${esc(r.text)}</div>
-      </div>
+      </div>`}
       <div class="acts">
         <button class="btn sm primary" data-publish="${esc(id)}">Publish</button>
         <button class="btn sm danger" data-reject="${esc(id)}">Reject</button>
@@ -539,7 +587,7 @@ async function dropPending(id) {
   await loadPending();
 }
 
-function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); renderFeatured(); renderLeavers(); renderComingUp(); }
+function renderAll() { renderDash(); renderList("jobs"); renderList("courses"); renderReviews(); renderEReviews(); renderFeatured(); renderLeavers(); renderComingUp(); }
 
 // ---------- visitor stats ----------
 let visitsRun = 0;
@@ -897,7 +945,7 @@ function comingItems() {
     TALENT.recruiters.filter(r => r.status === "approved" && r.access_until > t && r.access_until < t + 7 * 86400)
       .forEach(r => out.push({ date: day(r.access_until), text: `Talent pool search ends for <b>${esc(r.company)}</b>`, go: "talent" }));
   }
-  if (PENDING.length) out.push({ date: "", text: `${plural(PENDING.length, "course review")} waiting to be checked`, go: "reviews" });
+  if (PENDING.length) out.push({ date: "", text: `${plural(PENDING.length, "review")} waiting to be checked`, go: "reviews" });
   if (PAY) {
     const jobPays = featPays(30).filter(p => /^Featured job/.test(p.what)).length, empPays = featPays(30).filter(p => /^Featured employer/.test(p.what)).length;
     const liveJobs = files.jobs.data.filter(j => featLive(j) && jobLive(j)).length, liveProfiles = files.employers.data.filter(x => profileLive(x) && !x.partner).length;
@@ -1009,7 +1057,18 @@ const REVIEW_FIELDS = [
   ["name", "Name to show (blank = Anonymous)", "text"], ["background", "Background", "text"],
   ["posted", "Date added", "date"],
 ];
-const FIELDS = { jobs: JOB_FIELDS, courses: COURSE_FIELDS, reviews: REVIEW_FIELDS, employers: EMPLOYER_FIELDS };
+const STARS5 = ["5", "4", "3", "2", "1"];
+const EREVIEW_FIELDS = [
+  ["employer", "Company (as it's usually written, so its reviews land together)", "text", true], ["rating", "Overall stars", STARS5, true],
+  ["pay", "Paid on time", STARS5], ["rotation", "Rotations kept", STARS5], ["safety", "Safety, kit and medical", STARS5], ["management", "Management and support", STARS5],
+  ["recommend", "Would recommend", ["yes", "no"]], ["headline", "Headline", "text"],
+  ["pros", "What's good", "area"], ["cons", "What could be better", "area"],
+  ["role", "Role (keep it general)", "text", true], ["region", "Region", "text"],
+  ["status", "Still works there", ["former", "current"]], ["from", "From (year)", "text"], ["to", "To (year)", "text"],
+  ["reply", "Company's reply (shows under the review)", "area"], ["reply_date", "Date of reply", "date"],
+  ["posted", "Date added", "date"],
+];
+const FIELDS = { jobs: JOB_FIELDS, courses: COURSE_FIELDS, reviews: REVIEW_FIELDS, ereviews: EREVIEW_FIELDS, employers: EMPLOYER_FIELDS };
 let editing = null;
 
 function field([name, label, type, req], val) {
@@ -1031,7 +1090,8 @@ function field([name, label, type, req], val) {
 function openEditor(kind, id, prefill, pending) {
   const fields = FIELDS[kind];
   const found = id ? files[kind].data.find(x => x.id === id) : { posted: TODAY, closing: "Rolling", start: "", ...prefill };
-  const item = kind === "reviews" ? { ...found, rating: found.rating ? String(found.rating) : "" } : found;
+  const item = kind === "reviews" ? { ...found, rating: found.rating ? String(found.rating) : "" }
+    : kind === "ereviews" ? { ...found, ...Object.fromEntries(["rating", ...SCORE_KEYS.map(k => k[0])].map(k => [k, found[k] ? String(found[k]) : ""])) } : found;
   editing = { kind, id, pending };
   $("edit-title").textContent = (id ? "Edit " : "Add ") + NOUN[kind];
   const html = [];
@@ -1089,6 +1149,12 @@ $("edit-form").addEventListener("submit", async e => {
     out[name] = v;
   }
   if (kind === "reviews") out.rating = Number(out.rating);
+  if (kind === "ereviews") {
+    for (const k of ["rating", ...SCORE_KEYS.map(k => k[0])]) out[k] = Number(out[k]) || 0;
+    if (!out.pros && !out.cons) { $("edit-err").textContent = "Keep at least one of What's good or What could be better."; return; }
+    if (out.reply && !out.reply_date) out.reply_date = TODAY;
+    if (out.status === "current") out.to = "";
+  }
   const item = { id: old.id, ...old, ...out };
   if (form.elements.sample && !form.elements.sample.checked) delete item.sample;
   if (!item.featured_until) delete item.featured_until;
@@ -1099,7 +1165,7 @@ $("edit-form").addEventListener("submit", async e => {
   else if (!item.posted) item.posted = TODAY;
   if (!id) {
     const taken = new Set(files[kind].data.map(x => x.id));
-    let base = slug(kind === "reviews" ? `review ${item.provider} ${item.course}` : kind === "employers" ? item.name : `${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
+    let base = slug(kind === "reviews" ? `review ${item.provider} ${item.course}` : kind === "ereviews" ? `company review ${item.employer}` : kind === "employers" ? item.name : `${item.employer || item.provider} ${item.title}`) || "listing", n = base, k = 2;
     while (taken.has(n)) n = `${base}-${k++}`;
     item.id = n;
   }
@@ -1127,11 +1193,12 @@ document.addEventListener("click", async e => {
   if (d.edit) return openEditor(d.edit, d.id);
   if (d.publish) {
     const p = PENDING.find(x => x.id === d.publish);
-    return openEditor("reviews", null, { ...p.review, posted: TODAY }, p.id);
+    const { kind, ...review } = p.review;
+    return openEditor(kind === "employer" ? "ereviews" : "reviews", null, { ...review, posted: TODAY }, p.id);
   }
   if (d.reject) {
     const p = PENDING.find(x => x.id === d.reject);
-    if (!confirm(`Reject the review of "${p.review.course}"? It will be deleted.`)) return;
+    if (!confirm(`Reject the review of "${p.review.course || p.review.employer}"? It will be deleted.`)) return;
     return dropPending(p.id);
   }
   if (d.close) {
@@ -1155,6 +1222,8 @@ document.addEventListener("click", async e => {
 $("add-job").onclick = () => openEditor("jobs");
 $("add-course").onclick = () => openEditor("courses");
 $("add-review").onclick = () => openEditor("reviews");
+$("add-ereview").onclick = () => openEditor("ereviews");
+$("ereview-q").addEventListener("input", renderEReviews);
 $("add-employer").onclick = () => openEditor("employers", null, { joined: TODAY });
 // Founding partners: the Featured employer plan free for a set number of months. Their free time ends on its own.
 $("add-partner").onclick = () => {
@@ -1193,7 +1262,7 @@ async function signIn(token, remember) {
   TOKEN = token;
   const repo = await gh(`/repos/${REPO}`);
   if (!repo.permissions?.push) { const e = new Error("This key can see the repository but can't edit it. Set Contents to Read and write."); e.status = 403; throw e; }
-  await Promise.all([load("jobs"), load("courses"), load("reviews"), load("employers").catch(() => {})]);
+  await Promise.all([load("jobs"), load("courses"), load("reviews"), load("ereviews").catch(() => {}), load("employers").catch(() => {})]);
   loadPending().then(renderComingUp); loadReminders(); loadAlerts(); loadTalent(); loadSitrep();
   store.set("gh-token", token, remember);
   const user = await gh("/user").catch(() => null);
