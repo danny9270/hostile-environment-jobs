@@ -472,7 +472,7 @@ const FREE = MODULES.filter(m => m.free);
 const applies = x => !x.acts || x.acts.some(a => S.setup.acts.includes(a));
 const secs = m => (m.sections || []).map((sec, i) => [sec, i]).filter(([sec]) => applies(sec));
 const inUse = () => MODULES.filter(applies);
-/* Full export: modules 00 to 03 are free; the rest come with The App ($6 a year), checked against the alerts Worker
+/* Full export: modules 00 to 03 are free; the rest come with The App ($10 a year), checked against the alerts Worker
    with the same account code the /app/ page keeps in localStorage "hej-code". A soft lock, like the app's kit list. */
 const ALERTS_API = 'https://hej-alerts.danieldobb.workers.dev';
 let unlocked = false;
@@ -624,7 +624,7 @@ function amendTable() {
 function unlockBox() {
   if (unlocked) return `<div class="unlock ok"><h3>Full export on</h3><p>Your App account is active, so the Word file and print include every module and form, without the "Made with" line.</p></div>`;
   return `<div class="unlock"><h3>Export the full set with The App</h3>
-    <p>Modules 00 to 03 export free. Every module, the clearance sections and the blank forms export with The App, $6 a year, which also gives you job alerts and the EOD kit list.</p>
+    <p>Modules 00 to 03 export free. Every module, the clearance sections and the blank forms export with The App, $10 a year (first month free), which also gives you job alerts and the EOD kit list.</p>
     <div class="code-row"><input data-code placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your App account code"><button class="btn primary" type="button" data-unlock>Unlock</button><a class="btn" href="/app/#buy">Get The App</a></div>
     <p class="msg" data-unlock-msg>Already have it? Enter the account code shown under "Your account" in the app.</p>
     <p class="msg">Organisations: the first 7 get the full set with their logo and up to 5 users free for year one. <a href="#" data-org>Claim a place</a></p></div>`;

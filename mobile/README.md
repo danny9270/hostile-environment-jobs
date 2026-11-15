@@ -2,7 +2,7 @@
 
 The store apps are the `/app/` page (job alerts, rotation tracker, EOD kit list) wrapped with [Capacitor](https://capacitorjs.com), so there's one app to look after, not three. What the store versions add:
 
-- **Payments through the store.** Apple and Google require subscriptions bought inside an app to go through them, so the apps sell the same $6-a-year subscription as an in-app purchase (shown as the local price, e.g. $5.99). [RevenueCat](https://www.revenuecat.com) (free up to $2,500 a month of revenue) keeps track of who has paid; the alerts Worker asks RevenueCat and switches the account on. Website (Stripe) subscribers can still type their code into the app.
+- **Payments through the store.** Apple and Google require subscriptions bought inside an app to go through them, so the apps sell the same $10-a-year subscription (first month free) as an in-app purchase (shown as the local price, e.g. $5.99). [RevenueCat](https://www.revenuecat.com) (free up to $2,500 a month of revenue) keeps track of who has paid; the alerts Worker asks RevenueCat and switches the account on. Website (Stripe) subscribers can still type their code into the app.
 - **Real phone notifications** through Firebase Cloud Messaging (free). The "Job alerts" Action sends them alongside the web ones.
 - Offline rotation tracker, share sheet for the CSV and calendar files, links opening in an in-app browser, restore purchases, and delete-account (both stores require it).
 

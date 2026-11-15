@@ -1,5 +1,5 @@
 // Job alerts backend: a Cloudflare Worker (free plan) with a D1 database bound as DB.
-// It keeps alert accounts, their preferences and their phones, and takes the $6 a year through Stripe Checkout.
+// It keeps alert accounts, their preferences and their phones, and takes the $10 a year through Stripe Checkout.
 // It never sends the notifications itself: the "Job alerts" GitHub Action asks it who wants what and sends them,
 // because encrypting a push for every phone would go past the free plan's CPU limit.
 //
@@ -32,7 +32,7 @@
 //                        email when an employer asks to get in touch, employers when they're accepted or approved,
 //                        and contact@ when a new employer signs up. Without it everything still works on the page.
 //   MAIL_FROM            optional, the sender, default "H.E. Jobs <jobs@hostileenvironmentjobs.com>".
-// Store apps (mobile/): the iPhone and Android apps take the $6 a year through the App Store and Google Play, using
+// Store apps (mobile/): the iPhone and Android apps take the $10 a year through the App Store and Google Play, using
 // RevenueCat to keep track of who has paid. The app buys under the account's own code, then asks /api/store/sync, which
 // reads that code's subscription from RevenueCat and moves paid_until to its end date. Renewals are picked up the same
 // way whenever the account is looked at near its end date.
@@ -157,6 +157,12 @@ async function refresh(env, acct) {
     if (s.status === "complete" && s.payment_status !== "unpaid") {
       firstPayment = acct.source !== "stripe";
       acct.paid_until = Math.max(acct.paid_until, t) + YEAR;
+      // A subscription that starts with the free month runs until the trial ends; Stripe takes the first payment then.
+      if (s.subscription) {
+        const sub = await stripe(env, "GET", "subscriptions/" + s.subscription).catch(() => null);
+        const end = sub && (sub.items?.data?.[0]?.current_period_end || sub.current_period_end);
+        if (sub && ["active", "trialing"].includes(sub.status) && end) acct.paid_until = Math.max(end, t);
+      }
       acct.email = s.customer_details?.email || acct.email;
       acct.customer = s.customer || acct.customer;
       acct.subscription = s.subscription || acct.subscription;
@@ -220,12 +226,16 @@ async function publicAccount(env, acct, devices) {
            checkout_pending: Boolean(acct.pending_session) };
 }
 
+const TRIAL_DAYS = 30;
 const CLEAN_PREFS = p => ({
   categories: (Array.isArray(p.categories) ? p.categories : []).map(String).slice(0, 40),
   regions: (Array.isArray(p.regions) ? p.regions : []).map(String).slice(0, 20),
   keywords: String(p.keywords || "").slice(0, 200),
   courses: Boolean(p.courses),
   course_types: (Array.isArray(p.course_types) ? p.course_types : []).map(String).slice(0, 20),
+  // Tickets and documents with expiry dates, and saved jobs: the sender reminds subscribers before they run out or close.
+  certs: (Array.isArray(p.certs) ? p.certs : []).filter(c => c && /^\d{4}-\d\d-\d\d$/.test(c.d)).slice(0, 30).map(c => ({ n: String(c.n || "").slice(0, 60), d: c.d })),
+  saved: (Array.isArray(p.saved) ? p.saved : []).map(String).filter(id => id.length <= 120).slice(0, 100),
 });
 
 // Admin sign-in: the GitHub key the admin page already uses, accepted only if it belongs to the repository owner.
@@ -488,7 +498,7 @@ async function handle(req, env) {
     let price = null;
     if (paying(env)) {
       const pr = await stripe(env, "GET", "prices/" + env.STRIPE_PRICE);
-      price = { amount: pr.unit_amount / 100, currency: pr.currency.toUpperCase(), recurring: Boolean(pr.recurring) };
+      price = { amount: pr.unit_amount / 100, currency: pr.currency.toUpperCase(), recurring: Boolean(pr.recurring), trial_days: pr.recurring ? TRIAL_DAYS : 0 };
     }
     return json(req, { vapid_public_key: (await vapid(db)).public, free: !paying(env), price });
   }
@@ -509,6 +519,8 @@ async function handle(req, env) {
                      client_reference_id: acct.code, success_url: back + "&paid=1", cancel_url: back, allow_promotion_codes: "true",
                      "metadata[code]": acct.code };
     if (!price.recurring) params.customer_creation = "always";
+    // First month free (Dobbo, 2026-11-15), once per account: a card is taken now and charged when the month ends.
+    if (price.recurring && TRIAL_DAYS && !acct.subscription && !acct.customer) params["subscription_data[trial_period_days]"] = String(TRIAL_DAYS);
     if (acct.customer) params.customer = acct.customer;
     const s = await stripe(env, "POST", "checkout/sessions", params);
     await db.prepare("UPDATE accounts SET pending_session = ? WHERE code = ?").bind(s.id, acct.code).run();

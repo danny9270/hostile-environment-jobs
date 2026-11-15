@@ -153,7 +153,11 @@ function show(iso, push) {
   if (push && innerWidth < 860) p.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-fetch("/deploy.json").then(r => r.json()).then(d => {
+// The last copy is kept on the phone so the guide still opens with no signal; the store apps also carry one (deploy.json next to the page).
+const keep = { get: () => { try { return localStorage.getItem("hej-deploy-cache"); } catch { return null; } }, set: t => { try { localStorage.setItem("hej-deploy-cache", t); } catch {} } };
+fetch("/deploy.json").then(r => r.ok ? r.text() : Promise.reject()).then(t => { keep.set(t); return JSON.parse(t); })
+  .catch(() => keep.get() ? JSON.parse(keep.get()) : document.documentElement.dataset.native ? fetch("deploy.json").then(r => r.json()) : Promise.reject())
+  .then(d => {
   const ISO3 = { SO: "som", ET: "eth", ER: "eri", DJ: "dji", KE: "ken", SD: "sdn", SS: "ssd", UG: "uga", MA: "mar", DZ: "dza", TN: "tun", LY: "lby", EG: "egy", IL: "isr", PS: "pse", LB: "lbn", SY: "syr", JO: "jor", IQ: "irq", IR: "irn", SA: "sau", YE: "yem", OM: "omn", AE: "are", QA: "qat", BH: "bhr", KW: "kwt" };
   d.countries.forEach(c => { c.iso3 = ISO3[c.iso2]; DATA[c.iso2] = c; });
   $("#dep-updated").textContent = "Official advice last checked " + day(d.updated.slice(0, 10)) + ".";
