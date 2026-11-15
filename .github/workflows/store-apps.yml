@@ -87,13 +87,18 @@ jobs:
           status: completed
 
   ios:
-    runs-on: macos-15
+    runs-on: macos-26
     defaults:
       run:
         working-directory: mobile
         shell: bash
     steps:
       - uses: actions/checkout@v4
+      # Apple only accepts uploads built with Xcode 26 or later: use the newest Xcode on the runner.
+      - name: Pick the newest Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_[0-9]*.app | grep -vi beta | sort -V | tail -1)
+          echo "Using $XC"; sudo xcode-select -s "$XC/Contents/Developer"; xcodebuild -version
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -121,10 +126,13 @@ jobs:
           if [ "$RELEASE" = true ] && [ -n "$ASC_KEY_P8" ] && [ -n "$APPLE_TEAM_ID" ] && [ "$NO_FIREBASE" != true ]; then
             KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"; printf '%s\n' "$ASC_KEY_P8" > "$KEY"
             sed -i '' 's#<string>development</string>#<string>production</string>#' App/App.entitlements
+            # The archive is only signed locally ("-", which keeps the push entitlement in it). The export step then signs it
+            # for the App Store with Apple's cloud-managed certificate, so no registered test iPhones or saved certificates are needed.
             AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEY -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
             xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
               -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-              MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH archive | tail -40
+              CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- PROVISIONING_PROFILE_SPECIFIER= AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO \
+              MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION=${{ github.run_number }} archive | tail -40
             cat > "$RUNNER_TEMP/export.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
