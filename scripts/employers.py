@@ -21,12 +21,12 @@ PLANS = [
     {"name": "Featured job", "price": "£49", "per": "per job, 30 days",
      "points": ["Pinned to the top of the jobs list", "Highlighted card with a Featured badge",
                 "Its own post on our Facebook and LinkedIn pages", "Shared in the Facebook group"],
-     "payment_link": ""},
+     "payment_link": "https://buy.stripe.com/7sYdR2dtu9Dvge7aiC4c800"},
     {"name": "Featured employer", "price": "£149", "per": "90 days",
      "points": ["Company profile page with your logo, story and every open job", "All your jobs featured for 90 days",
                 "Your name links to your profile on every listing", "A spotlight post on our Facebook and LinkedIn pages",
                 "90 days of talent pool search included"],
-     "payment_link": "", "best": True},
+     "payment_link": "https://buy.stripe.com/14A3co3SUeXPe5ZeyS4c801", "best": True},
     {"name": "Candidate search", "price": "£99", "per": "30 days",
      "points": ["Search operators who are available now, by trade, region and start date",
                 "Ask to get in touch; their name, contact details and CV come through when they accept",
@@ -254,7 +254,7 @@ fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
 <div class="paid" id="ad-paid" hidden>
   <h2>Payment received, thank you</h2>
-  <p>Stripe has emailed your receipt. Now tell us which job or company to feature using the form below, and we'll have it live within a day. Featured time starts when it goes live, not when you paid.</p>
+  <p>Thanks for booking. Now tell us which job or company to feature using the form below, and we'll have it live within a day. Featured time starts when it goes live, not when you paid.</p>
 </div>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
