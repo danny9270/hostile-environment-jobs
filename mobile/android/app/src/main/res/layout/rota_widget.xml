@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rota_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="14dp"
+    android:background="@drawable/rota_widget_bg">
+    <TextView android:id="@+id/rota_where" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#9AA093" android:textSize="11sp" android:fontFamily="monospace" android:text="ROTATION" />
+    <TextView android:id="@+id/rota_num" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#F29A33" android:textSize="44sp" android:textStyle="bold" android:includeFontPadding="false" />
+    <TextView android:id="@+id/rota_what" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#ECEDE6" android:textSize="13sp" android:textStyle="bold" android:maxLines="2" />
+</LinearLayout>

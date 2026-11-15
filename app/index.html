@@ -1070,7 +1070,8 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 const TYPES = { w: "Worked", t: "Travel", s: "Standby", u: "Unpaid" };
 let rota = (() => { try { return JSON.parse(store.get("hej-rota")) || {}; } catch { return {}; } })();
 rota.log ||= {};
-const saveRota = () => store.set("hej-rota", JSON.stringify(rota));
+// Saving also updates the home-screen countdown widget in the store apps.
+const saveRota = () => { store.set("hej-rota", JSON.stringify(rota)); native?.widget?.(rota); };
 const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const day = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const addDays = (s, n) => { const d = day(s); d.setDate(d.getDate() + n); return iso(d); };
@@ -1244,6 +1245,7 @@ $("rota-clear").onclick = () => {
   $("rota-data-msg").textContent = "Cleared.";
 };
 drawRota();
+native?.widget?.(rota);
 
 // Tabs. The hash says which one is showing (#rota, #alerts, #jobs, #kit, #account); older links like #buy still land in the right place.
 const TABS = ["rota", "certs", "alerts", "jobs", "kit", "account"];
