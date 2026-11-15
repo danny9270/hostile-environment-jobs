@@ -3,7 +3,7 @@ name: Build job pages
 on:
   push:
     branches: [main]
-    paths: [jobs.json, courses.json, employers.json, index.html, scripts/build_pages.py, scripts/employers.py, scripts/referral.py, scripts/landing.py, scripts/pay.html, scripts/app.html, scripts/deploy.html, scripts/deploy-map.svg]
+    paths: [jobs.json, courses.json, employers.json, index.html, scripts/build_pages.py, scripts/employers.py, scripts/referral.py, scripts/landing.py, scripts/pay.html, scripts/app.html, scripts/deploy.html, scripts/deploy-map.svg, scripts/companies.html]
   schedule:
     - cron: "15 3 * * *"
   workflow_dispatch:
