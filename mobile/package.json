@@ -1,0 +1,30 @@
+{
+  "name": "hej-store-apps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The H.E. Jobs app for the App Store and Google Play: the /app/ page wrapped with Capacitor.",
+  "scripts": {
+    "build": "node build-www.mjs",
+    "sync": "node build-www.mjs && cap sync",
+    "assets": "capacitor-assets generate --iconBackgroundColor '#121412' --iconBackgroundColorDark '#121412' --splashBackgroundColor '#121412' --splashBackgroundColorDark '#121412'"
+  },
+  "dependencies": {
+    "@capacitor-firebase/messaging": "8.6.0",
+    "@capacitor/android": "8.6.2",
+    "@capacitor/app": "8.1.2",
+    "@capacitor/browser": "8.0.5",
+    "@capacitor/core": "8.6.2",
+    "@capacitor/filesystem": "8.1.5",
+    "@capacitor/ios": "8.6.2",
+    "@capacitor/share": "8.0.3",
+    "@capacitor/splash-screen": "8.0.2",
+    "@capacitor/status-bar": "8.0.4",
+    "@revenuecat/purchases-capacitor": "14.1.0",
+    "firebase": "12.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "4.0.0",
+    "@capacitor/cli": "8.6.2",
+    "esbuild": "0.25.10"
+  }
+}

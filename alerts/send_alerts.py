@@ -5,7 +5,11 @@ courses.json it hasn't sent before, waits until each new job's own page is live,
 Up to 3 matches go as one notification each; more than that go as one "N new jobs" notification.
 The very first run only records what's already listed, so nobody gets a flood of old jobs.
 
-Needs: pip install pywebpush. Signs in to the Worker with the Action's GitHub token (permissions: id-token: write).
+Store-app phones (kind "fcm") are sent through Firebase Cloud Messaging, which reaches both iPhones and Android phones.
+That needs the repository secret FCM_SERVICE_ACCOUNT: the JSON key of a Firebase service account (Project settings >
+Service accounts > Generate new private key). Without it those phones are skipped and the rest still go.
+
+Needs: pip install pywebpush google-auth requests. Signs in to the Worker with the Action's GitHub token (permissions: id-token: write).
 Run locally with --dry-run and a recipients JSON file to see what would be sent: python3 alerts/send_alerts.py --dry-run file.json
 """
 import datetime
@@ -101,6 +105,35 @@ def call(api, path, token, body=None):
         raise SystemExit(f"Alerts Worker said {err.code} on {path}: {err.read().decode()[:300]}")
 
 
+def fcm_sender():
+    """Returns send(token, note) -> "ok" | "gone" | "failed", or None when there's no Firebase key."""
+    raw = os.environ.get("FCM_SERVICE_ACCOUNT", "").strip()
+    if not raw:
+        return None
+    from google.oauth2 import service_account
+    from google.auth.transport.requests import AuthorizedSession
+    info = json.loads(raw)
+    creds = service_account.Credentials.from_service_account_info(info, scopes=["https://www.googleapis.com/auth/firebase.messaging"])
+    session = AuthorizedSession(creds)
+    url = f"https://fcm.googleapis.com/v1/projects/{info['project_id']}/messages:send"
+
+    def send(token, n):
+        tag = re.sub(r"[^A-Za-z0-9_-]", "", n["tag"])[:64]
+        msg = {"message": {"token": token, "notification": {"title": n["title"], "body": n["body"]}, "data": {"url": n["url"]},
+                           "android": {"ttl": f"{3 * 86400}s", "notification": {"tag": tag, "channel_id": "job_alerts"}},
+                           "apns": {"headers": {"apns-collapse-id": tag, "apns-expiration": str(int(datetime.datetime.now().timestamp()) + 3 * 86400)},
+                                    "payload": {"aps": {"sound": "default", "thread-id": "job-alerts"}}}}}
+        r = session.post(url, json=msg, timeout=30)
+        if r.ok:
+            return "ok"
+        err = r.text[:300]
+        if r.status_code == 404 or "UNREGISTERED" in err or (r.status_code == 400 and "registration token" in err.lower()):
+            return "gone"  # the app was removed or the token replaced
+        print(f"FCM push failed ({r.status_code}): {err}")
+        return "failed"
+    return send
+
+
 def main():
     dry = "--dry-run" in sys.argv
     jobs = [j for j in json.loads((ROOT / "jobs.json").read_text()) if is_open(j, "closing") and not j.get("sample")]
@@ -134,10 +167,20 @@ def main():
     key = Vapid02.from_raw(data["vapid"]["private"].encode())
     by_endpoint = {r["endpoint"]: r for r in data["recipients"]}
     gone, failed = [], 0
+    fcm = fcm_sender()
     for endpoint, notes in todo.items():
         r = by_endpoint[endpoint]
-        if r["kind"] != "web":
-            continue  # store-app phones (FCM) are sent by the app-store build, not yet live
+        if r["kind"] == "fcm":
+            if not fcm:
+                print("A store-app phone is waiting but there's no FCM_SERVICE_ACCOUNT secret yet, so it was skipped.")
+                continue
+            for n in notes:
+                result = fcm(r["sub"]["token"], n)
+                if result == "gone":
+                    gone.append(endpoint)
+                    break
+                failed += result == "failed"
+            continue
         for n in notes:
             try:
                 webpush(r["sub"], json.dumps(n), vapid_private_key=key, vapid_claims={"sub": CONTACT}, ttl=3 * 86400,

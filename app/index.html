@@ -310,7 +310,9 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <div class="app">
   <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
   <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
-  <p>Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
+  <p id="intro-web">Job alerts, rotation tracker and EOD kit list, $6 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
+  <p id="intro-native" hidden>Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. The rotation tracker is free; alerts and the full kit list come with a yearly subscription.</p>
+  <div class="row-btns" id="stores" hidden></div>
 
   <div class="panel hot" id="install" hidden>
     <h2>First, add it to your home screen</h2>
@@ -366,11 +368,13 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <li>Alerts for new jobs and courses that match what you picked</li>
       <li>Change what you get any time</li>
       <li>Use it on up to 5 phones</li>
-      <li>The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
+      <li id="kit-perk">The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
       <li id="renew-perk">Renews each year, cancel any time</li>
     </ul>
-    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $6 a year</button></div>
+    <div class="row-btns"><button class="btn primary" type="button" id="pay">Get the app, $6 a year</button>
+      <button class="btn" type="button" id="store-restore" hidden>Restore purchases</button></div>
     <p class="msg" id="pay-msg"></p>
+    <p class="sub" id="store-terms" hidden></p>
     <details style="margin-top:10px"><summary>Already paid? Use your code</summary>
       <p class="sub">Your code was shown after you paid and is under "Your account" on your other phone.</p>
       <div class="restore"><input id="restore-code" placeholder="HEJ-XXXX-XXXX-XXXX" autocomplete="off" aria-label="Your code"><button class="btn" type="button" id="restore">Use code</button></div>
@@ -387,8 +391,14 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
       <button class="btn" type="button" id="copy">Copy code</button>
       <button class="btn" type="button" id="sample">Show a sample notification</button>
       <button class="btn" type="button" id="renew" hidden>Renew for a year</button>
+      <a class="btn" id="manage" hidden>Manage subscription</a>
     </div>
     <p class="msg" id="acct-msg"></p>
+    <details style="margin-top:10px"><summary>Delete my account</summary>
+      <p class="sub">This deletes your code, your alert choices and the phones linked to it from our server straight away. It can't be undone. <span id="delete-store"></span></p>
+      <div class="row-btns"><button class="btn" type="button" id="delete">Delete my account</button></div>
+      <p class="msg" id="delete-msg"></p>
+    </details>
   </div>
 
   <div class="panel" id="refer" hidden>
@@ -482,6 +492,8 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <script>
 // The alerts Worker's address. Empty means alerts aren't switched on yet and the page says so.
 const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev";
+// Store pages for the iPhone and Android apps. Once they're live, paste the links here and the page shows the buttons.
+const STORE_LINKS = { ios: "", android: "" };
 const CATEGORIES = ["EOD", "IEDD", "Search", "Survey & Clearance", "Security", "Maritime Security", "Medical", "Security Risk & Analysis", "K9", "CBRN", "Management", "Quality & Safety", "Training", "Life Support & Logistics", "Aviation", "Other"];
 const REGIONS = ["Africa", "Middle East", "Europe", "Asia", "Americas", "Oceania"];
 const COURSE_TYPES = ["HEAT", "EOD & IEDD", "Search", "Medical", "Security", "Management", "Other"];
@@ -492,8 +504,10 @@ const store = { get: k => { try { return localStorage.getItem(k); } catch { retu
 const params = new URLSearchParams(location.search);
 const API = (params.get("api") && /^http:\/\/(localhost|127\.0\.0\.1)/.test(params.get("api")) ? params.get("api") : ALERTS_API).replace(/\/$/, "");
 const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-const pushable = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+// Inside the App Store or Google Play app (mobile/), payments go through the store and notifications through Firebase.
+const native = window.HEJNative || null;
+const standalone = Boolean(native) || matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const pushable = Boolean(native) || ("serviceWorker" in navigator && "PushManager" in window && "Notification" in window);
 
 let config = null, acct = null, prefs = JSON.parse(store.get("hej-prefs") || "{}"), JOBS = [];
 if (params.get("code")) store.set("hej-code", params.get("code"));
@@ -561,6 +575,7 @@ function drawMatches() {
 
 const fmtDate = t => new Date(t * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 async function subscribed() {
+  if (native) return (await native.pushOn()) && store.get("hej-fcm") ? { native: true } : null;
   if (!pushable || Notification.permission !== "granted") return null;
   const reg = await navigator.serviceWorker.getRegistration("/");
   return reg && reg.pushManager.getSubscription();
@@ -573,7 +588,14 @@ async function draw() {
   $("install").hidden = standalone || !(ios || /Android/.test(navigator.userAgent));
   $("install-ios").hidden = !ios;
   $("install-android").hidden = ios;
-  if (config?.price) {
+  if (native) {
+    const p = await native.product(store.get("hej-code") || undefined);
+    const price = p ? p.price : "$6";
+    $("price").innerHTML = `${esc(price)}<small>a year</small>`;
+    $("pay").textContent = `Subscribe, ${price} a year`;
+    $("renew-perk").textContent = "Renews each year, cancel any time";
+    $("store-terms").innerHTML = `The yearly subscription is charged to your ${native.platform === "ios" ? "Apple ID" : "Google account"} and renews each year unless you cancel at least 24 hours before it ends. Cancel any time in your ${esc(native.store)} subscriptions. <a href="https://hostileenvironmentjobs.com/terms/">Terms</a> · <a href="https://hostileenvironmentjobs.com/privacy/">Privacy</a>`;
+  } else if (config?.price) {
     const p = config.price, money = new Intl.NumberFormat("en", { style: "currency", currency: p.currency }).format(p.amount);
     $("price").innerHTML = `${esc(money.replace(/\.00$/, ""))}<small>${p.recurring ? "a year" : "for a year"}</small>`;
     $("renew-perk").textContent = p.recurring ? "Renews each year, cancel any time" : "One payment covers a whole year";
@@ -585,7 +607,7 @@ async function draw() {
   $("pay").disabled = needsHome;
   $("pay-msg").textContent = needsHome ? "Add the app to your home screen first (see above), then open it from there." : (!pushable ? "This browser can't show notifications. Try Chrome on Android or Safari on iPhone." : "");
   $("buy").hidden = Boolean(acct?.active);
-  $("referred").hidden = Boolean(acct) || !store.get("hej-ref");
+  $("referred").hidden = Boolean(acct) || !store.get("hej-ref") || Boolean(native);
   drawRefer();
   drawKit();
   $("save-row").hidden = !acct;
@@ -596,7 +618,9 @@ async function draw() {
   const sub = await subscribed().catch(() => null);
   const until = acct.free ? "free while testing" : acct.active ? (acct.renews ? "renews " : "paid until ") + fmtDate(acct.paid_until) : acct.paid_until ? "ran out " + fmtDate(acct.paid_until) : "not paid yet";
   $("acct-status").innerHTML = `Alerts: <b class="${acct.active && sub ? "" : "off"}">${acct.active ? (sub ? "on for this phone" : "notifications not on yet") : "off"}</b> · ${esc(until)} · ${acct.devices.length} phone${acct.devices.length === 1 ? "" : "s"}`;
-  $("renew").hidden = acct.free || acct.renews || (acct.active && acct.paid_until - Date.now() / 1000 > 30 * 86400);
+  $("renew").hidden = Boolean(native) || acct.free || acct.renews || (acct.active && acct.paid_until - Date.now() / 1000 > 30 * 86400);
+  $("manage").hidden = !native || !acct.store;
+  $("delete-store").textContent = acct.store ? `If you subscribed through the ${acct.store === "app_store" ? "App Store" : "Google Play"}, cancel it there as well, or it keeps renewing.` : acct.renews ? "Your card subscription is stopped with it." : "";
   if (acct.checkout_pending && !acct.active) $("pay-msg").textContent = "Waiting for your payment to go through. If you closed the payment page, tap Get the app again.";
   $("notify").hidden = !acct.active || Boolean(sub) || !pushable;
   if (acct.active && !$("notify").hidden && needsHome) {
@@ -609,7 +633,7 @@ async function draw() {
 const referUrl = () => `${location.origin}/app/?ref=${acct.ref}`;
 const REFER_TEXT = "Job alerts for EOD, mine action, security and HE medic work, straight to your phone:";
 function drawRefer() {
-  $("refer").hidden = !acct?.ref || acct.free;
+  $("refer").hidden = !acct?.ref || acct.free || Boolean(native);
   if ($("refer").hidden) return;
   const per = acct.referrals_per_year || 3, toward = acct.referrals % per;
   $("refer-link").textContent = referUrl();
@@ -632,7 +656,8 @@ async function load() {
     acct = await api("/api/account?code=" + encodeURIComponent(code));
     prefs = acct.prefs; store.set("hej-prefs", JSON.stringify(prefs)); drawPrefs(); drawMatches();
     const sub = await subscribed().catch(() => null);
-    if (sub && acct.active) api("/api/devices", { method: "POST", body: { code: acct.code, subscription: sub.toJSON() } }).catch(() => {});
+    if (sub && acct.active && native) native.pushToken().then(token => { store.set("hej-fcm", token); return api("/api/devices", { method: "POST", body: { code: acct.code, kind: "fcm", token } }); }).catch(() => {});
+    else if (sub && acct.active) api("/api/devices", { method: "POST", body: { code: acct.code, subscription: sub.toJSON() } }).catch(() => {});
   } catch (err) {
     if (/No account/.test(err.message)) store.set("hej-code", null);
     $("pay-msg").textContent = err.message;
@@ -640,8 +665,48 @@ async function load() {
   draw();
 }
 
+// In the store apps: make (or reuse) the account, buy through the store, then have the Worker check the store and switch alerts on.
+async function storeAccount() {
+  const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs, native: native.platform } });
+  store.set("hej-code", r.code);
+  return r.code;
+}
+async function storeDone(ok, code) {
+  if (!ok) return false;
+  await api("/api/store/sync", { method: "POST", body: { code } });
+  await load();
+  return true;
+}
+if (native) {
+  $("store-restore").hidden = false;
+  $("store-terms").hidden = false;
+  $("manage").href = native.manageUrl;
+  $("sample").hidden = true;
+  $("kit-perk").textContent = "The full EOD team kit list: every item, quantities and where to buy";
+  $("intro-web").hidden = true;
+  $("intro-native").hidden = false;
+  $("store-restore").onclick = async () => {
+    $("pay-msg").textContent = "Checking with the " + native.store + "…";
+    try {
+      const code = await storeAccount();
+      $("pay-msg").textContent = await storeDone(await native.restore(code), code) ? "" : `No subscription found on this ${native.platform === "ios" ? "Apple ID" : "Google account"}. If you paid on the website, use your code below.`;
+    } catch (err) { $("pay-msg").textContent = err.message; }
+  };
+} else if (STORE_LINKS.ios || STORE_LINKS.android) {
+  $("stores").hidden = false;
+  $("stores").innerHTML = (STORE_LINKS.ios ? `<a class="btn" href="${esc(STORE_LINKS.ios)}">Get it on the App Store</a>` : "") + (STORE_LINKS.android ? `<a class="btn" href="${esc(STORE_LINKS.android)}">Get it on Google Play</a>` : "");
+}
+
 $("pay").onclick = $("renew").onclick = async () => {
   $("pay-msg").textContent = "One moment…";
+  if (native) {
+    try {
+      const code = await storeAccount();
+      if (await storeDone(await native.buy(code), code)) { $("pay-msg").textContent = ""; if (!$("notify").hidden) $("enable").click(); }
+      else $("pay-msg").textContent = "";
+    } catch (err) { $("pay-msg").textContent = err.message; }
+    return;
+  }
   try {
     const r = await api("/api/checkout", { method: "POST", body: { code: store.get("hej-code"), prefs, ref: store.get("hej-ref") } });
     store.set("hej-code", r.code);
@@ -669,6 +734,17 @@ $("save").onclick = async () => {
 
 $("enable").onclick = async () => {
   $("notify-msg").textContent = "";
+  if (native) {
+    try {
+      const token = await native.pushToken();
+      await api("/api/devices", { method: "POST", body: { code: acct.code, kind: "fcm", token } });
+      store.set("hej-fcm", token);
+      acct = await api("/api/account?code=" + encodeURIComponent(acct.code));
+      await draw();
+      $("acct-msg").textContent = "Done. You'll get a notification when a matching job goes up.";
+    } catch (err) { $("notify-msg").textContent = err.message; }
+    return;
+  }
   try {
     // Must come straight from the tap, or iPhones won't ask.
     const perm = await Notification.requestPermission();
@@ -693,6 +769,19 @@ $("sample").onclick = async () => {
     await reg.showNotification(j ? `New ${j.category} job: ${j.title}` : "New job", { body: j ? `${j.employer} · ${j.location}` : "", icon: "/icon-192.png", badge: "/favicon-96x96.png", tag: "sample", data: { url: j ? `/jobs/${j.id}/` : "/app/" } });
     $("acct-msg").textContent = "That's what an alert looks like.";
   } catch (err) { $("acct-msg").textContent = err.message; }
+};
+
+$("delete").onclick = async () => {
+  if (!confirm("Delete your account and switch off your alerts? This can't be undone.")) return;
+  $("delete-msg").textContent = "Deleting…";
+  try {
+    const r = await api("/api/account", { method: "DELETE", body: { code: acct.code } });
+    store.set("hej-code", null); store.set("hej-fcm", null);
+    acct = null;
+    $("delete-msg").textContent = "";
+    await draw();
+    $("pay-msg").textContent = "Your account has been deleted. " + (r.note || "");
+  } catch (err) { $("delete-msg").textContent = err.message; }
 };
 
 $("copy").onclick = () => navigator.clipboard?.writeText(acct.code).then(() => $("acct-msg").textContent = "Code copied.", () => {});
@@ -838,6 +927,7 @@ $("add-go").onclick = () => {
 };
 
 function download(name, type, text) {
+  if (native) return native.save(name, type, text).catch(() => {});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
   document.body.append(a); a.click(); a.remove();
@@ -887,14 +977,14 @@ drawRota();
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") drawRota(); });
 
 drawPrefs();
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
+if (!native && "serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
 // Kit list: everyone sees the items; quantities, notes, supplier links and the checklist need a paid account.
 let KIT = null;
 function drawKit() {
   if (!KIT) return;
   const open = Boolean(acct?.active);
   $("kit-locked").hidden = open;
-  $("kit-print").hidden = !open;
+  $("kit-print").hidden = !open || Boolean(native);
   const sup = KIT.suppliers;
   $("kit-body").innerHTML = KIT.sections.map(s => `<div class="kit-sec"><h3>${esc(s.name)}</h3><ul class="kit-list">${s.items.map(it => {
     if (!open) return `<li><span>${esc(it.item)}</span><span class="q locked" aria-label="Quantity for subscribers">?</span></li>`;

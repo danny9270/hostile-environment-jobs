@@ -1,0 +1,13 @@
+{
+  "appId": "com.hostileenvironmentjobs.app",
+  "appName": "HE Jobs",
+  "webDir": "www",
+  "backgroundColor": "#121412",
+  "ios": { "contentInset": "never", "backgroundColor": "#121412", "scheme": "HE Jobs" },
+  "android": { "backgroundColor": "#121412" },
+  "plugins": {
+    "SplashScreen": { "launchAutoHide": false, "backgroundColor": "#121412", "showSpinner": false },
+    "FirebaseMessaging": { "presentationOptions": ["alert", "badge", "sound"] },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#1a1d19", "overlaysWebView": false }
+  }
+}

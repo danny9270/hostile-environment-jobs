@@ -1,0 +1,144 @@
+# Builds the iPhone and Android apps (mobile/) and, once the store keys are in place, sends them to the stores.
+#   - On a pull request it only checks that both apps still build (no keys needed).
+#   - On main (when the app page or mobile/ changes) and when run by hand, it signs both apps and uploads them:
+#     Android to Google Play's internal testing track, iPhone to TestFlight. Moving a build on to the public store
+#     is a button in Play Console / App Store Connect, so nothing reaches users without a person pressing it.
+# Repository secrets it uses (see mobile/README.md for where each comes from); any that are missing just skip that upload:
+#   ANDROID_KEYSTORE (base64 of upload.jks), ANDROID_KEYSTORE_PASSWORD, PLAY_SERVICE_ACCOUNT (JSON)
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (App Store Connect API key), APPLE_TEAM_ID
+# Repository variables: REVENUECAT_IOS_KEY, REVENUECAT_ANDROID_KEY (public RevenueCat SDK keys).
+# Free: the repository is public, so GitHub doesn't charge for these minutes, macOS included.
+name: Store apps
+on:
+  pull_request:
+    paths: [mobile/**, scripts/app.html, .github/workflows/store-apps.yml]
+  push:
+    branches: [main]
+    paths: [mobile/**, app/index.html, .github/workflows/store-apps.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: store-apps-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  REVENUECAT_IOS_KEY: ${{ vars.REVENUECAT_IOS_KEY }}
+  REVENUECAT_ANDROID_KEY: ${{ vars.REVENUECAT_ANDROID_KEY }}
+  RELEASE: ${{ github.event_name != 'pull_request' }}
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Build the app page into the Android project
+        run: |
+          [ -f firebase/google-services.json ] && cp firebase/google-services.json android/app/ || echo "No google-services.json yet: notifications won't work in this build."
+          npm run sync
+      - name: Build
+        env:
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          export VERSION_CODE=$((100 + ${{ github.run_number }})) VERSION_NAME=$(node -p "require('./package.json').version")
+          cd android
+          if [ "$RELEASE" = true ] && [ -n "$ANDROID_KEYSTORE" ]; then
+            echo "$ANDROID_KEYSTORE" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            export ANDROID_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
+            ./gradlew --no-daemon bundleRelease
+            echo "SIGNED=true" >> "$GITHUB_ENV"
+          else
+            ./gradlew --no-daemon assembleDebug
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: |
+            mobile/android/app/build/outputs/bundle/release/*.aab
+            mobile/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: ignore
+      - name: Check for the Google Play key
+        id: play
+        env:
+          PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+        run: echo "ok=$([ -n "$PLAY" ] && [ "$SIGNED" = true ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - name: Upload to Google Play (internal testing)
+        if: steps.play.outputs.ok == 'true'
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+          packageName: com.hostileenvironmentjobs.app
+          releaseFiles: mobile/android/app/build/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+
+  ios:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - name: Build the app page into the iPhone project
+        run: |
+          if [ -f firebase/GoogleService-Info.plist ]; then cp firebase/GoogleService-Info.plist ios/App/App/
+          else
+            echo "No GoogleService-Info.plist yet: using an empty one, so this build only proves the app compiles."
+            printf '<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0"><dict/></plist>\n' > ios/App/App/GoogleService-Info.plist
+            echo "NO_FIREBASE=true" >> "$GITHUB_ENV"
+          fi
+          npm run sync
+      - name: Build
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          cd ios/App
+          VERSION=$(node -p "require('../../package.json').version")
+          if [ "$RELEASE" = true ] && [ -n "$ASC_KEY_P8" ] && [ -n "$APPLE_TEAM_ID" ] && [ "$NO_FIREBASE" != true ]; then
+            KEY="$RUNNER_TEMP/AuthKey_$ASC_KEY_ID.p8"; printf '%s\n' "$ASC_KEY_P8" > "$KEY"
+            sed -i '' 's#<string>development</string>#<string>production</string>#' App/App.entitlements
+            AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEY -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
+            xcodebuild -project App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+              -archivePath "$RUNNER_TEMP/App.xcarchive" DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+              MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION=${{ github.run_number }} $AUTH archive | tail -40
+            cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          PLIST
+            xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+              -exportPath "$RUNNER_TEMP/export" $AUTH | tail -20
+            echo "Uploaded build ${{ github.run_number }} to TestFlight."
+          else
+            xcodebuild -project App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator \
+              -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build | tail -40
+          fi
