@@ -97,7 +97,7 @@ jobs:
       # Apple only accepts uploads built with Xcode 26 or later: use the newest Xcode on the runner.
       - name: Pick the newest Xcode
         run: |
-          XC=$(ls -d /Applications/Xcode_[0-9]*.app | sort -V | tail -1)
+          XC=$(ls -d /Applications/Xcode_[0-9]*.app | grep -vi beta | sort -V | tail -1)
           echo "Using $XC"; sudo xcode-select -s "$XC/Contents/Developer"; xcodebuild -version
       - uses: actions/setup-node@v4
         with:
