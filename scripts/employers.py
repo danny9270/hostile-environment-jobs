@@ -23,12 +23,12 @@ PLANS = [
     {"name": "Featured job", "price": "£49", "per": "per job, 30 days",
      "points": ["Pinned to the top of the jobs list", "Highlighted card with a Featured badge",
                 "Its own post on our Facebook and LinkedIn pages", "Shared in the Facebook group"],
-     "payment_link": ""},
+     "payment_link": "https://buy.stripe.com/7sYdR2dtu9Dvge7aiC4c800"},
     {"name": "Featured employer", "price": "£149", "per": "90 days",
      "points": ["Company profile page with your logo, story and every open job", "All your jobs featured for 90 days",
                 "Your name links to your profile on every listing", "A spotlight post on our Facebook and LinkedIn pages",
                 "90 days of talent pool search included"],
-     "payment_link": "", "best": True},
+     "payment_link": "https://buy.stripe.com/14A3co3SUeXPe5ZeyS4c801", "best": True},
     {"name": "Candidate search", "price": "£99", "per": "30 days",
      "points": ["Search operators who are available now, by trade, region and start date",
                 "Ask to get in touch; their name, contact details and CV come through when they accept",
@@ -36,6 +36,9 @@ PLANS = [
      "payment_link": "/candidates/#hiring"},
 ]
 # Each "payment_link" is a Stripe Payment Link (https://buy.stripe.com/...) or a page on this site. Left empty, the button asks people to email us instead.
+# In Stripe, set each Payment Link's "After payment" to "Don't show confirmation page" and redirect to
+# https://hostileenvironmentjobs.com/advertise/?paid=featured-job (or ?paid=featured-employer), so the buyer
+# lands on the form below to tell us which job or company to feature.
 # Candidate search is paid for on the talent pool page itself, once we've approved the employer.
 
 def is_date(d):
@@ -301,7 +304,8 @@ def advertise_page(page, e, employers=()):
         if p["payment_link"].startswith("/"):
             return f'<a class="btn primary" href="{e(p["payment_link"])}">Sign up to search</a>'
         if p["payment_link"]:
-            return f'<a class="btn primary" href="{e(p["payment_link"])}" target="_blank" rel="noopener">Pay and book</a>'
+            return (f'<a class="btn primary" href="{e(p["payment_link"])}" target="_blank" rel="noopener">Pay by card</a>'
+                    f'<a class="invoice" href="#enquire" data-plan="{e(p["name"])}">or ask for an invoice</a>')
         return f'<a class="btn primary" href="#enquire" data-plan="{e(p["name"])}">Book this</a>'
     plans = "\n".join(f"""<div class="plan{' best' if p.get('best') else ''}">
   <h2>{e(p['name'])}</h2>
@@ -329,6 +333,10 @@ fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.
 }}).catch(() => {{}});
 </script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
+<div class="paid" id="ad-paid" hidden>
+  <h2>Payment received, thank you</h2>
+  <p>Thanks for booking. Now tell us which job or company to feature using the form below, and we'll have it live within a day. Featured time starts when it goes live, not when you paid.</p>
+</div>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
 <form id="ad-form" method="POST">
@@ -354,6 +362,17 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
 document.getElementById("ad-form").action = "https://formsubmit.co/" + CONTACT;
 document.getElementById("ad-sent").hidden = !/sent=1/.test(location.search);
 document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click", () => document.getElementById("ad-plan").value = a.dataset.plan));
+// Back from a Stripe Payment Link (?paid=featured-job): thank them and ask what to feature.
+const paid = new URLSearchParams(location.search).get("paid");
+if (paid) {{
+  const plan = {{"featured-job": "Featured job", "featured-employer": "Featured employer"}}[paid];
+  if (plan) document.getElementById("ad-plan").value = plan;
+  document.querySelector("#ad-form [name=_subject]").value = "PAID: " + (plan || "featured plan") + " for Hostile Environment Jobs";
+  document.querySelector("#ad-form [name=details]").placeholder = "The job link, or your company name, website and logo";
+  document.getElementById("enquire").textContent = "Tell us what to feature";
+  document.getElementById("ad-paid").hidden = false;
+  document.getElementById("ad-paid").scrollIntoView();
+}}
 </script>"""
     return page("Advertise with us | Hostile Environment Jobs",
                 "Featured jobs and employer profiles on Hostile Environment Jobs: reach EOD, security, medic and mine action professionals.",

@@ -110,6 +110,23 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .employers li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); }
 .tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); margin-bottom: 2px; }
 .soon { color: var(--warn); font-weight: 600; }
+/* Closing soon: strip on the jobs page and the /closing-soon/ page */
+.closing { margin: 22px 0 6px; }
+.closing-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.closing-head h2 { margin: 0; font-size: 26px; }
+.closing-head a { font: 500 14px var(--mono); color: var(--accent); white-space: nowrap; }
+.closing-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.closing-card { position: relative; scroll-snap-align: start; background: var(--surface); border: 1px solid #5a3a1a; border-radius: 10px; padding: 18px 16px 14px; }
+.closing-card::before, .soon-detail::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 10px 10px 0 0;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, #111310 10px 20px); }
+.closing-card .left { font: 600 13px var(--mono); color: var(--warn); text-transform: uppercase; letter-spacing: .05em; }
+.closing-card h3 { margin: 4px 0 2px; font-size: 19px; line-height: 1.2; }
+.closing-card h3 a { color: var(--ink); text-decoration: none; }
+.closing-card h3 a::after { content: ""; position: absolute; inset: 0; }
+.closing-card h3 a:hover { color: var(--accent); }
+.closing-card .who { color: var(--muted); font-size: 14px; }
+.soon-detail { position: relative; border-color: #5a3a1a; }
+.soon-when { font-family: var(--mono); font-size: 14px; margin: 6px 0 0; }
 .empty { color: var(--muted); padding: 24px 0; }
 
 .detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
@@ -185,6 +202,8 @@ form label.check input { width: auto; flex: none; }
 .plan .price span { font: 500 13px var(--mono); color: var(--muted); }
 .plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
 .plan .btn { justify-self: start; }
+.plan .invoice { font-size: 13px; color: var(--muted); }
+.paid { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 4px 20px; margin: 28px 0 0; scroll-margin-top: 220px; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
@@ -268,6 +287,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/pay/">Pay guide</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
+    <a href="/sop/">SOP builder</a>
     <a href="/app/">The App</a>
     <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
@@ -351,6 +371,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="/pay/">Pay guide</a>
   <a href="/deploy/">Deployment guide</a>
+  <a href="/sop/">Mine action SOP builder</a>
   <a href="/#post" data-view="post">Post a job</a>
   <a href="/advertise/">Advertise</a>
   <a href="/#list-course" data-view="courses">List a course</a>
