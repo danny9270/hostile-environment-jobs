@@ -1,0 +1,31 @@
+# Every Thursday, adds a "jobs closing soon" post to social/facebook.xml and social/linkedin.xml.
+# Zapier's RSS zaps ("HE Jobs → Facebook Page" and "HE Jobs → LinkedIn Page") then post it to both Pages.
+# No post when nothing closes in the next 14 days. Run it by hand from the Actions tab if needed.
+name: Closing soon post
+on:
+  schedule:
+    - cron: "0 7 * * 4"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency: social-feed
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/closing_soon.py
+      - name: Publish the feed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add social
+          if git diff --cached --quiet; then echo "No post this week"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Closing soon post $(date -u +%F)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          # Pushes made with the workflow token don't start a Pages build on their own.
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"
