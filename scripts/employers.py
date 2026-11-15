@@ -7,6 +7,7 @@ A profile's "offer" is a deal for our users (shown on its page, its jobs and cou
 An employer with "partner": true is a founding partner: the featured employer plan given free until its
 "featured_until" date, shown with a "Founding partner" badge and named on the Advertise page.
 """
+import urllib.parse
 import datetime
 import json
 import re
@@ -146,6 +147,7 @@ def profile_page(x, jobs, page, e, closing_text, site, courses=()):
   {about}
   {f"<dl>{dl}</dl>" if dl else ""}
   {f'<div class="actions">{links}</div>' if links else ""}
+  <p class="who" style="margin-top:16px"><a href="/companies/?company={urllib.parse.quote(x['name'])}">Reviews from people who've worked for {e(x['name'])}</a></p>
 </article>
 <h2>Open jobs at {e(x['name'])}</h2>
 {cards}
