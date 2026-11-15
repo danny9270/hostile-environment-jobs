@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">HE Jobs</string>
+    <string name="title_activity_main">HE Jobs</string>
+    <string name="package_name">com.hostileenvironmentjobs.app</string>
+    <string name="custom_url_scheme">com.hostileenvironmentjobs.app</string>
+</resources>

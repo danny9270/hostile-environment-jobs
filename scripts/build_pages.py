@@ -361,7 +361,15 @@ def main():
         "Watch how to search EOD, mine action, security and medic jobs, find courses, post a job free and use the pay guide, CV builder, deployment guide, talent pool and app.",
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly"), (SITE + "/companies/", "weekly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    # Privacy and terms: their own pages, because the App Store and Google Play listings need a link to each.
+    legal = (ROOT / "scripts" / "legal.html").read_text().replace("<!--DATE-->", "15 November 2026")
+    priv, terms = legal.split("<!--TERMS-->")
+    for folder, title, desc, body in [("privacy", "Privacy | Hostile Environment Jobs", "What the Hostile Environment Jobs website and the H.E. Jobs app keep about you, and how to delete it.", priv.replace("<!--PRIVACY-->", "")),
+                                      ("terms", "Terms | Hostile Environment Jobs", "Terms for the Hostile Environment Jobs website and the H.E. Jobs app subscription.", terms)]:
+        (ROOT / folder).mkdir(exist_ok=True)
+        (ROOT / folder / "index.html").write_text(page(title, desc, f"/{folder}/", body.strip() + "\n"))
+
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly"), (SITE + "/companies/", "weekly"), (SITE + "/privacy/", "yearly"), (SITE + "/terms/", "yearly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + ([(SITE + "/deals/", "weekly")] if any(x.get("offer") for x in employers) else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")

@@ -32,6 +32,12 @@
 //                        email when an employer asks to get in touch, employers when they're accepted or approved,
 //                        and contact@ when a new employer signs up. Without it everything still works on the page.
 //   MAIL_FROM            optional, the sender, default "H.E. Jobs <jobs@hostileenvironmentjobs.com>".
+// Store apps (mobile/): the iPhone and Android apps take the $6 a year through the App Store and Google Play, using
+// RevenueCat to keep track of who has paid. The app buys under the account's own code, then asks /api/store/sync, which
+// reads that code's subscription from RevenueCat and moves paid_until to its end date. Renewals are picked up the same
+// way whenever the account is looked at near its end date.
+//   REVENUECAT_SECRET_KEY  secret. A RevenueCat secret API key (sk_..., v1). Without it store purchases can't be checked.
+//   REVENUECAT_ENTITLEMENT optional, the entitlement the subscription unlocks if it isn't "alerts".
 // The admin page also keeps its dated reminders here (config row "reminders"), so they aren't in the public repository.
 
 const SITE = "https://hostileenvironmentjobs.com";
@@ -63,7 +69,9 @@ const SCHEMA = [
 ];
 // Columns added after launch. SQLite has no ADD COLUMN IF NOT EXISTS, so each runs on its own and "duplicate column" is ignored.
 const COLUMNS = ["ALTER TABLE accounts ADD COLUMN ref TEXT", "ALTER TABLE accounts ADD COLUMN referred_by TEXT",
-                 "ALTER TABLE accounts ADD COLUMN ref_rewarded INTEGER NOT NULL DEFAULT 0"];
+                 "ALTER TABLE accounts ADD COLUMN ref_rewarded INTEGER NOT NULL DEFAULT 0",
+                 // Store apps: which store the subscription is with ("app_store" or "play_store") and whether it will renew.
+                 "ALTER TABLE accounts ADD COLUMN store TEXT", "ALTER TABLE accounts ADD COLUMN store_renews INTEGER NOT NULL DEFAULT 0"];
 let ready = null;
 const setup = db => (ready ??= (async () => {
   await db.batch(SCHEMA.map(s => db.prepare(s)));
@@ -77,7 +85,8 @@ const unb64url = s => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/
 
 function cors(req) {
   const origin = req.headers.get("Origin") || "";
-  const ok = origin === SITE || origin === "https://www.hostileenvironmentjobs.com" || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  const ok = origin === SITE || origin === "https://www.hostileenvironmentjobs.com" || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+    || origin === "capacitor://localhost" || origin === "https://localhost"; // the iPhone and Android store apps
   return { "Access-Control-Allow-Origin": ok ? origin : SITE, "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
            "Access-Control-Allow-Headers": "Content-Type, Authorization", "Vary": "Origin" };
 }
@@ -115,8 +124,31 @@ async function stripe(env, method, path, params) {
 }
 const paying = env => Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE);
 
+// Reads an account's App Store or Google Play subscription from RevenueCat and saves its end date.
+async function storeSync(env, acct) {
+  if (!env.REVENUECAT_SECRET_KEY) throw new Error("Store purchases can't be checked yet. Please try again later.");
+  const res = await fetch("https://api.revenuecat.com/v1/subscribers/" + encodeURIComponent(acct.code), {
+    headers: { Authorization: "Bearer " + env.REVENUECAT_SECRET_KEY, "Content-Type": "application/json" } });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error("RevenueCat: " + (body.message || res.status));
+  const ent = body.subscriber?.entitlements?.[env.REVENUECAT_ENTITLEMENT || "alerts"];
+  if (!ent) return acct;
+  const sub = body.subscriber.subscriptions?.[ent.product_identifier] || {};
+  const end = ent.expires_date ? Math.floor(Date.parse(ent.expires_date) / 1000) : now() + 100 * YEAR;
+  acct.store = sub.store || acct.store || "app_store";
+  acct.store_renews = sub.unsubscribe_detected_at || sub.billing_issues_detected_at ? 0 : 1;
+  // The store's date is the answer for store accounts (a refund can pull it in). Someone who also paid by card keeps
+  // whichever runs later, and stays counted as a card payer for referrals.
+  acct.paid_until = acct.source === "stripe" ? Math.max(acct.paid_until, end) : end;
+  if (acct.source !== "stripe") acct.source = "store";
+  await env.DB.prepare("UPDATE accounts SET paid_until = ?, store = ?, store_renews = ?, source = ? WHERE code = ?")
+    .bind(acct.paid_until, acct.store, acct.store_renews, acct.source, acct.code).run();
+  return acct;
+}
+
 // Brings an account's paid_until up to date with Stripe: a finished checkout adds a year, a live subscription runs to its period end.
 async function refresh(env, acct) {
+  if (acct.store && env.REVENUECAT_SECRET_KEY && acct.paid_until < now() + DAY) acct = await storeSync(env, acct).catch(() => acct);
   if (!paying(env)) return acct;
   const t = now();
   let firstPayment = false;
@@ -184,7 +216,7 @@ async function publicAccount(env, acct, devices) {
   acct = await ensureRef(env.DB, acct);
   const referred = (await env.DB.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by = ? AND source = 'stripe'").bind(acct.ref).first()).n;
   return { code: acct.code, ref: acct.ref, referrals: referred, referrals_per_year: REFERRALS_PER_YEAR, free_years: acct.ref_rewarded || 0, active: active(env, acct), free: !paying(env), paid_until: acct.paid_until || null,
-           renews: Boolean(acct.subscription), email: acct.email, prefs: JSON.parse(acct.prefs || "{}"), devices,
+           renews: Boolean(acct.subscription) || Boolean(acct.store && acct.store_renews && acct.paid_until > now()), store: acct.store || null, email: acct.email, prefs: JSON.parse(acct.prefs || "{}"), devices,
            checkout_pending: Boolean(acct.pending_session) };
 }
 
@@ -469,7 +501,8 @@ async function handle(req, env) {
       acct = { code: newCode(), prefs: JSON.stringify(CLEAN_PREFS(body.prefs || {})), paid_until: 0, created: now(), referred_by: by?.ref || null };
       await db.prepare("INSERT INTO accounts (code, prefs, paid_until, created, referred_by) VALUES (?, ?, 0, ?, ?)").bind(acct.code, acct.prefs, acct.created, acct.referred_by).run();
     }
-    if (!paying(env)) return json(req, { code: acct.code, url: null });
+    // The store apps only need the account: they take the payment through the App Store or Google Play.
+    if (!paying(env) || body.native) return json(req, { code: acct.code, url: null });
     const price = await stripe(env, "GET", "prices/" + env.STRIPE_PRICE);
     const back = `${SITE}/app/?code=${encodeURIComponent(acct.code)}`;
     const params = { mode: price.recurring ? "subscription" : "payment", "line_items[0][price]": env.STRIPE_PRICE, "line_items[0][quantity]": "1",
@@ -490,7 +523,23 @@ async function handle(req, env) {
       acct.prefs = JSON.stringify(CLEAN_PREFS(body.prefs));
       await db.prepare("UPDATE accounts SET prefs = ? WHERE code = ?").bind(acct.prefs, acct.code).run();
     }
+    if (req.method === "DELETE") {
+      // Deletes the account and its phones. A card subscription is cancelled too, if the Stripe key may do that.
+      let note = "";
+      if (acct.subscription && env.STRIPE_SECRET_KEY)
+        await stripe(env, "DELETE", "subscriptions/" + acct.subscription).catch(() => { note = "We couldn't stop your card renewal automatically. Email contact@hostileenvironmentjobs.com and we'll stop it."; });
+      await db.batch([db.prepare("DELETE FROM devices WHERE code = ?").bind(acct.code), db.prepare("DELETE FROM accounts WHERE code = ?").bind(acct.code)]);
+      return json(req, { ok: true, note });
+    }
     acct = await refresh(env, acct);
+    return json(req, await publicAccount(env, acct, await devicesOf(acct.code)));
+  }
+
+  // After a purchase or "Restore purchases" in the store apps.
+  if (path === "/api/store/sync" && req.method === "POST") {
+    let acct = await account(body.code);
+    if (!acct) return json(req, { error: "No account with that code." }, 404);
+    acct = await storeSync(env, acct);
     return json(req, await publicAccount(env, acct, await devicesOf(acct.code)));
   }
 
@@ -518,7 +567,7 @@ async function handle(req, env) {
   if (path === "/api/internal/recipients" && req.method === "GET") {
     if (!(await fromAction(req))) return json(req, { error: "Not allowed" }, 403);
     // Subscriptions that ran out in the last month get one look at Stripe in case they renewed.
-    const lapsed = (await db.prepare("SELECT * FROM accounts WHERE subscription IS NOT NULL AND paid_until BETWEEN ? AND ? LIMIT 25").bind(now() - 30 * DAY, now() + DAY).all()).results;
+    const lapsed = (await db.prepare("SELECT * FROM accounts WHERE (subscription IS NOT NULL OR store IS NOT NULL) AND paid_until BETWEEN ? AND ? LIMIT 25").bind(now() - 30 * DAY, now() + DAY).all()).results;
     for (const a of lapsed) await refresh(env, a).catch(() => {});
     const rows = (await db.prepare(`SELECT d.endpoint, d.kind, d.sub, a.code, a.prefs, a.paid_until FROM devices d JOIN accounts a ON a.code = d.code`).all()).results;
     const recipients = rows.filter(r => active(env, r)).map(r => ({ endpoint: r.endpoint, kind: r.kind, sub: JSON.parse(r.sub), code: r.code, prefs: JSON.parse(r.prefs) }));
