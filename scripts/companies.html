@@ -1,0 +1,271 @@
+<style>
+/* Company reviews: one card per company with its scores, then the reviews, then the review form and house rules. */
+.co-intro { max-width: 760px; }
+.co-intro p { color: var(--muted); }
+.caveat { background: var(--surface); border: 1px solid #5a3a1a; border-left: 4px solid var(--accent); border-radius: 8px; padding: 12px 16px; margin: 18px 0; font-size: 15px; }
+.caveat p { margin: 0; color: var(--ink); }
+.co-tools { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 10px; margin: 26px 0 10px; }
+.co-tools input, .co-tools select { width: 100%; font: inherit; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.co-list { display: grid; gap: 10px; margin: 8px 0 28px; }
+.co { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; scroll-margin-top: 80px; }
+.co:target { border-color: var(--accent); }
+.co-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: start; }
+.co-head h3 { margin: 0; font-size: 24px; }
+.co-head .meta { color: var(--muted); font-size: 15px; margin: 2px 0 0; }
+.co-score { text-align: right; }
+.co-score b { display: block; font: 900 34px/1 var(--display); color: var(--accent); }
+.co-score .stars { font-size: 18px; }
+.co-score small { display: block; font: 500 12.5px var(--mono); color: var(--muted); }
+.bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 6px 18px; margin: 12px 0 4px; }
+.bar { font-size: 14px; color: var(--muted); }
+.bar span { display: flex; justify-content: space-between; }
+.bar span b { color: var(--ink); font-weight: 600; }
+.bar i { display: block; height: 6px; border-radius: 3px; margin-top: 3px; background: linear-gradient(90deg, var(--accent) var(--p), #3a3f36 var(--p)); }
+.co details { margin-top: 10px; }
+.co summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+.er { margin: 12px 0 0; padding: 12px 14px; background: var(--raised); border-left: 3px solid var(--sand); border-radius: 4px; }
+.er h4 { margin: 4px 0; font: 700 18px var(--body); }
+.er p { margin: 6px 0; }
+.er .lbl { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); display: block; }
+.er cite { display: block; font: 500 12.5px var(--mono); color: var(--muted); font-style: normal; margin-top: 8px; }
+.er .rec { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .05em; border-radius: 4px; padding: 1px 7px; margin-left: 6px; border: 1px solid #2f4a35; color: var(--ok); }
+.er .rec.no { border-color: #5a2a1a; color: var(--warn); }
+.er .reply { margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 4px; font-size: 15px; }
+.er .report { font-size: 13px; color: var(--muted); }
+.co-acts { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; font-size: 15px; }
+.unrev { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 28px; }
+.unrev button { font: inherit; font-size: 15px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.unrev button:hover { border-color: var(--accent); }
+.co-section { padding-top: 12px; }
+.co-section > p { color: var(--muted); max-width: 720px; }
+form .row3, form .row4 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+form .row4 { grid-template-columns: repeat(4, 1fr); }
+form .choice { display: flex; gap: 18px; border: 0; padding: 0; margin: 0; }
+form .choice legend { font-weight: 600; font-size: 15px; padding: 0; margin-bottom: 4px; }
+form .choice label { display: flex; gap: 6px; align-items: center; font-weight: 400; }
+form .choice input { width: auto; }
+.rules li { margin-bottom: 6px; }
+@media (max-width: 640px) {
+  .co-head { grid-template-columns: 1fr; }
+  .co-score { text-align: left; }
+  .co-tools, form .row3, form .row4 { grid-template-columns: 1fr; }
+}
+</style>
+<div class="co-intro">
+  <p class="eyebrow" style="margin-top:32px">Company reviews</p>
+  <h1>Who's <span class="amp">good</span> to work for</h1>
+  <p>Honest, anonymous reviews of employers on the circuit, written by the operators, medics, team leaders and support staff who've worked for them. Did they pay on time? Did rotations happen when they said? Was the kit and casevac sorted? Ask the people who've been there.</p>
+  <div class="caveat"><p><b>Always anonymous, always checked.</b> We never show a reviewer's name and never pass who wrote a review to the company. We read every review before it goes up. Employers can reply, but they can't pay to remove or change a review, and that includes companies that advertise with us. These are personal opinions of the people who wrote them, not ours.</p></div>
+  <div class="actions"><a class="btn primary" href="#write">Review a company</a><a class="btn" href="#rules">What we publish</a></div>
+</div>
+
+<div class="co-tools">
+  <input id="co-q" type="search" placeholder="Search companies" aria-label="Search companies">
+  <select id="co-sort" aria-label="Sort"><option value="count">Most reviewed</option><option value="score">Highest rated</option><option value="name">A to Z</option></select>
+</div>
+<div class="co-list" id="co-list"></div>
+<p class="empty" id="co-empty" hidden>No reviews yet. Be the first: <a href="#write">review a company you've worked for</a>.</p>
+
+<section class="co-section" id="unreviewed-wrap" hidden>
+  <h2>Hiring now, no reviews yet</h2>
+  <p>Worked for one of these? Tell the next person what it's like.</p>
+  <div class="unrev" id="unreviewed"></div>
+</section>
+
+<section class="co-section page" id="write" aria-labelledby="h-write">
+  <h2 id="h-write">Review a company</h2>
+  <p>Anonymous. Tell us what it was like working for a company in the last few years, directly or through an agency. We check every review before it goes up. Your email is only for us, in case we need to ask about the review, and we delete it once the review is checked.</p>
+  <form id="co-form" novalidate>
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <label>Company <input name="employer" id="co-employer" list="co-names" maxlength="120" required placeholder="Start typing, or add a company that isn't listed"></label>
+    <datalist id="co-names"></datalist>
+    <fieldset class="rate"><legend>Overall rating</legend>
+      <input type="radio" name="rating" value="5" id="cr5" aria-label="5 out of 5" required><label for="cr5" title="5 out of 5">★</label>
+      <input type="radio" name="rating" value="4" id="cr4" aria-label="4 out of 5"><label for="cr4" title="4 out of 5">★</label>
+      <input type="radio" name="rating" value="3" id="cr3" aria-label="3 out of 5"><label for="cr3" title="3 out of 5">★</label>
+      <input type="radio" name="rating" value="2" id="cr2" aria-label="2 out of 5"><label for="cr2" title="2 out of 5">★</label>
+      <input type="radio" name="rating" value="1" id="cr1" aria-label="1 out of 5"><label for="cr1" title="1 out of 5">★</label>
+    </fieldset>
+    <div class="row4" id="co-scores"></div>
+    <fieldset class="choice"><legend>Would you tell a mate to work there?</legend>
+      <label><input type="radio" name="recommend" value="yes"> Yes</label>
+      <label><input type="radio" name="recommend" value="no"> No</label>
+    </fieldset>
+    <label>Headline <input name="headline" maxlength="80" placeholder="e.g. Paid on time, rotations slipped"></label>
+    <label>What's good <textarea name="pros" rows="4" maxlength="1500" placeholder="Pay, rotations, kit, medical cover, support from the office, the team..."></textarea></label>
+    <label>What could be better <textarea name="cons" rows="4" maxlength="1500" placeholder="Stick to what happened to you. Please don't name people."></textarea></label>
+    <div class="row3">
+      <label>Your role <input name="role" maxlength="60" required placeholder="e.g. EOD team leader"></label>
+      <label>Region <select name="region"><option value="">Rather not say</option><option>Africa</option><option>Middle East</option><option>Europe</option><option>Asia-Pacific</option><option>Americas</option><option>Maritime</option><option>UK</option></select></label>
+      <label>Do you still work there? <select name="status"><option value="former">No, I used to</option><option value="current">Yes, I do now</option></select></label>
+    </div>
+    <div class="row">
+      <label>From (year) <select name="from" id="co-from"><option value="">Rather not say</option></select></label>
+      <label id="co-to-wrap">To (year) <select name="to" id="co-to"><option value="">Rather not say</option></select></label>
+    </div>
+    <p class="small" style="color:var(--muted);margin:0">If the team was small, keep your role and dates general so nobody can tell it was you.</p>
+    <label>Your email <input name="email" type="email" required></label>
+    <label class="check"><input type="checkbox" name="confirm" value="yes" required> I worked for this company and this is my honest view. I haven't named anyone or shared anything confidential. My email won't be shown.</label>
+    <button class="btn primary" type="submit">Send review</button>
+    <p id="co-note" aria-live="polite"></p>
+  </form>
+</section>
+
+<section class="co-section page" id="rules" aria-labelledby="h-rules">
+  <h2 id="h-rules">What we publish</h2>
+  <ul class="rules">
+    <li><b>Your own experience.</b> What happened to you and what you think of it. Good and bad reviews both go up.</li>
+    <li><b>No names.</b> We take out names of managers, team leaders, colleagues and clients, and anything that points to one person.</li>
+    <li><b>Nothing that puts people at risk.</b> No exact sites, routes, movement timings, security set-ups, client names or anything under a non-disclosure agreement.</li>
+    <li><b>No accusations of crimes.</b> If you think a company broke the law or put lives at risk, report it to the right authority or the client. A review isn't the place for it, and we can't publish it.</li>
+    <li><b>No abuse, and no fakes.</b> We don't publish insults, reviews by a company about itself or its competitors, or more than one review from the same person about the same job.</li>
+    <li><b>Light edits only.</b> We may trim a review to keep to these rules, but we never change the rating or what it means. If too much would have to go, we ask you to rewrite it.</li>
+  </ul>
+  <p><b>Are you the company?</b> You can reply to any review, and your reply shows under it. If you think a review is untrue or breaks these rules, email <a class="co-mail" href="#">us</a> with a link to it and why. We take it down while we look into it, usually within two working days. We'll never tell you who wrote it.</p>
+</section>
+
+<script>
+(function () {
+  const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@"); // assembled here so spam bots don't collect it
+  const ALERTS_API = "https://hej-alerts.danieldobb.workers.dev"; // the job alerts Worker, which holds reviews until they're checked
+  const SCORES = [["pay", "Paid on time"], ["rotation", "Rotations kept"], ["safety", "Safety, kit and medical"], ["management", "Management and support"]];
+  // Well-known employers on the circuit, suggested in the form alongside everyone with jobs on the site.
+  const KNOWN = ["The HALO Trust", "Mines Advisory Group (MAG)", "Norwegian People's Aid (NPA)", "DanChurchAid (DCA)", "FSD (Fondation Suisse de Déminage)",
+    "Danish Refugee Council (DRC)", "UNMAS", "Humanity & Inclusion", "Tetra Tech", "Janus Global Operations", "SafeLane Global", "Dynasafe", "Optima Group",
+    "Fenix Insight", "1st Line Defence", "Brimstone UXO", "Zetica", "6 Alpha Associates", "G4S", "GardaWorld", "Constellis", "Control Risks", "Amentum",
+    "Mechem", "International SOS", "Ambrey", "MSS Global"];
+  const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // One key per company however it's written: "The Acme Group Ltd (ACG)" and "acme" match. Same as ckey in /index.html.
+  const ekey = n => String(n ?? "").toLowerCase().replace(/\(.*?\)/g, " ").replace(/&/g, " and ")
+    .replace(/\b(the|ltd|limited|inc|llc|plc|gmbh|group|co|company|international)\b/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+  const slug = n => ekey(n).replace(/ /g, "-") || "company";
+  const stars = r => `<span class="stars" style="--p:${(r / 5) * 100}%" role="img" aria-label="${r.toFixed(1)} out of 5">★★★★★</span>`;
+  const isOpen = j => j.closing === "Rolling" || !j.closing || new Date(j.closing + "T23:59:59") >= new Date();
+  const month = d => /^\d{4}-\d\d/.test(d || "") ? new Date(d.slice(0, 7) + "-01T00:00:00").toLocaleDateString("en-GB", { month: "short", year: "numeric" }) : "";
+  const avg = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
+
+  document.querySelectorAll('nav a[href="/companies/"]').forEach(a => a.setAttribute("aria-current", "page"));
+  document.querySelectorAll(".co-mail").forEach(a => { a.href = "mailto:" + CONTACT + "?subject=" + encodeURIComponent("About a company review"); a.textContent = CONTACT; });
+
+  // Score boxes and year lists for the form.
+  document.getElementById("co-scores").innerHTML = SCORES.map(([k, label]) => `<label>${label} <select name="${k}"><option value="">Skip</option>
+    ${[5, 4, 3, 2, 1].map(n => `<option value="${n}">${"★".repeat(n)}${"☆".repeat(5 - n)}</option>`).join("")}</select></label>`).join("");
+  const thisYear = new Date().getFullYear();
+  ["co-from", "co-to"].forEach(id => { for (let y = thisYear; y >= thisYear - 15; y--) document.getElementById(id).append(new Option(y, y)); });
+  const form = document.getElementById("co-form"), toWrap = document.getElementById("co-to-wrap");
+  const syncTo = () => toWrap.hidden = form.elements.status.value === "current";
+  form.elements.status.addEventListener("change", syncTo);
+  form.addEventListener("reset", () => setTimeout(syncTo));
+
+  let COMPANIES = [];
+  const opts = { cache: "no-cache" }, get = f => fetch(f, opts).then(r => r.ok ? r.json() : []).catch(() => []);
+  Promise.all([get("/employer-reviews.json"), get("/jobs.json"), get("/employers.json")]).then(([reviews, jobs, profiles]) => {
+    jobs = Array.isArray(jobs) ? jobs : (jobs.jobs || []);
+    profiles = (Array.isArray(profiles) ? profiles : []).filter(p => p.id && p.name && (!p.featured_until || new Date(p.featured_until + "T23:59:59") >= new Date()));
+    const byKey = new Map();
+    const company = name => {
+      const prof = profiles.find(p => [p.name, ...(p.aliases || [])].some(n => ekey(n) === ekey(name)));
+      const k = ekey(prof ? prof.name : name);
+      if (!k) return null;
+      if (!byKey.has(k)) byKey.set(k, { key: k, name: prof ? prof.name : name, profile: prof, reviews: [], jobs: 0 });
+      return byKey.get(k);
+    };
+    // Jobs first, so a company shows under the name it advertises with.
+    jobs.filter(j => !j.sample && j.employer && isOpen(j)).forEach(j => { const c = company(j.employer); if (c) c.jobs++; });
+    (Array.isArray(reviews) ? reviews : []).filter(r => r.employer && r.rating >= 1 && r.rating <= 5)
+      .sort((a, b) => String(b.posted).localeCompare(String(a.posted))).forEach(r => company(r.employer)?.reviews.push(r));
+    COMPANIES = [...byKey.values()];
+    const names = new Map();
+    [...COMPANIES.map(c => c.name), ...KNOWN].forEach(n => { if (!names.has(ekey(n))) names.set(ekey(n), n); });
+    document.getElementById("co-names").innerHTML = [...names.values()].sort((a, b) => a.localeCompare(b)).map(n => `<option value="${esc(n)}">`).join("");
+    render();
+    // ?company=Name shows that company's reviews, or the form filled in if it has none yet (or with &write=1).
+    const params = new URLSearchParams(location.search), want = params.get("company");
+    const found = want && COMPANIES.find(c => c.key === company(want)?.key && c.reviews.length);
+    if (found && !params.has("write")) {
+      const el = document.getElementById(slug(found.name));
+      el.querySelector("details").open = true; el.scrollIntoView();
+    } else if (want) prefill(want);
+    else if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  });
+
+  function card(c) {
+    const rs = c.reviews, overall = avg(rs.map(r => Number(r.rating)));
+    const rated = rs.filter(r => r.recommend);
+    const rec = rated.length ? Math.round(100 * rated.filter(r => r.recommend === "yes").length / rated.length) : null;
+    const bars = SCORES.map(([k, label]) => { const xs = rs.map(r => Number(r[k])).filter(n => n >= 1); return xs.length ? [label, avg(xs)] : null; }).filter(Boolean);
+    const years = r => r.status === "current" ? (r.from ? `since ${r.from}` : "") : [r.from, r.to].filter(Boolean).join("–");
+    const who = r => [esc(r.role), esc(r.region), r.status === "current" ? "works there now" : "used to work there", years(r), month(r.posted) && "reviewed " + month(r.posted)].filter(Boolean).join(" · ");
+    const report = r => `mailto:${CONTACT}?subject=${encodeURIComponent("Report a company review: " + (r.id || c.name))}`;
+    return `<article class="co" id="${esc(slug(c.name))}">
+      <div class="co-head"><div>
+        <h3>${c.profile ? `<a href="/employers/${encodeURIComponent(c.profile.id)}/">${esc(c.name)}</a>` : esc(c.name)}</h3>
+        <p class="meta">${rs.length} review${rs.length === 1 ? "" : "s"}${rec != null ? ` · ${rec}% would recommend` : ""}${c.jobs ? ` · <a href="/#jobs">${c.jobs} open job${c.jobs === 1 ? "" : "s"}</a>` : ""}</p>
+      </div><div class="co-score"><b>${overall.toFixed(1)}</b>${stars(overall)}<small>out of 5</small></div></div>
+      ${bars.length ? `<div class="bars">${bars.map(([l, v]) => `<div class="bar"><span>${l}<b>${v.toFixed(1)}</b></span><i style="--p:${v / 5 * 100}%"></i></div>`).join("")}</div>` : ""}
+      <details${location.hash === "#" + slug(c.name) ? " open" : ""}><summary>Read ${rs.length === 1 ? "the review" : `all ${rs.length} reviews`}</summary>
+        ${rs.map(r => `<div class="er">${stars(Number(r.rating))}${r.recommend ? `<span class="rec${r.recommend === "no" ? " no" : ""}">${r.recommend === "yes" ? "Would recommend" : "Wouldn't recommend"}</span>` : ""}
+          ${r.headline ? `<h4>${esc(r.headline)}</h4>` : ""}
+          ${r.pros ? `<p><span class="lbl">What's good</span>${esc(r.pros)}</p>` : ""}
+          ${r.cons ? `<p><span class="lbl">What could be better</span>${esc(r.cons)}</p>` : ""}
+          <cite>${who(r)}</cite>
+          ${r.reply ? `<div class="reply"><span class="lbl">Reply from ${esc(c.name)}${month(r.reply_date) ? ", " + month(r.reply_date) : ""}</span>${esc(r.reply)}</div>` : ""}
+          <a class="report" href="${report(r)}">Report this review</a></div>`).join("")}
+      </details>
+      <div class="co-acts"><button type="button" class="linkish" data-write="${esc(c.name)}">Review ${esc(c.name)}</button></div>
+    </article>`;
+  }
+
+  const q = document.getElementById("co-q"), sortSel = document.getElementById("co-sort");
+  function render() {
+    const term = q.value.trim().toLowerCase();
+    const sorters = { count: (a, b) => b.reviews.length - a.reviews.length || a.name.localeCompare(b.name),
+      score: (a, b) => avg(b.reviews.map(r => +r.rating)) - avg(a.reviews.map(r => +r.rating)) || b.reviews.length - a.reviews.length,
+      name: (a, b) => a.name.localeCompare(b.name) };
+    const shown = COMPANIES.filter(c => c.reviews.length && (!term || c.name.toLowerCase().includes(term))).sort(sorters[sortSel.value]);
+    document.getElementById("co-list").innerHTML = shown.map(card).join("");
+    const empty = document.getElementById("co-empty");
+    empty.hidden = shown.length > 0;
+    empty.innerHTML = term ? `No reviews of a company matching "${esc(q.value)}" yet. <a href="#write">Write the first one</a>.`
+      : `No reviews yet. Be the first: <a href="#write">review a company you've worked for</a>.`;
+    const hiring = COMPANIES.filter(c => c.jobs && !c.reviews.length).sort((a, b) => a.name.localeCompare(b.name));
+    document.getElementById("unreviewed-wrap").hidden = !hiring.length;
+    document.getElementById("unreviewed").innerHTML = hiring.map(c => `<button type="button" data-write="${esc(c.name)}">${esc(c.name)}</button>`).join("");
+  }
+  q.addEventListener("input", render);
+  sortSel.addEventListener("change", render);
+
+  function prefill(name) {
+    form.elements.employer.value = name;
+    document.getElementById("write").scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => form.querySelector("#cr5").focus({ preventScroll: true }), 400);
+  }
+  document.addEventListener("click", e => { const b = e.target.closest("[data-write]"); if (b) prefill(b.dataset.write); });
+
+  const note = document.getElementById("co-note");
+  const missing = bad => ({ employer: "Add the company's name.", rating: "Tap the stars to give your overall rating.", role: "Add your role. Keep it general if you like, e.g. Medic.",
+    email: "Add your email address. It won't be shown.", confirm: "Tick the box to confirm you worked there." })[bad?.name] || "Check the form, then send again.";
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = form.elements;
+    if (!form.checkValidity()) {
+      const bad = form.querySelector("input:invalid, select:invalid, textarea:invalid");
+      note.className = "note"; note.textContent = missing(bad); bad?.focus(); return;
+    }
+    const written = (f.pros.value.trim() + f.cons.value.trim()).length;
+    if (written < 30) { note.className = "note"; note.textContent = `Tell us a little more about what it's like there (at least 30 characters across the two boxes, you have ${written}).`; f.pros.focus(); return; }
+    const review = { kind: "employer", employer: f.employer.value.trim(), rating: Number(f.rating.value), recommend: f.recommend.value,
+      headline: f.headline.value.trim(), pros: f.pros.value.trim(), cons: f.cons.value.trim(), role: f.role.value.trim(), region: f.region.value,
+      status: f.status.value, from: f.from.value, to: f.status.value === "current" ? "" : f.to.value, email: f.email.value.trim(), _honey: f._honey.value };
+    SCORES.forEach(([k]) => review[k] = Number(f[k].value) || 0);
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    try {
+      const res = await fetch(ALERTS_API + "/api/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(review) });
+      const reply = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(reply.error || "error " + res.status);
+      form.reset(); note.className = "sent"; note.textContent = "Thanks. We'll check your review and put it up, usually within a day or two.";
+    } catch (err) { note.className = "note"; note.textContent = `That didn't send (${err.message}). Please try again, or email ${CONTACT}.`; }
+    finally { btn.disabled = false; }
+  });
+})();
+</script>

@@ -14,6 +14,14 @@ Static jobs and training board for EOD, IEDD, search, mine action, security, hos
 - A review attaches to every listing whose provider and title match `provider` and `course` (ignoring case and spacing), so it carries over to later dates of the same course. Reviews for a course that isn't listed are kept and show again when it is.
 - Nothing goes up automatically. The "Review a course" form sends the review to the job alerts Worker (`alerts/worker.js`, `POST /api/reviews`), which keeps it in its D1 database. It shows under Reviews, Waiting for approval on `/admin/`: Publish adds it to `reviews.json`, Reject deletes it.
 
+## Company reviews
+
+- `/companies/` lets people who've worked for an employer review it: overall stars, optional scores for paid on time, rotations kept, safety/kit/medical and management, would-recommend, what's good and what could be better. It's free and always anonymous: only the role, region, current or former, and years (if given) are shown.
+- The page body lives in `scripts/companies.html`; `scripts/build_pages.py` wraps it into `companies/index.html` (don't edit that by hand). It reads `employer-reviews.json`, `jobs.json` and `employers.json` in the browser, groups reviews by company name (ignoring case, "Ltd", "The", brackets and so on, plus any `aliases` in `employers.json`) and lists companies with open jobs and no reviews yet. Job pages and employer profiles link to it, and the job view on the home page shows the employer's score.
+- The form posts to the same Worker route as course reviews (`POST /api/reviews` with `kind: "employer"`), so they wait in the same list under Reviews on `/admin/`. Publish adds them to `employer-reviews.json`; the reviewer's email is deleted from the Worker once a review is published or rejected.
+- Fields in `employer-reviews.json`: `id`, `employer`, `rating`, and optionally `pay`, `rotation`, `safety`, `management` (1 to 5, 0 = not given), `recommend` (`yes`/`no`), `headline`, `pros`, `cons`, `role`, `region`, `status` (`former`/`current`), `from`, `to`, `posted`, and a company's right of reply in `reply` and `reply_date`.
+- Moderation: the Reviews tab on `/admin/` has a checklist. In short, publish first-hand experience and opinion, good or bad; take out names of people, accusations of crimes stated as fact, and anything operationally sensitive; reject fakes; never hide genuine negative reviews or let advertisers remove them. On a complaint, take the review down while checking, offer the company a reply, and never reveal who wrote it. It's a plain guide, not legal advice.
+
 ## Settings
 
 At the top of the script in `index.html`: `CONTACT` (email for the job and course forms), `FACEBOOK_GROUP` (group link) and the job/course categories.
@@ -66,6 +74,15 @@ It also lists the open courses from `courses.json`. Add `"elcas": "1234"` to a c
 - **Lost code:** in the Cloudflare dashboard, D1 > hej-alerts > Console: `SELECT code, paid_until FROM accounts WHERE email = 'their@email'`.
 - **Give someone free alerts:** after they've tapped "Get job alerts" once, run `UPDATE accounts SET paid_until = strftime('%s','2027-12-31') WHERE code = 'HEJ-...'` in the same console.
 - **Rotation tracker:** free for everyone, no account. People enter days on, days off and the first day of any hitch; it counts down to leave, logs worked, travel, standby and unpaid days with a day rate, and totals pay for the hitch, month, year and UK tax year. It's kept only in that phone's browser (`localStorage` key `hej-rota`), never sent to the Worker. They can download the log as CSV and load it back, and download the next 12 rotations as an `.ics` calendar file.
+
+## Mine Action SOP Builder
+
+`/sop/` (hand-written page, `sop/index.html`, not built by a script) builds an IMAS and IATG referenced SOP set in the browser and exports it to Word (.docx made in the browser) or print/PDF. Work is kept in that browser (`localStorage` key `hej-sop-v1`) and can be saved and opened as a `.json` project file. Nothing is uploaded.
+
+- **Modules:** `MODULES` in the page script. 00 to 03 have `free: true`; 04 to 12, 11.3 clearance methods and Annex A (blank forms, using `fields` and `form` columns) export only with The App. A module or section with `acts` drops out when none of those activities are ticked on the cover page.
+- **Guardrail:** structure, management, admin and QC wording only. Never add render safe, demolition, charge placement, firing or IED procedure content; technical sections stay as bracketed placeholders.
+- **Unlock:** anyone can edit every module on screen. The full export checks the visitor's App account code against the alerts Worker (`GET /api/account`, the same `hej-code` the `/app/` page keeps), so App subscribers on the same browser are unlocked automatically. It's a soft lock, like the app's kit list. Full exports drop the "Made with" footer line; the disclaimer is on every export.
+- **Organisations:** the first 7 get the full set free for year one (enquiries by email to contact@). Logo and shared projects aren't built yet.
 
 ## Talent pool
 

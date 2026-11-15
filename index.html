@@ -118,6 +118,23 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .employers li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); }
 .tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); margin-bottom: 2px; }
 .soon { color: var(--warn); font-weight: 600; }
+/* Closing soon: strip on the jobs page and the /closing-soon/ page */
+.closing { margin: 22px 0 6px; }
+.closing-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.closing-head h2 { margin: 0; font-size: 26px; }
+.closing-head a { font: 500 14px var(--mono); color: var(--accent); white-space: nowrap; }
+.closing-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.closing-card { position: relative; scroll-snap-align: start; background: var(--surface); border: 1px solid #5a3a1a; border-radius: 10px; padding: 18px 16px 14px; }
+.closing-card::before, .soon-detail::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 10px 10px 0 0;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, #111310 10px 20px); }
+.closing-card .left { font: 600 13px var(--mono); color: var(--warn); text-transform: uppercase; letter-spacing: .05em; }
+.closing-card h3 { margin: 4px 0 2px; font-size: 19px; line-height: 1.2; }
+.closing-card h3 a { color: var(--ink); text-decoration: none; }
+.closing-card h3 a::after { content: ""; position: absolute; inset: 0; }
+.closing-card h3 a:hover { color: var(--accent); }
+.closing-card .who { color: var(--muted); font-size: 14px; }
+.soon-detail { position: relative; border-color: #5a3a1a; }
+.soon-when { font-family: var(--mono); font-size: 14px; margin: 6px 0 0; }
 .empty { color: var(--muted); padding: 24px 0; }
 
 .detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
@@ -193,10 +210,47 @@ form label.check input { width: auto; flex: none; }
 .plan .price span { font: 500 13px var(--mono); color: var(--muted); }
 .plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
 .plan .btn { justify-self: start; }
+.plan .invoice { font-size: 13px; color: var(--muted); }
+.paid { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 4px 20px; margin: 28px 0 0; scroll-margin-top: 220px; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
 #sitrep { scroll-margin-top: 130px; }
+.partners-home { margin: 26px 0 6px; }
+.phead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin-bottom: 14px; }
+.phead .eyebrow { flex-basis: 100%; margin: 0; }
+.phead h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0; }
+.phead .more { margin-left: auto; font-weight: 600; white-space: nowrap; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; margin: 18px 0 28px; }
+.partners-home .pgrid { margin: 0; }
+.pcard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.pcard:hover { border-color: var(--sand); }
+.pbanner { position: relative; display: grid; place-items: center; min-height: 150px; padding: 26px 20px 50px; text-decoration: none;
+  background: radial-gradient(120% 120% at 85% 0%, #3a2a14 0%, transparent 55%),
+    repeating-radial-gradient(circle at 18% 120%, transparent 0 22px, rgba(242,154,46,.13) 22px 23px), var(--raised); background-size: cover; background-position: center; }
+.pbanner.photo { min-height: 190px; }
+.plogo { width: auto; max-width: 220px; height: 96px; object-fit: contain; background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.plogo.ptext { display: grid; place-items: center; width: 96px; font: 900 48px var(--display); color: var(--accent-ink); background: var(--accent); }
+.pbadge { position: absolute; left: 12px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 4px 10px 4px 8px; }
+.pbody { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px 18px; flex: 1; }
+.pbody h3 { font-size: 26px; margin: 0; }
+.pbody h3 a { color: var(--ink); text-decoration: none; }
+.pbody .who { margin: 0; color: var(--muted); font-size: 15px; }
+.pdeal { display: flex; align-items: center; gap: 12px; background: var(--soft); border: 1px dashed var(--accent); border-radius: 10px; padding: 10px 12px; }
+.pdeal b { font: 900 34px/1 var(--display); color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+.pdeal span { font-size: 15px; line-height: 1.3; }
+.pcourses { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 15px; }
+.pcourses li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 6px; }
+.pcourses .when { font: 600 13px var(--mono); color: var(--sand); text-transform: uppercase; }
+.pcourses .price { font: 500 13px var(--mono); color: var(--muted); }
+.pmore { margin: 0; font: 500 13px var(--mono); color: var(--muted); }
+.pbody .actions { margin-top: auto; padding-top: 6px; }
+@media (min-width: 760px) {
+  .pgrid.one { grid-template-columns: 1fr; }
+  .pgrid.one .pcard { flex-direction: row; }
+  .pgrid.one .pbanner { flex: 0 0 38%; min-height: 0; }
+}
 .sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
@@ -239,8 +293,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/guide/">How it works</a>
     <a href="/leavers/">Service leavers</a>
     <a href="/pay/">Pay guide</a>
+    <a href="/companies/">Company reviews</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
+    <a href="/sop/">SOP builder</a>
     <a href="/app/">The App</a>
     <a href="/candidates/">Talent pool</a>
     <a href="#post" data-view="post">Post a job</a>
@@ -262,6 +318,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     </div>
   </div>
   <div class="wrap">
+  <div class="closing" id="closing-soon" hidden>
+    <div class="closing-head"><h2>Closing soon</h2><a href="/closing-soon/">All closing soon &rarr;</a></div>
+    <div class="closing-row" id="closing-row"></div>
+  </div>
   <div class="tiles" id="tiles" role="group" aria-label="Job type"></div>
   <div class="tools">
     <input id="q" type="search" placeholder="Search title, employer, country or qualification (e.g. IEDD, FREC, SIA)" aria-label="Search jobs">
@@ -272,6 +332,16 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="jobs" id="list"></div>
   <p class="empty" id="empty" hidden>No open jobs match. Try another type or region, or join the Facebook group for new posts.</p>
   </div>
+  <div class="wrap"><!--partners--><section class="partners-home" aria-label="New partner"><div class="phead"><p class="eyebrow">New partner</p><h2>Backed by people who've <span class="amp">done the job</span></h2><a class="more" href="/deals/">All partner deals &rarr;</a></div><div class="pgrid one"><article class="pcard">
+  <a class="pbanner" href="/employers/invictus-strategic-solutions/"><img class="plogo" src="/logos/invictus.jpg" alt="Invictus Strategic Solutions Ltd logo"><span class="pbadge"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm0 5 1.5 3.1 3.4.5-2.5 2.4.6 3.4L12 14.8 9 16.4l.6-3.4-2.5-2.4 3.4-.5L12 7Z"/></svg>Founding partner</span></a>
+  <div class="pbody">
+    <h3><a href="/employers/invictus-strategic-solutions/">Invictus Strategic Solutions Ltd</a></h3>
+    <p class="who">Veteran-owned training in pre-hospital emergency care, first aid, hostile environments and travel risk</p>
+    <div class="pdeal"><b>5% off</b><span>Any Invictus course for Hostile Environment Jobs members.</span></div>
+    <ul class="pcourses"><li><span class="when">11 Jan</span><span>FREC 3 (First Response Emergency Care, Level 3)</span><span class=price>£495</span></li><li><span class="when">19 Jan</span><span>FREC 3 Requalification</span><span class=price>£295</span></li></ul><p class="pmore">+6 more dates</p>
+    <div class="actions"><a class="btn primary" href="/employers/invictus-strategic-solutions/#book">Book with the deal</a><a class="btn" href="/employers/invictus-strategic-solutions/">Profile</a></div>
+  </div>
+</article></div></section><!--/partners--></div>
   <div class="fb-band"><div class="wrap"><p>New jobs land in the Facebook group first</p><a class="btn primary fb-join" href="#" target="_blank" rel="noopener">Join 4.4K members</a></div></div>
   <div class="wrap"><div class="subscribe" id="sitrep">
     <p class="eyebrow">The Sitrep</p><h2>New jobs and course dates, every Monday</h2>
@@ -474,7 +544,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
 <section id="privacy" class="wrap" hidden>
   <div class="page">
     <h1>Privacy</h1>
-    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we keep it on our own server until we've checked it, show only the name and background you choose, and use your email only to check the review with you. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. When you click through to book a course, the link tells the provider you came from us so they can credit us; it carries no personal data. If you join the <a href="/candidates/">talent pool</a>, we keep your profile, contact details and CV on our own server (a Cloudflare Worker and database). Employers we've checked and who pay for search see your profile without your name, contact details or CV; those go to an employer only when you accept their request, and that employer is then responsible for how they use them. Your profile leaves search 90 days after you last confirm you're available and is deleted, with your CV, after 12 months, or straight away when you delete it yourself. If you sign up to search as an employer, we keep your company, name and email to run your account. We use your email only to tell you about requests and approvals. Ask us any time to delete what you've sent. The full policy, including the app, is on the <a href="/privacy/">privacy page</a>.</p>
+    <p>We don't use cookies or track you across sites. We count page views with GoatCounter, which stores no cookies and no personal data, so we can see which jobs people look at. If you send a job, we use your name and email only to reply about that job. If you review a course, we keep it on our own server until we've checked it, show only the name and background you choose, and use your email only to check the review with you. If you review a company, it's always anonymous: we show only your role, region and dates if you give them, never pass who wrote it to the company, and delete your email once the review has been checked. Job forms are delivered by FormSubmit. If you subscribe to the Sitrep, we keep your email address with our newsletter provider, Kit, only to send it; every email has an unsubscribe link. When you click through to book a course, the link tells the provider you came from us so they can credit us; it carries no personal data. If you join the <a href="/candidates/">talent pool</a>, we keep your profile, contact details and CV on our own server (a Cloudflare Worker and database). Employers we've checked and who pay for search see your profile without your name, contact details or CV; those go to an employer only when you accept their request, and that employer is then responsible for how they use them. Your profile leaves search 90 days after you last confirm you're available and is deleted, with your CV, after 12 months, or straight away when you delete it yourself. If you sign up to search as an employer, we keep your company, name and email to run your account. We use your email only to tell you about requests and approvals. Ask us any time to delete what you've sent. The full policy, including the app, is on the <a href="/privacy/">privacy page</a>.</p>
   </div>
 </section>
 </main>
@@ -485,6 +555,7 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a href="/jobs/">All open jobs</a>
   <a href="/pay/">Pay guide</a>
   <a href="/deploy/">Deployment guide</a>
+  <a href="/sop/">Mine action SOP builder</a>
   <a href="#post" data-view="post">Post a job</a>
   <a href="/advertise/">Advertise</a>
   <a href="#list-course" data-view="courses">List a course</a>
@@ -578,6 +649,18 @@ function renderList() {
     <div class="side">${due(j)}</div>
   </article>`).join("");
 }
+// Closing soon: jobs with a deadline in the next 14 days, soonest first (same rule as scripts/closing_soon.py).
+const SOON_DAYS = 14;
+function renderClosing() {
+  const left = j => Math.round((new Date(j.closing + "T00:00:00") - today) / 864e5);
+  const soon = JOBS.filter(j => !j.sample && isOpen(j) && /^\d{4}-\d\d-\d\d$/.test(j.closing || "") && left(j) <= SOON_DAYS)
+    .sort((a, b) => a.closing.localeCompare(b.closing));
+  document.getElementById("closing-soon").hidden = !soon.length;
+  document.getElementById("closing-row").innerHTML = soon.slice(0, 8).map(j => { const d = left(j);
+    return `<article class="closing-card"><div class="left">${d === 0 ? "Closes today" : d === 1 ? "Closes tomorrow" : d + " days left"}</div>
+      <h3><a href="#job/${encodeURIComponent(j.id)}">${esc(j.title)}</a></h3>
+      <div class="who">${esc(j.employer)} · ${esc(String(j.location || "").split(",")[0])}</div></article>`; }).join("");
+}
 let lastChecked = "";
 function buildFilters() {
   const openJobs = JOBS.filter(isOpen);
@@ -616,9 +699,25 @@ function renderDetail(id) {
       ${closed ? "" : `<a class="btn primary" href="${esc(j.apply_url)}" target="_blank" rel="noopener">Apply on employer's site</a>`}
       <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}" target="_blank" rel="noopener">Share on Facebook</a>
       <button class="btn" type="button" id="copy">Copy link</button>
-    </div>`;
+    </div>
+    ${companyLine(j.employer)}`;
   document.getElementById("copy").onclick = e => navigator.clipboard?.writeText(link).then(() => e.target.textContent = "Link copied").catch(() => {});
   document.title = `${j.title}, ${j.location} | Hostile Environment Jobs`;
+}
+
+// Company reviews (/companies/): a line on each job with the employer's score, read from employer-reviews.json.
+// ekey matches company names however they're written; keep it the same as in scripts/companies.html.
+const ekey = n => String(n ?? "").toLowerCase().replace(/\(.*?\)/g, " ").replace(/&/g, " and ")
+  .replace(/\b(the|ltd|limited|inc|llc|plc|gmbh|group|co|company|international)\b/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
+let EREVIEWS = [];
+const ereviewsLoaded = fetch("employer-reviews.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : []).catch(() => [])
+  .then(data => { EREVIEWS = (Array.isArray(data) ? data : []).filter(r => r.employer && r.rating >= 1 && r.rating <= 5); if (JOBS.length && location.hash.startsWith("#job/")) renderDetail(decodeURIComponent(location.hash.split("/")[1] || "")); });
+function companyLine(name) {
+  const prof = profileFor({ employer: name }), names = [name, ...(prof ? [prof.name, ...(prof.aliases || [])] : [])].map(ekey);
+  const rs = EREVIEWS.filter(r => names.includes(ekey(r.employer))), q = encodeURIComponent(name);
+  if (!rs.length) return `<p class="who" style="margin-top:16px">No company reviews of ${esc(name)} yet. Worked for them? <a href="/companies/?company=${q}&write=1">Review them anonymously</a>.</p>`;
+  const avg = rs.reduce((n, r) => n + Number(r.rating), 0) / rs.length;
+  return `<p class="who" style="margin-top:16px">${stars(avg)} <b>${avg.toFixed(1)}</b> from <a href="/companies/?company=${q}">${rs.length} operator review${rs.length > 1 ? "s" : ""} of ${esc(name)}</a></p>`;
 }
 
 // Featured: a job's own "featured_until" date, or any job from an employer with a live profile in employers.json.
@@ -637,6 +736,7 @@ const jobsLoaded = Promise.all([fetch("jobs.json", { cache: "no-cache" }).then(r
   lastChecked = JOBS.map(j => j.posted).filter(Boolean).sort().pop() || "";
   document.getElementById("sample-note").hidden = !JOBS.some(j => j.sample);
   buildFilters();
+  renderClosing();
   renderList();
   show(location.hash.slice(1) || "jobs");
 });

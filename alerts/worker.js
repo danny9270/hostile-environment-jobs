@@ -20,6 +20,8 @@
 //   GOATCOUNTER_SITE   optional, the GoatCounter site code if it isn't "hostileenvironmentjobs".
 // Course reviews: the "Review a course" form on the site posts here. Reviews wait in the database until the admin page
 // publishes them (into reviews.json) or rejects them; nothing a visitor sends goes on the site by itself.
+// Company reviews (/companies/) use the same route and table with kind "employer", and publish into employer-reviews.json.
+// They're always anonymous; the reviewer's email is only kept until the review is published or rejected.
 // Talent pool (/candidates/): operators post a profile and an "available from" date, free. Employers see the profiles
 // without names, contact details or CVs, and only once the admin page has approved them and they've paid for search.
 // An employer asks to get in touch; the operator's name, email, phone and CV are released only if they accept.
@@ -584,15 +586,24 @@ async function handle(req, env) {
     return json(req, { ok: true });
   }
 
-  // Course reviews from the site, held until the admin page publishes or rejects them.
+  // Course and company reviews from the site, held until the admin page publishes or rejects them.
   if (path === "/api/reviews" && req.method === "POST") {
     if (body._honey) return json(req, { ok: true }); // the hidden box only bots fill in
     const t = (v, n) => String(v ?? "").trim().slice(0, n);
-    const r = { provider: t(body.provider, 120), course: t(body.course, 160), rating: Number(body.rating), headline: t(body.headline, 80),
+    const stars = v => Number.isInteger(Number(v)) && Number(v) >= 1 && Number(v) <= 5 ? Number(v) : 0;
+    const year = v => /^(19|20)\d\d$/.test(String(v ?? "")) ? String(v) : "";
+    const employer = body.kind === "employer";
+    const r = employer ? {
+      kind: "employer", employer: t(body.employer, 120), rating: Number(body.rating), pay: stars(body.pay), rotation: stars(body.rotation),
+      safety: stars(body.safety), management: stars(body.management), recommend: ["yes", "no"].includes(body.recommend) ? body.recommend : "",
+      headline: t(body.headline, 80), pros: t(body.pros, 1500), cons: t(body.cons, 1500), role: t(body.role, 60), region: t(body.region, 40),
+      status: body.status === "current" ? "current" : "former", from: year(body.from), to: body.status === "current" ? "" : year(body.to),
+      posted: new Date().toISOString().slice(0, 10) } : { provider: t(body.provider, 120), course: t(body.course, 160), rating: Number(body.rating), headline: t(body.headline, 80),
                 text: t(body.text, 2000), name: t(body.name, 40), background: t(body.background, 60),
                 attended: /^\d{4}-\d\d$/.test(body.attended || "") ? body.attended : "", posted: new Date().toISOString().slice(0, 10) };
     const email = t(body.email, 200);
-    if (!r.provider || !r.course || !(r.rating >= 1 && r.rating <= 5) || !Number.isInteger(r.rating) || r.text.length < 20 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    const filled = employer ? r.employer && r.role && (r.pros + r.cons).length >= 30 : r.provider && r.course && r.text.length >= 20;
+    if (!filled || !(r.rating >= 1 && r.rating <= 5) || !Number.isInteger(r.rating) || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
       return json(req, { error: "Some of the review is missing. Check the form and send it again." }, 400);
     // A few reviews a day from one connection is plenty; the address is only kept as a one-way hash.
     const sender = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("hej-review:" + (req.headers.get("CF-Connecting-IP") || "")))).slice(0, 22);

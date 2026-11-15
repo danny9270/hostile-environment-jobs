@@ -110,6 +110,23 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .employers li::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--accent); transform: rotate(45deg); }
 .tag { display: inline-block; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sand); margin-bottom: 2px; }
 .soon { color: var(--warn); font-weight: 600; }
+/* Closing soon: strip on the jobs page and the /closing-soon/ page */
+.closing { margin: 22px 0 6px; }
+.closing-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.closing-head h2 { margin: 0; font-size: 26px; }
+.closing-head a { font: 500 14px var(--mono); color: var(--accent); white-space: nowrap; }
+.closing-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.closing-card { position: relative; scroll-snap-align: start; background: var(--surface); border: 1px solid #5a3a1a; border-radius: 10px; padding: 18px 16px 14px; }
+.closing-card::before, .soon-detail::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 10px 10px 0 0;
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 10px, #111310 10px 20px); }
+.closing-card .left { font: 600 13px var(--mono); color: var(--warn); text-transform: uppercase; letter-spacing: .05em; }
+.closing-card h3 { margin: 4px 0 2px; font-size: 19px; line-height: 1.2; }
+.closing-card h3 a { color: var(--ink); text-decoration: none; }
+.closing-card h3 a::after { content: ""; position: absolute; inset: 0; }
+.closing-card h3 a:hover { color: var(--accent); }
+.closing-card .who { color: var(--muted); font-size: 14px; }
+.soon-detail { position: relative; border-color: #5a3a1a; }
+.soon-when { font-family: var(--mono); font-size: 14px; margin: 6px 0 0; }
 .empty { color: var(--muted); padding: 24px 0; }
 
 .detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 24px 0 40px; }
@@ -185,10 +202,47 @@ form label.check input { width: auto; flex: none; }
 .plan .price span { font: 500 13px var(--mono); color: var(--muted); }
 .plan ul { margin: 6px 0 14px; padding-left: 18px; color: var(--muted); }
 .plan .btn { justify-self: start; }
+.plan .invoice { font-size: 13px; color: var(--muted); }
+.paid { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 4px 20px; margin: 28px 0 0; scroll-margin-top: 220px; }
 .subscribe { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin: 18px 0 26px; }
 .subscribe h2 { font-size: 24px; margin: 0 0 4px; }
 .subscribe p { margin: 0; color: var(--muted); }
 #sitrep { scroll-margin-top: 130px; }
+.partners-home { margin: 26px 0 6px; }
+.phead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin-bottom: 14px; }
+.phead .eyebrow { flex-basis: 100%; margin: 0; }
+.phead h2 { font-size: clamp(26px, 3.4vw, 36px); margin: 0; }
+.phead .more { margin-left: auto; font-weight: 600; white-space: nowrap; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; margin: 18px 0 28px; }
+.partners-home .pgrid { margin: 0; }
+.pcard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.pcard:hover { border-color: var(--sand); }
+.pbanner { position: relative; display: grid; place-items: center; min-height: 150px; padding: 26px 20px 50px; text-decoration: none;
+  background: radial-gradient(120% 120% at 85% 0%, #3a2a14 0%, transparent 55%),
+    repeating-radial-gradient(circle at 18% 120%, transparent 0 22px, rgba(242,154,46,.13) 22px 23px), var(--raised); background-size: cover; background-position: center; }
+.pbanner.photo { min-height: 190px; }
+.plogo { width: auto; max-width: 220px; height: 96px; object-fit: contain; background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.plogo.ptext { display: grid; place-items: center; width: 96px; font: 900 48px var(--display); color: var(--accent-ink); background: var(--accent); }
+.pbadge { position: absolute; left: 12px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent-ink); background: var(--accent); border-radius: 999px; padding: 4px 10px 4px 8px; }
+.pbody { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px 18px; flex: 1; }
+.pbody h3 { font-size: 26px; margin: 0; }
+.pbody h3 a { color: var(--ink); text-decoration: none; }
+.pbody .who { margin: 0; color: var(--muted); font-size: 15px; }
+.pdeal { display: flex; align-items: center; gap: 12px; background: var(--soft); border: 1px dashed var(--accent); border-radius: 10px; padding: 10px 12px; }
+.pdeal b { font: 900 34px/1 var(--display); color: var(--accent); text-transform: uppercase; white-space: nowrap; }
+.pdeal span { font-size: 15px; line-height: 1.3; }
+.pcourses { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 15px; }
+.pcourses li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 6px; }
+.pcourses .when { font: 600 13px var(--mono); color: var(--sand); text-transform: uppercase; }
+.pcourses .price { font: 500 13px var(--mono); color: var(--muted); }
+.pmore { margin: 0; font: 500 13px var(--mono); color: var(--muted); }
+.pbody .actions { margin-top: auto; padding-top: 6px; }
+@media (min-width: 760px) {
+  .pgrid.one { grid-template-columns: 1fr; }
+  .pgrid.one .pcard { flex-direction: row; }
+  .pgrid.one .pbanner { flex: 0 0 38%; min-height: 0; }
+}
 .sitrep-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .sitrep-form input { flex: 1 1 220px; }
 .agenda { display: grid; gap: 8px; padding-bottom: 40px; }
@@ -231,8 +285,10 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
     <a href="/guide/">How it works</a>
     <a href="/leavers/">Service leavers</a>
     <a href="/pay/">Pay guide</a>
+    <a href="/companies/">Company reviews</a>
     <a href="/deploy/">Deployment guide</a>
     <a href="/cv/">CV builder</a>
+    <a href="/sop/">SOP builder</a>
     <a href="/app/">The App</a>
     <a href="/candidates/">Talent pool</a>
     <a href="/#post" data-view="post">Post a job</a>
@@ -255,13 +311,13 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <h2>Featured job</h2>
   <p class="price">£49 <span>per job, 30 days</span></p>
   <ul><li>Pinned to the top of the jobs list</li><li>Highlighted card with a Featured badge</li><li>Its own post on our Facebook and LinkedIn pages</li><li>Shared in the Facebook group</li></ul>
-  <a class="btn primary" href="#enquire" data-plan="Featured job">Book this</a>
+  <a class="btn primary" href="https://buy.stripe.com/7sYdR2dtu9Dvge7aiC4c800" target="_blank" rel="noopener">Pay by card</a><a class="invoice" href="#enquire" data-plan="Featured job">or ask for an invoice</a>
 </div>
 <div class="plan best">
   <h2>Featured employer</h2>
   <p class="price">£149 <span>90 days</span></p>
   <ul><li>Company profile page with your logo, story and every open job</li><li>All your jobs featured for 90 days</li><li>Your name links to your profile on every listing</li><li>A spotlight post on our Facebook and LinkedIn pages</li><li>90 days of talent pool search included</li></ul>
-  <a class="btn primary" href="#enquire" data-plan="Featured employer">Book this</a>
+  <a class="btn primary" href="https://buy.stripe.com/14A3co3SUeXPe5ZeyS4c801" target="_blank" rel="noopener">Pay by card</a><a class="invoice" href="#enquire" data-plan="Featured employer">or ask for an invoice</a>
 </div>
 <div class="plan">
   <h2>Candidate search</h2>
@@ -283,6 +339,10 @@ fetch("https://hej-alerts.danieldobb.workers.dev/api/talent/stats").then(r => r.
 }).catch(() => {});
 </script>
 <p class="meta-line">Prices exclude VAT where it applies. Featured time starts when the job goes live. We still check every job before it's listed, paid or not.</p>
+<div class="paid" id="ad-paid" hidden>
+  <h2>Payment received, thank you</h2>
+  <p>Thanks for booking. Now tell us which job or company to feature using the form below, and we'll have it live within a day. Featured time starts when it goes live, not when you paid.</p>
+</div>
 <h2 id="enquire">Book or ask a question</h2>
 <p>Tell us which plan and the job or company, and we'll reply with next steps, usually within a day. Paying by invoice is fine.</p>
 <form id="ad-form" method="POST">
@@ -308,6 +368,17 @@ const CONTACT = ["contact", "hostileenvironmentjobs.com"].join("@");
 document.getElementById("ad-form").action = "https://formsubmit.co/" + CONTACT;
 document.getElementById("ad-sent").hidden = !/sent=1/.test(location.search);
 document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click", () => document.getElementById("ad-plan").value = a.dataset.plan));
+// Back from a Stripe Payment Link (?paid=featured-job): thank them and ask what to feature.
+const paid = new URLSearchParams(location.search).get("paid");
+if (paid) {
+  const plan = {"featured-job": "Featured job", "featured-employer": "Featured employer"}[paid];
+  if (plan) document.getElementById("ad-plan").value = plan;
+  document.querySelector("#ad-form [name=_subject]").value = "PAID: " + (plan || "featured plan") + " for Hostile Environment Jobs";
+  document.querySelector("#ad-form [name=details]").placeholder = "The job link, or your company name, website and logo";
+  document.getElementById("enquire").textContent = "Tell us what to feature";
+  document.getElementById("ad-paid").hidden = false;
+  document.getElementById("ad-paid").scrollIntoView();
+}
 </script>
 </main>
 <footer><div class="wrap">
@@ -316,6 +387,7 @@ document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click"
   <a href="/jobs/">All open jobs</a>
   <a href="/pay/">Pay guide</a>
   <a href="/deploy/">Deployment guide</a>
+  <a href="/sop/">Mine action SOP builder</a>
   <a href="/#post" data-view="post">Post a job</a>
   <a href="/advertise/">Advertise</a>
   <a href="/#list-course" data-view="courses">List a course</a>
