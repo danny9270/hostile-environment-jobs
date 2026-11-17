@@ -10,25 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:course-pcm-imas-eod-1-2-ukr-nov-2026@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261116
-DTEND;VALUE=DATE:20261117
-SUMMARY:Course starts: Field Operator / IMAS EOD Level 1 & 2 (taught in Ukr
- ainian) (Kosovo)
-LOCATION:Kosovo
-DESCRIPTION:Praedium Consulting Malta (MAT Kosovo EOD School)\, Kosovo. See
-  provider. On request\nEntry-level demining and EOD course delivered in Uk
- rainian. Pre-register online\, then the school sends a booking form.\n\nBo
- ok: https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=host
- ileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_co
- ntent=pcm-imas-eod-1-2-ukr-nov-2026
-URL:https://www.pcm-erw.com/course-dates-pre-registration/?utm_source=hosti
- leenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_con
- tent=pcm-imas-eod-1-2-ukr-nov-2026
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-drc-safety-assistant-barvinkove@hostileenvironmentjobs.com
 DTSTAMP:20261107T000000Z
 DTSTART;VALUE=DATE:20261119
@@ -126,6 +107,40 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Kyiv\, Ukraine\nOffice-based rol
  com/jobs/drc-safety-assistant-radio-operator-kyiv/
 URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-radio-oper
  ator-kyiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-nts-eore-manager-rural-damascus@hostileenvironmentjobs.com
+DTSTAMP:20261117T000000Z
+DTSTART;VALUE=DATE:20261130
+DTEND;VALUE=DATE:20261201
+SUMMARY:Job closes: National Non-Technical Survey / Explosive Ordnance Risk
+  Education Manager (Danish Refugee Council (DRC))
+LOCATION:Rural Damascus\, Syria
+DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nLead DRC
+ 's non-technical survey\, community liaison and risk education teams in Sy
+ ria\, including quality management and SOPs.\n\nDetails and how to apply: 
+ https://hostileenvironmentjobs.com/jobs/drc-nts-eore-manager-rural-damascu
+ s/
+URL:https://hostileenvironmentjobs.com/jobs/drc-nts-eore-manager-rural-dama
+ scus/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-mechanic-mechanical-clearance-mykolaiv@hostileenvironmentjobs.c
+ om
+DTSTAMP:20261117T000000Z
+DTSTART;VALUE=DATE:20261210
+DTEND;VALUE=DATE:20261211
+SUMMARY:Job closes: Mechanic (Mechanical Clearance) (Danish Refugee Council
+  (DRC))
+LOCATION:Mykolaiv\, Ukraine
+DESCRIPTION:Danish Refugee Council (DRC)\, Mykolaiv\, Ukraine\nMaintain and
+  repair DRC's GCS 200 mechanical demining machines supporting clearance te
+ ams in Ukraine.\n\nDetails and how to apply: https://hostileenvironmentjob
+ s.com/jobs/drc-mechanic-mechanical-clearance-mykolaiv/
+URL:https://hostileenvironmentjobs.com/jobs/drc-mechanic-mechanical-clearan
+ ce-mykolaiv/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
