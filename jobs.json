@@ -1,60 +1,42 @@
 [
  {
-  "id": "gardaworld-security-operations-manager-basra",
-  "title": "Security Operations Manager",
-  "employer": "GardaWorld",
-  "category": "Security",
-  "location": "Basra, Iraq",
+  "id": "drc-nts-eore-manager-rural-damascus",
+  "title": "National Non-Technical Survey / Explosive Ordnance Risk Education Manager",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Rural Damascus, Syria",
   "region": "Middle East",
-  "contract": "Independent contractor, open-ended, 8 weeks on / 4 off",
-  "salary": "Not stated (accommodation, insurance, flights and life support included)",
+  "contract": "Expatriate or national contract, 12 months (extendable)",
+  "salary": "DRC grade MF2 (amount not stated)",
   "requirements": [
-   "5+ years military, police or law enforcement",
-   "2+ years Iraq experience",
-   "Site security and manned guarding in high-risk environments, ideally oil and gas",
-   "Current FPOS-I or MIRA first aid and an accredited CP course"
+   "5+ years EORE and NTS experience in humanitarian mine action",
+   "2+ years supervising teams or managing EORE/NTS",
+   "NTS and EORE qualifications; IMAS, SOPs and QA/QC",
+   "IMSMA and GIS; fluent Arabic and strong English"
   ],
-  "summary": "Run a 24/7 local guard force and site security plans protecting staff on an oil and gas project in Basra.",
-  "closing": "Rolling",
-  "apply_url": "https://jobs.garda.com/job/Basra-Operations-Manager-Basra-Iraq/1449740300/",
-  "posted": "2026-11-15"
+  "summary": "Lead DRC's non-technical survey, community liaison and risk education teams in Syria, including quality management and SOPs.",
+  "closing": "2026-11-30",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177193&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-17"
  },
  {
-  "id": "weston-uxo-technician-ii-hawthorne",
-  "title": "UXO Technician II",
-  "employer": "Weston Solutions",
-  "category": "EOD",
-  "location": "Hawthorne, Nevada, USA",
-  "region": "Americas",
-  "contract": "Field project",
-  "salary": "$61,162 - $99,949",
+  "id": "drc-mechanic-mechanical-clearance-mykolaiv",
+  "title": "Mechanic (Mechanical Clearance)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Mykolaiv, Ukraine",
+  "region": "Europe",
+  "contract": "National contract, 3 months (extendable), starts 1 Jan 2027",
+  "salary": "From EUR 1,080 gross per month",
   "requirements": [
-   "Prior military EOD or 3 years munitions response / range clearance",
-   "Graduate of a formal UXO training course or EOD assistant courses",
-   "Able to operate detection and geophysical sensing equipment"
+   "5+ years as a light/heavy vehicle, demining or earth-moving machinery mechanic",
+   "Electrical, hydraulic and pneumatic systems experience",
+   "Category B driving licence"
   ],
-  "summary": "Identify and classify UXO and discarded military munitions, move safe items and supervise UXO sweep personnel.",
-  "closing": "Rolling",
-  "apply_url": "https://jobs.jobvite.com/weston/job/oIzqAfw1",
-  "posted": "2026-11-15"
- },
- {
-  "id": "gardaworld-canine-trainer-iraq",
-  "title": "Canine Trainer",
-  "employer": "GardaWorld",
-  "category": "K9",
-  "location": "Balad, Iraq",
-  "region": "Middle East",
-  "contract": "Independent contractor, open-ended, 15 weeks on / 5 off",
-  "salary": "Not stated (accommodation, food, insurance and rotation flights included)",
-  "requirements": [
-   "Certification as an explosive detection working dog trainer",
-   "3+ years as a military, law enforcement or commercial security canine trainer in the last 10 years"
-  ],
-  "summary": "Validate and train explosive detection dogs in Iraq, keeping training records and overseeing their daily health and welfare.",
-  "closing": "Rolling",
-  "apply_url": "https://jobs.garda.com/job/Baghdad-Canine-Trainer-Iraq-Iraq/1449315600/",
-  "posted": "2026-11-11"
+  "summary": "Maintain and repair DRC's GCS 200 mechanical demining machines supporting clearance teams in Ukraine.",
+  "closing": "2026-12-10",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177203&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-17"
  },
  {
   "id": "drc-hma-translator-kyiv",
