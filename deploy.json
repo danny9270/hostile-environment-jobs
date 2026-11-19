@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-18T13:26:29Z",
+ "updated": "2026-11-19T13:54:15Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -1755,9 +1755,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/israel",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
@@ -1773,10 +1777,6 @@
      {
       "date": "2026-06-08",
       "note": "Updated information about regional escalation following Iranian missile strikes ('Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-06-03",
-      "note": "FCDO no longer advises against all travel to Israel and Palestine but continues to advise against all travel to Gaza, parts of the West Bank and parts of northern Israel and the occupied Golan Heights. FCDO advises against all but essential travel to other parts of the West Bank (‘Warnings and…"
      }
     ],
     "warnings": [
@@ -1902,9 +1902,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/palestine",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
@@ -1920,10 +1924,6 @@
      {
       "date": "2026-06-08",
       "note": "Updated information about regional escalation following Iranian missile strikes ('Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-06-03",
-      "note": "FCDO no longer advises against all travel to Israel and Palestine but continues to advise against all travel to Gaza, parts of the West Bank and parts of northern Israel and the occupied Golan Heights. FCDO advises against all but essential travel to other parts of the West Bank (‘Warnings and…"
      }
     ],
     "warnings": [
@@ -2180,9 +2180,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/syria",
     "level": 4,
     "alert": "FCDO advises against all travel to the whole country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
@@ -2198,10 +2202,6 @@
      {
       "date": "2026-06-18",
       "note": "Updated information about regional tensions and conflict affecting Syria (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-02-27",
-      "note": "Updated information about the risks of regional escalation (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -2310,9 +2310,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/jordan",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions, demonstrations and mass gatherings, and incidents of terrorism (‘Warnings and insurance’ and ‘Safety and security’ pages)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
@@ -2328,27 +2332,18 @@
      {
       "date": "2026-09-10",
       "note": "Addition of information about Iranian missile strikes on Jordan (‘Warnings and insurance’ page)"
-     },
-     {
-      "date": "2026-08-25",
-      "note": "FCDO no longer advises against all but essential travel to Aqaba international airport and seaport following review of the security situation ('Warnings and insurance' page)."
      }
     ],
     "warnings": [
      "FCDO advises against all travel to within 3km of the border with Syria.",
-     "A shooting took place at a Church in Karak Governorate causing several casualties on 23 October 2026. Follow the advice of the local authorities and monitor local media.",
      "The context in the Middle East remains deeply unpredictable and the risk of sudden escalation is high. Since conflict began in early 2026, Iran has stated its intention to target locations associated with the US and Israel, including, but not limited to, organisations, businesses, facilities, and institutions. There have been strikes and retaliatory attacks by Iran and others across the region against civilian and…",
-     "British nationals in, or planning to travel through, the Middle East should be prepared for possible flight cancellations, airspace closures, and travel disruptions. You should:"
+     "British nationals in, or planning to travel through, the Middle East should be prepared for possible flight cancellations, airspace closures, and travel disruptions. You should:",
+     "read If you’re affected by a crisis abroad - GOV.UK. This includes guidance on “how to prepare for a crisis” with suggestions on what you might include in your emergency supplies and “what to do in a crisis”"
     ],
     "security": [
      {
       "heading": "Terrorism in Jordan",
       "text": "In the context of regional escalation, Iran-aligned militia groups have threatened to target US interests across the region, have claimed attacks in Jordan and are likely to continue to carry out these attacks in Jordan. As was the case before the recent regional escalation, terrorists are likely to try to carry out attacks in Jordan, including in places visited by foreign nationals, such as:",
-      "url": "https://www.gov.uk/foreign-travel-advice/jordan/safety-and-security"
-     },
-     {
-      "heading": "Political situation",
-      "text": "The political situation in Jordan is stable but sometimes there are protests in Amman and other cities. You should stay away from demonstrations and follow the advice of the local authorities.",
       "url": "https://www.gov.uk/foreign-travel-advice/jordan/safety-and-security"
      },
      {
@@ -2469,9 +2464,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/iraq",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
@@ -2487,10 +2486,6 @@
      {
       "date": "2026-05-06",
       "note": "Updated information about risks from terrorist kidnap (‘Safety and security’ page)."
-     },
-     {
-      "date": "2026-04-01",
-      "note": "Updated information about regional escalation (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -2620,9 +2615,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/iran",
     "level": 4,
     "alert": "FCDO advises against all travel to the whole country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
@@ -2638,10 +2637,6 @@
      {
       "date": "2026-06-18",
       "note": "Updated information about regional tensions and conflict affecting Iran (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-04-07",
-      "note": "Updated information about regional escalation (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -2751,9 +2746,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/saudi-arabia",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
@@ -2769,10 +2768,6 @@
      {
       "date": "2026-10-16",
       "note": "FCDO now advises against all but essential travel to Saudi Arabia. FCDO continues to advise against all travel to within 10km of the border with Yemen (‘Warnings and insurance’ page and ‘Regional risks’ page)."
-     },
-     {
-      "date": "2026-10-15",
-      "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -2895,9 +2890,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/yemen",
     "level": 4,
     "alert": "FCDO advises against all travel to the whole country",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)"
@@ -2913,10 +2912,6 @@
      {
       "date": "2026-06-18",
       "note": "Updated information about regional tensions and conflict affecting Yemen (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-03-09",
-      "note": "New information about entry to Saudi Arabia (see ‘Warnings and insurance’ and ‘Entry requirements’ pages)."
      }
     ],
     "warnings": [
@@ -3021,9 +3016,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/oman",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
@@ -3039,10 +3038,6 @@
      {
       "date": "2026-06-18",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-06-05",
-      "note": "Update to information regarding regional escalation (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -3142,9 +3137,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)"
@@ -3160,10 +3159,6 @@
      {
       "date": "2026-06-18",
       "note": "FCDO no longer advises against all but essential travel to UAE. Updated information about regional tensions (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-04-14",
-      "note": "Update to information regarding regional escalation (‘Warnings and insurance’ page)."
      }
     ],
     "warnings": [
@@ -3266,9 +3261,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/qatar",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page) ."
@@ -3284,10 +3283,6 @@
      {
       "date": "2026-07-22",
       "note": "Updated information about regional tensions, including information about recent strikes and retaliatory attacks by Iran ('Warnings insurance') page."
-     },
-     {
-      "date": "2026-07-13",
-      "note": "Updated information about regional tensions ('Warnings and insurance' page)."
      }
     ],
     "warnings": [
@@ -3396,9 +3391,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/bahrain",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page) ."
@@ -3414,10 +3413,6 @@
      {
       "date": "2026-07-23",
       "note": "FCDO now advises against all but essential travel to Bahrain (‘Warnings and insurance’ page)."
-     },
-     {
-      "date": "2026-07-22",
-      "note": "Updated information about regional tensions, including information about recent strikes and retaliatory attacks by Iran ('Warnings insurance') page."
      }
     ],
     "warnings": [
@@ -3530,9 +3525,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/kuwait",
     "level": 1,
     "alert": "FCDO does not advise against travel",
-    "updated": "2026-10-27",
-    "reviewed": "2026-10-27",
+    "updated": "2026-11-18",
+    "reviewed": "2026-11-18",
     "changes": [
+     {
+      "date": "2026-11-18",
+      "note": "Updated information about regional tensions (See ‘Warnings and insurance’ page)."
+     },
      {
       "date": "2026-10-27",
       "note": "Updated information about regional tensions (‘Warnings and insurance’ page)."
@@ -3548,10 +3547,6 @@
      {
       "date": "2026-07-23",
       "note": "FCDO now advises against all but essential travel to Kuwait (‘Warnings and insurance’ page)"
-     },
-     {
-      "date": "2026-07-22",
-      "note": "Updated information about regional tensions following recent strikes and retaliatory attacks by Iran ('Warnings and insurance' page)."
      }
     ],
     "warnings": [
