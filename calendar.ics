@@ -10,38 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:job-drc-safety-assistant-barvinkove@hostileenvironmentjobs.com
-DTSTAMP:20261107T000000Z
-DTSTART;VALUE=DATE:20261119
-DTEND;VALUE=DATE:20261120
-SUMMARY:Job closes: Safety Assistant (Danish Refugee Council (DRC))
-LOCATION:Barvinkove\, Ukraine
-DESCRIPTION:Danish Refugee Council (DRC)\, Barvinkove\, Ukraine\nSupport DR
- C's Barvinkove safety team with safety plans\, staff briefings\, documenta
- tion and safety equipment.\n\nDetails and how to apply: https://hostileenv
- ironmentjobs.com/jobs/drc-safety-assistant-barvinkove/
-URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-barvinkove
- /
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
-UID:job-drc-safety-officer-partnership-kharkiv@hostileenvironmentjobs.com
-DTSTAMP:20261105T000000Z
-DTSTART;VALUE=DATE:20261120
-DTEND;VALUE=DATE:20261121
-SUMMARY:Job closes: Safety Officer (Partnership Officer) (Danish Refugee Co
- uncil (DRC))
-LOCATION:Kharkiv\, Ukraine
-DESCRIPTION:Danish Refugee Council (DRC)\, Kharkiv\, Ukraine\nSupport the s
- afety of DRC's local partners in Kharkiv through safety and first aid trai
- ning\, capacity assessments and safety plans.\n\nDetails and how to apply:
-  https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-kh
- arkiv/
-URL:https://hostileenvironmentjobs.com/jobs/drc-safety-officer-partnership-
- kharkiv/
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
 DTSTAMP:20261028T000000Z
 DTSTART;VALUE=DATE:20261123
@@ -107,6 +75,21 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Kyiv\, Ukraine\nOffice-based rol
  com/jobs/drc-safety-assistant-radio-operator-kyiv/
 URL:https://hostileenvironmentjobs.com/jobs/drc-safety-assistant-radio-oper
  ator-kyiv/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:job-drc-safety-officer-el-obeid@hostileenvironmentjobs.com
+DTSTAMP:20261121T000000Z
+DTSTART;VALUE=DATE:20261128
+DTEND;VALUE=DATE:20261129
+SUMMARY:Job closes: Safety Officer (Danish Refugee Council (DRC))
+LOCATION:El Obeid\, Sudan
+DESCRIPTION:Danish Refugee Council (DRC)\, El Obeid\, Sudan\nHelp DRC's Hea
+ d of Safety & Access apply safety policies in Sudan\, tracking staff movem
+ ents\, reporting incidents and liaising with authorities.\n\nDetails and h
+ ow to apply: https://hostileenvironmentjobs.com/jobs/drc-safety-officer-el
+ -obeid/
+URL:https://hostileenvironmentjobs.com/jobs/drc-safety-officer-el-obeid/
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
