@@ -10,25 +10,6 @@ X-WR-CALDESC:Course start dates and job closing dates from hostileenvironme
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
-DTSTAMP:20261028T000000Z
-DTSTART;VALUE=DATE:20261123
-DTEND;VALUE=DATE:20261124
-SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
- (Soesterberg\, Netherlands)
-LOCATION:Soesterberg\, Netherlands
-DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
- ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
- d HEAT for NGO\, UN and media staff. Further dates 7 Dec\, 16 Dec and thro
- ugh 2027.\n\nBook: https://www.centreforsafety.org/course/basic-heat-cours
- e/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=cour
- se-calendar&utm_content=csd-basic-heat-nl
-URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
- stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
- content=csd-basic-heat-nl
-TRANSP:TRANSPARENT
-END:VEVENT
-BEGIN:VEVENT
 UID:job-drc-hma-translator-kyiv@hostileenvironmentjobs.com
 DTSTAMP:20261111T000000Z
 DTSTART;VALUE=DATE:20261123
@@ -124,6 +105,25 @@ DESCRIPTION:Danish Refugee Council (DRC)\, Rural Damascus\, Syria\nLead DRC
  s/
 URL:https://hostileenvironmentjobs.com/jobs/drc-nts-eore-manager-rural-dama
  scus/
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:course-csd-basic-heat-nl@hostileenvironmentjobs.com
+DTSTAMP:20261028T000000Z
+DTSTART;VALUE=DATE:20261207
+DTEND;VALUE=DATE:20261208
+SUMMARY:Course starts: Basic HEAT (Hostile Environment Awareness Training) 
+ (Soesterberg\, Netherlands)
+LOCATION:Soesterberg\, Netherlands
+DESCRIPTION:Centre for Safety and Development (CSD)\, Soesterberg\, Netherl
+ ands. 3 days (more dates monthly). €3\,200 incl. 2 nights\nScenario-base
+ d HEAT for NGO\, UN and media staff. Further dates 16 Dec\, 6 Jan and thro
+ ugh 2027.\n\nBook: https://www.centreforsafety.org/course/basic-heat-cours
+ e/?utm_source=hostileenvironmentjobs&utm_medium=referral&utm_campaign=cour
+ se-calendar&utm_content=csd-basic-heat-nl
+URL:https://www.centreforsafety.org/course/basic-heat-course/?utm_source=ho
+ stileenvironmentjobs&utm_medium=referral&utm_campaign=course-calendar&utm_
+ content=csd-basic-heat-nl
 TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
