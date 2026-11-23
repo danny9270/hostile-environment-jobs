@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22T12:52:05Z",
+ "updated": "2026-11-23T15:22:26Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -154,9 +154,13 @@
     "url": "https://www.gov.uk/foreign-travel-advice/ethiopia",
     "level": 3,
     "alert": "FCDO advises against all travel to parts of the country",
-    "updated": "2026-10-30",
-    "reviewed": "2026-10-30",
+    "updated": "2026-11-23",
+    "reviewed": "2026-11-23",
     "changes": [
+     {
+      "date": "2026-11-23",
+      "note": "FCDO now advises against all but essential travel to East Borena and Arsi in Oromia Region. FCDO continues to advise against all travel and all but essential travel to other parts of Ethiopia (‘Warnings and insurance’ and ‘Regional risks’ pages)."
+     },
      {
       "date": "2026-10-30",
       "note": "Update on areas that the FCDO advise against all travel to within 10km of the border with Kenya (Warnings and Insurance page)"
@@ -172,10 +176,6 @@
      {
       "date": "2026-10-16",
       "note": "New information about fighting in the Tigray region and updated information about travel from the airport and around Addis Ababa (‘Warnings and insurance’, ‘Safety and security’ and ‘Regional risks’ pages)."
-     },
-     {
-      "date": "2026-10-07",
-      "note": "Updated information about conflict and violence (‘Safety and security’ page)."
      }
     ],
     "warnings": [
