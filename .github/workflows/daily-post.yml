@@ -1,0 +1,32 @@
+# Every day except Thursday, adds one evergreen post (job spotlight, pay guide, deployment brief, course,
+# free tool, or the week in numbers) to social/facebook.xml and social/linkedin.xml, built from the site's data.
+# Zapier's RSS zaps ("HE Jobs → Facebook Page" and "HE Jobs → LinkedIn Page") then post it to both Pages.
+# Thursday is left to the "Closing soon post" workflow. Run it by hand from the Actions tab if needed.
+name: Daily social post
+on:
+  schedule:
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency: social-feed
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/daily_post.py
+      - name: Publish the feed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add social
+          if git diff --cached --quiet; then echo "No post today"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Daily social post $(date -u +%F)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          # Pushes made with the workflow token don't start a Pages build on their own.
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"
