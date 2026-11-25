@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24T15:16:52Z",
+ "updated": "2026-11-25T14:57:38Z",
  "errors": [
   "ReliefWeb: HTTP Error 403: Forbidden"
  ],
@@ -1733,7 +1733,7 @@
    "us": {
     "level": 2,
     "title": "Exercise Increased Caution",
-    "date": "2025-07-15",
+    "date": "2026-11-24",
     "url": "https://travel.state.gov/content/tsg_aem/us/en/home/international-travel/travel-advisories/destination.egy.html"
    },
    "reports": []
