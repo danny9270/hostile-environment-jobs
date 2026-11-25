@@ -1,5 +1,65 @@
 [
  {
+  "id": "drc-nts-eore-team-leader-deir-ezzor",
+  "title": "NTS/EORE Team Leader",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Deir Ezzor, Syria",
+  "region": "Middle East",
+  "contract": "National contract, 12 months (extendable)",
+  "salary": "Not stated (DRC Management G)",
+  "requirements": [
+   "Humanitarian mine action background including non-technical survey",
+   "Previous HMA team leader experience and 1 year EORE",
+   "NTS course certificate; IMAS level 3 desirable",
+   "Native Arabic, good English"
+  ],
+  "summary": "Lead a non-technical survey and explosive ordnance risk education team in Deir Ezzor to IMAS and NMAS standards.",
+  "closing": "2026-12-10",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177263&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-25"
+ },
+ {
+  "id": "drc-nts-eore-team-member-deir-ezzor",
+  "title": "NTS/EORE Team Member",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Survey & Clearance",
+  "location": "Deir Ezzor, Syria",
+  "region": "Middle East",
+  "contract": "National contract, 12 months (extendable)",
+  "salary": "Not stated (DRC grade J1)",
+  "requirements": [
+   "NTS/EORE certificate from a recognised mine action training body",
+   "Basic explosive ordnance recognition for Syria",
+   "Map, compass, GPS and laser range finder skills",
+   "Native Arabic, good English"
+  ],
+  "summary": "Deliver risk education sessions and carry out non-technical survey and community liaison in Deir Ezzor.",
+  "closing": "2026-12-10",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177262&DepartmentId=19001&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-25"
+ },
+ {
+  "id": "drc-security-access-officer-maracaibo",
+  "title": "Humanitarian Security and Access Officer (Oficial de Seguridad y Acceso Humanitario)",
+  "employer": "Danish Refugee Council (DRC)",
+  "category": "Security",
+  "location": "Maracaibo, Venezuela",
+  "region": "Americas",
+  "contract": "National contract (duration subject to budget), start around Dec 2026",
+  "salary": "Not stated (DRC band H, health insurance included)",
+  "requirements": [
+   "3+ years in security, humanitarian access or logistics",
+   "Degree in social sciences, international relations, logistics or similar",
+   "Strong knowledge of the local security context",
+   "Application in Spanish"
+  ],
+  "summary": "Monitor security and humanitarian access in Zulia state, running risk assessments, incident reports and liaison with local actors.",
+  "closing": "2026-12-02",
+  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177260&DepartmentId=19129&MediaId=5&SkipAdvertisement=true",
+  "posted": "2026-11-25"
+ },
+ {
   "id": "drc-safety-officer-el-obeid",
   "title": "Safety Officer",
   "employer": "Danish Refugee Council (DRC)",
@@ -116,25 +176,6 @@
   "closing": "2026-12-10",
   "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177203&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
   "posted": "2026-11-17"
- },
- {
-  "id": "drc-hma-translator-kyiv",
-  "title": "Translator (Humanitarian Mine Action Officer)",
-  "employer": "Danish Refugee Council (DRC)",
-  "category": "Other",
-  "location": "Kyiv, Ukraine",
-  "region": "Europe",
-  "contract": "National contract, 6 months (extendable)",
-  "salary": "From EUR 2,025 gross per month",
-  "requirements": [
-   "2+ years in a similar role or an international organisation",
-   "Advanced English and fluent Ukrainian",
-   "Strong communication and negotiation skills"
-  ],
-  "summary": "Interpret and translate for DRC's international mine action team, including technical SOPs and training materials.",
-  "closing": "2026-11-23",
-  "apply_url": "https://candidate.hr-manager.net/ApplicationInit.aspx?cid=1036&ProjectId=177146&DepartmentId=19100&MediaId=5&SkipAdvertisement=true",
-  "posted": "2026-11-11"
  },
  {
   "id": "errg-uxo-technician-i",
