@@ -31,7 +31,11 @@
 //   RESEND_API_KEY       optional secret, a Resend sending key for hostileenvironmentjobs.com. With it, operators get an
 //                        email when an employer asks to get in touch, employers when they're accepted or approved,
 //                        and contact@ when a new employer signs up. Without it everything still works on the page.
-//   MAIL_FROM            optional, the sender, default "H.E. Jobs <jobs@hostileenvironmentjobs.com>".
+//   MAIL_FROM            optional, the sender, default "H.E. Jobs <contact@hostileenvironmentjobs.com>".
+// Email alerts: subscribers can also (or instead) have matching jobs emailed to them, as part of the same subscription.
+// They need RESEND_API_KEY too; until it's set the app doesn't offer them. An address that isn't the one they paid with
+// gets a confirmation link first. Every alert email has a one-click unsubscribe. The "Job alerts" Action writes the
+// emails and hands them to /api/internal/email, which sends them through Resend in batches of up to 90.
 // Store apps (mobile/): the iPhone and Android apps take the $10 a year through the App Store and Google Play, using
 // RevenueCat to keep track of who has paid. The app buys under the account's own code, then asks /api/store/sync, which
 // reads that code's subscription from RevenueCat and moves paid_until to its end date. Renewals are picked up the same
@@ -71,7 +75,10 @@ const SCHEMA = [
 const COLUMNS = ["ALTER TABLE accounts ADD COLUMN ref TEXT", "ALTER TABLE accounts ADD COLUMN referred_by TEXT",
                  "ALTER TABLE accounts ADD COLUMN ref_rewarded INTEGER NOT NULL DEFAULT 0",
                  // Store apps: which store the subscription is with ("app_store" or "play_store") and whether it will renew.
-                 "ALTER TABLE accounts ADD COLUMN store TEXT", "ALTER TABLE accounts ADD COLUMN store_renews INTEGER NOT NULL DEFAULT 0"];
+                 "ALTER TABLE accounts ADD COLUMN store TEXT", "ALTER TABLE accounts ADD COLUMN store_renews INTEGER NOT NULL DEFAULT 0",
+                 // Email alerts: the address, whether they're on, whether the address is confirmed, and the token in its links.
+                 "ALTER TABLE accounts ADD COLUMN alert_email TEXT", "ALTER TABLE accounts ADD COLUMN email_on INTEGER NOT NULL DEFAULT 0",
+                 "ALTER TABLE accounts ADD COLUMN email_ok INTEGER NOT NULL DEFAULT 0", "ALTER TABLE accounts ADD COLUMN email_token TEXT"];
 let ready = null;
 const setup = db => (ready ??= (async () => {
   await db.batch(SCHEMA.map(s => db.prepare(s)));
@@ -223,7 +230,8 @@ async function publicAccount(env, acct, devices) {
   const referred = (await env.DB.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by = ? AND source = 'stripe'").bind(acct.ref).first()).n;
   return { code: acct.code, ref: acct.ref, referrals: referred, referrals_per_year: REFERRALS_PER_YEAR, free_years: acct.ref_rewarded || 0, active: active(env, acct), free: !paying(env), paid_until: acct.paid_until || null,
            renews: Boolean(acct.subscription) || Boolean(acct.store && acct.store_renews && acct.paid_until > now()), store: acct.store || null, email: acct.email, prefs: JSON.parse(acct.prefs || "{}"), devices,
-           checkout_pending: Boolean(acct.pending_session) };
+           checkout_pending: Boolean(acct.pending_session),
+           email_alerts: { ready: Boolean(env.RESEND_API_KEY), address: acct.alert_email || acct.email || "", on: Boolean(acct.email_on), confirmed: Boolean(acct.email_ok) } };
 }
 
 const TRIAL_DAYS = 30;
@@ -298,6 +306,7 @@ async function payments(env) {
     active: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ?"),
     renewing: await one("SELECT COUNT(*) AS n FROM accounts WHERE paid_until > ? AND subscription IS NOT NULL"),
     phones: (await db.prepare("SELECT COUNT(*) AS n FROM devices").first()).n,
+    email_ready: Boolean(env.RESEND_API_KEY), with_email: (await db.prepare("SELECT COUNT(*) AS n FROM accounts WHERE email_on = 1 AND email_ok = 1").first()).n,
     referred: (await db.prepare("SELECT COUNT(*) AS n FROM accounts WHERE referred_by IS NOT NULL AND source = 'stripe'").first()).n,
   };
   if (!env.STRIPE_SECRET_KEY) return { stripe: false, alerts, payments: [] };
@@ -327,7 +336,7 @@ async function payments(env) {
 async function alertStats(env) {
   const db = env.DB, t = now();
   const accts = (await db.prepare(`SELECT a.code, a.prefs, a.paid_until, a.email, a.subscription, a.source, a.ref, a.ref_rewarded, a.created,
-      (SELECT COUNT(*) FROM devices d WHERE d.code = a.code) AS phones,
+      a.email_on, a.email_ok, (SELECT COUNT(*) FROM devices d WHERE d.code = a.code) AS phones,
       (SELECT COUNT(*) FROM accounts b WHERE b.referred_by = a.ref AND b.source = 'stripe') AS referred FROM accounts a`).all()).results;
   const live = accts.filter(a => active(env, a));
   const wants = { categories: {}, regions: {}, course_types: {}, courses: 0, keywords: 0 };
@@ -343,6 +352,7 @@ async function alertStats(env) {
   const kinds = (await db.prepare("SELECT kind, COUNT(*) AS n FROM devices GROUP BY kind").all()).results;
   return {
     paying: paying(env), accounts: accts.length, active: live.length, with_phone: live.filter(a => a.phones).length,
+    with_email: live.filter(a => a.email_on && a.email_ok).length, email_ready: Boolean(env.RESEND_API_KEY),
     renewing: accts.filter(a => a.paid_until > t && a.subscription).length,
     new_30d: accts.filter(a => a.created > t - 30 * DAY).length,
     // Paid for a single year with no renewal set up, and running out within 30 days.
@@ -430,11 +440,38 @@ async function mail(env, to, subject, text) {
   if (!env.RESEND_API_KEY || !to) return false;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST", headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: env.MAIL_FROM || "H.E. Jobs <jobs@hostileenvironmentjobs.com>", to: [to], reply_to: "contact@hostileenvironmentjobs.com",
+    body: JSON.stringify({ from: env.MAIL_FROM || MAIL_FROM, to: [to], reply_to: "contact@hostileenvironmentjobs.com",
                            subject, text: text + "\n\nH.E. Jobs Team\n" + SITE }),
   }).catch(() => null);
   return Boolean(res?.ok);
 }
+
+const MAIL_FROM = "H.E. Jobs <contact@hostileenvironmentjobs.com>";
+const sameEmail = (a, b) => Boolean(a && b) && a.trim().toLowerCase() === b.trim().toLowerCase();
+
+// Switches email alerts on or off, or changes the address. A new address that isn't the one they paid with is only
+// used once its owner clicks the link we send it, so nobody can sign someone else up.
+async function setEmailAlerts(env, origin, acct, on, address) {
+  address = txt(address, 200);
+  if (on && !EMAIL.test(address)) throw new Error("That email address doesn't look right.");
+  if (on && !env.RESEND_API_KEY) throw new Error("Email alerts aren't switched on yet. Please try again soon.");
+  const moved = on && !sameEmail(address, acct.alert_email);
+  if (moved || !acct.email_token) acct.email_token = newId() + newId();
+  if (moved) { acct.alert_email = address; acct.email_ok = sameEmail(address, acct.email) ? 1 : 0; }
+  acct.email_on = on ? 1 : 0;
+  await env.DB.prepare("UPDATE accounts SET alert_email = ?, email_on = ?, email_ok = ?, email_token = ? WHERE code = ?")
+    .bind(acct.alert_email || null, acct.email_on, acct.email_ok || 0, acct.email_token, acct.code).run();
+  if (on && !acct.email_ok && !(await mail(env, acct.alert_email, "Confirm your H.E. Jobs email alerts",
+      "Tap this link to start getting matching jobs by email:\n" + origin + "/api/email/confirm?t=" + acct.email_token +
+      "\n\nIf you didn't ask for this, ignore this email and nothing will be sent.")))
+    throw new Error("We couldn't send the confirmation email. Check the address and try again.");
+  return acct;
+}
+
+const page = (req, title, body, status = 200) => new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title><style>body{font:17px/1.5 system-ui,sans-serif;background:#0f1412;color:#e8ece9;max-width:520px;margin:12vh auto;padding:0 16px}
+a,button{color:#0f1412;background:#e0b341;border:0;border-radius:8px;padding:10px 16px;font:inherit;font-weight:600;text-decoration:none;display:inline-block;cursor:pointer}</style></head>
+<body><h1>${title}</h1>${body}</body></html>`, { status, headers: { "Content-Type": "text/html; charset=utf-8", ...cors(req) } });
 
 // Old profiles, CVs and requests go once a day or so; there's no timer on the free plan, so it runs on normal traffic.
 let tidied = 0;
@@ -500,7 +537,7 @@ async function handle(req, env) {
       const pr = await stripe(env, "GET", "prices/" + env.STRIPE_PRICE);
       price = { amount: pr.unit_amount / 100, currency: pr.currency.toUpperCase(), recurring: Boolean(pr.recurring), trial_days: pr.recurring ? TRIAL_DAYS : 0 };
     }
-    return json(req, { vapid_public_key: (await vapid(db)).public, free: !paying(env), price });
+    return json(req, { vapid_public_key: (await vapid(db)).public, free: !paying(env), price, email: Boolean(env.RESEND_API_KEY) });
   }
 
   // Start: makes an account (or reuses the one on this phone) and, when payments are on, a Stripe Checkout for it.
@@ -534,6 +571,10 @@ async function handle(req, env) {
     if (req.method === "PUT" && body.prefs) {
       acct.prefs = JSON.stringify(CLEAN_PREFS(body.prefs));
       await db.prepare("UPDATE accounts SET prefs = ? WHERE code = ?").bind(acct.prefs, acct.code).run();
+    }
+    if (req.method === "PUT" && body.email_alerts) {
+      if (body.email_alerts.on && !active(env, acct)) return json(req, { error: "Email alerts come with the subscription. Start it first." }, 400);
+      acct = await setEmailAlerts(env, url.origin, acct, Boolean(body.email_alerts.on), body.email_alerts.address ?? acct.alert_email ?? acct.email);
     }
     if (req.method === "DELETE") {
       // Deletes the account and its phones. A card subscription is cancelled too, if the Stripe key may do that.
@@ -583,9 +624,57 @@ async function handle(req, env) {
     for (const a of lapsed) await refresh(env, a).catch(() => {});
     const rows = (await db.prepare(`SELECT d.endpoint, d.kind, d.sub, a.code, a.prefs, a.paid_until FROM devices d JOIN accounts a ON a.code = d.code`).all()).results;
     const recipients = rows.filter(r => active(env, r)).map(r => ({ endpoint: r.endpoint, kind: r.kind, sub: JSON.parse(r.sub), code: r.code, prefs: JSON.parse(r.prefs) }));
+    // Email alerts count as one more "phone" for the account; the address itself stays here.
+    if (env.RESEND_API_KEY) {
+      const mails = (await db.prepare("SELECT code, prefs, paid_until FROM accounts WHERE email_on = 1 AND email_ok = 1 AND alert_email IS NOT NULL").all()).results;
+      for (const a of mails.filter(a => active(env, a))) recipients.push({ endpoint: "email:" + a.code, kind: "email", sub: {}, code: a.code, prefs: JSON.parse(a.prefs) });
+    }
     const seen = (await db.prepare("SELECT id FROM seen").all()).results.map(r => r.id);
     const keys = await vapid(db);
     return json(req, { recipients, seen, vapid: keys });
+  }
+
+  // For the sender only: sends alert emails written by the Action, [{code, subject, text, html}], up to 90 at a time.
+  // The address, the unsubscribe links and headers are filled in here, so the Action never sees an address.
+  if (path === "/api/internal/email" && req.method === "POST") {
+    if (!(await fromAction(req))) return json(req, { error: "Not allowed" }, 403);
+    if (!env.RESEND_API_KEY) return json(req, { sent: 0, failed: 0, note: "No RESEND_API_KEY" });
+    // One query for the lot: the free plan allows 50 database queries per request.
+    const list = (Array.isArray(body.emails) ? body.emails : []).filter(e => fmtCode(e?.code)).slice(0, 90);
+    const codes = [...new Set(list.map(e => fmtCode(e.code)))];
+    const found = codes.length ? (await db.prepare(`SELECT * FROM accounts WHERE code IN (${codes.map(() => "?").join(",")})`).bind(...codes).all()).results : [];
+    const byCode = Object.fromEntries(found.map(a => [a.code, a]));
+    const out = [];
+    for (const e of list) {
+      const a = byCode[fmtCode(e.code)];
+      if (!a || !a.email_on || !a.email_ok || !a.alert_email || !active(env, a)) continue;
+      const off = url.origin + "/api/email/off?t=" + a.email_token;
+      const fill = s => String(s || "").replaceAll("{{UNSUBSCRIBE}}", off);
+      out.push({ from: env.MAIL_FROM || MAIL_FROM, to: [a.alert_email], reply_to: "contact@hostileenvironmentjobs.com", subject: txt(e.subject, 200),
+                 text: fill(e.text), html: fill(e.html), headers: { "List-Unsubscribe": `<${off}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } });
+    }
+    if (!out.length) return json(req, { sent: 0, failed: 0 });
+    const res = await fetch("https://api.resend.com/emails/batch", { method: "POST", body: JSON.stringify(out),
+      headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" } });
+    if (!res.ok) return json(req, { sent: 0, failed: out.length, error: (await res.text()).slice(0, 300) });
+    return json(req, { sent: out.length, failed: 0 });
+  }
+
+  // The links in alert emails: confirm a new address, and turn email alerts off (one click from the mail app, or a button here).
+  if (path === "/api/email/confirm" || path === "/api/email/off") {
+    const t = String(url.searchParams.get("t") || "");
+    const a = t.length >= 20 && await db.prepare("SELECT * FROM accounts WHERE email_token = ?").bind(t).first();
+    if (!a) return page(req, "That link has expired", `<p>It may be from an older email. You can change your email alerts in the app.</p><p><a href="${SITE}/app/#account">Open the app</a></p>`, 404);
+    if (path === "/api/email/confirm") {
+      await db.prepare("UPDATE accounts SET email_ok = 1, email_on = 1 WHERE code = ?").bind(a.code).run();
+      return page(req, "Email alerts are on", `<p>Matching jobs will be emailed to ${a.alert_email.replace(/[<>&"]/g, "")} as they go up.</p><p><a href="${SITE}/app/#account">Open the app</a></p>`);
+    }
+    if (req.method === "POST") {
+      await db.prepare("UPDATE accounts SET email_on = 0 WHERE code = ?").bind(a.code).run();
+      return page(req, "Email alerts are off", `<p>We won't email you job alerts any more. Your subscription and any phone notifications are unchanged.</p><p><a href="${SITE}/app/#account">Turn them back on in the app</a></p>`);
+    }
+    return page(req, "Stop email alerts?", `<p>We'll stop emailing job alerts to ${String(a.alert_email || "").replace(/[<>&"]/g, "")}. Phone notifications aren't affected.</p>
+<form method="post"><button type="submit">Stop email alerts</button></form>`);
   }
 
   // For the sender only: marks listings as sent and drops phones whose push address has gone.

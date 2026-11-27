@@ -421,7 +421,7 @@ def main():
         "/guide/", gd[len(gd_style):], gd_style).replace('<a href="/guide/">', '<a href="/guide/" aria-current="page">', 1))
 
     # Privacy and terms: their own pages, because the App Store and Google Play listings need a link to each.
-    legal = (ROOT / "scripts" / "legal.html").read_text().replace("<!--DATE-->", "15 November 2026")
+    legal = (ROOT / "scripts" / "legal.html").read_text().replace("<!--DATE-->", "27 November 2026")
     priv, terms = legal.split("<!--TERMS-->")
     for folder, title, desc, body in [("privacy", "Privacy | Hostile Environment Jobs", "What the Hostile Environment Jobs website and the H.E. Jobs app keep about you, and how to delete it.", priv.replace("<!--PRIVACY-->", "")),
                                       ("terms", "Terms | Hostile Environment Jobs", "Terms for the Hostile Environment Jobs website and the H.E. Jobs app subscription.", terms)]:

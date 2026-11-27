@@ -718,7 +718,7 @@ function renderPayments() {
   $("pay-summary").innerHTML = `<h2>Payments</h2>
     ${PAY.stripe ? "" : `<p class="small muted">Stripe isn't connected to the alerts Worker, so there are no payments to show.</p>`}
     <div class="grid tiles" style="margin-bottom:8px">${tiles}</div>
-    <p class="small muted">${a.active} of ${a.accounts} job alert account${a.accounts === 1 ? "" : "s"} paid up, ${a.renewing} renewing automatically, ${a.phones} phone${a.phones === 1 ? "" : "s"} getting alerts.</p>
+    <p class="small muted">${a.active} of ${a.accounts} job alert account${a.accounts === 1 ? "" : "s"} paid up, ${a.renewing} renewing automatically, ${a.phones} phone${a.phones === 1 ? "" : "s"} getting alerts${a.email_ready ? `, ${a.with_email || 0} getting email alerts` : ""}.</p>
     ${recent.length ? `<h3>Latest</h3><ul class="attn">${recent.map(p => `<li><b>${esc(money(p.amount, p.currency))}</b> ${esc(p.what)} · ${esc(p.email || p.name || "")} · ${payDate(p.created)}</li>`).join("")}</ul>` : `<p class="muted small">No payments yet.</p>`}
     <p class="small"><button class="btn sm" data-go="payments">All payments</button></p>`;
   const f = $("pay-f").value;
