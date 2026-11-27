@@ -162,7 +162,7 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.note { color: var(--warn); } .sent { color: var(--ok); }
+.note, .subscribe p.note { color: var(--warn); } .sent, .subscribe p.sent { color: var(--ok); }
 /* Course reviews: star summary on each course card, plus the moderated review form. */
 .stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
@@ -279,7 +279,21 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   .job { grid-template-columns: 40px minmax(0, 1fr); }
   .job .ico { width: 40px; height: 40px; grid-row: span 1; }
   .job .side { text-align: left; grid-row: auto; grid-column: 2; white-space: normal; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Phones: a short hero and job types as one swipeable row, so search and the first jobs come up sooner. */
+  .hero .wrap { padding-block: 26px 22px; }
+  .hero .eyebrow { margin-bottom: 10px; }
+  .hero p.lede { font-size: 17px; }
+  .lede-more { display: none; }
+  .stats { gap: 6px 22px; margin-top: 16px; }
+  .stats b { font-size: 30px; }
+  .hero .guide-link { margin-top: 12px; }
+  .tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; scroll-snap-type: x proximity; margin: 18px -16px 6px; padding: 0 16px 6px; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .tiles::-webkit-scrollbar { display: none; }
+  .tools { grid-template-columns: 1fr 1fr; } .tools #q { grid-column: 1 / -1; }
+  .tile { grid-template-columns: auto auto; align-items: center; gap: 2px 8px; padding: 10px 14px; scroll-snap-align: start; }
+  .tile svg { grid-row: span 2; width: 22px; height: 22px; }
+  .tile .t { font-size: 17px; white-space: nowrap; }
+  .tile .n { font-size: 12px; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }
@@ -351,6 +365,25 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <div class="who">Danish Refugee Council (DRC) · Rural Damascus, Syria · Closes 30 Nov 2026</div>
   <p>Lead DRC&#x27;s non-technical survey, community liaison and risk education teams in Syria, including quality management and SOPs.</p>
 </article>
+<div class="subscribe" id="sitrep">
+  <p class="eyebrow">The Sitrep</p><h2>Get jobs like this every Monday</h2>
+  <p>New jobs and course dates in one short email a week. Free, no spam, unsubscribe any time. Or get them on your phone the moment they go up with <a href="/app/">The App</a>.</p>
+  <form class="sitrep-form" novalidate onsubmit="return sitrepSignup(this)"><input type="email" name="email_address" required placeholder="Your email" aria-label="Your email" autocomplete="email"><button class="btn primary" type="submit">Subscribe</button></form>
+  <p class="sitrep-note" aria-live="polite"></p>
+</div>
+<script>
+function sitrepSignup(form) {
+  var note = form.nextElementSibling, btn = form.querySelector("button");
+  if (!form.checkValidity()) { note.className = "sitrep-note note"; note.textContent = "Enter your email address, then subscribe."; return false; }
+  btn.disabled = true;
+  // Kit doesn't let another site read its reply, so a sent request counts as done.
+  fetch("https://app.kit.com/forms/10135803/subscriptions", { method: "POST", mode: "no-cors", body: new FormData(form) })
+    .then(function () { form.reset(); note.className = "sitrep-note sent"; note.textContent = "Nearly done: check your inbox and click the link to confirm."; if (window.goatcounter && goatcounter.count) goatcounter.count({ path: "sitrep-signup" + location.pathname, event: true }); })
+    .catch(function () { note.className = "sitrep-note note"; note.textContent = "That didn't send. Please try again."; })
+    .then(function () { btn.disabled = false; });
+  return false;
+}
+</script>
 <h2>Browse more</h2>
 <nav class="chips" aria-label="Browse by type"><a class="btn" href="/work/eod-jobs/">EOD jobs</a><a class="btn" href="/work/uxo-jobs-uk/">UXO jobs in the UK</a><a class="btn" href="/work/mine-action-jobs/">Mine action jobs</a><a class="btn" href="/work/close-protection-jobs/">Close protection jobs</a><a class="btn" href="/work/security-jobs/">Hostile environment security jobs</a><a class="btn" href="/work/ngo-safety-security-jobs/">NGO safety and security jobs</a><a class="btn" href="/work/maritime-security-jobs/">Maritime security jobs</a><a class="btn" href="/work/hostile-environment-medic-jobs/">Hostile environment medic jobs</a><a class="btn" href="/work/k9-explosive-detection-jobs/">K9 and explosive detection dog jobs</a><a class="btn" href="/work/security-risk-analyst-jobs/">Security risk analyst jobs</a><a class="btn" href="/work/heat-courses/">HEAT courses</a><a class="btn" href="/work/eod-courses/">EOD and IEDD courses</a><a class="btn" href="/work/jobs-in-syria/">Jobs in Syria</a><a class="btn" href="/work/jobs-in-united-states/">Jobs in United States</a><a class="btn" href="/work/jobs-in-ukraine/">Jobs in Ukraine</a><a class="btn" href="/work/jobs-in-united-kingdom/">Jobs in United Kingdom</a><a class="btn" href="/work/jobs-in-iraq/">Jobs in Iraq</a><a class="btn" href="/work/jobs-in-kenya/">Jobs in Kenya</a><a class="btn" href="/work/jobs-in-sudan/">Jobs in Sudan</a><a class="btn" href="/work/jobs-in-australia/">Jobs in Australia</a><a class="btn" href="/work/jobs-in-afghanistan/">Jobs in Afghanistan</a><a class="btn" href="/work/jobs-in-libya/">Jobs in Libya</a><a class="btn" href="/work/jobs-in-ethiopia/">Jobs in Ethiopia</a><a class="btn" href="/work/jobs-in-uganda/">Jobs in Uganda</a><a class="btn" href="/work/jobs-in-somalia/">Jobs in Somalia</a></nav>
 </main>

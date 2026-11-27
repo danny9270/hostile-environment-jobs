@@ -136,6 +136,7 @@ def landing(slug, h1, intro, jobs, courses, courses_first, page, e, closing_text
 {''.join(f'<p>{e(p)}</p>' for p in intro)}
 {ALERTS}
 {''.join(sections)}
+<!--sitrep-box-->
 <h2>Browse more</h2>
 {related}"""
     return page(title, description, f"/work/{slug}/", body)

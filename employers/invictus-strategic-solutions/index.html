@@ -163,7 +163,7 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.note { color: var(--warn); } .sent { color: var(--ok); }
+.note, .subscribe p.note { color: var(--warn); } .sent, .subscribe p.sent { color: var(--ok); }
 /* Course reviews: star summary on each course card, plus the moderated review form. */
 .stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
@@ -280,7 +280,21 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   .job { grid-template-columns: 40px minmax(0, 1fr); }
   .job .ico { width: 40px; height: 40px; grid-row: span 1; }
   .job .side { text-align: left; grid-row: auto; grid-column: 2; white-space: normal; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Phones: a short hero and job types as one swipeable row, so search and the first jobs come up sooner. */
+  .hero .wrap { padding-block: 26px 22px; }
+  .hero .eyebrow { margin-bottom: 10px; }
+  .hero p.lede { font-size: 17px; }
+  .lede-more { display: none; }
+  .stats { gap: 6px 22px; margin-top: 16px; }
+  .stats b { font-size: 30px; }
+  .hero .guide-link { margin-top: 12px; }
+  .tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; scroll-snap-type: x proximity; margin: 18px -16px 6px; padding: 0 16px 6px; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .tiles::-webkit-scrollbar { display: none; }
+  .tools { grid-template-columns: 1fr 1fr; } .tools #q { grid-column: 1 / -1; }
+  .tile { grid-template-columns: auto auto; align-items: center; gap: 2px 8px; padding: 10px 14px; scroll-snap-align: start; }
+  .tile svg { grid-row: span 2; width: 22px; height: 22px; }
+  .tile .t { font-size: 17px; white-space: nowrap; }
+  .tile .n { font-size: 12px; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }

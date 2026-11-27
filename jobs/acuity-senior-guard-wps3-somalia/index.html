@@ -163,7 +163,7 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.note { color: var(--warn); } .sent { color: var(--ok); }
+.note, .subscribe p.note { color: var(--warn); } .sent, .subscribe p.sent { color: var(--ok); }
 /* Course reviews: star summary on each course card, plus the moderated review form. */
 .stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
@@ -280,7 +280,21 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   .job { grid-template-columns: 40px minmax(0, 1fr); }
   .job .ico { width: 40px; height: 40px; grid-row: span 1; }
   .job .side { text-align: left; grid-row: auto; grid-column: 2; white-space: normal; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Phones: a short hero and job types as one swipeable row, so search and the first jobs come up sooner. */
+  .hero .wrap { padding-block: 26px 22px; }
+  .hero .eyebrow { margin-bottom: 10px; }
+  .hero p.lede { font-size: 17px; }
+  .lede-more { display: none; }
+  .stats { gap: 6px 22px; margin-top: 16px; }
+  .stats b { font-size: 30px; }
+  .hero .guide-link { margin-top: 12px; }
+  .tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; scroll-snap-type: x proximity; margin: 18px -16px 6px; padding: 0 16px 6px; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .tiles::-webkit-scrollbar { display: none; }
+  .tools { grid-template-columns: 1fr 1fr; } .tools #q { grid-column: 1 / -1; }
+  .tile { grid-template-columns: auto auto; align-items: center; gap: 2px 8px; padding: 10px 14px; scroll-snap-align: start; }
+  .tile svg { grid-row: span 2; width: 22px; height: 22px; }
+  .tile .t { font-size: 17px; white-space: nowrap; }
+  .tile .n { font-size: 12px; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }
@@ -331,6 +345,25 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   </div>
   <p class="who" style="margin-top:16px"><a href="/companies/?company=Acuity%20International">Read what operators say about working for Acuity International</a> or <a href="/companies/?company=Acuity%20International&amp;write=1">review them anonymously</a>.</p>
 </article>
+<div class="subscribe" id="sitrep">
+  <p class="eyebrow">The Sitrep</p><h2>Get jobs like this every Monday</h2>
+  <p>New jobs and course dates in one short email a week. Free, no spam, unsubscribe any time. Or get them on your phone the moment they go up with <a href="/app/">The App</a>.</p>
+  <form class="sitrep-form" novalidate onsubmit="return sitrepSignup(this)"><input type="email" name="email_address" required placeholder="Your email" aria-label="Your email" autocomplete="email"><button class="btn primary" type="submit">Subscribe</button></form>
+  <p class="sitrep-note" aria-live="polite"></p>
+</div>
+<script>
+function sitrepSignup(form) {
+  var note = form.nextElementSibling, btn = form.querySelector("button");
+  if (!form.checkValidity()) { note.className = "sitrep-note note"; note.textContent = "Enter your email address, then subscribe."; return false; }
+  btn.disabled = true;
+  // Kit doesn't let another site read its reply, so a sent request counts as done.
+  fetch("https://app.kit.com/forms/10135803/subscriptions", { method: "POST", mode: "no-cors", body: new FormData(form) })
+    .then(function () { form.reset(); note.className = "sitrep-note sent"; note.textContent = "Nearly done: check your inbox and click the link to confirm."; if (window.goatcounter && goatcounter.count) goatcounter.count({ path: "sitrep-signup" + location.pathname, event: true }); })
+    .catch(function () { note.className = "sitrep-note note"; note.textContent = "That didn't send. Please try again."; })
+    .then(function () { btn.disabled = false; });
+  return false;
+}
+</script>
 </main>
 <footer><div class="wrap">
   <span>&copy; 2026 Hostile Environment Jobs</span>
