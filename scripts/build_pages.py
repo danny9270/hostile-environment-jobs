@@ -255,6 +255,40 @@ def closing_page(jobs):
     return page("Jobs closing soon | Hostile Environment Jobs", desc, "/closing-soon/", body)
 
 
+# Old links to closed jobs (shared posts, past Sitreps, Google) land on 404.html. On a /jobs/<id>/ address
+# it says the job has closed and offers the open jobs closest to it, plus the Sitrep and job alerts,
+# so the visit isn't lost. Google still gets a 404, which is right for an expired job.
+NOT_FOUND = """<h1 id="nf-title" style="margin-top:32px">Not found</h1>
+<p id="nf-text">This page may have moved, or the link is wrong.</p>
+<div id="nf-similar" hidden><h2 style="margin-top:28px">Similar open jobs</h2><div class="list" id="nf-list"></div></div>
+<div class="actions"><a class="btn primary" href="/#jobs">See all open jobs</a><a class="btn" href="/sitrep/">Get new jobs weekly by email</a><a class="btn" href="/app/">Job alerts app</a></div>
+<script>
+(function () {
+  var m = location.pathname.match(/^\\/jobs\\/([a-z0-9-]+)\\/?$/);
+  if (!m) return;
+  document.getElementById("nf-title").textContent = "This job has closed";
+  document.getElementById("nf-text").textContent = "The deadline has passed, so it's no longer on the site. Here are the open jobs most like it.";
+  var stop = { the: 1, and: 1, of: 1, in: 1, uk: 0 };
+  var words = m[1].split("-").filter(function (w) { return w.length > 1 && !stop[w]; });
+  var esc = function (t) { return String(t || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  fetch("/jobs.json").then(function (r) { return r.json(); }).then(function (jobs) {
+    var today = new Date().toISOString().slice(0, 10);
+    var scored = jobs.filter(function (j) { return j.id && !j.sample && (!/^\\d{4}-/.test(j.closing || "") || j.closing >= today); }).map(function (j) {
+      var hay = (j.id + " " + j.title + " " + j.employer + " " + j.location + " " + j.category).toLowerCase();
+      var score = words.reduce(function (n, w) { return n + (hay.indexOf(w) > -1 ? (j.id.indexOf(w) === 0 ? 1 : 2) : 0); }, 0);
+      return { j: j, score: score };
+    }).filter(function (x) { return x.score > 0; }).sort(function (a, b) { return b.score - a.score || (b.j.posted || "").localeCompare(a.j.posted || ""); }).slice(0, 5);
+    if (!scored.length) return;
+    document.getElementById("nf-list").innerHTML = scored.map(function (x) {
+      var j = x.j;
+      return '<article class="detail"><span class="tag">' + esc(j.category) + '</span><h3 style="margin-top:8px"><a href="/jobs/' + esc(j.id) + '/">' + esc(j.title) + '</a></h3><div class="who">' + esc(j.employer) + ' · ' + esc(j.location) + '</div></article>';
+    }).join("");
+    document.getElementById("nf-similar").hidden = false;
+  }).catch(function () {});
+})();
+</script>
+"""
+
 def main():
     all_jobs = json.loads((ROOT / "jobs.json").read_text())
     courses = json.loads((ROOT / "courses.json").read_text())
@@ -302,8 +336,7 @@ def main():
 
     # Closed jobs' pages are deleted, so old shared links land here instead.
     (ROOT / "404.html").write_text(page("Page not found | Hostile Environment Jobs", "This page or job has gone.", "/404.html",
-        '<h1 style="margin-top:32px">Not found</h1>\n<p>This job may have closed, or the link is wrong.</p>\n'
-        '<div class="actions"><a class="btn primary" href="/#jobs">See open jobs</a></div>').replace('<meta name="description"', '<meta name="robots" content="noindex">\n<meta name="description"'))
+        NOT_FOUND).replace('<meta name="description"', '<meta name="robots" content="noindex">\n<meta name="description"'))
 
     # Pay guide: the page reads pay.json and jobs.json in the browser, so it only needs rebuilding when the header changes.
     pay = (ROOT / "scripts" / "pay.html").read_text()
