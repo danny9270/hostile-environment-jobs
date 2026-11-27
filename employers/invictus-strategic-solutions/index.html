@@ -54,6 +54,24 @@ nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
 nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 15px; }
 nav a:hover { color: var(--ink); }
 nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent); }
+/* Phones: the 15 links folded behind a Menu button so the sticky header stays one line (about 56px, not 230px). */
+.menu-btn { display: none; }
+@media (max-width: 759px) {
+  header.top .wrap { gap: 8px; min-height: 56px; }
+  .brand { font-size: 18px; gap: 8px; }
+  .menu-btn { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; background: none; border: 1px solid var(--line); color: var(--ink); font: 600 15px var(--body); padding: 8px 12px; border-radius: 8px; cursor: pointer; min-height: 40px; }
+  .menu-btn svg { color: var(--accent); }
+  header.top nav { display: none; }
+  header.top.menu-open nav { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 100%; margin: 0 0 12px; max-height: calc(100vh - 80px); overflow-y: auto; }
+  header.top.menu-open nav a { padding: 11px 12px; background: var(--raised); color: var(--ink); font-size: 16px; }
+  header.top.menu-open nav a[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+}
+@media (max-width: 369px) {
+  .brand { font-size: 16px; }
+  .brand svg { width: 24px; height: 24px; }
+  .menu-btn { padding: 8px 10px; }
+  .menu-word { display: none; }
+}
 
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, #2b2416 0%, var(--bg) 60%); }
 .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; pointer-events: none; }
@@ -113,7 +131,7 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 .soon { color: var(--warn); font-weight: 600; }
 /* Closing soon: strip on the jobs page and the /closing-soon/ page */
 .closing { margin: 22px 0 6px; }
-.closing-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.closing-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
 .closing-head h2 { margin: 0; font-size: 26px; }
 .closing-head a { font: 500 14px var(--mono); color: var(--accent); white-space: nowrap; }
 .closing-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 1fr); gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
@@ -145,7 +163,7 @@ nav a[aria-current="page"] { color: var(--accent-ink); background: var(--accent)
 form { display: grid; gap: 14px; margin-top: 18px; }
 form label { display: grid; gap: 4px; font-weight: 600; font-size: 15px; }
 form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.note { color: var(--warn); } .sent { color: var(--ok); }
+.note, .subscribe p.note { color: var(--warn); } .sent, .subscribe p.sent { color: var(--ok); }
 /* Course reviews: star summary on each course card, plus the moderated review form. */
 .stars { --p: 0%; letter-spacing: 1px; background: linear-gradient(90deg, var(--accent) var(--p), #4a5045 var(--p)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .rev { position: relative; z-index: 1; margin-top: 8px; font-size: 15px; color: var(--muted); }
@@ -261,8 +279,22 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   .tools, form .row, .employers { grid-template-columns: 1fr; }
   .job { grid-template-columns: 40px minmax(0, 1fr); }
   .job .ico { width: 40px; height: 40px; grid-row: span 1; }
-  .job .side { text-align: left; grid-row: auto; grid-column: 2; }
-  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .job .side { text-align: left; grid-row: auto; grid-column: 2; white-space: normal; }
+  /* Phones: a short hero and job types as one swipeable row, so search and the first jobs come up sooner. */
+  .hero .wrap { padding-block: 26px 22px; }
+  .hero .eyebrow { margin-bottom: 10px; }
+  .hero p.lede { font-size: 17px; }
+  .lede-more { display: none; }
+  .stats { gap: 6px 22px; margin-top: 16px; }
+  .stats b { font-size: 30px; }
+  .hero .guide-link { margin-top: 12px; }
+  .tiles { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; scroll-snap-type: x proximity; margin: 18px -16px 6px; padding: 0 16px 6px; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .tiles::-webkit-scrollbar { display: none; }
+  .tools { grid-template-columns: 1fr 1fr; } .tools #q { grid-column: 1 / -1; }
+  .tile { grid-template-columns: auto auto; align-items: center; gap: 2px 8px; padding: 10px 14px; scroll-snap-align: start; }
+  .tile svg { grid-row: span 2; width: 22px; height: 22px; }
+  .tile .t { font-size: 17px; white-space: nowrap; }
+  .tile .n { font-size: 12px; }
   nav { margin-left: 0; }
   .detail dl { grid-template-columns: 1fr; gap: 2px; }
   .detail dd { margin-bottom: 8px; }
@@ -278,7 +310,8 @@ footer .wrap { display: flex; gap: 16px; flex-wrap: wrap; }
   <a class="brand" href="/#jobs" data-view="jobs">
     <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14 1v7M14 20v7M1 14h7M20 14h7" stroke="currentColor" stroke-width="2.5"/><circle cx="14" cy="14" r="3" fill="currentColor"/></svg>
     Hostile Environment <span class="amp">Jobs</span></a>
-  <nav>
+  <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav" onclick="this.setAttribute('aria-expanded', this.closest('header').classList.toggle('menu-open'))"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="menu-word">Menu</span></button>
+  <nav id="site-nav" onclick="if (event.target.closest('a')) { this.closest('header').classList.remove('menu-open'); this.previousElementSibling.setAttribute('aria-expanded', 'false'); }">
     <a href="/#jobs" data-view="jobs">Jobs</a>
     <a href="/#courses" data-view="courses">Courses</a>
     <a href="/#calendar" data-view="calendar">Calendar</a>
