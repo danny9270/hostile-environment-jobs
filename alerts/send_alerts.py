@@ -6,6 +6,9 @@ Up to 3 matches go as one notification each; more than that go as one "N new job
 It also reminds subscribers 60, 30 and 7 days before a ticket or document they logged runs out, and 3 days before a saved job closes.
 The very first run only records what's already listed, so nobody gets a flood of old jobs.
 
+Email alerts (kind "email", endpoint "email:<code>") get every match in one email per run, plus the same reminders.
+The Worker fills in the address and unsubscribe link and sends them through Resend, so nothing here needs a mail key.
+
 Store-app phones (kind "fcm") are sent through Firebase Cloud Messaging, which reaches both iPhones and Android phones.
 That needs the repository secret FCM_SERVICE_ACCOUNT: the JSON key of a Firebase service account (Project settings >
 Service accounts > Generate new private key). Without it those phones are skipped and the rest still go.
@@ -14,11 +17,13 @@ Needs: pip install pywebpush google-auth requests. Signs in to the Worker with t
 Run locally with --dry-run and a recipients JSON file to see what would be sent: python3 alerts/send_alerts.py --dry-run file.json
 """
 import datetime
+import html
 import json
 import os
 import pathlib
 import re
 import sys
+import time
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -73,7 +78,7 @@ def plan(recipients, jobs, courses, seen):
     for r in recipients:
         p = r.get("prefs") or {}
         hits = [job_note(j) for j in new_jobs if job_matches(j, p)] + [course_note(c) for c in new_courses if course_matches(c, p)]
-        if len(hits) > 3:
+        if len(hits) > 3 and r.get("kind") != "email":  # an email has room for every match
             n_jobs = sum(h["tag"].startswith("job-") for h in hits)
             what = f"{n_jobs} new jobs" + (f" and {len(hits) - n_jobs} courses" if len(hits) > n_jobs else "") if n_jobs else f"{len(hits)} new courses"
             hits = [{"title": f"{what} match your alerts", "body": "; ".join(h["title"].split(": ", 1)[-1] for h in hits[:4]) + "…",
@@ -131,6 +136,43 @@ def plan_reminders(recipients, jobs, seen, today=None):
         per_code[r["code"]] = notes
     out = {r["endpoint"]: per_code[r["code"]] for r in recipients if per_code.get(r["code"])}
     return out, sent
+
+
+def link(path):
+    base, _, frag = path.partition("#")
+    return SITE + base + ("&" if "?" in base else "?") + "utm_source=email-alert" + ("#" + frag if frag else "")
+
+
+def email_for(code, notes):
+    """One alert email: {code, subject, text, html}. The Worker swaps {{UNSUBSCRIBE}} for the account's own link."""
+    jobs = [n for n in notes if n["tag"].startswith("job-")]
+    if len(notes) == 1:
+        subject = notes[0]["title"]
+    elif jobs:
+        subject = f"{len(jobs)} new job{'s' if len(jobs) > 1 else ''} match your alerts" + (f": {jobs[0]['title'].split(': ', 1)[-1]} and more" if len(jobs) > 1 else "")
+    else:
+        subject = f"{len(notes)} updates from H.E. Jobs"
+    subject = subject[:150]
+    lines = [f"{n['title']}\n{n['body']}\n{link(n['url'])}" for n in notes]
+    text = ("New listings that match your alerts:\n\n" + "\n\n".join(lines) +
+            f"\n\nSee every open job: {link('/#jobs')}\nChange what you get: {SITE}/app/#alerts\n"
+            "Stop these emails: {{UNSUBSCRIBE}}\n\nH.E. Jobs Team\n" + SITE)
+    e = html.escape
+    items = "".join(
+        f'<tr><td style="padding:14px 0;border-bottom:1px solid #e3e6e4"><a href="{e(link(n["url"]))}" style="color:#1d5b3f;font-weight:700;font-size:16px;text-decoration:none">{e(n["title"])}</a>'
+        f'<div style="color:#55605a;font-size:14px;margin-top:3px">{e(n["body"])}</div></td></tr>' for n in notes)
+    body = f"""<!doctype html><html><body style="margin:0;background:#f3f5f4;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1c2420">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:20px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:10px">
+<tr><td style="background:#0f1412;color:#e0b341;padding:16px 22px;border-radius:10px 10px 0 0;font-weight:800;letter-spacing:.04em">HOSTILE ENVIRONMENT JOBS</td></tr>
+<tr><td style="padding:18px 22px 6px"><p style="margin:0 0 4px;font-size:15px">New listings that match your alerts:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{items}</table>
+<p style="margin:18px 0"><a href="{e(link('/#jobs'))}" style="background:#e0b341;color:#0f1412;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block">See every open job</a></p>
+<p style="margin:0 0 18px;font-size:15px">H.E. Jobs Team</p></td></tr>
+<tr><td style="padding:14px 22px 18px;border-top:1px solid #e3e6e4;color:#6b756f;font-size:12px">You get these because you turned on email alerts in The App.
+<a href="{SITE}/app/#alerts" style="color:#6b756f">Change what you get</a> · <a href="{{{{UNSUBSCRIBE}}}}" style="color:#6b756f">Stop these emails</a></td></tr>
+</table></td></tr></table></body></html>"""
+    return {"code": code, "subject": subject, "text": text, "html": body}
 
 
 def page_live(path):
@@ -213,8 +255,11 @@ def main():
         todo.setdefault(endpoint, []).extend(notes)
     sent += rem_sent
     print(f"{len(sent)} new listings, {sum(map(len, todo.values()))} notifications to {len(todo)} phones")
+    emails = [email_for(ep.split(":", 1)[1], notes) for ep, notes in todo.items() if ep.startswith("email:")]
     if dry:
-        print(json.dumps(todo, indent=1))
+        print(json.dumps({ep: n for ep, n in todo.items() if not ep.startswith("email:")}, indent=1))
+        for m in emails:
+            print(f"\nEMAIL to account {m['code']}: {m['subject']}\n{m['text']}")
         return
 
     from pywebpush import WebPushException, webpush
@@ -225,6 +270,8 @@ def main():
     fcm = fcm_sender()
     for endpoint, notes in todo.items():
         r = by_endpoint[endpoint]
+        if r["kind"] == "email":
+            continue
         if r["kind"] == "fcm":
             if not fcm:
                 print("A store-app phone is waiting but there's no FCM_SERVICE_ACCOUNT secret yet, so it was skipped.")
@@ -247,8 +294,17 @@ def main():
                     break
                 failed += 1
                 print(f"Push failed ({status}): {str(err)[:200]}")
+    mailed = 0
+    for i in range(0, len(emails), 90):
+        if i:
+            time.sleep(1)  # Resend allows a couple of requests a second
+        res = call(api, "/api/internal/email", token, {"emails": emails[i:i + 90]})
+        mailed += res.get("sent", 0)
+        failed += res.get("failed", 0)
+        if res.get("error") or res.get("note"):
+            print("Email alerts:", res.get("error") or res.get("note"))
     call(api, "/api/internal/sent", token, {"seen": sent, "gone": gone})
-    print(f"Done. {len(gone)} old phones removed, {failed} failures.")
+    print(f"Done. {mailed} emails sent, {len(gone)} old phones removed, {failed} failures.")
 
 
 if __name__ == "__main__":

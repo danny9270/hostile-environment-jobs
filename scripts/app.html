@@ -122,8 +122,8 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
   <div data-tab="alerts">
   <p class="eyebrow" style="margin-top:32px">The H.E. Jobs app</p>
   <h1>Jobs, rotation, kit. One <span class="amp">app.</span></h1>
-  <p id="intro-web">Job alerts, rotation tracker and EOD kit list: first month free, then $10 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
-  <p id="intro-native" hidden>Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are. The rotation tracker is free; alerts and the full kit list come with a yearly subscription.</p>
+  <p id="intro-web">Job alerts, rotation tracker and EOD kit list: first month free, then $10 a year. Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are, or an email if you'd rather. No laptop needed and no app store: it installs from this page. The rotation tracker is free.</p>
+  <p id="intro-native" hidden>Pick the work and regions you want and your phone gets a notification within a few hours of a matching job or course going up, wherever you are, or an email if you'd rather. The rotation tracker is free; alerts and the full kit list come with a yearly subscription.</p>
   <div class="row-btns" id="stores" hidden></div>
   </div>
 
@@ -180,7 +180,7 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
     <p class="sub" id="referred" hidden>A mate sent you here. When you sign up, it counts towards their free year.</p>
     <div class="price" id="price">$10<small>a year</small></div>
     <ul class="perks">
-      <li>Alerts for new jobs and courses that match what you picked</li>
+      <li>Alerts for new jobs and courses that match what you picked, as phone notifications, emails or both</li>
       <li>Change what you get any time</li>
       <li>Use it on up to 5 phones</li>
       <li id="kit-perk">The full EOD team kit list: every item, quantities and where to buy, plus a printable checklist</li>
@@ -215,6 +215,15 @@ html[data-native] .app .eyebrow { margin-top: 20px !important; }
       <div class="row-btns"><button class="btn" type="button" id="delete">Delete my account</button></div>
       <p class="msg" id="delete-msg"></p>
     </details>
+  </div>
+
+  <div class="panel" id="email" data-tab="alerts account" hidden>
+    <h2>Email alerts</h2>
+    <p class="sub">Get matching jobs by email as well as, or instead of, phone notifications. Same job types and regions you picked under Alerts, in one email when new matches go up. Included in your subscription.</p>
+    <p class="status" id="email-status"></p>
+    <form class="restore" id="email-form" onsubmit="return false"><input id="email-addr" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" style="text-transform:none;font-family:inherit"><button class="btn primary" type="button" id="email-on">Email me</button></form>
+    <div class="row-btns"><button class="btn" type="button" id="email-off" hidden>Stop email alerts</button></div>
+    <p class="msg" id="email-msg"></p>
   </div>
 
   <div class="panel" id="refer" data-tab="account" hidden>
@@ -570,15 +579,18 @@ async function draw() {
     $("price").innerHTML = "Free<small>while we test it</small>";
     $("renew-perk").textContent = "Free during testing";
   }
-  const needsHome = ios && !standalone;
-  $("pay").disabled = needsHome;
-  $("pay-msg").textContent = needsHome ? "Add the app to your home screen first (see above), then open it from there." : (!pushable ? "This browser can't show notifications. Try Chrome on Android or Safari on iPhone." : "");
+  // On an iPhone, notifications only work from the home screen app, but email alerts work from here too.
+  const needsHome = ios && !standalone, emailOk = Boolean(config?.email);
+  $("pay").disabled = needsHome && !emailOk;
+  $("pay-msg").textContent = needsHome ? (emailOk ? "For phone notifications, add the app to your home screen first (see above) and sign up from there. Only want email alerts? You can sign up here." : "Add the app to your home screen first (see above), then open it from there.")
+    : (!pushable ? (emailOk ? "This browser can't show notifications, but you can still get alerts by email." : "This browser can't show notifications. Try Chrome on Android or Safari on iPhone.") : "");
   $("buy").hidden = Boolean(acct?.active);
   $("referred").hidden = Boolean(acct) || !store.get("hej-ref") || Boolean(native);
   drawRefer();
   drawKit();
   drawCerts();
   drawMatches();
+  drawEmail();
   $("save-row").hidden = !acct;
   $("account").hidden = !acct;
   $("notify").hidden = true;
@@ -594,10 +606,34 @@ async function draw() {
   $("notify").hidden = !acct.active || Boolean(sub) || !pushable;
   if (acct.active && !$("notify").hidden && needsHome) {
     $("enable").disabled = true;
-    $("notify-msg").textContent = "Add the app to your home screen first, open it from there and enter your code under 'Already paid?'.";
-    $("buy").hidden = false;
+    $("notify-msg").textContent = "For phone notifications, add the app to your home screen, open it from there and enter your code (under Account here) in 'Already paid?'." + (acct.email_alerts?.ready ? " Or just turn on email alerts below." : "");
+    $("buy").hidden = Boolean(acct.email_alerts?.ready);
   }
 }
+
+function drawEmail() {
+  const e = acct?.email_alerts;
+  $("email").hidden = !acct?.active || !e?.ready;
+  if ($("email").hidden) return;
+  if (document.activeElement !== $("email-addr") && !$("email-addr").value) $("email-addr").value = e.address || "";
+  $("email-status").innerHTML = e.on && e.confirmed ? `Email alerts: <b>on</b>, to ${esc(e.address)}`
+    : e.on ? `Email alerts: <b class="off">waiting for you to confirm</b>. We sent a link to ${esc(e.address)}. Check your junk folder if it isn't there.`
+    : `Email alerts: <b class="off">off</b>`;
+  $("email-on").textContent = e.on ? "Change address" : "Email me";
+  $("email-off").hidden = !e.on;
+}
+async function setEmail(on) {
+  $("email-msg").textContent = "One moment…";
+  try {
+    acct = await api("/api/account", { method: "PUT", body: { code: acct.code, email_alerts: { on, address: $("email-addr").value.trim() } } });
+    const e = acct.email_alerts;
+    $("email-msg").textContent = !on ? "Email alerts are off." : e.confirmed ? "Done. Matching jobs will be emailed to you as they go up." : "Nearly there. Tap the link in the email we've just sent you.";
+    drawEmail();
+  } catch (err) { $("email-msg").textContent = err.message; }
+}
+$("email-on").onclick = () => setEmail(true);
+$("email-off").onclick = () => setEmail(false);
+$("email-addr").onkeydown = ev => { if (ev.key === "Enter") setEmail(true); };
 
 const referUrl = () => `${location.origin}/app/?ref=${acct.ref}`;
 const REFER_TEXT = "Job alerts for EOD, mine action, security and HE medic work, straight to your phone:";
@@ -951,7 +987,7 @@ native?.widget?.(rota);
 
 // Tabs. The hash says which one is showing (#rota, #alerts, #jobs, #kit, #account); older links like #buy still land in the right place.
 const TABS = ["rota", "certs", "alerts", "jobs", "kit", "account"];
-const INSIDE = { buy: "alerts", prefs: "alerts", install: "alerts", matches: "jobs", saved: "jobs", refer: "account", tracker: "rota" };
+const INSIDE = { buy: "alerts", prefs: "alerts", email: "account", install: "alerts", matches: "jobs", saved: "jobs", refer: "account", tracker: "rota" };
 const appEl = document.querySelector(".app");
 function showTab(t, spot) {
   appEl.dataset.on = t;
