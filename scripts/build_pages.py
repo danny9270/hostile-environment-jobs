@@ -428,10 +428,13 @@ def main():
         (ROOT / folder).mkdir(exist_ok=True)
         (ROOT / folder / "index.html").write_text(page(title, desc, f"/{folder}/", body.strip() + "\n"))
 
-    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly"), (SITE + "/companies/", "weekly"), (SITE + "/privacy/", "yearly"), (SITE + "/terms/", "yearly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly") for j in jobs]
+    urls = [(SITE + "/", "daily"), (SITE + "/jobs/", "daily"), (SITE + "/closing-soon/", "daily"), (SITE + "/pay/", "weekly"), (SITE + "/deploy/", "daily"), (SITE + "/leavers/", "monthly"), (SITE + "/cv/", "monthly"), (SITE + "/sop/", "monthly"), (SITE + "/app/", "monthly"), (SITE + "/candidates/", "monthly"), (SITE + "/advertise/", "monthly"), (SITE + "/guide/", "monthly"), (SITE + "/companies/", "weekly"), (SITE + "/privacy/", "yearly"), (SITE + "/terms/", "yearly")] + [(f"{SITE}/jobs/{j['id']}/", "weekly", j.get("posted")) for j in jobs]
+    # Sitrep issues and archive: each issue is dated by its folder, so it can carry a true lastmod.
+    sitrep_days = sorted((d.name for d in (ROOT / "sitrep").glob("20*-*-*") if (d / "index.html").exists()), reverse=True)
+    urls += [(SITE + "/sitrep/", "weekly", sitrep_days[0] if sitrep_days else None)] + [(f"{SITE}/sitrep/{d}/", "yearly", d) for d in sitrep_days]
     urls += landing_urls + ([(SITE + "/employers/", "weekly")] if employers else []) + ([(SITE + "/deals/", "weekly")] if any(x.get("offer") for x in employers) else []) + profile_urls
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "".join(f"  <url><loc>{u}</loc><changefreq>{f}</changefreq></url>\n" for u, f in urls) + "</urlset>\n")
+        + "".join(f"  <url><loc>{u[0]}</loc>{f'<lastmod>{u[2]}</lastmod>' if len(u) > 2 and u[2] else ''}<changefreq>{u[1]}</changefreq></url>\n" for u in urls) + "</urlset>\n")
     print(f"Built {len(jobs)} job pages, {len(employers)} employer profiles and {n_events} calendar events")
 
 
